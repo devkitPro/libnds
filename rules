@@ -1,0 +1,40 @@
+#---------------------------------------------------------------------------------
+%.a:
+#---------------------------------------------------------------------------------
+	@echo $(notdir $@)
+	@$(AR) -rc $@ $^
+
+#---------------------------------------------------------------------------------
+%.o: %.c
+	@echo $(notdir $<)
+	@$(CC) -MMD -MF $(DEPSDIR)/$*.d $(CFLAGS) -c $< -o $@
+
+#---------------------------------------------------------------------------------
+%.o: %.s
+	@echo $(notdir $<)
+	@$(CC) -MMD -MF $(DEPSDIR)/$*.d -x assembler-with-cpp $(ASFLAGS) -c $< -o $@
+
+#---------------------------------------------------------------------------------
+# canned command sequence for binary data
+#---------------------------------------------------------------------------------
+define bin2o
+	cp $(<) $(*).tmp
+	$(OBJCOPY) -I binary -O elf32-littlearm -B arm \
+	--rename-section .data=.rodata,readonly,data,contents,alloc \
+	--redefine-sym _binary_$*_tmp_start=$*\
+	--redefine-sym _binary_$*_tmp_end=$*_end\
+	--redefine-sym _binary_$*_tmp_size=$*_size\
+	$(*).tmp $(@)
+	echo "extern const uint32" $(*)"_end[];" >> $(*).h
+	echo "extern const uint8" $(*)"[];" >> $(*).h
+	echo "extern const uint32" $(*)_size[]";" >> $(*).h
+	rm $(*).tmp
+endef
+
+#---------------------------------------------------------------------------------
+
+%.o : %.bin
+	@echo $(notdir $<)
+	@$(bin2o)
+
+

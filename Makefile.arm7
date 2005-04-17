@@ -1,0 +1,8 @@
+CFLAGS	:=	$(BASEFLAGS) $(ARM7FLAGS)
+VPATH	:=	$(ARM7_VPATH)
+DEPSDIR	:=	$(DEPENDS)/arm7
+
+$(LIBDIR)/libnds7.a:	$(ARM7OBJS)
+
+-include $(BASEDIR)/rules
+-include $(DEPSDIR)/*.d

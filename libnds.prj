@@ -1,0 +1,42 @@
+[Project ID]
+Signature=UE Proj: v.1
+[Project Information]
+Filter=*.*
+Project Directory=C:\projects\nds\clean_ndslib\
+Use Relative Directory=1
+Relative to Project File=1
+Project Wordfile=
+Project Tagfile=
+Create Tagfile=0
+Include Sub Directories=1
+[Group]
+0=
+[Open Files]
+Open File0=C:\projects\nds\clean_ndslib\source\arm7\audio.c
+Active File Display Mode=3
+Open File Pos0=157
+Open File Line0=0
+Active File Index=2
+Open File Window Pos0=0,1,-1,-1,-4,-23,110,110,952,504
+Open File1=C:\projects\nds\clean_ndslib\license.txt
+Open File Pos1=920
+Open File Line1=0
+Open File Window Pos1=0,1,-1,-1,-4,-23,132,132,978,530
+Open File2=C:\projects\devkitPro\tools\general\Gcc2MS.cpp
+Open File Pos2=799
+Open File Line2=0
+Open File Window Pos2=2,3,-1,-1,-4,-23,110,110,954,508
+Open File3=
+[File View]
+Current Select=Project Files\
+Scroll Position=0
+[Files]
+0=include\
+1=license.txt
+2=source\arm7\
+3=source\arm9\
+4=source\common\
+5=Makefile
+6=Makefile.arm7
+7=Makefile.arm9
+8=rules

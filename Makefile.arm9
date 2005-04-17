@@ -1,0 +1,8 @@
+CFLAGS	:=	$(BASEFLAGS) $(ARM9FLAGS)
+VPATH	:=	$(ARM9_VPATH)
+DEPSDIR	:=	$(DEPENDS)/arm9
+
+$(LIBDIR)/libnds9.a:	$(ARM9OBJS)
+
+-include $(BASEDIR)/rules
+-include $(DEPSDIR)/*.d
