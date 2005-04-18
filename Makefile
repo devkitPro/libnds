@@ -16,7 +16,7 @@ export LD		:=	$(PREFIX)gcc
 export AR		:=	$(PREFIX)ar
 export OBJCOPY	:=	$(PREFIX)objcopy
 
-export PATH		:=	$(PATH):/c/devkitARM_r11/bin
+#export PATH		:=	$(PATH):/c/devkitARM_r11/bin
 
 export BASEDIR	:= $(CURDIR)
 export LIBDIR	:= $(BASEDIR)/lib
@@ -33,19 +33,18 @@ ARM7SFILES		:=	$(foreach dir,$(ARM7SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 export ARM9_VPATH	:=	$(foreach dir,$(ARM9SOURCES),$(BASEDIR)/$(dir))
 export ARM7_VPATH	:=	$(foreach dir,$(ARM7SOURCES),$(BASEDIR)/$(dir))
 
-export ARM9OBJS 	:= $(ARM9BINFILES:.bin=.o) $(ARM9CFILES:.c=.o) $(ARM9SFILES:.s=.o)
+export ARM9OBJS 	:=  $(ARM9CFILES:.c=.o) $(ARM9SFILES:.s=.o) $(ARM9BINFILES:.bin=.o)
 export ARM7OBJS 	:= $(ARM7CFILES:.c=.o) $(ARM7SFILES:.s=.o)
 
 
-ARCH	:=	-mthumb -mthumb-interwork
+export ARCH	:=	-mthumb -mthumb-interwork
 
-export ARM9FLAGS	:=	-mcpu=arm9 -mtune=arm9 -DARM9
-export ARM7FLAGS	:=	-mcpu=arm7tdmi -mtune=arm7tdmi -DARM7 
+export ARM9FLAGS	:=	$(ARCH) -mcpu=arm9 -mtune=arm9 -DARM9
+export ARM7FLAGS	:=	$(ARCH) -mcpu=arm7tdmi -mtune=arm7tdmi -DARM7 
 
 export BASEFLAGS	:=	-g -Wall -O2\
 			 			-fomit-frame-pointer\
 						-ffast-math \
-						$(ARCH) \
 						-I$(INCDIR)
 
 .PHONEY:	all libs dist
