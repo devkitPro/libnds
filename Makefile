@@ -16,7 +16,7 @@ export LD		:=	$(PREFIX)gcc
 export AR		:=	$(PREFIX)ar
 export OBJCOPY	:=	$(PREFIX)objcopy
 
-#export PATH		:=	$(PATH):/c/devkitARM_r11/bin
+export PATH		:=	$(DEVKITARM):$(PATH)
 
 export BASEDIR	:= $(CURDIR)
 export LIBDIR	:= $(BASEDIR)/lib

@@ -68,8 +68,9 @@ extern "C" {
 #define VRAM_E_CR       (*(vuint8*)0x04000244)
 #define VRAM_F_CR       (*(vuint8*)0x04000245)
 #define VRAM_G_CR       (*(vuint8*)0x04000246)
-#define VRAM_H_CR       (*(vuint8*)0x04000247)
-#define VRAM_I_CR       (*(vuint8*)0x04000248)
+#define WRAM_CR			(*(vuint8*)0x04000247)
+#define VRAM_H_CR       (*(vuint8*)0x04000248)
+#define VRAM_I_CR       (*(vuint8*)0x04000249)
 
 #define VRAM_ENABLE   (1<<7)
 
@@ -80,8 +81,16 @@ typedef enum
 {
 	VRAM_A_LCD = 0,
 	VRAM_A_MAIN_BG  = 1,
+	VRAM_A_MAIN_BG_0x6000000  = 1 | VRAM_OFFSET(0),
+	VRAM_A_MAIN_BG_0x6020000  = 1 | VRAM_OFFSET(1),
+	VRAM_A_MAIN_BG_0x6040000  = 1 | VRAM_OFFSET(2),
+	VRAM_A_MAIN_BG_0x6060000  = 1 | VRAM_OFFSET(3),
 	VRAM_A_MAIN_SPRITE = 2,
-	VRAM_A_TEXTURE = 3
+	VRAM_A_TEXTURE = 3,
+	VRAM_A_TEXTURE_SLOT0 = 3 | VRAM_OFFSET(0),
+	VRAM_A_TEXTURE_SLOT1 = 3 | VRAM_OFFSET(1),
+	VRAM_A_TEXTURE_SLOT2 = 3 | VRAM_OFFSET(2),
+	VRAM_A_TEXTURE_SLOT3 = 3 | VRAM_OFFSET(3)
 
 }VRAM_A_TYPE;
 
@@ -89,8 +98,16 @@ typedef enum
 {
 	VRAM_B_LCD = 0,
 	VRAM_B_MAIN_BG  = 1 | VRAM_OFFSET(1),
+	VRAM_B_MAIN_BG_0x6000000  = 1 | VRAM_OFFSET(0),
+	VRAM_B_MAIN_BG_0x6020000  = 1 | VRAM_OFFSET(1),
+	VRAM_B_MAIN_BG_0x6040000  = 1 | VRAM_OFFSET(2),
+	VRAM_B_MAIN_BG_0x6060000  = 1 | VRAM_OFFSET(3),
 	VRAM_B_MAIN_SPRITE = 2,
-	VRAM_B_TEXTURE = 3 | VRAM_OFFSET(1)
+	VRAM_B_TEXTURE = 3 | VRAM_OFFSET(1),
+	VRAM_B_TEXTURE_SLOT0 = 3 | VRAM_OFFSET(0),
+	VRAM_B_TEXTURE_SLOT1 = 3 | VRAM_OFFSET(1),
+	VRAM_B_TEXTURE_SLOT2 = 3 | VRAM_OFFSET(2),
+	VRAM_B_TEXTURE_SLOT3 = 3 | VRAM_OFFSET(3)
 
 }VRAM_B_TYPE;	
 
@@ -98,49 +115,109 @@ typedef enum
 {
 	VRAM_C_LCD = 0,
 	VRAM_C_MAIN_BG  = 1 | VRAM_OFFSET(2),
-	VRAM_C_MAIN_SPRITE = 2,
+	VRAM_C_MAIN_BG_0x6000000  = 1 | VRAM_OFFSET(0),
+	VRAM_C_MAIN_BG_0x6020000  = 1 | VRAM_OFFSET(1),
+	VRAM_C_MAIN_BG_0x6040000  = 1 | VRAM_OFFSET(2),
+	VRAM_C_MAIN_BG_0x6060000  = 1 | VRAM_OFFSET(3),
+	VRAM_C_ARM7 = 2,
 	VRAM_C_SUB_BG  = 4,
-	VRAM_C_TEXTURE = 3 | VRAM_OFFSET(2)
+	VRAM_C_SUB_BG_0x6200000  = 4 | VRAM_OFFSET(0),
+	VRAM_C_SUB_BG_0x6220000  = 4 | VRAM_OFFSET(1),
+	VRAM_C_SUB_BG_0x6240000  = 4 | VRAM_OFFSET(2),
+	VRAM_C_SUB_BG_0x6260000  = 4 | VRAM_OFFSET(3),
+	VRAM_C_TEXTURE = 3 | VRAM_OFFSET(2),
+	VRAM_C_TEXTURE_SLOT0 = 3 | VRAM_OFFSET(0),
+	VRAM_C_TEXTURE_SLOT1 = 3 | VRAM_OFFSET(1),
+	VRAM_C_TEXTURE_SLOT2 = 3 | VRAM_OFFSET(2),
+	VRAM_C_TEXTURE_SLOT3 = 3 | VRAM_OFFSET(3)
 
 }VRAM_C_TYPE;
 
 typedef enum
-{
+{	
 	VRAM_D_LCD = 0,
 	VRAM_D_MAIN_BG  = 1 | VRAM_OFFSET(3),
-	VRAM_D_MAIN_SPRITE = 2,
-	VRAM_D_SUB_SPRITE = 4,
-	VRAM_D_TEXTURE = 3 | VRAM_OFFSET(3)
-
+	VRAM_D_MAIN_BG_0x6000000  = 1 | VRAM_OFFSET(0),
+	VRAM_D_MAIN_BG_0x6020000  = 1 | VRAM_OFFSET(1),
+	VRAM_D_MAIN_BG_0x6040000  = 1 | VRAM_OFFSET(2),
+	VRAM_D_MAIN_BG_0x6060000  = 1 | VRAM_OFFSET(3),
+	VRAM_D_ARM7 = 2,
+	VRAM_D_SUB_SPRITE  = 4,
+	VRAM_D_TEXTURE = 3 | VRAM_OFFSET(3),
+	VRAM_D_TEXTURE_SLOT0 = 3 | VRAM_OFFSET(0),
+	VRAM_D_TEXTURE_SLOT1 = 3 | VRAM_OFFSET(1),
+	VRAM_D_TEXTURE_SLOT2 = 3 | VRAM_OFFSET(2),
+	VRAM_D_TEXTURE_SLOT3 = 3 | VRAM_OFFSET(3)
 }VRAM_D_TYPE;
 
 typedef enum
 {
 	VRAM_E_LCD			=0,
-	VRAM_E_TEX_PALETTE = 3
+	VRAM_E_MAIN_SPRITE = 2,
+	VRAM_E_TEX_PALETTE = 3,
+	VRAM_E_BG_EXT_PALETTE = 4,
+	VRAM_E_OBJ_EXT_PALETTE = 5,
+
 }VRAM_E_TYPE;
 
+typedef enum
+{
+	VRAM_F_LCD			=0,
+	VRAM_F_MAIN_SPRITE = 2,
+	VRAM_F_TEX_PALETTE = 3,
+	VRAM_F_BG_EXT_PALETTE = 4,
+	VRAM_F_OBJ_EXT_PALETTE = 5,
+
+}VRAM_F_TYPE;
+
+typedef enum
+{
+	VRAM_G_LCD			=0,
+	VRAM_G_MAIN_SPRITE = 2,
+	VRAM_G_TEX_PALETTE = 3,
+	VRAM_G_BG_EXT_PALETTE = 4,
+	VRAM_G_OBJ_EXT_PALETTE = 5,
+
+}VRAM_G_TYPE;
+
+typedef enum
+{
+	VRAM_H_LCD			=0,
+	VRAM_H_SUB_BG = 1,
+	VRAM_H_SUB_BG_EXT_PALETTE = 5,
+
+}VRAM_H_TYPE;
+
+typedef enum
+{
+	VRAM_I_LCD			=0,
+	VRAM_I_SUB_BG	= 1,
+	VRAM_I_SUB_SPRITE = 2,
+	VRAM_I_SUB_SPRITE_EXT_PALETTE = 3,
+
+}VRAM_I_TYPE;
 //////////////////////////////////////////////////
   uint32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d);
-
-
   void vramRestorMainBanks(uint32 vramTemp);
 
 //////////////////////////////////////////////////
   void vramSetBankA(VRAM_A_TYPE a);
-
 //////////////////////////////////////////////////
   void vramSetBankB(VRAM_B_TYPE b);
-
 //////////////////////////////////////////////////
   void vramSetBankC(VRAM_C_TYPE c);
-
 ///////////////////////////////////////////////////
   void vramSetBankD(VRAM_D_TYPE d);
-
 ////////////////////////////////////////////////////
   void vramSetBankE(VRAM_E_TYPE e);
-
+  ////////////////////////////////////////////////////
+  void vramSetBankF(VRAM_F_TYPE f);
+  ////////////////////////////////////////////////////
+  void vramSetBankG(VRAM_G_TYPE g);
+  ////////////////////////////////////////////////////
+  void vramSetBankH(VRAM_H_TYPE h);
+  ////////////////////////////////////////////////////
+  void vramSetBankI(VRAM_I_TYPE i);
 //////////////////////////////////////////////////////////////////////
 // Display control registers
 //////////////////////////////////////////////////////////////////////
@@ -270,8 +347,10 @@ typedef enum
 #define BG_BMP16_512x256 (BG_RS_64x64 | BG_256_COLOR | BIT(2))
 #define BG_BMP16_512x512 (BG_RS_128x128 | BG_256_COLOR | BIT(2))
 
-
-
+#define BG_PALETTE_SLOT0 0
+#define BG_PALETTE_SLOT1 0
+#define BG_PALETTE_SLOT2 BIT(13)
+#define BG_PALETTE_SLOT3 BIT(13)
 //////////////////////////////////////////////////////////////////////
 
 #define BG0_X0         (*(vuint16*)0x04000010)

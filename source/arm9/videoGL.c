@@ -702,6 +702,7 @@ int glGenTextures(int n, int *names)
 //	is ignored as all DS textures are 2D
 void glBindTexture(int target, int name)
 {
+	
 	GFX_TEX_FORMAT = textures[name];
 	
 	activeTexture = name;
@@ -844,7 +845,7 @@ int glTexImage2D(int target, int empty1, int type, int sizeX, int sizeY, int emp
 	
 	vramRestorMainBanks(vramTemp);
 
-	if(palette)
+/*	if(palette)
 	{
 		vramSetBankE(VRAM_E_LCD);
 
@@ -852,6 +853,6 @@ int glTexImage2D(int target, int empty1, int type, int sizeX, int sizeY, int emp
 
 		vramSetBankE(VRAM_E_TEX_PALETTE);
 	}
-
+*/
 	return 1;
 }

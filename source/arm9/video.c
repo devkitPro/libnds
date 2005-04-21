@@ -74,3 +74,23 @@
 {
 	VRAM_E_CR = VRAM_ENABLE | e;
 }
+////////////////////////////////////////////////////
+  void vramSetBankF(VRAM_F_TYPE f)
+{
+	VRAM_F_CR = VRAM_ENABLE | f;
+}
+  ////////////////////////////////////////////////////
+  void vramSetBankG(VRAM_G_TYPE g)
+{
+	VRAM_G_CR = VRAM_ENABLE | g;
+}
+  ////////////////////////////////////////////////////
+  void vramSetBankH(VRAM_H_TYPE h)
+{
+	VRAM_H_CR = VRAM_ENABLE | h;
+}
+  ////////////////////////////////////////////////////
+  void vramSetBankI(VRAM_I_TYPE i)
+{
+	VRAM_I_CR = VRAM_ENABLE | i;
+}
