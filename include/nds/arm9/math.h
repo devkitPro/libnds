@@ -32,7 +32,7 @@
 #ifndef MATH_ARM9_INCLUDE
 #define MATH_ARM9_INCLUDE
 
-#include "nds/arm9/videoGL.h"
+#include <NDS/ARM9/videoGL.h>
 
 /////////////////////////////////////////////////////////////
 //  Math coprocessor register definitions
@@ -44,6 +44,8 @@
 #define DIV_DENOMINATOR32	(*(vint32*) (0x04000298))
 #define DIV_RESULT64		(*(vint64*) (0x040002A0))
 #define DIV_RESULT32		(*(vint32*) (0x040002A0))
+#define DIV_REMANDER64		(*(vint64*) (0x040002A8))
+#define DIV_REMANDER32		(*(vint32*) (0x040002A8))
 
 #define SQRT_CR				(*(vuint16*)(0x040002B0))
 #define SQRT_PARAM64		(*(vint64*) (0x040002B8))
@@ -133,6 +135,24 @@ static inline int32 div32(int32 num, int32 den)
 
 ///////////////////////////////////////
 //  Interger divide
+//  Takes a 32 bit numerator and 32 bit
+//	denominator and returns 32 bit result
+static inline int32 mod32(int32 num, int32 den)
+{
+	DIV_CR = DIV_32_32;
+	
+	while(DIV_CR & DIV_BUSY);
+
+	DIV_NUMERATOR32 = num;
+	DIV_DENOMINATOR32 = den;
+
+	while(DIV_CR & DIV_BUSY);
+
+	return (DIV_REMANDER32);
+}
+
+///////////////////////////////////////
+//  Interger divide
 //	Takes a 64 bit numerator and 32 bit
 //  denominator are returns 32 bit result
 static inline int32 div64(int64 num, int32 den)
@@ -149,6 +169,23 @@ static inline int32 div64(int64 num, int32 den)
 	return (DIV_RESULT32);
 }
 
+///////////////////////////////////////
+//  Interger divide
+//	Takes a 64 bit numerator and 32 bit
+//  denominator are returns 32 bit result
+static inline int32 mod64(int64 num, int32 den)
+{
+	DIV_CR = DIV_32_32;
+	
+	while(DIV_CR & DIV_BUSY);
+
+	DIV_NUMERATOR64 = num;
+	DIV_DENOMINATOR32 = den;
+
+	while(DIV_CR & DIV_BUSY);
+
+	return (DIV_REMANDER32);
+}
 ///////////////////////////////////////
 //  Integer square root
 //  takes a 32 bit integer and returns 

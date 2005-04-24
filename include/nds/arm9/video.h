@@ -153,6 +153,7 @@ typedef enum
 typedef enum
 {
 	VRAM_E_LCD			=0,
+	VRAM_E_MAIN_BG  = 1,
 	VRAM_E_MAIN_SPRITE = 2,
 	VRAM_E_TEX_PALETTE = 3,
 	VRAM_E_BG_EXT_PALETTE = 4,
@@ -163,6 +164,7 @@ typedef enum
 typedef enum
 {
 	VRAM_F_LCD			=0,
+	VRAM_F_MAIN_BG  = 1,
 	VRAM_F_MAIN_SPRITE = 2,
 	VRAM_F_TEX_PALETTE = 3,
 	VRAM_F_BG_EXT_PALETTE = 4,
@@ -173,6 +175,7 @@ typedef enum
 typedef enum
 {
 	VRAM_G_LCD			=0,
+	VRAM_G_MAIN_BG  = 1,
 	VRAM_G_MAIN_SPRITE = 2,
 	VRAM_G_TEX_PALETTE = 3,
 	VRAM_G_BG_EXT_PALETTE = 4,
@@ -184,7 +187,7 @@ typedef enum
 {
 	VRAM_H_LCD			=0,
 	VRAM_H_SUB_BG = 1,
-	VRAM_H_SUB_BG_EXT_PALETTE = 5,
+	VRAM_H_SUB_BG_EXT_PALETTE = 2,
 
 }VRAM_H_TYPE;
 
@@ -261,18 +264,32 @@ typedef enum
 #define MODE_FB2	(0x000A0000)
 #define MODE_FB3	(0x000E0000)
 
+#define DISPLAY_SPR_HBLANK	   (1 << 23)
 
-#define DISPLAY_OAM_ACCESS    (1 << 5)
-#define DISPLAY_SPR_1D_LAYOUT (1 << 4)
-#define DISPLAY_SCREEN_OFF    (1 << 7)
-#define DISPLAY_BG_EXT_PALETTE	BIT(30)
+#define DISPLAY_SPR_1D_LAYOUT	(1 << 4)
 
-#define H_BLANK_OAM    (1<<5)
+#define DISPLAY_SPR_1D				(1 << 4)
+#define DISPLAY_SPR_2D				(0 << 4)
+#define DISPLAY_SPR_1D_BMP			(4 << 4)
+#define DISPLAY_SPR_2D_BMP_128		(0 << 4)
+#define DISPLAY_SPR_2D_BMP_256		(2 << 4)
 
-#define OBJ_MAP_2D    (0<<4)
-#define OBJ_MAP_1D    (1<<4)
 
-#define FORCED_BLANK  (1<<7)
+#define DISPLAY_SPR_1D_SIZE_32		(0 << 20)
+#define DISPLAY_SPR_1D_SIZE_64		(1 << 20)
+#define DISPLAY_SPR_1D_SIZE_128		(2 << 20)
+#define DISPLAY_SPR_1D_SIZE_256		(3 << 20)
+
+#define DISPLAY_SPR_EXT_PALETTE		(1 << 31)
+#define DISPLAY_BG_EXT_PALETTE	(1 << 30)
+
+
+
+#define DISPLAY_SCREEN_OFF     (1 << 7)
+
+
+ 
+
 
 #define videoSetMode(mode)  (DISPLAY_CR = (mode))
 #define videoSetModeSub(mode)  (SUB_DISPLAY_CR = (mode))
@@ -494,12 +511,14 @@ typedef enum
 #define ATTR0_TYPE_NORMAL     (0<<10)
 #define ATTR0_TYPE_BLENDED    (1<<10)
 #define ATTR0_TYPE_WINDOWED   (2<<10)
+#define ATTR0_BMP			  (3<<10)
 
 #define ATTR0_MOSAIC          (1<<12)
 
-#define ATTR0_COLOR_16        (0<<13)
+#define ATTR0_COLOR_16        (0<<13) //16 color in tile mode...16 bit in bitmap mode
 #define ATTR0_COLOR_256       (1<<13)
 
+#define ATTR0_BMP			  (3<<10)
 #define ATTR0_SQUARE          (0<<14)
 #define ATTR0_WIDE            (1<<14)
 #define ATTR0_TALL            (2<<14)
@@ -516,7 +535,7 @@ typedef enum
 // Atribute 2 consists of the following:
 #define ATTR2_PRIORITY(n)     ((n)<<10)
 #define ATTR2_PALETTE(n)      ((n)<<12)
-
+#define ATTR2_ALPHA(n)		  ((n)<<12)
 //////////////////////////////////////////////////////////////////////
 // Sprite structures
 //////////////////////////////////////////////////////////////////////
