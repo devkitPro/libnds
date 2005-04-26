@@ -41,23 +41,25 @@ extern "C" {
 
 //////////////////////////////////////////////////////////////////////
 
-#include "nds.h"
+#include <NDS/NDS.h>
 
 //////////////////////////////////////////////////////////////////////
 // Sound (ARM7 only)
 //////////////////////////////////////////////////////////////////////
 
 #define SOUND_VOL(n)	(n)
-#define SOUND_FREQ(n)	(0x10000 - (0x1000000 / (n)))
+#define SOUND_FREQ(n)	((-0x1000000 / (n)))
 #define SOUND_ENABLE	BIT(31)
-#define SOUND_REPEAT    (0)
+#define SOUND_REPEAT    BIT(27)
+#define SOUND_ONE_SHOT  BIT(28)
+#define SOUND_PAN(n)	((n) << 16)
 
 #define SCHANNEL_ENABLE BIT(15)
 
 //registers
 #define SCHANNEL_CR(n)				(*(vuint32*)(0x04000400 + ((n)<<4)))
 #define SCHANNEL_SOURCE(n)			(*(vuint32*)(0x04000404 + ((n)<<4)))
-#define SCHANNEL_TIMER(n)			(*(vuint16*)(0x04000408 + ((n)<<4)))
+#define SCHANNEL_TIMER(n)			(*(vint16*)(0x04000408 + ((n)<<4)))
 #define SCHANNEL_REPEAT_POINT(n)	(*(vuint16*)(0x0400040A + ((n)<<4)))
 #define SCHANNEL_LENGTH(n)			(*(vuint32*)(0x0400040C + ((n)<<4)))
 

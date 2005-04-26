@@ -279,6 +279,9 @@ typedef enum
 #define DISPLAY_SPR_1D_SIZE_64		(1 << 20)
 #define DISPLAY_SPR_1D_SIZE_128		(2 << 20)
 #define DISPLAY_SPR_1D_SIZE_256		(3 << 20)
+#define DISPLAY_SPR_1D_BMP_SIZE_128		(0 << 22)
+#define DISPLAY_SPR_1D_BMP_SIZE_256		(1 << 22)
+
 
 #define DISPLAY_SPR_EXT_PALETTE		(1 << 31)
 #define DISPLAY_BG_EXT_PALETTE	(1 << 30)
