@@ -59,7 +59,7 @@ typedef struct sTransferRegion {
 
 //////////////////////////////////////////////////////////////////////
 
-#define IPC ((TransferRegion volatile *)(0x037FF000))
+#define IPC ((TransferRegion volatile *)(0x027FF000))
 
 #define IPC_PEN_DOWN BIT(6)
 #define IPC_X BIT(0)
