@@ -269,7 +269,9 @@ void printInt(int w, int d)
 		d *= -1;
 	}
 
-	while(d > 0)
+	if (d == 0)
+		buf[loop++] = 0;
+	else while (d > 0)
 	{
 		buf[loop++] =  d % 10;
 		d /= 10; 
