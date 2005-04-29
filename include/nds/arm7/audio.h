@@ -58,6 +58,8 @@ extern "C" {
 
 //registers
 #define SCHANNEL_CR(n)				(*(vuint32*)(0x04000400 + ((n)<<4)))
+#define SCHANNEL_VOL(n)				(*(vuint8*)(0x04000400 + ((n)<<4)))
+#define SCHANNEL_PAN(n)				(*(vuint8*)(0x04000402 + ((n)<<4)))
 #define SCHANNEL_SOURCE(n)			(*(vuint32*)(0x04000404 + ((n)<<4)))
 #define SCHANNEL_TIMER(n)			(*(vint16*)(0x04000408 + ((n)<<4)))
 #define SCHANNEL_REPEAT_POINT(n)	(*(vuint16*)(0x0400040A + ((n)<<4)))
