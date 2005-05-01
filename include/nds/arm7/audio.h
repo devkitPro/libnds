@@ -41,7 +41,7 @@ extern "C" {
 
 //////////////////////////////////////////////////////////////////////
 
-#include "nds.h"
+#include <NDS/NDS.h>
 
 //////////////////////////////////////////////////////////////////////
 // Sound (ARM7 only)
@@ -66,7 +66,7 @@ extern "C" {
 #define SCHANNEL_LENGTH(n)			(*(vuint32*)(0x0400040C + ((n)<<4)))
 
 #define SOUND_CR          (*(vuint16*)0x04000500)
-
+#define SOUND_MASTER_VOL  (*(vuint8*)0x04000500)
 //not sure on the following
 #define SOUND_BIAS        (*(vuint16*)0x04000504)
 #define SOUND508          (*(vuint16*)0x04000508)
