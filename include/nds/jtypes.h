@@ -39,7 +39,18 @@
 #define CODE_IN_EXRAM __attribute__ ((section (".ewram"), long_call))
 #define VAR_IN_EXRAM __attribute__ ((section (".ewram")))
 #define PACKED __attribute__ ((packed))
-  
+
+// libgba compatible section macros
+#define IWRAM_CODE	__attribute__((section(".iwram"), long_call))
+#define ITCM_CODE	__attribute__((section(".itcm"), long_call))
+#define EWRAM_CODE	__attribute__((section(".ewram"), long_call))
+
+#define IWRAM_DATA	__attribute__((section(".iwram")))
+#define DTCM_DATA	__attribute__((section(".dtcm")))
+#define EWRAM_DATA	__attribute__((section(".ewram")))
+#define EWRAM_BSS	__attribute__((section(".sbss")))
+#define ALIGN(m)	__attribute__((aligned (m)))
+ 
 // These are linked to the bin2o macro in the Makefile
 #define GETRAW(name)      (name)
 #define GETRAWSIZE(name)  ((int)name##_end - (int)name)

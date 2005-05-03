@@ -12,17 +12,17 @@ Include Sub Directories=1
 [Group]
 0=
 [Open Files]
-Open File0=
-Active File Display Mode=-1
-Open File Pos0=506
-Open File Line0=0
+Open File0=C:\projects\devkitPro\libnds\include\nds\jtypes.h
+Active File Display Mode=3
+Open File Pos0=2206
+Open File Line0=433
 Active File Index=0
-Open File Window Pos0=2,3,-1,-1,-4,-23,44,44,818,559
-Open File1=C:\projects\devkitPro\libnds\Makefile.arm7
-Open File Pos1=0
-Open File Line1=0
-Open File Window Pos1=0,1,-1,-1,-4,-23,66,66,844,585
-Open File2=C:\projects\devkitPro\libnds\Makefile.arm9
+Open File Window Pos0=2,3,-1,-1,-4,-23,0,0,774,515
+Open File1=C:\projects\devkitPro\libgba\include\gba_base.h
+Open File Pos1=1875
+Open File Line1=1109
+Open File Window Pos1=0,1,-1,-1,-4,-23,22,22,800,541
+Open File2=
 Open File Pos2=0
 Open File Line2=0
 Open File Window Pos2=0,1,-1,-1,-4,-23,88,88,866,607
