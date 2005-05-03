@@ -1,7 +1,7 @@
 #---------------------------------------------------------------------------------
 .SUFFIXES:
 #---------------------------------------------------------------------------------
-BUILD	:= build
+BUILD		:= build
 
 ARM9SOURCES :=	source/arm9 source/common
 ARM7SOURCES :=	source/arm7 source/common
@@ -33,9 +33,8 @@ ARM7SFILES		:=	$(foreach dir,$(ARM7SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 export ARM9_VPATH	:=	$(foreach dir,$(ARM9SOURCES),$(BASEDIR)/$(dir))
 export ARM7_VPATH	:=	$(foreach dir,$(ARM7SOURCES),$(BASEDIR)/$(dir))
 
-export ARM9OBJS 	:=  $(ARM9CFILES:.c=.o) $(ARM9SFILES:.s=.o) $(ARM9BINFILES:.bin=.o)
+export ARM9OBJS 	:= $(ARM9BINFILES:.bin=.o) $(ARM9CFILES:.c=.o) $(ARM9SFILES:.s=.o) 
 export ARM7OBJS 	:= $(ARM7CFILES:.c=.o) $(ARM7SFILES:.s=.o)
-
 
 export ARCH	:=	-mthumb -mthumb-interwork
 

@@ -19,8 +19,9 @@
 #---------------------------------------------------------------------------------
 define bin2o
 	cp $(<) $(*).tmp
+	alignbin $(*).tmp
 	$(OBJCOPY) -I binary -O elf32-littlearm -B arm \
-	--rename-section .data=.rodata,readonly,data,contents,alloc \
+	--rename-section .data=.rodata \
 	--redefine-sym _binary_$*_tmp_start=$*\
 	--redefine-sym _binary_$*_tmp_end=$*_end\
 	--redefine-sym _binary_$*_tmp_size=$*_size\
