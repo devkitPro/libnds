@@ -5,5 +5,5 @@ DEPSDIR	:=	$(DEPENDS)/arm7
 
 $(LIBDIR)/libnds7.a:	$(ARM7OBJS)
 
--include $(BASEDIR)/rules
+-include $(DEVKITARM)/base_rules
 -include $(DEPSDIR)/*.d

@@ -1,6 +1,9 @@
 #---------------------------------------------------------------------------------
 .SUFFIXES:
 #---------------------------------------------------------------------------------
+-include $(DEVKITARM)/ds_rules
+
+#---------------------------------------------------------------------------------
 BUILD		:= build
 
 ARM9SOURCES :=	source/arm9 source/common
@@ -8,15 +11,7 @@ ARM7SOURCES :=	source/arm7 source/common
 
 DATESTRING	:=	$(shell date +%Y)$(shell date +%m)$(shell date +%d)
 
-PREFIX	:=	arm-elf-
-
-export CC		:=	$(PREFIX)gcc
-export AS		:=	$(PREFIX)as
-export LD		:=	$(PREFIX)gcc
-export AR		:=	$(PREFIX)ar
-export OBJCOPY	:=	$(PREFIX)objcopy
-
-export PATH		:=	$(DEVKITARM):$(PATH)
+export PATH		:=	$(DEVKITARM)/bin:$(PATH)
 
 export BASEDIR	:= $(CURDIR)
 export LIBDIR	:= $(BASEDIR)/lib
