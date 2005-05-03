@@ -50,7 +50,7 @@
 #define EWRAM_DATA	__attribute__((section(".ewram")))
 #define EWRAM_BSS	__attribute__((section(".sbss")))
 #define ALIGN(m)	__attribute__((aligned (m)))
- 
+
 // These are linked to the bin2o macro in the Makefile
 #define GETRAW(name)      (name)
 #define GETRAWSIZE(name)  ((int)name##_end - (int)name)
