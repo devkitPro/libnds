@@ -52,6 +52,9 @@ extern "C" {
 #define SOUND_ENABLE	BIT(31)
 #define SOUND_REPEAT    BIT(27)
 #define SOUND_ONE_SHOT  BIT(28)
+#define SOUND_16BIT      BIT(29)
+#define SOUND_8BIT       (0)
+
 #define SOUND_PAN(n)	((n) << 16)
 
 #define SCHANNEL_ENABLE BIT(15)
