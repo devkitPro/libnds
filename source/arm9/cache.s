@@ -38,8 +38,8 @@ DC_FlushAll:
 outer_loop:
 	mov	r0, #0
 inner_loop:
-	orr	r2, r1, r0		@ generate segment and line address
-	mcr	p15, 0, r2, c7, c14	@ clean and flush the line
+	orr	r2, r1, r0			@ generate segment and line address
+	mcr	p15, 0, r2, c7, c14, 2		@ clean and flush the line
 	add	r0, r0, #CACHE_LINE_SIZE
 	cmp	r0, #DCACHE_SIZE/4
 	bne	inner_loop
@@ -58,7 +58,7 @@ DC_FlushRange:
 	add	r1, r1, r0
 	bic	r0, r0, #CACHE_LINE_SIZE - 1
 .flush:
-	mcr	p15, 0, r0, c7, c14, 1
+	mcr	p15, 0, r0, c7, c14, 1		@ clean and flush address
 	add	r0, r0, #CACHE_LINE_SIZE
 	cmp	r0, r1
 	blt	.flush
@@ -80,7 +80,7 @@ DC_InvalidateAll:
 //---------------------------------------------------------------------------------
 DC_InvalidateRange:
 /*---------------------------------------------------------------------------------
-	Clean and invalidate a range
+	Invalidate a range
 ---------------------------------------------------------------------------------*/
 	add	r1, r1, r0
 	bic	r0, r0, #CACHE_LINE_SIZE - 1
