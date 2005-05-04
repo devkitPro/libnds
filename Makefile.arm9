@@ -7,3 +7,7 @@ $(LIBDIR)/libnds9.a:	$(ARM9OBJS)
 
 -include $(DEVKITARM)/base_rules
 -include $(DEPSDIR)/*.d
+
+%.o	:	%.bin
+	@echo $(notdir $<)
+	@$(bin2o)
