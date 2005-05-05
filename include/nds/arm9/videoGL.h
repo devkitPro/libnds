@@ -46,9 +46,9 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include <NDS/jtypes.h>
-#include <NDS/ARM9/video.h>
-#include <NDS/DMA.h>
+#include "nds/jtypes.h"
+#include "nds/arm9/video.h"
+#include "nds/dma.h"
 //////////////////////////////////////////////////////////////////////
 
 typedef int f32;             // 1.19.12 fixed point for matricies

@@ -32,7 +32,7 @@
 #ifndef MATH_ARM9_INCLUDE
 #define MATH_ARM9_INCLUDE
 
-#include <NDS/ARM9/videoGL.h>
+#include "nds/arm9/videoGL.h"
 
 /////////////////////////////////////////////////////////////
 //  Math coprocessor register definitions
@@ -116,7 +116,7 @@ static inline f32 sqrtf32(f32 a)
 //  Integer versions
 
 ///////////////////////////////////////
-//  Interger divide
+//  Integer divide
 //  Takes a 32 bit numerator and 32 bit
 //	denominator and returns 32 bit result
 static inline int32 div32(int32 num, int32 den)
@@ -152,7 +152,7 @@ static inline int32 mod32(int32 num, int32 den)
 }
 
 ///////////////////////////////////////
-//  Interger divide
+//  Integer divide
 //	Takes a 64 bit numerator and 32 bit
 //  denominator are returns 32 bit result
 static inline int32 div64(int64 num, int32 den)
@@ -170,7 +170,7 @@ static inline int32 div64(int64 num, int32 den)
 }
 
 ///////////////////////////////////////
-//  Interger divide
+//  Integer divide
 //	Takes a 64 bit numerator and 32 bit
 //  denominator are returns 32 bit result
 static inline int32 mod64(int64 num, int32 den)
