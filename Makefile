@@ -76,6 +76,10 @@ clean:
 #---------------------------------------------------------------------------------
 dist: all
 #---------------------------------------------------------------------------------
-	@tar --exclude=*CVS* -cvjf libnds-src-$(DATESTRING).tar.bz2 source include license.txt Makefile Makefile.arm9 Makefile.arm7 rules
+	@tar --exclude=*CVS* -cvjf libnds-src-$(DATESTRING).tar.bz2 source include license.txt Makefile Makefile.arm9 Makefile.arm7
 	@tar --exclude=*CVS* -cvjf libnds-$(DATESTRING).tar.bz2 include lib license.txt
 
+install: dist
+	mkdir -p $(INSTALLDIR)/libnds
+	bzip2 -cd libnds-$(DATESTRING).tar.bz2 | tar -xv -C $(INSTALLDIR)/libnds
+	
