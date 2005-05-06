@@ -1,3 +1,5 @@
+-include $(DEVKITARM)/base_rules
+
 CFLAGS	:=	$(BASEFLAGS) $(ARM7FLAGS)
 ASFLAGS :=	$(ARM7FLAGS)
 VPATH	:=	$(ARM7_VPATH)
@@ -5,5 +7,4 @@ DEPSDIR	:=	$(DEPENDS)/arm7
 
 $(LIBDIR)/libnds7.a:	$(ARM7OBJS)
 
--include $(DEVKITARM)/base_rules
 -include $(DEPSDIR)/*.d
