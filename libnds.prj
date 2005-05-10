@@ -12,21 +12,21 @@ Include Sub Directories=1
 [Group]
 0=
 [Open Files]
-Open File0=
-Active File Display Mode=-1
-Open File Pos0=2064
-Open File Line0=772
-Active File Index=17
-Open File Window Pos0=0,1,-1,-1,-4,-23,0,0,873,440
-Open File1=C:\Dave's Documents\docs\nitro\SDK\include\nitro\os\ARM9\cache.h
-Open File Pos1=0
-Open File Line1=1787
-Open File Window Pos1=0,1,-1,-1,-4,-23,22,22,899,466
-Open File2=C:\Dave's Documents\docs\nitro\SDK\include\nitro\os\ARM9\protectionRegion.h
-Open File Pos2=0
-Open File Line2=7199
-Open File Window Pos2=0,1,-1,-1,-4,-23,44,44,921,488
-Open File3=C:\Dave's Documents\docs\nitro\SDK\include\nitro\os\ARM9\protectionUnit.h
+Open File0=c:\projects\devkitPro\libnds\include\nds\ipc.h
+Active File Display Mode=3
+Open File Pos0=1901
+Open File Line0=1564
+Active File Index=2
+Open File Window Pos0=0,1,-1,-1,-4,-23,132,132,1005,572
+Open File1=C:\projects\devkitPro\libnds\include\nds\jtypes.h
+Open File Pos1=1752
+Open File Line1=1124
+Open File Window Pos1=0,1,-1,-1,-4,-23,0,0,877,444
+Open File2=C:\projects\devkitPro\libnds\include\nds\system.h
+Open File Pos2=5096
+Open File Line2=3537
+Open File Window Pos2=2,3,-1,-1,-4,-23,22,22,899,466
+Open File3=
 Open File Pos3=0
 Open File Line3=0
 Open File Window Pos3=0,1,-1,-1,-4,-23,66,66,943,510
@@ -108,7 +108,7 @@ Open File Line22=4362
 Open File Window Pos22=0,1,-1,-1,-4,-23,154,154,1031,598
 Open File23=
 [File View]
-Current Select=Project Files\Makefile
+Current Select=Project Files\include\nds\jtypes.h
 Scroll Position=0
 [Files]
 0=include\

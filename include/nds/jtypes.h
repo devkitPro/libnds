@@ -39,6 +39,7 @@
 #define CODE_IN_EXRAM __attribute__ ((section (".ewram"), long_call))
 #define VAR_IN_EXRAM __attribute__ ((section (".ewram")))
 #define PACKED __attribute__ ((packed))
+#define packed_struct struct PACKED
 
 // libgba compatible section macros
 #define IWRAM_CODE	__attribute__((section(".iwram"), long_call))
