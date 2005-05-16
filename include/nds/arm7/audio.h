@@ -49,7 +49,7 @@ extern "C" {
 
 #define SOUND_VOL(n)	(n)
 #define SOUND_FREQ(n)	((-0x1000000 / (n)))
-#define SOUND_ENABLE	BIT(31)
+#define SOUND_ENABLE	BIT(15)
 #define SOUND_REPEAT    BIT(27)
 #define SOUND_ONE_SHOT  BIT(28)
 #define SOUND_16BIT      BIT(29)
@@ -57,7 +57,7 @@ extern "C" {
 
 #define SOUND_PAN(n)	((n) << 16)
 
-#define SCHANNEL_ENABLE BIT(15)
+#define SCHANNEL_ENABLE BIT(31)
 
 //registers
 #define SCHANNEL_CR(n)				(*(vuint32*)(0x04000400 + ((n)<<4)))
