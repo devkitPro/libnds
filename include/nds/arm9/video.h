@@ -346,8 +346,8 @@ typedef enum
 #define BG_WRAP_ON     (1 << 13)
 
 #define BG_32x32       (0 << 14)
-#define BG_32x64       (1 << 14)
-#define BG_64x32       (2 << 14)
+#define BG_64x32       (1 << 14)
+#define BG_32x64       (2 << 14)
 #define BG_64x64       (3 << 14)
 
 #define BG_RS_16x16    (0 << 14)
