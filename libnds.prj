@@ -12,8 +12,8 @@ Include Sub Directories=1
 [Group]
 0=
 [Open Files]
-Open File0=c:\projects\devkitPro\libnds\include\nds\ipc.h
-Active File Display Mode=3
+Open File0=
+Active File Display Mode=-1
 Open File Pos0=1901
 Open File Line0=1564
 Active File Index=2
@@ -108,7 +108,7 @@ Open File Line22=4362
 Open File Window Pos22=0,1,-1,-1,-4,-23,154,154,1031,598
 Open File23=
 [File View]
-Current Select=Project Files\include\nds\jtypes.h
+Current Select=Project Files\Makefile
 Scroll Position=0
 [Files]
 0=include\
