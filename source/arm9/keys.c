@@ -1,6 +1,8 @@
 //////////////////////////////////////////////////////////////////////
 //
-// NDS.h -- Master include (includes the rest of the library)
+// keys.h -- provides slightly higher level input forming
+//
+//  Contributed by DesktopMA
 //
 // version 0.1, February 14, 2005
 //
@@ -25,66 +27,58 @@
 //
 // Changelog:
 //   0.1: First version
+//	
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef NDS_INCLUDE
-#define NDS_INCLUDE
 
-//////////////////////////////////////////////////////////////////////
+#include <nds.h>
 
-#ifndef ARM7
-#ifndef ARM9
-#error Either ARM7 or ARM9 must be defined
-#endif
-#endif
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-//////////////////////////////////////////////////////////////////////
-
-#include "nds/jtypes.h"
-#include "nds/bios.h"
-
-#ifdef ARM9
-#include "nds/arm9/video.h"
-#include "nds/arm9/CP15.h"
-#include "nds/arm9/trig_lut.h"
-#include "nds/arm9/math.h"
 #include "nds/arm9/keys.h"
-#include "nds/arm9/cache.h"
 
-#endif
+u16 keys=0;
+u16 keysold=0;
 
-#ifdef ARM7
-#include "nds/arm7/touch.h"
-#include "nds/arm7/clock.h"
-#include "nds/arm7/audio.h"
-#include "nds/arm7/wifi.h"
-#include "nds/arm7/serial.h"
-#endif
+u16 oldx=0;
+u16 oldy=0;
 
-#include "nds/card.h"
-
-#include "nds/memory.h"
-#include "nds/dma.h"
-#include "nds/timers.h"
-#include "nds/system.h"
-#include "nds/interrupts.h"
-#include "nds/ipc.h"
-
-
-//////////////////////////////////////////////////////////////////////
-
-#ifdef __cplusplus
+void keysInit()
+{
+	keys=0;
+	keysold=0;
 }
-#endif
 
-//////////////////////////////////////////////////////////////////////
+s32 abs(s32 val)
+{
+	if(val>=0)
+		return val;
 
-#endif
+	return (val*-1);
+}
 
-//////////////////////////////////////////////////////////////////////
+void scanKeys()
+{
+	keysold=keys;
+	keys=KEYS_CUR;
 
+	if(abs(IPC->touchXpx-oldx)>20 || abs(IPC->touchYpx==oldy)>20)
+		keys&=~KEY_TOUCH;
+
+	oldx=IPC->touchXpx;
+	oldy=IPC->touchYpx;
+	
+}
+u32 keysHeld()
+{
+	return keys;
+}
+
+u32 keysDown()
+{
+	return (keys^keysold)&keys;
+}
+
+u32 keysUp()
+{
+	return (keys^keysold)&(~keys);
+}

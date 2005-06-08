@@ -1,6 +1,8 @@
 //////////////////////////////////////////////////////////////////////
 //
-// NDS.h -- Master include (includes the rest of the library)
+// keys.h -- provides slightly higher level input forming
+//
+//  Contributed by DesktopMA
 //
 // version 0.1, February 14, 2005
 //
@@ -25,66 +27,29 @@
 //
 // Changelog:
 //   0.1: First version
+//	
 //
 //////////////////////////////////////////////////////////////////////
 
-#ifndef NDS_INCLUDE
-#define NDS_INCLUDE
+//---------------------------------------------------------------------------------
+#ifndef	_keys_h_
+#define	_keys_h_
+//---------------------------------------------------------------------------------
 
-//////////////////////////////////////////////////////////////////////
+#include <nds.h>
 
-#ifndef ARM7
-#ifndef ARM9
-#error Either ARM7 or ARM9 must be defined
-#endif
-#endif
+#define KEY_TOUCH (1<<12)
+#define KEY_X (1<<10)
+#define KEY_Y (1<<11)
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+void scanKeys();
+void keysInit();
+u32 keysHeld();
+u32 keysDown();
+u32 keysUp();
 
-//////////////////////////////////////////////////////////////////////
+#define KEYS_CUR ( ((~KEYS)&0x3ff) | (((~IPC->buttons)&3)<<10) | (((~IPC->buttons)<<6) & KEY_TOUCH ))
 
-#include "nds/jtypes.h"
-#include "nds/bios.h"
-
-#ifdef ARM9
-#include "nds/arm9/video.h"
-#include "nds/arm9/CP15.h"
-#include "nds/arm9/trig_lut.h"
-#include "nds/arm9/math.h"
-#include "nds/arm9/keys.h"
-#include "nds/arm9/cache.h"
-
-#endif
-
-#ifdef ARM7
-#include "nds/arm7/touch.h"
-#include "nds/arm7/clock.h"
-#include "nds/arm7/audio.h"
-#include "nds/arm7/wifi.h"
-#include "nds/arm7/serial.h"
-#endif
-
-#include "nds/card.h"
-
-#include "nds/memory.h"
-#include "nds/dma.h"
-#include "nds/timers.h"
-#include "nds/system.h"
-#include "nds/interrupts.h"
-#include "nds/ipc.h"
-
-
-//////////////////////////////////////////////////////////////////////
-
-#ifdef __cplusplus
-}
-#endif
-
-//////////////////////////////////////////////////////////////////////
-
-#endif
-
-//////////////////////////////////////////////////////////////////////
-
+//---------------------------------------------------------------------------------
+#endif // _keys_h_
+//---------------------------------------------------------------------------------

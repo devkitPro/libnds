@@ -30,7 +30,7 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include "nds.h"
+#include <nds.h>
 
 //lut resolution for trig functions (must be power of two and must be the same as LUT resolution)
 //in other words dont change unless you also change your LUTs
@@ -739,57 +739,58 @@ uint16* vramGetBank(uint16 *addr)
 	else return VRAM_I;
 }
 
+
 int vramIsTextureBank(uint16 *addr)
 {
-	uint16* vram = vramGetBank(addr);
+   uint16* vram = vramGetBank(addr);
 
-	if(vram == VRAM_A)
-	{
-		if((VRAM_A_CR & 3) == VRAM_A_TEXTURE)
-			return 1;
-		else return 0;
-	}
-	else if(vram == VRAM_B)
-	{
-		if((VRAM_B_CR & 3) == VRAM_B_TEXTURE)
-			return 1;
-		else return 0;
-	}
-	else if(vram == VRAM_C)
-	{
-		if((VRAM_C_CR & 3) == VRAM_C_TEXTURE)
-			return 1;
-		else return 0;
-	}
-	else if(vram == VRAM_D)
-	{
-		if((VRAM_D_CR & 3) == VRAM_D_TEXTURE)
-			return 1;
-		else return 0;
-	}
-	else 
-		return 0;
-	
-}
+   if(vram == VRAM_A)
+   {
+      if((VRAM_A_CR & 3) == ((VRAM_A_TEXTURE) & 3))
+         return 1;
+      else return 0;
+   }
+   else if(vram == VRAM_B)
+   {
+      if((VRAM_B_CR & 3) == ((VRAM_B_TEXTURE) & 3))
+         return 1;
+      else return 0;
+   }
+   else if(vram == VRAM_C)
+   {
+      if((VRAM_C_CR & 3) == ((VRAM_C_TEXTURE) & 3))
+         return 1;
+      else return 0;
+   }
+   else if(vram == VRAM_D)
+   {
+      if((VRAM_D_CR & 3) == ((VRAM_D_TEXTURE) & 3))
+         return 1;
+      else return 0;
+   }
+   else
+      return 0;
+   
+} 
 uint32* getNextTextureSlot(int size)
 {
-	uint32* result = nextBlock;
-	nextBlock += size >> 2;
+   uint32* result = nextBlock;
+   nextBlock += size >> 2;
 
-	//uh-oh...out of texture memory in this bank...find next one assigned to textures
-	while(!vramIsTextureBank((uint16*)nextBlock) && nextBlock < (uint32*)VRAM_E)
-	{
-		nextBlock = (uint32*)vramGetBank((uint16*)nextBlock) + (0x20000 >> 2); //next bank
-		result = nextBlock;	  	
-		nextBlock += size >> 2;
-	}
+   //uh-oh...out of texture memory in this bank...find next one assigned to textures
+   while(!vramIsTextureBank((uint16*)nextBlock - 1) && nextBlock <= (uint32*)VRAM_E)
+   {
+      nextBlock = (uint32*)vramGetBank((uint16*)result) + (0x20000 >> 2); //next bank
+      result = nextBlock;        
+      nextBlock += size >> 2;
+   }
 
-	if(nextBlock >= (uint32*)VRAM_E)
-		return 0;
+   if(nextBlock > (uint32*)VRAM_E)
+      return 0;
 
-	else return result;	
+   else return result;   
 
-}
+} 
 
 ///////////////////////////////////////
 // Similer to glTextImage2D from gl it takes a pointer to data
