@@ -39,7 +39,7 @@ extern "C" {
 
 //////////////////////////////////////////////////////////////////////
 
-#include "nds/jtypes.h"
+#include <NDS/jtypes.h>
 
 //////////////////////////////////////////////////////////////////////
 // Timers ////////////////////////////////////////////////////////////
@@ -48,6 +48,8 @@ extern "C" {
 // The timers are fed with a 33.4 MHz source on the ARM9.  The
 // ARM7 timing hasn't been tested yet, but is likely to
 // be the same.
+
+#define TIMER_FREQ(n) (-0x2000000/(n))
 
 // Timer values (16 bit timers)
 #define TIMER0_DATA    (*(vuint16*)0x04000100)

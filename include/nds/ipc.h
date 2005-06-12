@@ -36,6 +36,7 @@
 #include "jtypes.h"
 
 //////////////////////////////////////////////////////////////////////
+
 typedef struct sTransferSoundData {
   const void *data;
   u32 len;
@@ -104,9 +105,27 @@ typedef struct sTransferRegion {
 #define IPC_Y BIT(1)
 #define IPC_LID_CLOSED BIT(7)
 //////////////////////////////////////////////////////////////////////
+// Synchronization register 
 
-// Synchronization register (name *will* change!)
-#define MAGIC180      (*(vuint16*)0x04000180)
+#define IPC_SYNC				(*(vuint16*)0x04000180)
+
+#define IPC_SYNC_IRQ_ENABLE		(1<<14)
+#define IPC_SYNC_IRQ_REQUEST	(1<<13)
+
+#define IPC_SYNC_SEND_COMMAND(n)		(IPC_SYNC = (IPC_SYNC & 0xF0FF) | (((n) & 0xF) << 8) | IPC_SYNC_IRQ_REQUEST)
+#define IPC_SYNC_GET_COMMAND		((IPC_SYNC & 0xF) )
+
+//////////////////////////////////////////////////////////////////////
+//fifo
+
+
+#define IPC_FIFO_SEND              (*(vu16*)0x4000188)                   
+#define IPC_FIFO_RECIEVE           (*(vu16*)0x4010000)                                      
+#define IPC_FIFO_CR                (*(vu16*)0x4000184)
+#define IPC_FIFO_ENABLE            (1<<15)
+
+#define IPC_FIFO_IRQ_FULL			(1<<17)
+#define IPC_FIFO_IRQ_EMPTY			(1<<18)
 
 //////////////////////////////////////////////////////////////////////
 

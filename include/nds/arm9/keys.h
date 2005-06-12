@@ -42,12 +42,18 @@
 #define KEY_X (1<<10)
 #define KEY_Y (1<<11)
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 void scanKeys();
 void keysInit();
 u32 keysHeld();
 u32 keysDown();
 u32 keysUp();
 
+#ifdef __cplusplus
+}
+#endif
 #define KEYS_CUR ( ((~KEYS)&0x3ff) | (((~IPC->buttons)&3)<<10) | (((~IPC->buttons)<<6) & KEY_TOUCH ))
 
 //---------------------------------------------------------------------------------

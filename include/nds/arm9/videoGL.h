@@ -46,9 +46,9 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include "nds/jtypes.h"
-#include "nds/arm9/video.h"
-#include "nds/dma.h"
+#include <NDS/jtypes.h>
+#include <NDS/ARM9/video.h>
+#include <NDS/DMA.h>
 //////////////////////////////////////////////////////////////////////
 
 typedef int f32;             // 1.19.12 fixed point for matricies
@@ -159,6 +159,7 @@ typedef struct {
 #define GL_ANTIALIAS		(1<<4)			//not fully figured out
 #define GL_OUTLINE			(1<<5)
 
+#define GL_TEXTURE_ALPHA_MASK (1 << 29)
 //////////////////////////////////////////////////////////////////////
 
 #define GL_RGB		8
