@@ -4,6 +4,9 @@
 ifeq ($(strip $(DEVKITARM)),)
 $(error "Please set DEVKITARM in your environment. export DEVKITARM=<path to>devkitARM)
 endif
+ifeq ($(strip $(DEVKITPRO)),)
+$(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>devkitPro)
+endif
 
 include $(DEVKITARM)/ds_rules
 
@@ -84,6 +87,6 @@ dist: all
 	@tar --exclude=*CVS* -cvjf libnds-$(DATESTRING).tar.bz2 include lib license.txt
 
 install: dist
-	mkdir -p $(INSTALLDIR)/libnds
-	bzip2 -cd libnds-$(DATESTRING).tar.bz2 | tar -xv -C $(INSTALLDIR)/libnds
+	mkdir -p $(DEVKITPRO)/libnds
+	bzip2 -cd libnds-$(DATESTRING).tar.bz2 | tar -xv -C $(DEVKITPRO)/libnds
 	
