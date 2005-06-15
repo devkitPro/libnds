@@ -31,6 +31,7 @@
 //////////////////////////////////////////////////////////////////////
 
 #include <nds.h>
+#include <nds/arm9/trig_lut.h>
 
 //lut resolution for trig functions (must be power of two and must be the same as LUT resolution)
 //in other words dont change unless you also change your LUTs

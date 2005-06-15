@@ -51,7 +51,6 @@ extern "C" {
 #ifdef ARM9
 #include "nds/arm9/video.h"
 #include "nds/arm9/CP15.h"
-#include "nds/arm9/trig_lut.h"
 #include "nds/arm9/math.h"
 #include "nds/arm9/keys.h"
 #include "nds/arm9/cache.h"

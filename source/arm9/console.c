@@ -36,7 +36,7 @@
 
 #include <stdarg.h>
 
-extern u16 default_font[];
+#include "default_font_bin.h"
 
 /////////////////////////////////////////
 //global console variables
@@ -140,7 +140,7 @@ void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16*
 
 void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth)
 {
-	consoleInit(default_font, charBase, 256, 0, map, CONSOLE_USE_COLOR255, bitDepth); 	
+	consoleInit((u16*)default_font_bin, charBase, 256, 0, map, CONSOLE_USE_COLOR255, bitDepth); 	
 }
 
 void consolePrintSet(int x, int y)
