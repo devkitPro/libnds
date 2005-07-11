@@ -37,7 +37,7 @@ extern "C" {
 
 //////////////////////////////////////////////////////////////////////
 
-#include "nds.h"
+#include "nds/jtypes.h"
 
 //////////////////////////////////////////////////////////////////////
 
@@ -159,7 +159,7 @@ extern void swiDivMod(int numerator, int divisor, int * result, int * remainder)
 //  flags(24) = transfer mode (0: copy, 1: fill)
 //  flags(20..0) = tranfer count (always in words)
 //
-// FastCopy (swi 0x0B)
+// FastCopy (swi 0x0C)
 //  source = pointer to transfer source
 //  dest = pointer to transfer destination
 //  flags(24) = transfer mode (0: copy, 1: fill)

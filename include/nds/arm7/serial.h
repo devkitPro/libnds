@@ -35,6 +35,7 @@
 #error Serial header is for ARM7 only
 #endif
 
+#include <nds/bios.h>
 //////////////////////////////////////////////////////////////////////
 // Networking ////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -66,6 +67,16 @@
 #define SERIAL_ENABLE   0x8000
 #define SERIAL_BUSY     0x80
 
+#define SPI_DEVICE_POWER  (0 << 8)
+#define SPI_DEVICE_TOUCH  (2 << 8)
+#define SPI_BAUDRATE_2Mhz 1
+#define SPI_BAUDRATE_1Mhz 2
+#define SPI_CONTINUOUS    (1<<11)
+#define PM_AMP_OFFSET     2
+#define PM_AMP_ON         1
+#define PM_AMP_OFF    	  0
+
+static inline void SerialWaitBusy() {   while (SERIAL_CR & SERIAL_BUSY) swiDelay(1); }
 //////////////////////////////////////////////////////////////////////
 
 #endif
