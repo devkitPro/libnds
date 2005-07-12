@@ -1,8 +1,7 @@
 /*---------------------------------------------------------------------------------
- $Id: touch.c,v 1.2 2005-07-11 23:12:15 wntrmute Exp $
- Touch screen control for the ARM7
+	$Id: touch.c,v 1.3 2005-07-12 17:32:20 wntrmute Exp $
 
- version 0.1, February 14, 2005
+	Touch screen control for the ARM7
 
   Copyright (C) 2005
 			Michael Noland (joat)
@@ -27,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/07/11 23:12:15  wntrmute
+	*** empty log message ***
+	
 
 ---------------------------------------------------------------------------------*/
 
