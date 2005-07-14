@@ -1,55 +1,57 @@
-////////////////////////////////////////////////////////////////////
-//
-// videoGL.h -- Video API vaguely similar to OpenGL
-//
-// version 0.1, February 14, 2005
-//
-//  Copyright (C) 2005 Michael Noland (joat) and Jason Rogers (dovoto)
-//
-//  This software is provided 'as-is', without any express or implied
-//  warranty.  In no event will the authors be held liable for any
-//  damages arising from the use of this software.
-//
-//  Permission is granted to anyone to use this software for any
-//  purpose, including commercial applications, and to alter it and
-//  redistribute it freely, subject to the following restrictions:
-//
-//  1. The origin of this software must not be misrepresented; you
-//     must not claim that you wrote the original software. If you use
-//     this software in a product, an acknowledgment in the product
-//     documentation would be appreciated but is not required.
-//  2. Altered source versions must be plainly marked as such, and
-//     must not be misrepresented as being the original software.
-//  3. This notice may not be removed or altered from any source
-//     distribution.
-//
-// Changelog:
-//   0.1: First version
-//	 
-//   0.2: Added gluFrustrum, gluPerspective, and gluLookAt
-//			Converted all floating point math to fixed point
-//
-//	 0.3: Display lists added thanks to mike260	
-//
-//////////////////////////////////////////////////////////////////////
+/*---------------------------------------------------------------------------------
+	$Id: videoGL.h,v 1.6 2005-07-14 08:00:57 wntrmute Exp $
 
+	videoGL.h -- Video API vaguely similar to OpenGL
+
+	Copyright (C) 2005
+		Michael Noland (joat)
+		Jason Rogers (dovoto)
+		Dave Murphy (WinterMute)
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any
+  damages arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any
+  purpose, including commercial applications, and to alter it and
+  redistribute it freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you
+     must not claim that you wrote the original software. If you use
+     this software in a product, an acknowledgment in the product
+     documentation would be appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and
+     must not be misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source
+     distribution.
+
+	$Log: not supported by cvs2svn $
+	
+
+---------------------------------------------------------------------------------*/
 
 #ifndef VIDEOGL_ARM9_INCLUDE
 #define VIDEOGL_ARM9_INCLUDE
 
 #undef NO_GL_INLINE
-//////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
 
 #ifndef ARM9
 #error 3D hardware is only available from the ARM9
 #endif
 
-//////////////////////////////////////////////////////////////////////
-
+//---------------------------------------------------------------------------------
 #include <nds/jtypes.h>
 #include <nds/arm9/video.h>
 #include <nds/dma.h>
-//////////////////////////////////////////////////////////////////////
+
+/*---------------------------------------------------------------------------------
+	lut resolution for trig functions (must be power of two and must be the same as LUT resolution)
+	in other words dont change unless you also change your LUTs
+---------------------------------------------------------------------------------*/
+#define LUT_SIZE (512)
+#define LUT_MASK (0x1FF)
+
 
 typedef int f32;             // 1.19.12 fixed point for matricies
 #define intof32(n)           ((n) << 12)
@@ -496,7 +498,6 @@ void glMaterialShinnyness(void);
 //////////////////////////////////////////////////////////////////////
 
 static inline void glMaterialShinnyness(void)
-
 {
 	uint32 shiny32[128/4];
 	uint8  *shiny8 = (uint8*)shiny32;

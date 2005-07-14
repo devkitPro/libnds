@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: microphone.c,v 1.1 2005-07-12 17:32:20 wntrmute Exp $
+	$Id: microphone.c,v 1.2 2005-07-14 08:00:57 wntrmute Exp $
 
 	Microphone control for the ARM7
 
@@ -27,7 +27,8 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
-	
+	Revision 1.1  2005/07/12 17:32:20  wntrmute
+	added microphone functions
 
 ---------------------------------------------------------------------------------*/
 #include <nds/arm7/audio.h>
@@ -54,7 +55,7 @@ void PM_SetAmp(u8 control) {
 //---------------------------------------------------------------------------------
 // Read a byte from the microphone. Code based on neimod's example.
 //---------------------------------------------------------------------------------
-u8 MIC_GetData8() {
+u8 MIC_ReadData() {
 //---------------------------------------------------------------------------------
   u16 result, result2;
   
@@ -96,7 +97,7 @@ void StartRecording(u8* buffer, int length) {
   microphone_buffer_length = length;
   current_length = 0;
 
-  TurnOnMicrophone();
+  MIC_On();
 
   // Setup a 16kHz timer
   TIMER0_DATA = 0xF7CF;
@@ -107,7 +108,7 @@ void StartRecording(u8* buffer, int length) {
 int StopRecording() {
 //---------------------------------------------------------------------------------
   TIMER0_CR &= ~TIMER_ENABLE;
-  TurnOffMicrophone();
+  MIC_Off();
   microphone_buffer = 0;
   return current_length;
 }
@@ -118,7 +119,7 @@ void  ProcessMicrophoneTimerIRQ() {
   if(microphone_buffer && microphone_buffer_length > 0) {
     // Read data from the microphone. Data from the Mic is unsigned, flipping
     // the highest bit makes it signed.
-    *microphone_buffer++ = MIC_GetData8() ^ 0x80;
+    *microphone_buffer++ = MIC_ReadData() ^ 0x80;
     --microphone_buffer_length;
     current_length++;
   }
