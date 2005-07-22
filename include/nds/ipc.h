@@ -94,6 +94,7 @@ typedef struct sTransferRegion {
   vuint8 mailRead;
   vuint8 mailBusy;
   vuint8 mailSize;
+  void *jump;
 } TransferRegion, * pTransferRegion;
 
 //////////////////////////////////////////////////////////////////////
