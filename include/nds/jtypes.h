@@ -1,65 +1,60 @@
-//////////////////////////////////////////////////////////////////////
-//
-// jtypes.h -- Common types (and a few useful macros)
-//
-// version 0.1, February 14, 2005
-//
-//  Copyright (C) 2005 Michael Noland (joat) and Jason Rogers (dovoto)
-//
-//  This software is provided 'as-is', without any express or implied
-//  warranty.  In no event will the authors be held liable for any
-//  damages arising from the use of this software.
-//
-//  Permission is granted to anyone to use this software for any
-//  purpose, including commercial applications, and to alter it and
-//  redistribute it freely, subject to the following restrictions:
-//
-//  1. The origin of this software must not be misrepresented; you
-//     must not claim that you wrote the original software. If you use
-//     this software in a product, an acknowledgment in the product
-//     documentation would be appreciated but is not required.
-//  2. Altered source versions must be plainly marked as such, and
-//     must not be misrepresented as being the original software.
-//  3. This notice may not be removed or altered from any source
-//     distribution.
-//
-// Changelog:
-//   0.1: First version
-//	 0.2: Added alternate typedefines (u8 u16 ect...)
-//
-//////////////////////////////////////////////////////////////////////
+/*---------------------------------------------------------------------------------
+	$Id: jtypes.h,v 1.5 2005-07-22 17:39:53 wntrmute Exp $
 
+	jtypes.h -- Common types (and a few useful macros)
+
+	Copyright (C) 2005
+		Michael Noland (joat)
+		Jason Rogers (dovoto)
+		Dave Murphy (WinterMute)
+
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any
+  damages arising from the use of this software.
+
+  Permission is granted to anyone to use this software for any
+  purpose, including commercial applications, and to alter it and
+  redistribute it freely, subject to the following restrictions:
+
+  1. The origin of this software must not be misrepresented; you
+     must not claim that you wrote the original software. If you use
+     this software in a product, an acknowledgment in the product
+     documentation would be appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and
+     must not be misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source
+     distribution.
+
+	$Log: not supported by cvs2svn $
+
+---------------------------------------------------------------------------------*/
 #ifndef NDS_JTYPES_INCLUDE
 #define NDS_JTYPES_INCLUDE
+//---------------------------------------------------------------------------------
 
-//////////////////////////////////////////////////////////////////////
 
-#define CODE_IN_IWRAM __attribute__ ((section (".iwram"), long_call))
-#define VAR_IN_IWRAM __attribute__ ((section (".iwram")))
-#define CODE_IN_EXRAM __attribute__ ((section (".ewram"), long_call))
-#define VAR_IN_EXRAM __attribute__ ((section (".ewram")))
 #define PACKED __attribute__ ((packed))
 #define packed_struct struct PACKED
 
+//---------------------------------------------------------------------------------
 // libgba compatible section macros
-#define IWRAM_CODE	__attribute__((section(".iwram"), long_call))
+//---------------------------------------------------------------------------------
 #define ITCM_CODE	__attribute__((section(".itcm"), long_call))
-#define EWRAM_CODE	__attribute__((section(".ewram"), long_call))
 
-#define IWRAM_DATA	__attribute__((section(".iwram")))
 #define DTCM_DATA	__attribute__((section(".dtcm")))
-#define EWRAM_DATA	__attribute__((section(".ewram")))
-#define EWRAM_BSS	__attribute__((section(".sbss")))
+#define DTCM_BSS	__attribute__((section(".sbss")))
 #define ALIGN(m)	__attribute__((aligned (m)))
 
+//---------------------------------------------------------------------------------
 // These are linked to the bin2o macro in the Makefile
+//---------------------------------------------------------------------------------
 #define GETRAW(name)      (name)
-#define GETRAWSIZE(name)  ((int)name##_end - (int)name)
+#define GETRAWSIZE(name)  ((int)name##_size)
+#define GETRAWEND(name)  ((int)name##_end)
 
 #define ASSERT(arg) 
 
 #define BIT(n) (1 << (n))
-//////////////////////////////////////////////////////////////////////
 
 typedef unsigned char           uint8;
 typedef unsigned short int      uint16;
@@ -95,7 +90,6 @@ typedef int64                   dfixed;
 typedef volatile int32          vfixed;
 
 
-/////////////////alt defines
 typedef unsigned char           u8;
 typedef unsigned short int      u16;
 typedef unsigned int            u32;
@@ -117,14 +111,13 @@ typedef volatile s32          vs32;
 typedef volatile s64          vs64;
 
 
-//////////////////////////////////////////////////////////////////////
 
 typedef void (* VoidFunctionPointer)(void);
 typedef void (* fp)(void);
 
 
-//////////////////////////////////////////////////////////////////////
 
+//---------------------------------------------------------------------------------
 #endif
+//---------------------------------------------------------------------------------
 
-//////////////////////////////////////////////////////////////////////
