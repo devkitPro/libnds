@@ -38,9 +38,10 @@
 
 #include <nds.h>
 
-#define KEY_TOUCH (1<<12)
 #define KEY_X (1<<10)
 #define KEY_Y (1<<11)
+#define KEY_TOUCH (1<<12)
+#define KEY_LID (1<<13)
 
 #ifdef __cplusplus
 extern "C" {
@@ -54,7 +55,6 @@ u32 keysUp();
 #ifdef __cplusplus
 }
 #endif
-#define KEYS_CUR ( ((~KEYS)&0x3ff) | (((~IPC->buttons)&3)<<10) | (((~IPC->buttons)<<6) & KEY_TOUCH ))
 
 //---------------------------------------------------------------------------------
 #endif // _keys_h_

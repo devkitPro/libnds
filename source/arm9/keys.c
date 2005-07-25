@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: keys.c,v 1.2 2005-07-14 08:00:57 wntrmute Exp $
+	$Id: keys.c,v 1.3 2005-07-25 02:19:01 desktopman Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -27,6 +27,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/07/14 08:00:57  wntrmute
+	resynchronise with ndslib
+	
 
 ---------------------------------------------------------------------------------*/
 //////////////////////////////////////////////////////////////////////
@@ -64,8 +67,11 @@
 
 
 #include <nds.h>
+#include <stdlib.h>
 
 #include "nds/arm9/keys.h"
+
+#define KEYS_CUR (( ((~KEYS)&0x3ff) | (((~IPC->buttons)&3)<<10) | (((~IPC->buttons)<<6) & (KEY_TOUCH|KEY_LID) ))^KEY_LID)
 
 u16 keys=0;
 u16 keysold=0;
@@ -77,14 +83,6 @@ void keysInit()
 {
 	keys=0;
 	keysold=0;
-}
-
-s32 abs(s32 val)
-{
-	if(val>=0)
-		return val;
-
-	return (val*-1);
 }
 
 void scanKeys() {
