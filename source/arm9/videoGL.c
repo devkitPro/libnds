@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.6 2005-07-14 08:00:57 wntrmute Exp $
+	$Id: videoGL.c,v 1.7 2005-07-27 02:20:05 wntrmute Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -27,6 +27,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.6  2005/07/14 08:00:57  wntrmute
+	resynchronise with ndslib
+	
 
 ---------------------------------------------------------------------------------*/
 
@@ -259,7 +262,7 @@ static uint16 enable_bits = GL_TEXTURE_2D | (1<<13) | (1<<14);
 
 void glEnable(int bits)
 {
-	enable_bits |= bits & (GL_TEXTURE_2D|GL_TOON_HIGHLIGHT|GL_OUTLINE|GL_ANTIALIAS);
+	enable_bits |= bits | (GL_TEXTURE_2D|GL_TOON_HIGHLIGHT|GL_OUTLINE|GL_ANTIALIAS);
 	GFX_CONTROL = enable_bits;
 }
 
@@ -267,7 +270,7 @@ void glEnable(int bits)
 
 void glDisable(int bits)
 {
-	enable_bits &= ~(bits & (GL_TEXTURE_2D|GL_TOON_HIGHLIGHT|GL_OUTLINE|GL_ANTIALIAS));
+	enable_bits &= ~(bits | (GL_TEXTURE_2D|GL_TOON_HIGHLIGHT|GL_OUTLINE|GL_ANTIALIAS));
 	GFX_CONTROL = enable_bits;
 }
 
@@ -442,61 +445,45 @@ void glRotateXi(int angle)
  
 
 void glRotatef32i(int angle, f32 x, f32 y, f32 z)
-
 {
 
   f32 axis[3];
-
   f32 sine = SIN[angle &  LUT_MASK];
-
   f32 cosine = COS[angle & LUT_MASK];
-
   f32 one_minus_cosine = intof32(1) - cosine;
 
   axis[0]=x;
-
   axis[1]=y;
-
   axis[2]=z;
 
   normalizef32(axis);   // should require passed in normalized?
 
- 
-
   MATRIX_MULT3x3 = cosine + mulf32(one_minus_cosine, mulf32(axis[0], axis[0]));
-
   MATRIX_MULT3x3 = mulf32(one_minus_cosine, mulf32(axis[0], axis[1])) - mulf32(axis[2], sine);
-
   MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[0]), axis[2]) + mulf32(axis[1], sine);
 
- 
-
   MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[0]),  axis[1]) + mulf32(axis[2], sine);
-
   MATRIX_MULT3x3 = cosine + mulf32(mulf32(one_minus_cosine, axis[1]), axis[1]);
-
   MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[1]), axis[2]) - mulf32(axis[0], sine);
 
- 
-
   MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[0]), axis[2]) - mulf32(axis[1], sine);
-
   MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[1]), axis[2]) + mulf32(axis[0], sine);
-
   MATRIX_MULT3x3 = cosine + mulf32(mulf32(one_minus_cosine, axis[2]), axis[2]);
 
 }
 
  
 
+
 void glRotatef32(float angle, f32 x, f32 y, f32 z)
-
 {
-
-  glRotatef32i((int)(angle * LUT_SIZE / 360.0), x, y, z);
-
+    glRotatef32i((int)(angle * LUT_SIZE / 360.0), x, y, z);
 }
 
+void glRotatef(float angle, float x, float y, float z)
+{
+	glRotatef32(angle, floatof32(x), floatof32(y), floatof32(z));
+}
 //////////////////////////////////////////////////////////////////////
 //	rotations wrapped in float...mainly for testing
 void glRotateX(float angle)
@@ -515,36 +502,57 @@ void glRotateZ(float angle)
 	glRotateZi((int)(angle * LUT_SIZE / 360.0));
 }
 
+//float wrappers for porting
+void glVertex3f(float x, float y, float z)
+{
+	glVertex3v16(floatov16(x), floatov16(y), floatov16(z));
+}
+void glTexCoord2f(float s, float t)
+{
+	glTexCoord2t16(floatot16(t*127), floatot16(s*127));
+}
+
+void glColor3f(float r, float g, float b)
+{
+	glColor3b((uint8)(r*255), (uint8)(g*255), (uint8)(b*255));
+}
+void glScalef(float x, float y, float z)
+{
+	MATRIX_SCALE = floatof32(x);
+	MATRIX_SCALE = floatof32(y);
+	MATRIX_SCALE = floatof32(z);
+}
+void glTranslatef(float x, float y, float z)
+{
+	MATRIX_TRANSLATE = floatof32(x);
+    MATRIX_TRANSLATE = floatof32(y);
+    MATRIX_TRANSLATE = floatof32(z);
+}
+
+void glNormal3f(float x, float y, float z)
+{
+	if(x >= 1 || x <= -1) x *= .95;
+	if(y >= 1 || y <= -1) y *= .95;
+	if(z >= 1 || z <= -1) z *= .95;
+
+	glNormal(NORMAL_PACK(floatov10(x), floatov10(y), floatov10(z)));
+}
 //////////////////////////////////////////////////////////////////////
 // Fixed point look at function, it appears to work as expected although 
 //	testing is recomended
 void gluLookAtf32(f32 eyex, f32 eyey, f32 eyez, f32 lookAtx, f32 lookAty, f32 lookAtz, f32 upx, f32 upy, f32 upz) 
-
 { 
-
   f32 side[3], forward[3], up[3]; 
 
- 
-
   forward[0] = lookAtx - eyex; 
-
   forward[1] = lookAty - eyey; 
-
   forward[2] = lookAtz - eyez; 
-
- 
 
   normalizef32(forward); 
 
- 
-
   up[0] = upx; 
-
   up[1] = upy; 
-
   up[2] = upz; 
-
- 
 
   crossf32(forward, up, side); 
 
@@ -552,42 +560,25 @@ void gluLookAtf32(f32 eyex, f32 eyey, f32 eyez, f32 lookAtx, f32 lookAty, f32 lo
 
   crossf32(side, forward, up); 
 
- 
-
   glMatrixMode(GL_MODELVIEW); 
 
  
-
   // should we use MATRIX_MULT4x3 as in ogl|es?? 
 
   MATRIX_LOAD4x3 =  side[0]; 
-
   MATRIX_LOAD4x3 =  up[0]; 
-
   MATRIX_LOAD4x3 = -forward[0]; 
 
- 
-
   MATRIX_LOAD4x3 =  side[1]; 
-
   MATRIX_LOAD4x3 =  up[1]; 
-
   MATRIX_LOAD4x3 = -forward[1]; 
 
- 
-
   MATRIX_LOAD4x3 =  side[2]; 
-
   MATRIX_LOAD4x3 =  up[2]; 
-
   MATRIX_LOAD4x3 = -forward[2]; 
 
- 
-
   MATRIX_LOAD4x3 = -eyex; 
-
   MATRIX_LOAD4x3 = -eyey; 
-
   MATRIX_LOAD4x3 = -eyez; 
 
 }
@@ -943,14 +934,29 @@ int glTexImage2D(int target, int empty1, int type, int sizeX, int sizeY, int emp
 	
 	vramRestorMainBanks(vramTemp);
 
-/*	if(palette)
+	/*if(palette)
 	{
+		u32* temp = (u32)(texture+size);
+
 		vramSetBankE(VRAM_E_LCD);
 
-		dmaCopyWords(3, (uint32*)(texture+size), (uint32*)(VRAM_E), palette);
+		
+		swiCpuCopy( texture + size, VRAM_E, COPY_MODE_WORD | palette);
 
 		vramSetBankE(VRAM_E_TEX_PALETTE);
 	}
 */
 	return 1;
 }
+
+
+void glTexLoadPal(u16* pal, u8 count)
+{
+		vramSetBankE(VRAM_E_LCD);
+		
+		dmaCopyWords(3, (u32*)pal, (u32*)VRAM_E , count);
+
+		vramSetBankE(VRAM_E_TEX_PALETTE);
+
+}
+

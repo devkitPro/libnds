@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.6 2005-07-14 08:00:57 wntrmute Exp $
+	$Id: videoGL.h,v 1.7 2005-07-27 02:20:05 wntrmute Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.6  2005/07/14 08:00:57  wntrmute
+	resynchronise with ndslib
+	
 	
 
 ---------------------------------------------------------------------------------*/
@@ -52,6 +55,9 @@
 #define LUT_SIZE (512)
 #define LUT_MASK (0x1FF)
 
+#define GLuint u32
+#define GLfloat float
+
 
 typedef int f32;             // 1.19.12 fixed point for matricies
 #define intof32(n)           ((n) << 12)
@@ -60,6 +66,8 @@ typedef int f32;             // 1.19.12 fixed point for matricies
 #define f32tofloat(n)        (((float)(n)) / (float)(1<<12))
 
 typedef short int t16;       // text coordinate 1.11.4 fixed point
+
+#define f32tot16(n)             ((v10)(n >> 8))
 #define intot16(n)           ((n) << 4)
 #define t16toint(n)          ((n) >> 4)
 #define floatot16(n)         ((t16)((n) * (1 << 4)))
@@ -67,6 +75,7 @@ typedef short int t16;       // text coordinate 1.11.4 fixed point
 
 typedef short int v16;       // vertex 1.3.12 fixed format
 #define intov16(n)           ((n) << 12)
+#define f32tov16(n)             (n)
 #define v16toint(n)          ((n) >> 12)
 #define floatov16(n)         ((v16)((n) * (1 << 12)))
 #define VERTEX_PACK(x,y)		(((y) << 16) | ((x) & 0xFFFF))
@@ -74,6 +83,7 @@ typedef short int v16;       // vertex 1.3.12 fixed format
 
 typedef short int v10;       // vertex 1.0.9 fixed point
 #define intov10(n)           ((n) << 9)
+#define f32tov10(n)          ((v10)(n >> 3))
 #define v10toint(n)          ((n) >> 9)
 #define floatov10(n)         ((v10)((n) * (1 << 9)))
 #define NORMAL_PACK(x,y,z)   (((x) & 0x3FF) | (((y) & 0x3FF) << 10) | ((z) << 20))
@@ -99,8 +109,14 @@ typedef struct {
 
 //////////////////////////////////////////////////////////////////////
 
+
+#define GL_FALSE				0
+#define GL_TRUE					1
+
 #define GL_TRIANGLE        0
 #define GL_QUAD            1
+#define GL_TRIANGLES        0
+#define GL_QUADS            1
 #define GL_TRIANGLE_STRIP  2
 #define GL_QUAD_STRIP      3
 
@@ -115,6 +131,7 @@ typedef struct {
 #define GL_SHININESS            8
 #define GL_EMISSION             0x10
 
+#define GL_LIGHTING				1
 //////////////////////////////////////////////////////////////////////
 
 #define POLY_ALPHA(n)  ((n) << 16)
@@ -160,7 +177,8 @@ typedef struct {
 #define GL_TOON_HIGHLIGHT	(1<<1)
 #define GL_ANTIALIAS		(1<<4)			//not fully figured out
 #define GL_OUTLINE			(1<<5)
-
+#define GL_BLEND			(1<<3)
+#define GL_ALPHA_TEST		(1<<2)
 #define GL_TEXTURE_ALPHA_MASK (1 << 29)
 //////////////////////////////////////////////////////////////////////
 
@@ -226,16 +244,22 @@ void glRotateZi(int angle);
 void glRotateX(float angle);
 void glRotateY(float angle);
 void glRotateZ(float angle);
+void glRotatef32i(int angle, f32 x, f32 y, f32 z);
+
+
 void gluLookAtf32(f32 eyex, f32 eyey, f32 eyez, f32 lookAtx, f32 lookAty, f32 lookAtz, f32 upx, f32 upy, f32 upz);
 void gluLookAt(float eyex, float eyey, float eyez, float lookAtx, float lookAty, float lookAtz, float upx, float upy, float upz);
 void gluFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far);
 void gluFrustum(float left, float right, float bottom, float top, float near, float far);
 void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar);
 void gluPerspective(float fovy, float aspect, float zNear, float zFar);
+
 int glTexImage2D(int target, int empty1, int type, int sizeX, int sizeY, int empty2, int param, uint8* texture);
+void glTexLoadPal(u16* pal, u8 count);
 void glBindTexture(int target, int name);
 int glGenTextures(int n, int *names);
 void glResetTextures(void);
+
 void glMaterialf(int mode, rgb color);
 void glResetMatrixStack(void);
 void glSetOutlineColor(int id, rgb color);
@@ -243,6 +267,14 @@ void glSetToonTable(uint16 *table);
 void glSetToonTableRange(int start, int end, rgb color);
 void glReset(void);
 
+//float wrappers for porting
+void glRotatef(float angle, float x, float y, float z);
+void glVertex3f(float x, float y, float z);
+void glTexCoord2f(float s, float t);
+void glColor3f(float r, float g, float b);
+void glScalef(float x, float y, float z);
+void glTranslatef(float x, float y, float z);
+void glNormal3f(float x, float y, float z);
 //////////////////////////////////////////////////////////////////////
 
 
@@ -306,6 +338,12 @@ void glMaterialShinnyness(void);
 #endif
 
 #ifndef NO_GL_INLINE
+
+//////////////////////////////////////////////////////////////////////
+  static inline void glSetAlpha(int alpha)
+  {
+	  GFX_ALPHA = alpha;
+  }
 //////////////////////////////////////////////////////////////////////
 
   static inline void glBegin(int mode)
@@ -336,9 +374,9 @@ void glMaterialShinnyness(void);
 
 //////////////////////////////////////////////////////////////////////
 
-  static inline void glColor3b(uint8 red, uint8 green, uint8 blue)
+static inline void glColor3b(uint8 red, uint8 green, uint8 blue)
 {
-  GFX_COLOR = (vuint32)RGB15(red, green, blue);
+	GFX_COLOR = (vuint32)RGB15(red>>3, green>>3, blue>>3);
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -350,7 +388,7 @@ void glMaterialShinnyness(void);
 
 //////////////////////////////////////////////////////////////////////
 
-  static inline void glVertex3v16(v16 x, v16 y, v16 z)
+static inline void glVertex3v16(v16 x, v16 y, v16 z)
 {
   GFX_VERTEX16 = (y << 16) | (x & 0xFFFF);
   GFX_VERTEX16 = ((uint32)(uint16)z);
@@ -468,7 +506,10 @@ void glMaterialShinnyness(void);
 }
 
 //////////////////////////////////////////////////////////////////////
-
+static inline void glLoadIdentity(void)
+{
+  MATRIX_IDENTITY = 0;
+}
   static inline void glIdentity(void)
 {
   MATRIX_IDENTITY = 0;

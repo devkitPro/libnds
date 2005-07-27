@@ -30,36 +30,38 @@
 //
 //////////////////////////////////////////////////////////////////////
 
+//---------------------------------------------------------------------------------
 #ifndef VIDEO_ARM9_INCLUDE
+//---------------------------------------------------------------------------------
 #define VIDEO_ARM9_INCLUDE
+//---------------------------------------------------------------------------------
 
-//////////////////////////////////////////////////////////////////////
 
 #ifndef ARM9
 #error Video is only available on the ARM9
 #endif
 
-//////////////////////////////////////////////////////////////////////
 
 #include "nds/jtypes.h"
 
-//////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 	
-//////////////////////////////////////////////////////////////////////
 
+//---------------------------------------------------------------------------------
 // macro creates a 15 bit color from 3x5 bit components
+//---------------------------------------------------------------------------------
 #define RGB15(r,g,b)  ((r)|((g)<<5)|((b)<<10))
 
 
 #define SCREEN_HEIGHT 192
 #define SCREEN_WIDTH  256
-//////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
 //	Vram Control
+//---------------------------------------------------------------------------------
 #define VRAM_CR			(*(vuint32*)0x04000240)
 #define VRAM_A_CR       (*(vuint8*)0x04000240)
 #define VRAM_B_CR       (*(vuint8*)0x04000241)
@@ -199,32 +201,24 @@ typedef enum
 	VRAM_I_SUB_SPRITE_EXT_PALETTE = 3,
 
 }VRAM_I_TYPE;
-//////////////////////////////////////////////////
+
+
   uint32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d);
   void vramRestorMainBanks(uint32 vramTemp);
 
-//////////////////////////////////////////////////
   void vramSetBankA(VRAM_A_TYPE a);
-//////////////////////////////////////////////////
   void vramSetBankB(VRAM_B_TYPE b);
-//////////////////////////////////////////////////
   void vramSetBankC(VRAM_C_TYPE c);
-///////////////////////////////////////////////////
   void vramSetBankD(VRAM_D_TYPE d);
-////////////////////////////////////////////////////
   void vramSetBankE(VRAM_E_TYPE e);
-  ////////////////////////////////////////////////////
   void vramSetBankF(VRAM_F_TYPE f);
-  ////////////////////////////////////////////////////
   void vramSetBankG(VRAM_G_TYPE g);
-  ////////////////////////////////////////////////////
   void vramSetBankH(VRAM_H_TYPE h);
-  ////////////////////////////////////////////////////
   void vramSetBankI(VRAM_I_TYPE i);
-//////////////////////////////////////////////////////////////////////
-// Display control registers
-//////////////////////////////////////////////////////////////////////
 
+//---------------------------------------------------------------------------------
+// Display control registers
+//---------------------------------------------------------------------------------
 #define DISPLAY_CR       (*(vuint32*)0x04000000)
 #define SUB_DISPLAY_CR   (*(vuint32*)0x04001000)
 
@@ -235,7 +229,9 @@ typedef enum
 #define MODE_4_2D      0x10004
 #define MODE_5_2D      0x10005
 
+//---------------------------------------------------------------------------------
 // main display only
+//---------------------------------------------------------------------------------
 #define MODE_6_2D      0x10006
 
 #define ENABLE_3D    (1<<3)
@@ -249,8 +245,6 @@ typedef enum
 #define DISPLAY_WIN1_ON       (1 << 14)
 #define DISPLAY_SPR_WIN_ON    (1 << 15)
 
-
-// Main display only
 #define MODE_0_3D    (MODE_0_2D | DISPLAY_BG0_ACTIVE | ENABLE_3D) 
 #define MODE_1_3D    (MODE_1_2D | DISPLAY_BG0_ACTIVE | ENABLE_3D)
 #define MODE_2_3D    (MODE_2_2D | DISPLAY_BG0_ACTIVE | ENABLE_3D)
@@ -296,12 +290,10 @@ typedef enum
 
 #define videoSetMode(mode)  (DISPLAY_CR = (mode))
 #define videoSetModeSub(mode)  (SUB_DISPLAY_CR = (mode))
-//////////////////////////////////////////////////////////////////////
 
 #define BRIGHTNESS     (*(vuint16*)0x0400006C)
 #define SUB_BRIGHTNESS (*(vuint16*)0x0400106C)
 
-//////////////////////////////////////////////////////////////////////
 
 #define BG_CR		    ((vuint16*)0x04000008)
 #define BG0_CR         (*(vuint16*)0x04000008)
@@ -315,7 +307,6 @@ typedef enum
 #define SUB_BG2_CR     (*(vuint16*)0x0400100C)
 #define SUB_BG3_CR     (*(vuint16*)0x0400100E)
 
-//////////////////////////////////////////////////////////////////////
 
 #define BG_256_COLOR   (BIT(7))
 #define BG_16_COLOR    (0)
@@ -371,7 +362,6 @@ typedef enum
 #define BG_PALETTE_SLOT1 0
 #define BG_PALETTE_SLOT2 BIT(13)
 #define BG_PALETTE_SLOT3 BIT(13)
-//////////////////////////////////////////////////////////////////////
 
 #define BG0_X0         (*(vuint16*)0x04000010)
 #define BG0_Y0         (*(vuint16*)0x04000012)
@@ -396,7 +386,6 @@ typedef enum
 #define BG3_CX         (*(vuint32*)0x04000038)
 #define BG3_CY         (*(vuint32*)0x0400003C)
 
-//////////////////////////////////////////////////////////////////////
 
 #define SUB_BG0_X0     (*(vuint16*)0x04001010)
 #define SUB_BG0_Y0     (*(vuint16*)0x04001012)
@@ -421,15 +410,18 @@ typedef enum
 #define SUB_BG3_CX     (*(vuint32*)0x04001038)
 #define SUB_BG3_CY     (*(vuint32*)0x0400103C)
 
-//////////////////////////////////////////////////////////////////////
 
+//---------------------------------------------------------------------------------
 // Window 0
+//---------------------------------------------------------------------------------
 #define WIN0_X0        (*(vuint8*)0x04000041)
 #define WIN0_X1        (*(vuint8*)0x04000040)
 #define WIN0_Y0        (*(vuint8*)0x04000045)
 #define WIN0_Y1        (*(vuint8*)0x04000044)
 
+//---------------------------------------------------------------------------------
 // Window 1
+//---------------------------------------------------------------------------------
 #define WIN1_X0        (*(vuint8*)0x04000042)
 #define WIN1_X1        (*(vuint8*)0x04000043)
 #define WIN1_Y0        (*(vuint8*)0x04000047)
@@ -438,13 +430,17 @@ typedef enum
 #define WIN_IN         (*(vuint16*)0x04000048)
 #define WIN_OUT        (*(vuint16*)0x0400004A)
 
+//---------------------------------------------------------------------------------
 // Window 0
+//---------------------------------------------------------------------------------
 #define SUB_WIN0_X0    (*(vuint8*)0x04001041)
 #define SUB_WIN0_X1    (*(vuint8*)0x04001040)
 #define SUB_WIN0_Y0    (*(vuint8*)0x04001045)
 #define SUB_WIN0_Y1    (*(vuint8*)0x04001044)
 
+//---------------------------------------------------------------------------------
 // Window 1
+//---------------------------------------------------------------------------------
 #define SUB_WIN1_X0    (*(vuint8*)0x04001042)
 #define SUB_WIN1_X1    (*(vuint8*)0x04001043)
 #define SUB_WIN1_Y0    (*(vuint8*)0x04001047)
@@ -453,12 +449,10 @@ typedef enum
 #define SUB_WIN_IN     (*(vuint16*)0x04001048)
 #define SUB_WIN_OUT    (*(vuint16*)0x0400104A)
 
-//////////////////////////////////////////////////////////////////////
 
 #define MOSAIC_CR      (*(vuint16*)0x0400004C)
 #define SUB_MOSAIC_CR  (*(vuint16*)0x0400104C)
 
-//////////////////////////////////////////////////////////////////////
 
 #define BLEND_CR       (*(vuint16*)0x04000050)
 #define BLEND_AB       (*(vuint16*)0x04000052)
@@ -487,11 +481,13 @@ typedef enum
 #define BLEND_DST_SPRITE   (1<<12)
 #define BLEND_DST_BACKDROP (1<<13)
 
-//////////////////////////////////////////////////////////////////////
-// Background control defines
-//////////////////////////////////////////////////////////////////////
-///
-///BGxCNT defines ///
+//---------------------------------------------------------------------------------
+//	Background control defines
+//---------------------------------------------------------------------------------
+
+//---------------------------------------------------------------------------------
+//	BGxCNT defines
+//---------------------------------------------------------------------------------
 #define BG_MOSAIC_ENABLE    0x40
 #define BG_COLOR_256      0x80
 #define BG_COLOR_16        0x0
@@ -515,11 +511,11 @@ typedef enum
 
 #define WRAPAROUND              0x1
 
-//////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
 // Sprite control defines
-//////////////////////////////////////////////////////////////////////
-
+//---------------------------------------------------------------------------------
 // Attribute 0 consists of 8 bits of Y plus the following flags:
+//---------------------------------------------------------------------------------
 #define ATTR0_NORMAL          (0<<8)
 #define ATTR0_ROTSCALE        (1<<8)
 #define ATTR0_DISABLED        (2<<8)
@@ -540,7 +536,9 @@ typedef enum
 #define ATTR0_WIDE            (1<<14)
 #define ATTR0_TALL            (2<<14)
   
+//---------------------------------------------------------------------------------
 // Atribute 1 consists of 9 bits of X plus the following flags:
+//---------------------------------------------------------------------------------
 #define ATTR1_ROTDATA(n)      ((n)<<9)  // note: overlaps with flip flags
 #define ATTR1_FLIP_X          (1<<12)
 #define ATTR1_FLIP_Y          (1<<13)
@@ -549,21 +547,25 @@ typedef enum
 #define ATTR1_SIZE_32         (2<<14)
 #define ATTR1_SIZE_64         (3<<14)
 
+//---------------------------------------------------------------------------------
 // Atribute 2 consists of the following:
+//---------------------------------------------------------------------------------
 #define ATTR2_PRIORITY(n)     ((n)<<10)
 #define ATTR2_PALETTE(n)      ((n)<<12)
 #define ATTR2_ALPHA(n)		  ((n)<<12)
-//////////////////////////////////////////////////////////////////////
-// Sprite structures
-//////////////////////////////////////////////////////////////////////
 
+//---------------------------------------------------------------------------------
+// Sprite structures
+//---------------------------------------------------------------------------------
 typedef struct sSpriteEntry {
+//---------------------------------------------------------------------------------
   uint16 attribute[3];
   uint16 filler;
 } SpriteEntry, * pSpriteEntry;
 
-
+//---------------------------------------------------------------------------------
 typedef struct sSpriteRotation {
+//---------------------------------------------------------------------------------
   uint16 filler1[3];
   uint16 hdx;
 
@@ -577,50 +579,49 @@ typedef struct sSpriteRotation {
   uint16 vdy;
 } SpriteRotation, * pSpriteRotation;
 
-//////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
 // 3D core control
-//////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
+#define GFX_CONTROL			(*(vuint16*) 0x04000060)
 
-#define GFX_CONTROL           (*(vuint16*) 0x04000060)
+#define GFX_FIFO			(*(vuint32*) 0x04000400)  
+#define GFX_STATUS			(*(vuint32*) 0x04000600)
+#define GFX_COLOR			(*(vuint32*) 0x04000480)
 
-#define GFX_FIFO              (*(vuint32*) 0x04000400)  
-#define GFX_STATUS            (*(vuint32*) 0x04000600)
-#define GFX_COLOR             (*(vuint32*) 0x04000480)
+#define GFX_VERTEX10		(*(vuint32*) 0x04000490)
+#define GFX_VERTEX_XY		(*(vuint32*) 0x04000494)
+#define GFX_VERTEX_XZ		(*(vuint32*) 0x04000498)
+#define GFX_VERTEX_YZ		(*(vuint32*) 0x0400049C)
+#define GFX_VERTEX_DIFF		(*(vuint32*) 0x040004A0)
 
-#define GFX_VERTEX10          (*(vuint32*) 0x04000490)
-#define GFX_VERTEX_XY          (*(vuint32*) 0x04000494)
-#define GFX_VERTEX_XZ          (*(vuint32*) 0x04000498)
-#define GFX_VERTEX_YZ          (*(vuint32*) 0x0400049C)
-#define GFX_VERTEX_DIFF          (*(vuint32*) 0x040004A0)
+#define GFX_VERTEX16		(*(vuint32*) 0x0400048C)
+#define GFX_TEX_COORD		(*(vuint32*) 0x04000488)
+#define GFX_TEX_FORMAT		(*(vuint32*) 0x040004A8)
 
-#define GFX_VERTEX16          (*(vuint32*) 0x0400048C)
-#define GFX_TEX_COORD         (*(vuint32*) 0x04000488)
-#define GFX_TEX_FORMAT        (*(vuint32*) 0x040004A8)
+#define GFX_CLEAR_COLOR		(*(vuint32*) 0x04000350)
+#define GFX_CLEAR_DEPTH		(*(vuint16*) 0x04000354)
 
-#define GFX_CLEAR_COLOR       (*(vuint32*) 0x04000350)
-#define GFX_CLEAR_DEPTH       (*(vuint16*) 0x04000354)
+#define GFX_LIGHT_VECTOR	(*(vuint32*) 0x040004C8)
+#define GFX_LIGHT_COLOR		(*(vuint32*) 0x040004CC)
+#define GFX_NORMAL			(*(vuint32*) 0x04000484)
 
-#define GFX_LIGHT_VECTOR      (*(vuint32*) 0x040004C8)
-#define GFX_LIGHT_COLOR       (*(vuint32*) 0x040004CC)
-#define GFX_NORMAL            (*(vuint32*) 0x04000484)
+#define GFX_DIFFUSE_AMBIENT		(*(vuint32*) 0x040004C0)
+#define GFX_SPECULAR_EMISSION	(*(vuint32*) 0x040004C4)
+#define GFX_SHININESS			(*(vuint32*) 0x040004D0)
 
-#define GFX_DIFFUSE_AMBIENT   (*(vuint32*) 0x040004C0)
-#define GFX_SPECULAR_EMISSION (*(vuint32*) 0x040004C4)
-#define GFX_SHININESS         (*(vuint32*) 0x040004D0)
+#define GFX_POLY_FORMAT		(*(vuint32*) 0x040004A4)
+#define GFX_ALPHA			(*(vuint16*) 0x04000340)
 
-#define GFX_POLY_FORMAT       (*(vuint32*) 0x040004A4)
+#define GFX_BEGIN			(*(vuint32*) 0x04000500)
+#define GFX_END				(*(vuint32*) 0x04000504)
+#define GFX_FLUSH			(*(vuint32*) 0x04000540)
+#define GFX_VIEWPORT		(*(vuint32*) 0x04000580)
+#define GFX_TOON_TABLE		((vuint16*)  0x04000380)
+#define GFX_EDGE_TABLE		((vuint16*)  0x04000330)
 
-#define GFX_BEGIN             (*(vuint32*) 0x04000500)
-#define GFX_END               (*(vuint32*) 0x04000504)
-#define GFX_FLUSH             (*(vuint32*) 0x04000540)
-#define GFX_VIEWPORT          (*(vuint32*) 0x04000580)
-#define GFX_TOON_TABLE		  ((vuint16*)  0x04000380)
-#define GFX_EDGE_TABLE		  ((vuint16*)  0x04000330)
-
-//////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
 // Matrix processor control
-//////////////////////////////////////////////////////////////////////
-
+//---------------------------------------------------------------------------------
 #define MATRIX_CONTROL    (*(vuint32*)0x04000440)
 #define MATRIX_PUSH       (*(vuint32*)0x04000444)
 #define MATRIX_POP        (*(vuint32*)0x04000448)
@@ -635,12 +636,11 @@ typedef struct sSpriteRotation {
 #define MATRIX_MULT4x3    (*(vfixed*) 0x04000464)
 #define MATRIX_MULT3x3    (*(vfixed*) 0x04000468)
 
-//////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 }
 #endif
 
+//---------------------------------------------------------------------------------
 #endif
-
-//////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
