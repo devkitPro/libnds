@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.7 2005-07-27 02:20:05 wntrmute Exp $
+	$Id: videoGL.c,v 1.8 2005-07-27 15:54:58 wntrmute Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -7,7 +7,6 @@
 			Michael Noland (joat)
 			Jason Rogers (dovoto)
 			Dave Murphy (WinterMute)
-			Chris Double (doublec)
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any
@@ -27,6 +26,10 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2005/07/27 02:20:05  wntrmute
+	resynchronise with ndslib
+	Updated GL with float wrappers for NeHe
+	
 	Revision 1.6  2005/07/14 08:00:57  wntrmute
 	resynchronise with ndslib
 	
@@ -228,9 +231,8 @@ void glBegin(int mode)
   GFX_FLUSH = 2;
 }
 
-//////////////////////////////////////////////////////////////////////
 
-void glMaterialShinnyness(void)
+void glMaterialShinyness(void)
 
 {
 	uint32 shiny32[128/4];
@@ -769,7 +771,7 @@ void glResetTextures(void)
 //  Returns 1 if succesful and 0 if out of texture names
 int glGenTextures(int n, int *names)
 {
-	static int name = 0;
+	static int name = 1;
 
 	int index = 0;
 
@@ -784,30 +786,51 @@ int glGenTextures(int n, int *names)
 	return 1;
 }
 
-///////////////////////////////////////
+//---------------------------------------------------------------------------------
 // glBindTexure sets the current named
 //	texture to the active texture.  Target 
 //	is ignored as all DS textures are 2D
-void glBindTexture(int target, int name)
-{
-	
-	GFX_TEX_FORMAT = textures[name];
+//---------------------------------------------------------------------------------
+void glBindTexture(int target, int name) {
+//---------------------------------------------------------------------------------
+	if (name == 0) 
+		GFX_TEX_FORMAT = 0; 
+	else 
+		GFX_TEX_FORMAT = textures[name]; 
+
 	
 	activeTexture = name;
 }
 
-///////////////////////////////////////
+//---------------------------------------------------------------------------------
+void glTexCoord2f32(f32 u, f32 v) { 
+//---------------------------------------------------------------------------------
+	int x=0,y=0; 
+   
+	x = ((0x00700000) & textures[activeTexture]) >> 20; 
+	y = ((0x03800000) & textures[activeTexture]) >> 23; 
+
+	glTexCoord2t16(f32tot16 (mulf32(u,intof32(1<<(3+x)))), f32tot16 (mulf32(v,intof32(1<<(3+y))))); 
+}
+
+
+//---------------------------------------------------------------------------------
 // glTexParameter although named the same 
 //	as its gl counterpart it is not compatible
 //	Effort may be made in the future to make it so.
-void glTexParameter(uint8 sizeX, uint8 sizeY, uint32* addr, uint8 mode, uint32 param)
-{
+//---------------------------------------------------------------------------------
+void glTexParameter(	uint8 sizeX, uint8 sizeY,
+											uint32* addr,
+											uint8 mode,
+											uint32 param) {
+//---------------------------------------------------------------------------------
 	textures[activeTexture] = param | (sizeX << 20) | (sizeY << 23) | (((uint32)addr >> 3) & 0xFFFF) | (mode << 26);
 }
 
 
-uint16* vramGetBank(uint16 *addr)
-{
+//---------------------------------------------------------------------------------
+uint16* vramGetBank(uint16 *addr) {
+//---------------------------------------------------------------------------------
 	if(addr >= VRAM_A && addr < VRAM_B)
 		return VRAM_A;
 	else if(addr >= VRAM_B && addr < VRAM_C)
@@ -828,8 +851,9 @@ uint16* vramGetBank(uint16 *addr)
 }
 
 
-int vramIsTextureBank(uint16 *addr)
-{
+//---------------------------------------------------------------------------------
+int vramIsTextureBank(uint16 *addr) {
+//---------------------------------------------------------------------------------
    uint16* vram = vramGetBank(addr);
 
    if(vram == VRAM_A)
@@ -860,8 +884,9 @@ int vramIsTextureBank(uint16 *addr)
       return 0;
    
 } 
-uint32* getNextTextureSlot(int size)
-{
+//---------------------------------------------------------------------------------
+uint32* getNextTextureSlot(int size) {
+//---------------------------------------------------------------------------------
    uint32* result = nextBlock;
    nextBlock += size >> 2;
 
@@ -880,12 +905,16 @@ uint32* getNextTextureSlot(int size)
 
 } 
 
-///////////////////////////////////////
+//---------------------------------------------------------------------------------
 // Similer to glTextImage2D from gl it takes a pointer to data
 //	Empty fields and target are unused but provided for code compatibility.
 //	type is simply the texture type (GL_RGB, GL_RGB8 ect...)
-int glTexImage2D(int target, int empty1, int type, int sizeX, int sizeY, int empty2, int param, uint8* texture)
-{
+//---------------------------------------------------------------------------------
+int glTexImage2D(	int target, int empty1, int type,
+									int sizeX, int sizeY,
+									int empty2, int param,
+									uint8* texture) {
+//---------------------------------------------------------------------------------
 	uint16 alpha = 0;
 	uint32 size = 0;
 	uint16 palette = 0;
@@ -950,8 +979,9 @@ int glTexImage2D(int target, int empty1, int type, int sizeX, int sizeY, int emp
 }
 
 
-void glTexLoadPal(u16* pal, u8 count)
-{
+//---------------------------------------------------------------------------------
+void glTexLoadPal(u16* pal, u8 count) {
+//---------------------------------------------------------------------------------
 		vramSetBankE(VRAM_E_LCD);
 		
 		dmaCopyWords(3, (u32*)pal, (u32*)VRAM_E , count);

@@ -14,15 +14,15 @@ Include Sub Directories=1
 [Open Files]
 Open File0=
 Active File Display Mode=-1
-Open File Pos0=167542
-Open File Line0=162480
-Active File Index=5
-Open File Window Pos0=0,1,-1,-1,-4,-23,88,88,962,496
-Open File1=C:\projects\devkitPro\sources\psptoolchain\newlib-1.13.0.patch
-Open File Pos1=21761
-Open File Line1=0
-Open File Window Pos1=0,1,-1,-1,-4,-23,110,110,988,522
-Open File2=C:\projects\devkitPro\sources\psptoolchain\gcc-4.0.1.patch
+Open File Pos0=0
+Open File Line0=3594
+Active File Index=0
+Open File Window Pos0=2,3,-1,-1,-4,-23,0,0,874,408
+Open File1=C:\projects\nds\ndslib\lib\ARM9\console.c
+Open File Pos1=0
+Open File Line1=3354
+Open File Window Pos1=0,1,-1,-1,-4,-23,22,22,900,434
+Open File2=
 Open File Pos2=907
 Open File Line2=2002
 Open File Window Pos2=0,1,-1,-1,-4,-23,132,132,1010,544
@@ -108,7 +108,7 @@ Open File Line22=4362
 Open File Window Pos22=0,1,-1,-1,-4,-23,154,154,1031,598
 Open File23=
 [File View]
-Current Select=Project Files
+Current Select=Project Files\source\arm9\videoGL.c
 Scroll Position=0
 [Files]
 0=include\
