@@ -31,13 +31,15 @@
 #ifndef TRIG_LUT_H
 #define TRIG_LUT_H
 
-#include "COS_bin.h"
-#include "SIN_bin.h"
-#include "TAN_bin.h"
 
-static const short * COS = (short *)COS_bin;
-static const short * SIN = (short *)SIN_bin;
-static const short * TAN = (short *)TAN_bin;
+extern short COS_bin[];
+extern short SIN_bin[];
+extern short TAN_bin[];
+
+
+#define COS COS_bin
+#define SIN SIN_bin
+#define TAN TAN_bin;
 
 
 #endif 

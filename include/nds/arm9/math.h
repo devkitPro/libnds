@@ -33,6 +33,7 @@
 #define MATH_ARM9_INCLUDE
 
 #include "nds/arm9/videoGL.h"
+#include <nds/arm9/trig_lut.h>
 
 /////////////////////////////////////////////////////////////
 //  Math coprocessor register definitions
