@@ -39,7 +39,7 @@ extern short TAN_bin[];
 
 #define COS COS_bin
 #define SIN SIN_bin
-#define TAN TAN_bin;
+#define TAN TAN_bin
 
 
 #endif 
