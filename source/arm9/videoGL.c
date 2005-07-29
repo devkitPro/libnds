@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.8 2005-07-27 15:54:58 wntrmute Exp $
+	$Id: videoGL.c,v 1.9 2005-07-29 05:19:55 dovoto Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,12 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2005/07/27 15:54:58  wntrmute
+	Synchronise with ndslib.
+	
+	Added f32 version of glTextCoord
+	fixed glBindTexture (0,0) now clears fomatting
+	
 	Revision 1.7  2005/07/27 02:20:05  wntrmute
 	resynchronise with ndslib
 	Updated GL with float wrappers for NeHe
@@ -511,7 +517,7 @@ void glVertex3f(float x, float y, float z)
 }
 void glTexCoord2f(float s, float t)
 {
-	glTexCoord2t16(floatot16(t*127), floatot16(s*127));
+	glTexCoord2t16(floatot16(s*127), floatot16(t*127));
 }
 
 void glColor3f(float r, float g, float b)
