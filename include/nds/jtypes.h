@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: jtypes.h,v 1.6 2005-07-28 03:54:19 dovoto Exp $
+	$Id: jtypes.h,v 1.7 2005-07-29 00:40:50 wntrmute Exp $
 
 	jtypes.h -- Common types (and a few useful macros)
 
@@ -7,25 +7,33 @@
 		Michael Noland (joat)
 		Jason Rogers (dovoto)
 		Dave Murphy (WinterMute)
+		Chris Double (doublec)
 
-  This software is provided 'as-is', without any express or implied
-  warranty.  In no event will the authors be held liable for any
-  damages arising from the use of this software.
+	This software is provided 'as-is', without any express or implied
+	warranty.  In no event will the authors be held liable for any
+	damages arising from the use of this software.
 
-  Permission is granted to anyone to use this software for any
-  purpose, including commercial applications, and to alter it and
-  redistribute it freely, subject to the following restrictions:
+	Permission is granted to anyone to use this software for any
+	purpose, including commercial applications, and to alter it and
+	redistribute it freely, subject to the following restrictions:
 
-  1. The origin of this software must not be misrepresented; you
-     must not claim that you wrote the original software. If you use
-     this software in a product, an acknowledgment in the product
-     documentation would be appreciated but is not required.
-  2. Altered source versions must be plainly marked as such, and
-     must not be misrepresented as being the original software.
-  3. This notice may not be removed or altered from any source
-     distribution.
+	1.	The origin of this software must not be misrepresented; you
+		must not claim that you wrote the original software. If you use
+		this software in a product, an acknowledgment in the product
+		documentation would be appreciated but is not required.
+	2.	Altered source versions must be plainly marked as such, and
+		must not be misrepresented as being the original software.
+	3.	This notice may not be removed or altered from any source
+		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.6  2005/07/28 03:54:19  dovoto
+	Adjusted trig_lut so that cos and sin look tables are visible to all.
+	
+	Math.h no includes the trig_lut header.
+	
+	added some typedefs to jtypes for compatibility with ndslib.
+	
 	Revision 1.5  2005/07/22 17:39:53  wntrmute
 	removed useless section macros
 	
@@ -48,13 +56,6 @@
 #define DTCM_BSS	__attribute__((section(".sbss")))
 #define ALIGN(m)	__attribute__((aligned (m)))
 
-//---------------------------------------------------------------------------------
-// ndslib compaible section macros
-//---------------------------------------------------------------------------------
-#define CODE_IN_IWRAM __attribute__ ((section (".iwram"), long_call))
-#define VAR_IN_IWRAM __attribute__ ((section (".iwram")))
-#define CODE_IN_EXRAM __attribute__ ((section (".ewram"), long_call))
-#define VAR_IN_EXRAM __attribute__ ((section (".ewram")))
 #define PACKED __attribute__ ((packed))
 #define packed_struct struct PACKED
 
@@ -133,6 +134,12 @@ typedef volatile s16          vs16;
 typedef volatile s32          vs32;
 typedef volatile s64          vs64;
 
+#ifndef __cplusplus
+/** C++ compatible bool for C
+
+*/
+typedef enum { false, true } bool;
+#endif
 
 
 typedef void (* VoidFunctionPointer)(void);
