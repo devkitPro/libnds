@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: jtypes.h,v 1.7 2005-07-29 00:40:50 wntrmute Exp $
+	$Id: jtypes.h,v 1.8 2005-07-29 00:55:04 wntrmute Exp $
 
 	jtypes.h -- Common types (and a few useful macros)
 
@@ -27,6 +27,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2005/07/29 00:40:50  wntrmute
+	removed useless section macros
+	added C++ compatible bool
+	
 	Revision 1.6  2005/07/28 03:54:19  dovoto
 	Adjusted trig_lut so that cos and sin look tables are visible to all.
 	
@@ -58,11 +62,6 @@
 
 #define PACKED __attribute__ ((packed))
 #define packed_struct struct PACKED
-
-// libgba compatible section macros
-#define IWRAM_CODE	__attribute__((section(".iwram"), long_call))
-#define ITCM_CODE	__attribute__((section(".itcm"), long_call))
-#define EWRAM_CODE	__attribute__((section(".ewram"), long_call))
 
 //---------------------------------------------------------------------------------
 // These are linked to the bin2o macro in the Makefile
