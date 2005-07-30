@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.4 2005-07-14 08:00:57 wntrmute Exp $
+	$Id: console.c,v 1.5 2005-07-30 23:20:38 dovoto Exp $
 
 	console code -- provides basic print functionality
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/07/14 08:00:57  wntrmute
+	resynchronise with ndslib
+	
 
 ---------------------------------------------------------------------------------*/
 
@@ -399,7 +402,7 @@ void print(const char* s)
 
 void printF(int w, float f)
 {
-	unsigned int* t = (unsigned int*)&f;
+	/*unsigned int* t = (unsigned int*)&f;
 	unsigned int fraction = (*t) & 0x007FFFFF;
 	int exp = ((*t) >> 23) & 0xFF;
 
@@ -411,7 +414,7 @@ void printF(int w, float f)
 	
 	printInt(1, fraction);
 	consolePrintChar('e');
-	printInt(1, exp - 127);
+	printInt(1, exp - 127);*/
 	
 	/*
 	if(exp == 0 && fraction == 0)
@@ -499,14 +502,17 @@ void consolePrintf(const char* s, ...)
 				break;
 			default:
 				consolePrintChar('%');
+				s++;
 				break;
 			}
+			break;
 		default:
 			consolePrintChar(*s);
+			s++;
 			break;
 		}
 
-		s++;
+	
 	}
 	va_end(argp);
 }
