@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.h,v 1.3 2005-07-29 00:57:40 wntrmute Exp $
+	$Id: touch.h,v 1.4 2005-08-01 23:12:17 wntrmute Exp $
 
 	Microphone control for the ARM7
 
@@ -26,6 +26,11 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/07/29 00:57:40  wntrmute
+	updated file headers
+	added touchReadXY function
+	made header C++ compatible
+	
 
 ---------------------------------------------------------------------------------*/
 #ifndef ARM7_TOUCH_INCLUDE
@@ -60,6 +65,8 @@ extern "C" {
 typedef struct touchPosition {
 	int16	x;
 	int16	y;
+	int16	px;
+	int16	py;
 } touchPosition;
 
 touchPosition touchReadXY();

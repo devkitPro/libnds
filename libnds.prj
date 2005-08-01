@@ -12,13 +12,13 @@ Include Sub Directories=1
 [Group]
 0=
 [Open Files]
-Open File0=
-Active File Display Mode=-1
-Open File Pos0=2190
-Open File Line0=1319
-Active File Index=5
-Open File Window Pos0=0,1,-1,-1,-4,-23,198,198,1072,606
-Open File1=C:\projects\devkitPro\libnds\source\common\card.c
+Open File0=C:\projects\devkitPro\libnds\include\nds\ipc.h
+Active File Display Mode=3
+Open File Pos0=4769
+Open File Line0=2289
+Active File Index=0
+Open File Window Pos0=2,3,-1,-1,-4,-23,0,0,918,345
+Open File1=
 Open File Pos1=0
 Open File Line1=0
 Open File Window Pos1=0,1,-1,-1,-4,-23,0,0,878,412
@@ -108,7 +108,7 @@ Open File Line22=4362
 Open File Window Pos22=0,1,-1,-1,-4,-23,154,154,1031,598
 Open File23=
 [File View]
-Current Select=Project Files\include\nds\\
+Current Select=Project Files\include\nds\ipc.h
 Scroll Position=0
 [Files]
 0=include\

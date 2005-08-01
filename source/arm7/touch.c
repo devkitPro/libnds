@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.4 2005-07-29 00:57:40 wntrmute Exp $
+	$Id: touch.c,v 1.5 2005-08-01 23:12:17 wntrmute Exp $
 
 	Touch screen control for the ARM7
 
@@ -26,6 +26,11 @@
 			distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/07/29 00:57:40  wntrmute
+	updated file headers
+	added touchReadXY function
+	made header C++ compatible
+	
 	Revision 1.3  2005/07/12 17:32:20  wntrmute
 	updated file header
 	
@@ -116,8 +121,11 @@ touchPosition touchReadXY() {
 
 	}
 	
-	touchPos.x = ( touchRead(TSC_MEASURE_X) - (int16) TOUCH_CAL_X1) * CNTRL_WIDTH  / TOUCH_WIDTH + (int16) TOUCH_CNTRL_X1;
-	touchPos.y = ( touchRead(TSC_MEASURE_Y) - (int16) TOUCH_CAL_Y1) * CNTRL_HEIGHT / TOUCH_HEIGHT + (int16) TOUCH_CNTRL_Y1;
+	touchPos.x = touchRead(TSC_MEASURE_X);
+	touchPos.y = touchRead(TSC_MEASURE_Y);
+
+	touchPos.px = ( touchPos.x - (int16) TOUCH_CAL_X1) * CNTRL_WIDTH  / TOUCH_WIDTH + (int16) TOUCH_CNTRL_X1;
+	touchPos.py = ( touchPos.y - (int16) TOUCH_CAL_Y1) * CNTRL_HEIGHT / TOUCH_HEIGHT + (int16) TOUCH_CNTRL_Y1;
 
 	return touchPos;
 
