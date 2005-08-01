@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: image.c,v 1.1 2005-07-27 02:20:52 wntrmute Exp $
+	$Id: image.c,v 1.2 2005-08-01 23:18:22 wntrmute Exp $
 
 
   Copyright (C) 2005
@@ -25,9 +25,12 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.1  2005/07/27 02:20:52  wntrmute
+	add image functions
+	
 
 ---------------------------------------------------------------------------------*/
-#include <nds.h>
+#include <nds/jtypes.h>
 #include <nds/arm9/image.h>
 #include <malloc.h>
 

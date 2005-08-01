@@ -1,32 +1,33 @@
-//////////////////////////////////////////////////////////////////////
-//
-// BIOS.h -- SWI function wrappers for the BIOS
-//
-// version 0.1, February 14, 2005
-//
-//  Copyright (C) 2005 Michael Noland (joat) and Jason Rogers (dovoto)
-//
-//  This software is provided 'as-is', without any express or implied
-//  warranty.  In no event will the authors be held liable for any
-//  damages arising from the use of this software.
-//
-//  Permission is granted to anyone to use this software for any
-//  purpose, including commercial applications, and to alter it and
-//  redistribute it freely, subject to the following restrictions:
-//
-//  1. The origin of this software must not be misrepresented; you
-//     must not claim that you wrote the original software. If you use
-//     this software in a product, an acknowledgment in the product
-//     documentation would be appreciated but is not required.
-//  2. Altered source versions must be plainly marked as such, and
-//     must not be misrepresented as being the original software.
-//  3. This notice may not be removed or altered from any source
-//     distribution.
-//
-// Changelog:
-//   0.1: First version
-//
-//////////////////////////////////////////////////////////////////////
+/*---------------------------------------------------------------------------------
+	$Id: bios.h,v 1.3 2005-08-01 23:18:22 wntrmute Exp $
+
+	BIOS functions
+
+	Copyright (C) 2005
+		Michael Noland (joat)
+		Jason Rogers (dovoto)
+		Dave Murphy (WinterMute)
+
+	This software is provided 'as-is', without any express or implied
+	warranty.  In no event will the authors be held liable for any
+	damages arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any
+	purpose, including commercial applications, and to alter it and
+	redistribute it freely, subject to the following restrictions:
+
+	1.	The origin of this software must not be misrepresented; you
+		must not claim that you wrote the original software. If you use
+		this software in a product, an acknowledgment in the product
+		documentation would be appreciated but is not required.
+	2.	Altered source versions must be plainly marked as such, and
+		must not be misrepresented as being the original software.
+	3.	This notice may not be removed or altered from any source
+		distribution.
+
+	$Log: not supported by cvs2svn $
+
+---------------------------------------------------------------------------------*/
 
 #ifndef _BIOS_INCLUDE_
 #define _BIOS_INCLUDE_
@@ -35,11 +36,8 @@
 extern "C" {
 #endif
 
-//////////////////////////////////////////////////////////////////////
+#include <nds/jtypes.h>
 
-#include "nds/jtypes.h"
-
-//////////////////////////////////////////////////////////////////////
 
 typedef struct DecompressionStream {
   int (*getSize)(uint8 * source, uint16 * dest, uint32 r2);
@@ -55,67 +53,54 @@ typedef struct UnpackStruct {
   uint32 dataOffset;  
 } PACKED TUnpackStruct, * PUnpackStruct;
 
-//////////////////////////////////////////////////////////////////////
 // SoftReset (swi 0x00)
-//////////////////////////////////////////////////////////////////////
-
 extern void swiSoftReset(void);
 
-//////////////////////////////////////////////////////////////////////
 // DelayLoop (swi 0x03)
-//////////////////////////////////////////////////////////////////////
-
 extern void swiDelay(uint32 duration);
 
-//////////////////////////////////////////////////////////////////////
-//
-// IntrWait (swi 0x04)
-//
-// waitForSet - 0: Return if the interrupt has already occured
-//              1: Wait until the interrupt has been set since the call
-//      flags - interrupt sensitivity bitmask to wait for
-//
-//////////////////////////////////////////////////////////////////////
+
+/*---------------------------------------------------------------------------------
+	IntrWait (swi 0x04)
+
+	waitForSet -	0: Return if the interrupt has already occured
+					1: Wait until the interrupt has been set since the call
+	flags - interrupt sensitivity bitmask to wait for
+---------------------------------------------------------------------------------*/
 
 extern void swiIntrWait(int waitForSet, uint32 flags);
 
-//////////////////////////////////////////////////////////////////////
-//
-// WaitForVBlank (swi 0x05)
-//  Identical to calling IntrWait(1, 1)
-//
-//////////////////////////////////////////////////////////////////////
-
+/*---------------------------------------------------------------------------------
+	WaitForVBlank (swi 0x05)
+	Identical to calling IntrWait(1, 1)
+---------------------------------------------------------------------------------*/
 extern void swiWaitForVBlank(void);
 
 #ifdef ARM9
-//////////////////////////////////////////////////////////////////////
-//
-// WaitForIRQ (swi 0x06)
-//   mov r0, #0
-//   MCR p15, 0, r0, c7, c0, 4
-//
-//////////////////////////////////////////////////////////////////////
+/*---------------------------------------------------------------------------------
+	WaitForIRQ (swi 0x06)
+		mov r0, #0
+		MCR p15, 0, r0, c7, c0, 4
+---------------------------------------------------------------------------------*/
 
 extern void swiWaitForIRQ(void);
 #endif
 
 #ifdef ARM7
-//////////////////////////////////////////////////////////////////////
-//
-// Halt (swi 0x06)
-//  Identical to calling SetHaltCR(?)
-//
-// Sleep (swi 0x07)
-//  Identical to calling SetHaltCR(?)
-//
-// SetHaltCR(uint32 data) (swi 0x1F)
-//  Writes data to 0x04000300:32
-//
-//////////////////////////////////////////////////////////////////////
-
+/*---------------------------------------------------------------------------------
+	Halt (swi 0x06)
+	Identical to calling SetHaltCR(?)
+---------------------------------------------------------------------------------*/
 extern void swiHalt(void);
+/*---------------------------------------------------------------------------------
+	Sleep (swi 0x07)
+	Identical to calling SetHaltCR(?)
+---------------------------------------------------------------------------------*/
 extern void swiSleep(void);
+/*---------------------------------------------------------------------------------
+	SetHaltCR(uint32 data) (swi 0x1F)
+	Writes data to 0x04000300:32
+---------------------------------------------------------------------------------*/
 extern void swiSetHaltCr(uint32 data);
 #endif
 
@@ -348,16 +333,12 @@ extern uint8 swiGetVolumeTable(int index);
 
 extern void swiUnknown(void);
 
-//////////////////////////////////////////////////////////////////////
-//
-// SetHaltCR(uint32 data) (swi 0x1F)
-//  Writes data to 0x04000300:32
-//
-//////////////////////////////////////////////////////////////////////
-
+/*---------------------------------------------------------------------------------
+	SetHaltCR(uint32 data) (swi 0x1F)
+	Writes data to 0x04000300:32
+---------------------------------------------------------------------------------*/
 extern void swiSetHaltCR(uint32 data);
 
-//////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 }
@@ -365,4 +346,3 @@ extern void swiSetHaltCR(uint32 data);
 
 #endif
 
-//////////////////////////////////////////////////////////////////////

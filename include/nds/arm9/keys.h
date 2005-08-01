@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: keys.h,v 1.4 2005-07-25 02:31:07 wntrmute Exp $
+	$Id: keys.h,v 1.5 2005-08-01 23:18:22 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -27,6 +27,10 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/07/25 02:31:07  wntrmute
+	made local variables static
+	added proper header to keys.h
+	
 	Revision 1.3  2005/07/25 02:19:01  desktopman
 	Added support for KEY_LID in keys.c.
 	Moved KEYS_CUR from header to source file.
@@ -43,7 +47,7 @@
 #define	_keys_h_
 //---------------------------------------------------------------------------------
 
-#include <nds.h>
+#include <nds/jtypes.h>
 
 #define KEY_X (1<<10)
 #define KEY_Y (1<<11)

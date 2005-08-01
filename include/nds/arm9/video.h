@@ -1,34 +1,33 @@
-//////////////////////////////////////////////////////////////////////
-//
-// video.h -- Video registers and defines
-//
-// version 0.1, February 14, 2005
-//
-//  Copyright (C) 2005 Michael Noland (joat) and Jason Rogers (dovoto)
-//
-//  This software is provided 'as-is', without any express or implied
-//  warranty.  In no event will the authors be held liable for any
-//  damages arising from the use of this software.
-//
-//  Permission is granted to anyone to use this software for any
-//  purpose, including commercial applications, and to alter it and
-//  redistribute it freely, subject to the following restrictions:
-//
-//  1. The origin of this software must not be misrepresented; you
-//     must not claim that you wrote the original software. If you use
-//     this software in a product, an acknowledgment in the product
-//     documentation would be appreciated but is not required.
-//  2. Altered source versions must be plainly marked as such, and
-//     must not be misrepresented as being the original software.
-//  3. This notice may not be removed or altered from any source
-//     distribution.
-//
-// Changelog:
-//   0.1: First version
-//	 0.2: Fixed sprite mapping bug.  1D mapping should work now.  
-//			Changed some register defines for consistency.
-//
-//////////////////////////////////////////////////////////////////////
+/*---------------------------------------------------------------------------------
+	$Id: video.h,v 1.10 2005-08-01 23:18:22 wntrmute Exp $
+
+	Video registers and defines
+
+	Copyright (C) 2005
+		Michael Noland (joat)
+		Jason Rogers (dovoto)
+		Dave Murphy (WinterMute)
+
+	This software is provided 'as-is', without any express or implied
+	warranty.  In no event will the authors be held liable for any
+	damages arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any
+	purpose, including commercial applications, and to alter it and
+	redistribute it freely, subject to the following restrictions:
+
+	1.	The origin of this software must not be misrepresented; you
+		must not claim that you wrote the original software. If you use
+		this software in a product, an acknowledgment in the product
+		documentation would be appreciated but is not required.
+	2.	Altered source versions must be plainly marked as such, and
+		must not be misrepresented as being the original software.
+	3.	This notice may not be removed or altered from any source
+		distribution.
+
+	$Log: not supported by cvs2svn $
+
+---------------------------------------------------------------------------------*/
 
 #ifndef VIDEO_ARM9_INCLUDE
 #define VIDEO_ARM9_INCLUDE
@@ -41,7 +40,7 @@
 
 //////////////////////////////////////////////////////////////////////
 
-#include <NDS/jtypes.h>
+#include <nds/jtypes.h>
 
 //////////////////////////////////////////////////////////////////////
 
@@ -199,32 +198,22 @@ typedef enum
 	VRAM_I_SUB_SPRITE_EXT_PALETTE = 3,
 
 }VRAM_I_TYPE;
-//////////////////////////////////////////////////
+
   uint32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d);
   void vramRestorMainBanks(uint32 vramTemp);
 
-//////////////////////////////////////////////////
-  void vramSetBankA(VRAM_A_TYPE a);
-//////////////////////////////////////////////////
-  void vramSetBankB(VRAM_B_TYPE b);
-//////////////////////////////////////////////////
-  void vramSetBankC(VRAM_C_TYPE c);
-///////////////////////////////////////////////////
-  void vramSetBankD(VRAM_D_TYPE d);
-////////////////////////////////////////////////////
-  void vramSetBankE(VRAM_E_TYPE e);
-  ////////////////////////////////////////////////////
-  void vramSetBankF(VRAM_F_TYPE f);
-  ////////////////////////////////////////////////////
-  void vramSetBankG(VRAM_G_TYPE g);
-  ////////////////////////////////////////////////////
-  void vramSetBankH(VRAM_H_TYPE h);
-  ////////////////////////////////////////////////////
-  void vramSetBankI(VRAM_I_TYPE i);
-//////////////////////////////////////////////////////////////////////
-// Display control registers
-//////////////////////////////////////////////////////////////////////
+void vramSetBankA(VRAM_A_TYPE a);
+void vramSetBankB(VRAM_B_TYPE b);
+void vramSetBankC(VRAM_C_TYPE c);
+void vramSetBankD(VRAM_D_TYPE d);
+void vramSetBankE(VRAM_E_TYPE e);
+void vramSetBankF(VRAM_F_TYPE f);
+void vramSetBankG(VRAM_G_TYPE g);
+void vramSetBankH(VRAM_H_TYPE h);
+void vramSetBankI(VRAM_I_TYPE i);
 
+
+// Display control registers
 #define DISPLAY_CR       (*(vuint32*)0x04000000)
 #define SUB_DISPLAY_CR   (*(vuint32*)0x04001000)
 
@@ -296,12 +285,9 @@ typedef enum
 
 #define videoSetMode(mode)  (DISPLAY_CR = (mode))
 #define videoSetModeSub(mode)  (SUB_DISPLAY_CR = (mode))
-//////////////////////////////////////////////////////////////////////
 
 #define BRIGHTNESS     (*(vuint16*)0x0400006C)
 #define SUB_BRIGHTNESS (*(vuint16*)0x0400106C)
-
-//////////////////////////////////////////////////////////////////////
 
 #define BG_CR		    ((vuint16*)0x04000008)
 #define BG0_CR         (*(vuint16*)0x04000008)
@@ -314,8 +300,6 @@ typedef enum
 #define SUB_BG1_CR     (*(vuint16*)0x0400100A)
 #define SUB_BG2_CR     (*(vuint16*)0x0400100C)
 #define SUB_BG3_CR     (*(vuint16*)0x0400100E)
-
-//////////////////////////////////////////////////////////////////////
 
 #define BG_256_COLOR   (BIT(7))
 #define BG_16_COLOR    (0)
@@ -371,7 +355,6 @@ typedef enum
 #define BG_PALETTE_SLOT1 0
 #define BG_PALETTE_SLOT2 BIT(13)
 #define BG_PALETTE_SLOT3 BIT(13)
-//////////////////////////////////////////////////////////////////////
 
 #define BG0_X0         (*(vuint16*)0x04000010)
 #define BG0_Y0         (*(vuint16*)0x04000012)
@@ -396,8 +379,6 @@ typedef enum
 #define BG3_CX         (*(vuint32*)0x04000038)
 #define BG3_CY         (*(vuint32*)0x0400003C)
 
-//////////////////////////////////////////////////////////////////////
-
 #define SUB_BG0_X0     (*(vuint16*)0x04001010)
 #define SUB_BG0_Y0     (*(vuint16*)0x04001012)
 #define SUB_BG1_X0     (*(vuint16*)0x04001014)
@@ -421,7 +402,6 @@ typedef enum
 #define SUB_BG3_CX     (*(vuint32*)0x04001038)
 #define SUB_BG3_CY     (*(vuint32*)0x0400103C)
 
-//////////////////////////////////////////////////////////////////////
 
 // Window 0
 #define WIN0_X0        (*(vuint8*)0x04000041)
@@ -453,12 +433,10 @@ typedef enum
 #define SUB_WIN_IN     (*(vuint16*)0x04001048)
 #define SUB_WIN_OUT    (*(vuint16*)0x0400104A)
 
-//////////////////////////////////////////////////////////////////////
 
 #define MOSAIC_CR      (*(vuint16*)0x0400004C)
 #define SUB_MOSAIC_CR  (*(vuint16*)0x0400104C)
 
-//////////////////////////////////////////////////////////////////////
 
 #define BLEND_CR       (*(vuint16*)0x04000050)
 #define BLEND_AB       (*(vuint16*)0x04000052)
@@ -487,11 +465,9 @@ typedef enum
 #define BLEND_DST_SPRITE   (1<<12)
 #define BLEND_DST_BACKDROP (1<<13)
 
-//////////////////////////////////////////////////////////////////////
 // Background control defines
-//////////////////////////////////////////////////////////////////////
-///
-///BGxCNT defines ///
+
+// BGxCNT defines ///
 #define BG_MOSAIC_ENABLE    0x40
 #define BG_COLOR_256      0x80
 #define BG_COLOR_16        0x0
@@ -515,9 +491,7 @@ typedef enum
 
 #define WRAPAROUND              0x1
 
-//////////////////////////////////////////////////////////////////////
 // Sprite control defines
-//////////////////////////////////////////////////////////////////////
 
 // Attribute 0 consists of 8 bits of Y plus the following flags:
 #define ATTR0_NORMAL          (0<<8)
@@ -553,9 +527,9 @@ typedef enum
 #define ATTR2_PRIORITY(n)     ((n)<<10)
 #define ATTR2_PALETTE(n)      ((n)<<12)
 #define ATTR2_ALPHA(n)		  ((n)<<12)
-//////////////////////////////////////////////////////////////////////
+
+
 // Sprite structures
-//////////////////////////////////////////////////////////////////////
 
 typedef struct sSpriteEntry {
   uint16 attribute[3];
@@ -577,9 +551,7 @@ typedef struct sSpriteRotation {
   uint16 vdy;
 } SpriteRotation, * pSpriteRotation;
 
-//////////////////////////////////////////////////////////////////////
 // 3D core control
-//////////////////////////////////////////////////////////////////////
 
 #define GFX_CONTROL           (*(vuint16*) 0x04000060)
 
@@ -618,9 +590,7 @@ typedef struct sSpriteRotation {
 #define GFX_TOON_TABLE		  ((vuint16*)  0x04000380)
 #define GFX_EDGE_TABLE		  ((vuint16*)  0x04000330)
 
-//////////////////////////////////////////////////////////////////////
 // Matrix processor control
-//////////////////////////////////////////////////////////////////////
 
 #define MATRIX_CONTROL    (*(vuint32*)0x04000440)
 #define MATRIX_PUSH       (*(vuint32*)0x04000444)
@@ -636,12 +606,8 @@ typedef struct sSpriteRotation {
 #define MATRIX_MULT4x3    (*(vfixed*) 0x04000464)
 #define MATRIX_MULT3x3    (*(vfixed*) 0x04000468)
 
-//////////////////////////////////////////////////////////////////////
-
 #ifdef __cplusplus
 }
 #endif
 
 #endif
-
-//////////////////////////////////////////////////////////////////////

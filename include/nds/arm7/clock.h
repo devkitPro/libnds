@@ -1,37 +1,37 @@
-//////////////////////////////////////////////////////////////////////
-//
-// clock.h -- Real-time clock code for the ARM7
-//
-// version 0.1, February 14, 2005
-//
-//  Copyright (C) 2005 Michael Noland (joat) and Jason Rogers (dovoto)
-//
-//  This software is provided 'as-is', without any express or implied
-//  warranty.  In no event will the authors be held liable for any
-//  damages arising from the use of this software.
-//
-//  Permission is granted to anyone to use this software for any
-//  purpose, including commercial applications, and to alter it and
-//  redistribute it freely, subject to the following restrictions:
-//
-//  1. The origin of this software must not be misrepresented; you
-//     must not claim that you wrote the original software. If you use
-//     this software in a product, an acknowledgment in the product
-//     documentation would be appreciated but is not required.
-//  2. Altered source versions must be plainly marked as such, and
-//     must not be misrepresented as being the original software.
-//  3. This notice may not be removed or altered from any source
-//     distribution.
-//
-// Changelog:
-//   0.1: First version
-//
-//////////////////////////////////////////////////////////////////////
+/*---------------------------------------------------------------------------------
+	$Id: clock.h,v 1.3 2005-08-01 23:18:22 wntrmute Exp $
+
+	ARM7 realtime clock
+
+	Copyright (C) 2005
+		Michael Noland (joat)
+		Jason Rogers (dovoto)
+		Dave Murphy (WinterMute)
+
+	This software is provided 'as-is', without any express or implied
+	warranty.  In no event will the authors be held liable for any
+	damages arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any
+	purpose, including commercial applications, and to alter it and
+	redistribute it freely, subject to the following restrictions:
+
+	1.	The origin of this software must not be misrepresented; you
+		must not claim that you wrote the original software. If you use
+		this software in a product, an acknowledgment in the product
+		documentation would be appreciated but is not required.
+	2.	Altered source versions must be plainly marked as such, and
+		must not be misrepresented as being the original software.
+	3.	This notice may not be removed or altered from any source
+		distribution.
+
+	$Log: not supported by cvs2svn $
+
+---------------------------------------------------------------------------------*/
 
 #ifndef ARM7_CLOCK_INCLUDE
 #define ARM7_CLOCK_INCLUDE
 
-//////////////////////////////////////////////////////////////////////
 
 #ifndef ARM7
 #error The clock is only available on the ARM7
@@ -41,11 +41,8 @@
 extern "C" {
 #endif
 
-//////////////////////////////////////////////////////////////////////
 
 #include <nds/arm7/serial.h>
-
-//////////////////////////////////////////////////////////////////////
 
 // RTC registers
 #define WRITE_STATUS_REG1  0x60
@@ -92,7 +89,6 @@ extern "C" {
 #define READ_FREE_REG      0x6E
 #define WRITE_FREE_REG     0x6F
 
-//////////////////////////////////////////////////////////////////////
 
 void rtcReset(void);
 void rtcTransaction(uint8 * command, uint32 commandLength, uint8 * result, uint32 resultLength);
@@ -103,7 +99,6 @@ void rtcGetData(uint8 * data, uint32 size);
 void BCDToInteger(uint8 * data, uint32 length);
 void integerToBCD(uint8 * data, uint32 length);
 
-//////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 }
@@ -111,4 +106,3 @@ void integerToBCD(uint8 * data, uint32 length);
 
 #endif
 
-//////////////////////////////////////////////////////////////////////

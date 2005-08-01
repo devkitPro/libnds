@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.9 2005-07-29 05:19:55 dovoto Exp $
+	$Id: videoGL.c,v 1.10 2005-08-01 23:18:22 wntrmute Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2005/07/29 05:19:55  dovoto
+	Had s and t swapped in glTextCoord2f
+	
 	Revision 1.8  2005/07/27 15:54:58  wntrmute
 	Synchronise with ndslib.
 	
@@ -42,7 +45,11 @@
 
 ---------------------------------------------------------------------------------*/
 
-#include <nds.h>
+#include <nds/jtypes.h>
+#include <nds/memory.h>
+#include <nds/arm9/math.h>
+#include <nds/arm9/video.h>
+#include <nds/arm9/videoGL.h>
 #include <nds/arm9/trig_lut.h>
 
 

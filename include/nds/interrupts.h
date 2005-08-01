@@ -1,55 +1,39 @@
+/*---------------------------------------------------------------------------------
+	$Id: interrupts.h,v 1.3 2005-08-01 23:18:22 wntrmute Exp $
 
+	Interrupt registers and vector pointers
 
+	Copyright (C) 2005
+		Jason Rogers (dovoto)
+		Dave Murphy (WinterMute)
 
+	This software is provided 'as-is', without any express or implied
+	warranty.  In no event will the authors be held liable for any
+	damages arising from the use of this software.
 
+	Permission is granted to anyone to use this software for any
+	purpose, including commercial applications, and to alter it and
+	redistribute it freely, subject to the following restrictions:
 
+	1.	The origin of this software must not be misrepresented; you
+		must not claim that you wrote the original software. If you use
+		this software in a product, an acknowledgment in the product
+		documentation would be appreciated but is not required.
 
+	2.	Altered source versions must be plainly marked as such, and
+		must not be misrepresented as being the original software.
 
+	3.	This notice may not be removed or altered from any source
+		distribution.
 
+	$Log: not supported by cvs2svn $
 
-
-
-
-
-
-
-//////////////////////////////////////////////////////////////////////
-//
-// interrupts.h -- Interrupt registers and vector pointers
-//
-// version 0.1, February 14, 2005
-//
-//  Copyright (C) 2005 Michael Noland (joat) and Jason Rogers (dovoto)
-//
-//  This software is provided 'as-is', without any express or implied
-//  warranty.  In no event will the authors be held liable for any
-//  damages arising from the use of this software.
-//
-//  Permission is granted to anyone to use this software for any
-//  purpose, including commercial applications, and to alter it and
-//  redistribute it freely, subject to the following restrictions:
-//
-//  1. The origin of this software must not be misrepresented; you
-//     must not claim that you wrote the original software. If you use
-//     this software in a product, an acknowledgment in the product
-//     documentation would be appreciated but is not required.
-//  2. Altered source versions must be plainly marked as such, and
-//     must not be misrepresented as being the original software.
-//  3. This notice may not be removed or altered from any source
-//     distribution.
-//
-// Changelog:
-//   0.1: First version
-//	 0.2: Added a simple slow default irq handler and support functions
-//
-//////////////////////////////////////////////////////////////////////
+---------------------------------------------------------------------------------*/
 
 #ifndef NDS_INTERRUPTS_INCLUDE
 #define NDS_INTERRUPTS_INCLUDE
 
-//////////////////////////////////////////////////////////////////////
-// Interrupt Control /////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
+#include <nds/jtypes.h>
 
 // Interrupt flags for IE and IF
 #define IRQ_VBLANK     (1 << 0)
@@ -76,23 +60,26 @@
 #define IRQ_ALL			(~0)
 
 
-
-//////////////////////////////////////////////////////////////////////
-
-// IE: Interrupt Enable Register
-// This is the activation mask for the internal interrupts.  Unless
-// the corresponding bit is set, the IRQ will be masked out.
+/*---------------------------------------------------------------------------------
+	IE: Interrupt Enable Register
+	This is the activation mask for the internal interrupts.  Unless
+	the corresponding bit is set, the IRQ will be masked out.
+---------------------------------------------------------------------------------*/
 #define IE             (*(vuint32*)0x04000210)
 
-// IF: Interrupt Flags Register
-// Since there is only one hardware interrupt vector, the IF register
-// contains flags to indicate when a particular sort of interrupt
-// has occured.
+/*---------------------------------------------------------------------------------
+	IF: Interrupt Flags Register
+	Since there is only one hardware interrupt vector, the IF register
+	contains flags to indicate when a particular sort of interrupt
+	has occured.
+---------------------------------------------------------------------------------*/
 #define IF             (*(vuint32*)0x04000214)
 
-// IME: Interrupt Master Enable Register
-// When bit 0 is clear, all interrupts are masked.  When it is 1,
-// interrupts will occur if not masked out.
+/*---------------------------------------------------------------------------------
+	IME: Interrupt Master Enable Register
+	When bit 0 is clear, all interrupts are masked.  When it is 1,
+	interrupts will occur if not masked out.
+---------------------------------------------------------------------------------*/
 #define IME            (*(vuint16*)0x04000208)
 
 // Values for IME
@@ -100,7 +87,6 @@
 #define IME_ENABLED    (1)
 
 
-//////////////////////////////////////////////////////////////////////
 
 #ifdef ARM7
 #define VBLANK_INTR_WAIT_FLAGS  (*(vuint32*)(0x04000000-8))
@@ -108,32 +94,26 @@
 #endif
 
 #ifdef ARM9
-//#include <NDS/ARM9/CP15.h>
-//#define VBLANK_INTR_WAIT_FLAGS  (*(vuint32*)((CP15_GetDTCM() & ~0xFFF) + 0x3FF8))
-//#define IRQ_HANDLER             (*(VoidFunctionPointer *)((CP15_GetDTCM() & ~0xFFF) + 0x3FFC))
+
 #define VBLANK_INTR_WAIT_FLAGS  (*(vuint32*)0x00803FF8)
 #define IRQ_HANDLER             (*(VoidFunctionPointer *)0x00803FFC)
 #endif
 
-//////////////////////////////////////////////////////////////////////
 #ifdef __cplusplus
 extern "C" {
 #endif
-//////////////////////////////////////////////////////////////////////
+
+
 void irqSet(int irq, VoidFunctionPointer handler);
 void irqClear(int irq);
 void irqInitHandler(VoidFunctionPointer handler);
 void irqDefaultHandler(void);
 void irqEnable(int irq);
 void irqDisable(int irq);
-//////////////////////////////////////////////////////////////////////
+
 #ifdef __cplusplus
 }
 #endif
-//////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////////////////////////////////////////
+#endif //NDS_INTERRUPTS_INCLUDE
 
-#endif
-
-//////////////////////////////////////////////////////////////////////

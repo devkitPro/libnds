@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: trig_lut.h,v 1.5 2005-07-29 00:35:52 wntrmute Exp $
+	$Id: trig_lut.h,v 1.6 2005-08-01 23:18:22 wntrmute Exp $
 
 	Trig_lut.h provides access to external precompiled trig look up tables
 
@@ -26,7 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
-	
+	Revision 1.5  2005/07/29 00:35:52  wntrmute
+	update file header
+	reference externs directly
 
 ---------------------------------------------------------------------------------*/
 #ifndef TRIG_LUT_H

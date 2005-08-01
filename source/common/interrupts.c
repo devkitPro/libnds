@@ -28,8 +28,8 @@
 //
 //////////////////////////////////////////////////////////////////////
 
-#include <nds.h>
-
+#include <nds/interrupts.h>
+#include <nds/system.h>
 
 void irqDummy(void)
 {
