@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.h,v 1.4 2005-08-01 23:12:17 wntrmute Exp $
+	$Id: touch.h,v 1.5 2005-08-03 17:36:23 wntrmute Exp $
 
 	Microphone control for the ARM7
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/08/01 23:12:17  wntrmute
+	extended touchReadXY to return touchscreen co-ordinates as well as screen co-ordinates
+	
 	Revision 1.3  2005/07/29 00:57:40  wntrmute
 	updated file headers
 	added touchReadXY function
@@ -62,12 +65,7 @@ extern "C" {
 #define TSC_MEASURE_AUX      0xE4
 #define TSC_MEASURE_TEMP2    0xF4
 
-typedef struct touchPosition {
-	int16	x;
-	int16	y;
-	int16	px;
-	int16	py;
-} touchPosition;
+
 
 touchPosition touchReadXY();
 
