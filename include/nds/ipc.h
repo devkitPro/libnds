@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: ipc.h,v 1.9 2005-07-27 02:20:05 wntrmute Exp $
+	$Id: ipc.h,v 1.10 2005-08-03 05:26:42 wntrmute Exp $
 
 	Inter Processor Communication
 
@@ -26,6 +26,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2005/07/27 02:20:05  wntrmute
+	resynchronise with ndslib
+	Updated GL with float wrappers for NeHe
+	
 
 ---------------------------------------------------------------------------------*/
 
@@ -33,7 +37,7 @@
 #define NDS_IPC_INCLUDE
 
 
-#include "jtypes.h"
+#include <nds/jtypes.h>
 
 
 //---------------------------------------------------------------------------------
@@ -45,16 +49,16 @@ typedef struct sTransferSoundData {
   u8 vol;
   u8 pan;
   u8 format;
-  u8 PADDING[1];
+  u8 PADDING;
 } TransferSoundData, * pTransferSoundData;
  
  
 //---------------------------------------------------------------------------------
 typedef struct sTransferSound {
 //---------------------------------------------------------------------------------
+  TransferSoundData data[16];
   u8 count;
   u8 PADDING[3];
-  TransferSoundData data[16];
 } TransferSound, * pTransferSound;
  
 
@@ -113,8 +117,8 @@ typedef struct sTransferRegion {
 //---------------------------------------------------------------------------------
 #define IPC_SYNC				(*(vuint16*)0x04000180)
 
-#define IPC_SYNC_IRQ_ENABLE		(1<<14)
-#define IPC_SYNC_IRQ_REQUEST	(1<<13)
+#define IPC_SYNC_IRQ_ENABLE		BIT(14)
+#define IPC_SYNC_IRQ_REQUEST	BIT(13)
 
 #define IPC_SYNC_SEND_COMMAND(n)	(IPC_SYNC = (IPC_SYNC & 0xF0FF) | (((n) & 0xF) << 8) | IPC_SYNC_IRQ_REQUEST)
 #define IPC_SYNC_GET_COMMAND		((IPC_SYNC & 0xF) )

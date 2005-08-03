@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: bios.h,v 1.3 2005-08-01 23:18:22 wntrmute Exp $
+	$Id: bios.h,v 1.4 2005-08-03 05:26:42 wntrmute Exp $
 
 	BIOS functions
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/08/01 23:18:22  wntrmute
+	adjusted headers for logging
+	
 
 ---------------------------------------------------------------------------------*/
 
@@ -67,14 +70,13 @@ extern void swiDelay(uint32 duration);
 					1: Wait until the interrupt has been set since the call
 	flags - interrupt sensitivity bitmask to wait for
 ---------------------------------------------------------------------------------*/
-
-extern void swiIntrWait(int waitForSet, uint32 flags);
+void swiIntrWait(int waitForSet, uint32 flags);
 
 /*---------------------------------------------------------------------------------
 	WaitForVBlank (swi 0x05)
 	Identical to calling IntrWait(1, 1)
 ---------------------------------------------------------------------------------*/
-extern void swiWaitForVBlank(void);
+void swiWaitForVBlank(void);
 
 #ifdef ARM9
 /*---------------------------------------------------------------------------------
@@ -82,27 +84,28 @@ extern void swiWaitForVBlank(void);
 		mov r0, #0
 		MCR p15, 0, r0, c7, c0, 4
 ---------------------------------------------------------------------------------*/
+void swiWaitForIRQ(void);
 
-extern void swiWaitForIRQ(void);
-#endif
+#endif // ARM9
 
 #ifdef ARM7
 /*---------------------------------------------------------------------------------
 	Halt (swi 0x06)
 	Identical to calling SetHaltCR(?)
 ---------------------------------------------------------------------------------*/
-extern void swiHalt(void);
+void swiHalt(void);
 /*---------------------------------------------------------------------------------
 	Sleep (swi 0x07)
 	Identical to calling SetHaltCR(?)
 ---------------------------------------------------------------------------------*/
-extern void swiSleep(void);
+void swiSleep(void);
 /*---------------------------------------------------------------------------------
 	SetHaltCR(uint32 data) (swi 0x1F)
 	Writes data to 0x04000300:32
 ---------------------------------------------------------------------------------*/
-extern void swiSetHaltCr(uint32 data);
-#endif
+void swiSetHaltCr(uint32 data);
+
+#endif //ARM7
 
 //////////////////////////////////////////////////////////////////////
 //
@@ -114,7 +117,7 @@ extern void swiSetHaltCr(uint32 data);
 //
 //////////////////////////////////////////////////////////////////////
 
-extern void swiChangeSoundBias(int enabled, int delay);
+void swiChangeSoundBias(int enabled, int delay);
 
 //////////////////////////////////////////////////////////////////////
 //
