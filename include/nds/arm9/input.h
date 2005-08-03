@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: keys.h,v 1.5 2005-08-01 23:18:22 wntrmute Exp $
+	$Id: input.h,v 1.1 2005-08-03 17:37:28 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -27,6 +27,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/08/01 23:18:22  wntrmute
+	adjusted headers for logging
+	
 	Revision 1.4  2005/07/25 02:31:07  wntrmute
 	made local variables static
 	added proper header to keys.h
@@ -43,8 +46,8 @@
 ---------------------------------------------------------------------------------*/
 
 //---------------------------------------------------------------------------------
-#ifndef	_keys_h_
-#define	_keys_h_
+#ifndef	_input_h_
+#define	_input_h_
 //---------------------------------------------------------------------------------
 
 #include <nds/jtypes.h>
@@ -62,6 +65,8 @@ void keysInit();
 u32 keysHeld();
 u32 keysDown();
 u32 keysUp();
+
+touchPosition touchReadXY();
 
 #ifdef __cplusplus
 }
