@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: pcx.c,v 1.2 2005-08-01 23:18:22 wntrmute Exp $
+	$Id: pcx.c,v 1.3 2005-08-03 05:05:59 dovoto Exp $
 
 
   Copyright (C) 2005
@@ -24,6 +24,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/08/01 23:18:22  wntrmute
+	adjusted headers for logging
+	
 	Revision 1.1  2005/07/27 02:20:52  wntrmute
 	add image functions
 
@@ -82,7 +85,7 @@ int loadPCX(unsigned char* pcx, sImage* image)
 	pal = (RGB_24*)(pcx + 1);
 
 	for(i = 0; i < 256; i++)
-		image->palette[i] = RGB15(pal[i].r >> 3 ,pal[i].g >> 3 , pal[i].b >> 3) ;
+		image->palette[i] = RGB15((pal[i].r + 4) >> 3 ,(pal[i].g + 4) >> 3 , (pal[i].b + 4) >> 3) ;
 	
 	return 1;
 }
