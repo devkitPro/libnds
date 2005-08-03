@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: serial.h,v 1.3 2005-08-01 23:18:22 wntrmute Exp $
+	$Id: serial.h,v 1.4 2005-08-03 05:16:02 wntrmute Exp $
 
 	ARM7 serial control
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/08/01 23:18:22  wntrmute
+	adjusted headers for logging
+	
 
 ---------------------------------------------------------------------------------*/
 
@@ -70,9 +73,20 @@
 #define SPI_BAUDRATE_2Mhz 1
 #define SPI_BAUDRATE_1Mhz 2
 #define SPI_CONTINUOUS    (1<<11)
-#define PM_AMP_OFFSET     2
-#define PM_AMP_ON         1
-#define PM_AMP_OFF    	  0
+
+
+#define PM_CONTROL		0
+
+#define PM_SOUND_PWR		BIT(0)
+#define PM_SOUND_VOL		BIT(1)
+#define PM_BACKLIGHT_BOTTOM	BIT(2)
+#define PM_BACKLIGHT_TOP	BIT(3)
+#define PM_LED_CONTROL(m)	(m)<<4
+#define PM_SYSTEM_PWR		BIT(6)
+
+#define PM_AMP_OFFSET	2
+#define PM_AMP_ON	1
+#define PM_AMP_OFF	0
 
 static inline void SerialWaitBusy() {   while (SERIAL_CR & SERIAL_BUSY) swiDelay(1); }
 
