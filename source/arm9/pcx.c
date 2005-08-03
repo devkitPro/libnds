@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: pcx.c,v 1.3 2005-08-03 05:05:59 dovoto Exp $
+	$Id: pcx.c,v 1.4 2005-08-03 05:18:06 wntrmute Exp $
 
 
   Copyright (C) 2005
@@ -24,6 +24,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/08/03 05:05:59  dovoto
+	added rounding to palette conversion
+	
 	Revision 1.2  2005/08/01 23:18:22  wntrmute
 	adjusted headers for logging
 	
@@ -36,8 +39,9 @@
 #include <nds/arm9/image.h>
 #include <malloc.h>
 
-int loadPCX(unsigned char* pcx, sImage* image)
-{
+//---------------------------------------------------------------------------------
+int loadPCX(unsigned char* pcx, sImage* image) {
+//---------------------------------------------------------------------------------
 	//struct rgb {unsigned char b,g,r;};
 	RGB_24* pal;
 	
@@ -64,15 +68,12 @@ int loadPCX(unsigned char* pcx, sImage* image)
 	
 	count = 0;
 
-	while(count < size)
-	{
+	while(count < size) {
 		c = *pcx++;
 		
-		if(c < 192)
+		if(c < 192) {
 			image->data8[count++] = c;
-
-		else
-		{
+		} else {
 			run = c - 192;
 		
 			c = *pcx++;
