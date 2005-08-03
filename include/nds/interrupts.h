@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.3 2005-08-01 23:18:22 wntrmute Exp $
+	$Id: interrupts.h,v 1.4 2005-08-03 05:17:26 wntrmute Exp $
 
 	Interrupt registers and vector pointers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/08/01 23:18:22  wntrmute
+	adjusted headers for logging
+	
 
 ---------------------------------------------------------------------------------*/
 
@@ -36,27 +39,26 @@
 #include <nds/jtypes.h>
 
 // Interrupt flags for IE and IF
-#define IRQ_VBLANK     (1 << 0)
-#define IRQ_HBLANK     (1 << 1)
-#define IRQ_YTRIGGER   (1 << 2)
-#define IRQ_TIMER0     (1 << 3)
-#define IRQ_TIMER1     (1 << 4)
-#define IRQ_TIMER2     (1 << 5)
-#define IRQ_TIMER3     (1 << 6)
-#define IRQ_NETWORK    (1 << 7)
-#define IRQ_DMA0       (1 << 8)
-#define IRQ_DMA1       (1 << 9)
-#define IRQ_DMA2       (1 << 10)
-#define IRQ_DMA3       (1 << 11)
-#define IRQ_KEYS       (1 << 12)
-#define IRQ_CART       (1 << 13)
-#define IRQ_SYNC		(1 << 16)
-#define IRQ_CARD       (1 << 19)
-#define IRQ_CARD_LINE  (1 << 20)
+#define IRQ_VBLANK			BIT(0)
+#define IRQ_HBLANK			BIT(1)
+#define IRQ_YTRIGGER		BIT(2)
+#define IRQ_TIMER0			BIT(3)
+#define IRQ_TIMER1			BIT(4)
+#define IRQ_TIMER2			BIT(5)
+#define IRQ_TIMER3			BIT(6)
+#define IRQ_NETWORK			BIT(7)
+#define IRQ_DMA0			BIT(8)
+#define IRQ_DMA1			BIT(9)
+#define IRQ_DMA2			BIT(10)
+#define IRQ_DMA3			BIT(11)
+#define IRQ_KEYS			BIT(12)
+#define IRQ_CART			BIT(13)
+#define IRQ_IPC_SYNC		BIT(16)
+#define IRQ_FIFO_FULL		BIT(17)
+#define IRQ_FIFO_NOT_EMPTY	BIT(18)
+#define IRQ_CARD			BIT(19)
+#define IRQ_CARD_LINE		BIT(20)
 
-#define IRQ_IPC_SYNC    BIT(16)
-#define IRQ_FIFO_EMPTY  BIT(17)
-#define IRQ_FIFO_FULL	BIT(18)
 #define IRQ_ALL			(~0)
 
 
