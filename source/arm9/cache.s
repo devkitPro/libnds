@@ -1,4 +1,6 @@
 /*---------------------------------------------------------------------------------
+  $Id: cache.s,v 1.3 2005-08-03 05:12:29 wntrmute Exp $
+
   Copyright (C) 2005
   	Michael Noland (joat)
   	Jason Rogers (dovoto)
@@ -20,6 +22,8 @@
      must not be misrepresented as being the original software.
   3. This notice may not be removed or altered from any source
      distribution.
+
+  $Log: not supported by cvs2svn $
 
 ---------------------------------------------------------------------------------*/
 #define ICACHE_SIZE	0x2000
@@ -56,7 +60,7 @@ DC_FlushRange:
 	Clean and invalidate a range
 ---------------------------------------------------------------------------------*/
 	add	r1, r1, r0
-	bic	r0, r0, #CACHE_LINE_SIZE - 1
+	bic	r0, r0, #(CACHE_LINE_SIZE - 1)
 .flush:
 	mcr	p15, 0, r0, c7, c14, 1		@ clean and flush address
 	add	r0, r0, #CACHE_LINE_SIZE
