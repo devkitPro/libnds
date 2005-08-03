@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: jtypes.h,v 1.8 2005-07-29 00:55:04 wntrmute Exp $
+	$Id: jtypes.h,v 1.9 2005-08-03 17:38:05 wntrmute Exp $
 
 	jtypes.h -- Common types (and a few useful macros)
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2005/07/29 00:55:04  wntrmute
+	removed more useless section macros
+	
 	Revision 1.7  2005/07/29 00:40:50  wntrmute
 	removed useless section macros
 	added C++ compatible bool
@@ -132,6 +135,16 @@ typedef volatile s8           vs8;
 typedef volatile s16          vs16;
 typedef volatile s32          vs32;
 typedef volatile s64          vs64;
+
+
+
+typedef struct touchPosition {
+	int16	x;
+	int16	y;
+	int16	px;
+	int16	py;
+} touchPosition;
+
 
 #ifndef __cplusplus
 /** C++ compatible bool for C
