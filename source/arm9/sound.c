@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: sound.c,v 1.1 2005-08-03 05:28:07 wntrmute Exp $
+	$Id: sound.c,v 1.2 2005-08-04 17:57:58 wntrmute Exp $
 
 	Sound Functions
 
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.1  2005/08/03 05:28:07  wntrmute
+	added arm9 sound functions
+	
 
 ---------------------------------------------------------------------------------*/
 #include <nds/arm9/sound.h>
@@ -31,7 +34,7 @@
 #include <string.h>
 
 //---------------------------------------------------------------------------------
-void playSoundBlock(TransferSound *snd) {
+static void playSoundBlock(TransferSound *snd) {
 //---------------------------------------------------------------------------------
 	DC_FlushRange( snd, sizeof(TransferSound) );
 
@@ -39,37 +42,17 @@ void playSoundBlock(TransferSound *snd) {
 }
 
 //---------------------------------------------------------------------------------
-static TransferSound Snd = 
-//---------------------------------------------------------------------------------
-{
-	{
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 },
-		{ (void *)0 , 0, 11025, 64, 64, 1 }
-	}
-};
+static TransferSound Snd;
+static TransferSoundData SndDat =		{ (void *)0 , 0, 11025, 64, 64, 1 };
 
 //---------------------------------------------------------------------------------
 void setGenericSound( u32 rate, u8 vol, u8 pan, u8 format) {
 //---------------------------------------------------------------------------------
 
-	Snd.data[0].rate	= rate;
-	Snd.data[0].vol		= vol;
-	Snd.data[0].pan		= pan;
-	Snd.data[0].format	= format;
+	SndDat.rate		= rate;
+	SndDat.vol		= vol;
+	SndDat.pan		= pan;
+	SndDat.format	= format;
 }
 
 //---------------------------------------------------------------------------------
@@ -77,7 +60,7 @@ void playSound( pTransferSoundData sound) {
 //---------------------------------------------------------------------------------
 	Snd.count = 1;
 
-	memcpy( &Snd.data[0], sound, sizeof(TransferSoundData) );
+	memcpy( &SndDat, sound, sizeof(TransferSoundData) );
 
 	playSoundBlock(&Snd);
 
@@ -86,8 +69,9 @@ void playSound( pTransferSoundData sound) {
 //---------------------------------------------------------------------------------
 void playGenericSound(const void* data, u32 length) {
 //---------------------------------------------------------------------------------
-	
 	Snd.count = 1;
+
+	memcpy( &Snd.data[0], &SndDat, sizeof(TransferSoundData) );
 	Snd.data[0].data = data;
 	Snd.data[0].len = length;
 

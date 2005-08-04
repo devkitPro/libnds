@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: sound.h,v 1.1 2005-08-03 05:28:07 wntrmute Exp $
+	$Id: sound.h,v 1.2 2005-08-04 17:57:58 wntrmute Exp $
 
 	Sound Functions
 
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.1  2005/08/03 05:28:07  wntrmute
+	added arm9 sound functions
+	
 
 ---------------------------------------------------------------------------------*/
 #ifndef _sound_h_
@@ -35,7 +38,6 @@ extern "C" {
 
 #include <nds/ipc.h>
 
-void playSoundBlock(TransferSound *snd);
 void playSound( pTransferSoundData sound);
 void playGenericSound(const void* data, u32 length);
 
