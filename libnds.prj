@@ -14,15 +14,15 @@ Include Sub Directories=1
 [Open Files]
 Open File0=
 Active File Display Mode=-1
-Open File Pos0=2077
-Open File Line0=1489
-Active File Index=3
-Open File Window Pos0=0,1,-1,-1,-4,-23,0,0,874,443
-Open File1=C:\projects\devkitPro\libnds\include\nds\jtypes.h
-Open File Pos1=4448
-Open File Line1=3663
-Open File Window Pos1=0,1,-1,-1,-4,-23,22,22,900,469
-Open File2=C:\projects\devkitPro\libnds\include\nds\arm9\input.h
+Open File Pos0=2827
+Open File Line0=1762
+Active File Index=0
+Open File Window Pos0=2,3,-1,-1,-4,-23,0,0,918,359
+Open File1=C:\projects\devkitPro\libnds\include\nds\arm9\sound.h
+Open File Pos1=1311
+Open File Line1=386
+Open File Window Pos1=0,1,-1,-1,-4,-23,22,22,944,385
+Open File2=
 Open File Pos2=1964
 Open File Line2=1104
 Open File Window Pos2=0,1,-1,-1,-4,-23,44,44,922,491
@@ -108,7 +108,7 @@ Open File Line22=4362
 Open File Window Pos22=0,1,-1,-1,-4,-23,154,154,1031,598
 Open File23=
 [File View]
-Current Select=Project Files\Makefile
+Current Select=Project Files\source\arm9\sound.c
 Scroll Position=0
 [Files]
 0=include\
