@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: image.h,v 1.1 2005-07-27 02:20:52 wntrmute Exp $
+	$Id: image.h,v 1.2 2005-08-11 14:53:00 desktopman Exp $
 
 
   Copyright (C) 2005
@@ -24,6 +24,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.1  2005/07/27 02:20:52  wntrmute
+	add image functions
+	
 
 ---------------------------------------------------------------------------------*/
 #ifndef IMAGE_H
@@ -56,6 +59,7 @@
 extern "C" {
 #endif
 
+void image24to16(sImage* img);
 void image8to16(sImage* img);
 void image8to16trans(sImage* img, u8 transperentColor);
 void imageDestroy(sImage* img);
