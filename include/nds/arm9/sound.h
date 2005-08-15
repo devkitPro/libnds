@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: sound.h,v 1.2 2005-08-04 17:57:58 wntrmute Exp $
+	$Id: sound.h,v 1.3 2005-08-15 03:49:25 wntrmute Exp $
 
 	Sound Functions
 
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/08/04 17:57:58  wntrmute
+	playSoundBlock internal only
+	
 	Revision 1.1  2005/08/03 05:28:07  wntrmute
 	added arm9 sound functions
 	
@@ -39,6 +42,7 @@ extern "C" {
 #include <nds/ipc.h>
 
 void playSound( pTransferSoundData sound);
+void setGenericSound( u32 rate, u8 vol, u8 pan, u8 format);
 void playGenericSound(const void* data, u32 length);
 
 
