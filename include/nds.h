@@ -54,6 +54,7 @@ extern "C" {
 #include "nds/arm9/math.h"
 #include "nds/arm9/input.h"
 #include "nds/arm9/cache.h"
+#include "nds/arm9/videoGL.h"
 
 #endif
 
