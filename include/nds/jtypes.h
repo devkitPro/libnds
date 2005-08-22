@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: jtypes.h,v 1.9 2005-08-03 17:38:05 wntrmute Exp $
+	$Id: jtypes.h,v 1.10 2005-08-22 08:09:48 wntrmute Exp $
 
 	jtypes.h -- Common types (and a few useful macros)
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2005/08/03 17:38:05  wntrmute
+	added touch struct
+	
 	Revision 1.8  2005/07/29 00:55:04  wntrmute
 	removed more useless section macros
 	
@@ -136,6 +139,7 @@ typedef volatile s16          vs16;
 typedef volatile s32          vs32;
 typedef volatile s64          vs64;
 
+typedef int f32;             // 1.19.12 fixed point for matricies
 
 
 typedef struct touchPosition {
