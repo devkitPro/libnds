@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.8 2005-07-27 15:54:57 wntrmute Exp $
+	$Id: videoGL.h,v 1.9 2005-08-22 08:05:53 wntrmute Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,12 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2005/07/27 15:54:57  wntrmute
+	Synchronise with ndslib.
+	
+	Added f32 version of glTextCoord
+	fixed glBindTexture (0,0) now clears fomatting
+	
 	Revision 1.7  2005/07/27 02:20:05  wntrmute
 	resynchronise with ndslib
 	Updated GL with float wrappers for NeHe
@@ -40,7 +46,6 @@
 #ifndef VIDEOGL_ARM9_INCLUDE
 #define VIDEOGL_ARM9_INCLUDE
 
-#undef NO_GL_INLINE
 //---------------------------------------------------------------------------------
 
 #ifndef ARM9
@@ -64,7 +69,6 @@
 #define GLfloat float
 
 
-typedef int f32;             // 1.19.12 fixed point for matricies
 #define intof32(n)           ((n) << 12)
 #define f32toint(n)          ((n) >> 12)
 #define floatof32(n)         ((f32)((n) * (1 << 12)))
@@ -305,154 +309,11 @@ void glNormal3f(float x, float y, float z);
 	void glFlush(void);
 	void glMaterialShinnyness(void);
 	void glPolyFmt(int alpha); 
-#endif
 
-#ifndef NO_GL_INLINE
+#else
 
-static inline void glSetAlpha(int alpha) { GFX_ALPHA = alpha; }
-
-static inline void glBegin(int mode) { GFX_BEGIN = mode; }
-
-static inline void glEnd( void) { GFX_END = 0; }
-
-static inline void glClearColor(uint8 red, uint8 green, uint8 blue) { GFX_CLEAR_COLOR = RGB15(red, green, blue); }
-
-static inline void glClearDepth(uint16 depth) { GFX_CLEAR_DEPTH = depth; }
-
-static inline void glColor3b(uint8 red, uint8 green, uint8 blue) { GFX_COLOR = (vuint32)RGB15(red>>3, green>>3, blue>>3); }
-
-
-static inline void glColor(rgb color) { GFX_COLOR = (vuint32)color; }
-
-//---------------------------------------------------------------------------------
-static inline void glVertex3v16(v16 x, v16 y, v16 z) {
-//---------------------------------------------------------------------------------
-	GFX_VERTEX16 = (y << 16) | (x & 0xFFFF);
-	GFX_VERTEX16 = ((uint32)(uint16)z);
-}
-
-
-//---------------------------------------------------------------------------------
-static inline void glVertex2v16(int yx, v16 z) {
-//---------------------------------------------------------------------------------
-	GFX_VERTEX16 = yx;
-	GFX_VERTEX16 = (z);
-}
-
-static inline void glTexCoord2t16(t16 u, t16 v) { GFX_TEX_COORD = TEXTURE_PACK(u,v); }
-
-static inline void glTexCoord1i(uint32 uv) { GFX_TEX_COORD = uv; }
-
-static inline void glPushMatrix(void) { MATRIX_PUSH = 0; }
-
-static inline void glPopMatrix(int32 index) { MATRIX_POP = index; }
-
-static inline void glRestoreMatrix(int32 index) { MATRIX_RESTORE = index; }
-
-
-static inline void glStoreMatrix(int32 index) { MATRIX_STORE = index; }
-
-//---------------------------------------------------------------------------------
-static inline void glScalev(vector* v) { 
-//---------------------------------------------------------------------------------
-	MATRIX_SCALE = v->x;
-	MATRIX_SCALE = v->y;
-	MATRIX_SCALE = v->z;
-}
-
-
-//---------------------------------------------------------------------------------
-static inline void glTranslatev(vector* v) {
-//---------------------------------------------------------------------------------
-	MATRIX_TRANSLATE = v->x;
-	MATRIX_TRANSLATE = v->y;
-	MATRIX_TRANSLATE = v->z;
-}
-
-//---------------------------------------------------------------------------------
-static inline void glTranslate3f32(f32 x, f32 y, f32 z) {
-//---------------------------------------------------------------------------------
-	MATRIX_TRANSLATE = x;
-	MATRIX_TRANSLATE = y;
-	MATRIX_TRANSLATE = z;
-}
-
-//---------------------------------------------------------------------------------
-static inline void glScalef32(f32 factor) {
-//---------------------------------------------------------------------------------
-	MATRIX_SCALE = factor;
-	MATRIX_SCALE = factor;
-	MATRIX_SCALE = factor;
-}
-
-//---------------------------------------------------------------------------------
-static inline void glTranslatef32(f32 delta) {
-//---------------------------------------------------------------------------------
-	MATRIX_TRANSLATE = delta;
-	MATRIX_TRANSLATE = delta;
-	MATRIX_TRANSLATE = delta;
-}
-
-//---------------------------------------------------------------------------------
-static inline void glLight(int id, rgb color, v10 x, v10 y, v10 z) {
-//---------------------------------------------------------------------------------
-	id = (id & 3) << 30;
-	GFX_LIGHT_VECTOR = id | ((z & 0x3FF) << 20) | ((y & 0x3FF) << 10) | (x & 0x3FF);
-	GFX_LIGHT_COLOR = id | color;
-}
-
-static inline void glNormal(uint32 normal) { GFX_NORMAL = normal; }
-
-static inline void glLoadIdentity(void) { MATRIX_IDENTITY = 0; }
-static inline void glIdentity(void) { MATRIX_IDENTITY = 0; }
-
-static inline void glMatrixMode(int mode) { MATRIX_CONTROL = mode; }
-
-static inline void glViewPort(uint8 x1, uint8 y1, uint8 x2, uint8 y2) { GFX_VIEWPORT = (x1) + (y1 << 8) + (x2 << 16) + (y2 << 24); }
-
-static inline void glFlush(void) { GFX_FLUSH = 2; }
-
-//---------------------------------------------------------------------------------
-static inline void glMaterialShinyness(void) {
-//---------------------------------------------------------------------------------
-	uint32 shiny32[128/4];
-	uint8  *shiny8 = (uint8*)shiny32;
-
-	int i;
-
-	for (i = 0; i < 128 * 2; i += 2)
-		shiny8[i>>1] = i;
-
-	for (i = 0; i < 128 / 4; i++)
-		GFX_SHININESS = shiny32[i];
-}
-
-static inline void glPolyFmt(int alpha) // obviously more to this
-{
-  GFX_POLY_FORMAT = alpha;
-}
-
-//---------------------------------------------------------------------------------
-//Display lists have issues that need to resolving.
-//There seems to be some issues with list size.
-//---------------------------------------------------------------------------------
-static inline void glCallList(u32* list)
-//---------------------------------------------------------------------------------
-{
-	u32 count = *list++;
-
-	while(count--)
-		GFX_FIFO = *list++;
-
-	//this works sometimes??
-//	DMA_SRC(0) = (uint32)list;
-//	DMA_DEST(0) = 0x4000400;
-//	DMA_CR(0) = DMA_FIFO | count;
-//
-//	while(DMA_CR(0) & DMA_BUSY);
-
-}
-
+	#include "videoGL.inl"
+	
 #endif  //endif #no inline
 #ifdef __cplusplus
 }

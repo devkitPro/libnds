@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.10 2005-08-01 23:18:22 wntrmute Exp $
+	$Id: videoGL.c,v 1.11 2005-08-22 08:05:53 wntrmute Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.10  2005/08/01 23:18:22  wntrmute
+	adjusted headers for logging
+	
 	Revision 1.9  2005/07/29 05:19:55  dovoto
 	Had s and t swapped in glTextCoord2f
 	
@@ -53,743 +56,557 @@
 #include <nds/arm9/trig_lut.h>
 
 
-
-#ifdef NO_GL_INLINE
-//////////////////////////////////////////////////////////////////////
-
-void glBegin(int mode)
-{
-  GFX_BEGIN = mode;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glEnd( void)
-{
-  GFX_END = 0;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glClearColor(uint8 red, uint8 green, uint8 blue)
-{
-  GFX_CLEAR_COLOR = RGB15(red, green, blue);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glClearDepth(uint16 depth)
-{
-  GFX_CLEAR_DEPTH = depth;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glColor3b(uint8 red, uint8 green, uint8 blue)
-{
-  GFX_COLOR = (vuint32)RGB15(red, green, blue);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glColor(rgb color)
-{
-  GFX_COLOR = (vuint32)color;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glVertex3v16(v16 x, v16 y, v16 z)
-{
-  GFX_VERTEX16 = (y << 16) | (x & 0xFFFF);
-  GFX_VERTEX16 = ((uint32)(uint16)z);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glVertex2v16(int yx, v16 z)
-{
-  GFX_VERTEX16 = yx;
-  GFX_VERTEX16 = (z);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glTexCoord2t16(t16 u, t16 v)
-{
-  GFX_TEX_COORD = (u << 16) + v;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glTexCoord1i(uint32 uv)
-{
-  GFX_TEX_COORD = uv;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glPushMatrix(void)
-{
-  MATRIX_PUSH = 0;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glPopMatrix(int32 index)
-{
-  MATRIX_POP = index;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glRestoreMatrix(int32 index)
-{
-  MATRIX_RESTORE = index;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glStoreMatrix(int32 index)
-{
-  MATRIX_STORE = index;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glScalev(vector* v)
-{
-  MATRIX_SCALE = v->x;
-  MATRIX_SCALE = v->y;
-  MATRIX_SCALE = v->z;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glTranslatev(vector* v)
-{
-  MATRIX_TRANSLATE = v->x;
-  MATRIX_TRANSLATE = v->y;
-  MATRIX_TRANSLATE = v->z;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glTranslate3f32(f32 x, f32 y, f32 z)
-{
-  MATRIX_TRANSLATE = x;
-  MATRIX_TRANSLATE = y;
-  MATRIX_TRANSLATE = z;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glScalef32(f32 factor)
-{
-  MATRIX_SCALE = factor;
-  MATRIX_SCALE = factor;
-  MATRIX_SCALE = factor;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glTranslatef32(f32 delta)
-{
-  MATRIX_TRANSLATE = delta;
-  MATRIX_TRANSLATE = delta;
-  MATRIX_TRANSLATE = delta;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glLight(int id, rgb color, v10 x, v10 y, v10 z)
-{
-  id = (id & 3) << 30;
-  GFX_LIGHT_VECTOR = id | ((z & 0x3FF) << 20) | ((y & 0x3FF) << 10) | (x & 0x3FF);
-  GFX_LIGHT_COLOR = id | color;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glNormal(uint32 normal)
-{
-  GFX_NORMAL = normal;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glIdentity(void)
-{
-  MATRIX_IDENTITY = 0;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glMatrixMode(int mode)
-{
-  MATRIX_CONTROL = mode;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glViewPort(uint8 x1, uint8 y1, uint8 x2, uint8 y2)
-{
-  GFX_VIEWPORT = (x1) + (y1 << 8) + (x2 << 16) + (y2 << 24);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glFlush(void)
-{
-  GFX_FLUSH = 2;
-}
-
-
-void glMaterialShinyness(void)
-
-{
-	uint32 shiny32[128/4];
-	uint8  *shiny8 = (uint8*)shiny32;
-
-	int i;
-
-	for (i = 0; i < 128 * 2; i += 2)
-		shiny8[i>>1] = i;
-
-	for (i = 0; i < 128 / 4; i++)
-		GFX_SHININESS = shiny32[i];
-}
-
-//////////////////////////////////////////////////////////////////////
-
-  void glPolyFmt(int alpha) // obviously more to this
-{
-  GFX_POLY_FORMAT = alpha;
-}
-
-#endif  //endif #no inline
-//////////////////////////////////////////////////////////////////////
-
-
 static uint16 enable_bits = GL_TEXTURE_2D | (1<<13) | (1<<14);
 
-//////////////////////////////////////////////////////////////////////
 
-void glEnable(int bits)
-{
+//---------------------------------------------------------------------------------
+void glEnable(int bits) {
+//---------------------------------------------------------------------------------
 	enable_bits |= bits | (GL_TEXTURE_2D|GL_TOON_HIGHLIGHT|GL_OUTLINE|GL_ANTIALIAS);
 	GFX_CONTROL = enable_bits;
 }
 
-//////////////////////////////////////////////////////////////////////
 
-void glDisable(int bits)
-{
+//---------------------------------------------------------------------------------
+void glDisable(int bits) {
+//---------------------------------------------------------------------------------
 	enable_bits &= ~(bits | (GL_TEXTURE_2D|GL_TOON_HIGHLIGHT|GL_OUTLINE|GL_ANTIALIAS));
 	GFX_CONTROL = enable_bits;
 }
 
-//////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
+void glLoadMatrix4x4(m4x4 * m) {
+//---------------------------------------------------------------------------------
+	MATRIX_LOAD4x4 = m->m[0];
+	MATRIX_LOAD4x4 = m->m[1];
+	MATRIX_LOAD4x4 = m->m[2];
+	MATRIX_LOAD4x4 = m->m[3];
 
-void glLoadMatrix4x4(m4x4 * m)
-{
-  MATRIX_LOAD4x4 = m->m[0];
-  MATRIX_LOAD4x4 = m->m[1];
-  MATRIX_LOAD4x4 = m->m[2];
-  MATRIX_LOAD4x4 = m->m[3];
+	MATRIX_LOAD4x4 = m->m[4];
+	MATRIX_LOAD4x4 = m->m[5];
+	MATRIX_LOAD4x4 = m->m[6];
+	MATRIX_LOAD4x4 = m->m[7];
 
-  MATRIX_LOAD4x4 = m->m[4];
-  MATRIX_LOAD4x4 = m->m[5];
-  MATRIX_LOAD4x4 = m->m[6];
-  MATRIX_LOAD4x4 = m->m[7];
+	MATRIX_LOAD4x4 = m->m[8];
+	MATRIX_LOAD4x4 = m->m[9];
+	MATRIX_LOAD4x4 = m->m[10];
+	MATRIX_LOAD4x4 = m->m[11];
 
-  MATRIX_LOAD4x4 = m->m[8];
-  MATRIX_LOAD4x4 = m->m[9];
-  MATRIX_LOAD4x4 = m->m[10];
-  MATRIX_LOAD4x4 = m->m[11];
-
-  MATRIX_LOAD4x4 = m->m[12];
-  MATRIX_LOAD4x4 = m->m[13];
-  MATRIX_LOAD4x4 = m->m[14];
-  MATRIX_LOAD4x4 = m->m[15];
+	MATRIX_LOAD4x4 = m->m[12];
+	MATRIX_LOAD4x4 = m->m[13];
+	MATRIX_LOAD4x4 = m->m[14];
+	MATRIX_LOAD4x4 = m->m[15];
 }
 
-//////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
+void glLoadMatrix4x3(m4x3* m) {
+//---------------------------------------------------------------------------------
+	MATRIX_LOAD4x3 = m->m[0];
+	MATRIX_LOAD4x3 = m->m[1];
+	MATRIX_LOAD4x3 = m->m[2];
+	MATRIX_LOAD4x3 = m->m[3];
 
-void glLoadMatrix4x3(m4x3* m)
-{
-  MATRIX_LOAD4x3 = m->m[0];
-  MATRIX_LOAD4x3 = m->m[1];
-  MATRIX_LOAD4x3 = m->m[2];
-  MATRIX_LOAD4x3 = m->m[3];
+	MATRIX_LOAD4x3 = m->m[4];
+	MATRIX_LOAD4x3 = m->m[5];
+	MATRIX_LOAD4x3 = m->m[6];
+	MATRIX_LOAD4x3 = m->m[7];
 
-  MATRIX_LOAD4x3 = m->m[4];
-  MATRIX_LOAD4x3 = m->m[5];
-  MATRIX_LOAD4x3 = m->m[6];
-  MATRIX_LOAD4x3 = m->m[7];
-
-  MATRIX_LOAD4x3 = m->m[8];
-  MATRIX_LOAD4x3 = m->m[9];
-  MATRIX_LOAD4x3 = m->m[10];
-  MATRIX_LOAD4x3 = m->m[11];
+	MATRIX_LOAD4x3 = m->m[8];
+	MATRIX_LOAD4x3 = m->m[9];
+	MATRIX_LOAD4x3 = m->m[10];
+	MATRIX_LOAD4x3 = m->m[11];
 }
 
-//////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
+void glMultMatrix4x4(m4x4* m) {
+//---------------------------------------------------------------------------------
+	MATRIX_MULT4x4 = m->m[0];
+	MATRIX_MULT4x4 = m->m[1];
+	MATRIX_MULT4x4 = m->m[2];
+	MATRIX_MULT4x4 = m->m[3];
 
-void glMultMatrix4x4(m4x4* m)
-{
-  MATRIX_MULT4x4 = m->m[0];
-  MATRIX_MULT4x4 = m->m[1];
-  MATRIX_MULT4x4 = m->m[2];
-  MATRIX_MULT4x4 = m->m[3];
+	MATRIX_MULT4x4 = m->m[4];
+	MATRIX_MULT4x4 = m->m[5];
+	MATRIX_MULT4x4 = m->m[6];
+	MATRIX_MULT4x4 = m->m[7];
 
-  MATRIX_MULT4x4 = m->m[4];
-  MATRIX_MULT4x4 = m->m[5];
-  MATRIX_MULT4x4 = m->m[6];
-  MATRIX_MULT4x4 = m->m[7];
+	MATRIX_MULT4x4 = m->m[8];
+	MATRIX_MULT4x4 = m->m[9];
+	MATRIX_MULT4x4 = m->m[10];
+	MATRIX_MULT4x4 = m->m[11];
 
-  MATRIX_MULT4x4 = m->m[8];
-  MATRIX_MULT4x4 = m->m[9];
-  MATRIX_MULT4x4 = m->m[10];
-  MATRIX_MULT4x4 = m->m[11];
-
-  MATRIX_MULT4x4 = m->m[12];
-  MATRIX_MULT4x4 = m->m[13];
-  MATRIX_MULT4x4 = m->m[14];
-  MATRIX_MULT4x4 = m->m[15];
+	MATRIX_MULT4x4 = m->m[12];
+	MATRIX_MULT4x4 = m->m[13];
+	MATRIX_MULT4x4 = m->m[14];
+	MATRIX_MULT4x4 = m->m[15];
 }
 
-//////////////////////////////////////////////////////////////////////
 
-void glMultMatrix4x3(m4x3* m)
-{
-  MATRIX_MULT4x3 = m->m[0];
-  MATRIX_MULT4x3 = m->m[1];
-  MATRIX_MULT4x3 = m->m[2];
-  MATRIX_MULT4x3 = m->m[3];
+//---------------------------------------------------------------------------------
+void glMultMatrix4x3(m4x3* m) {
+//---------------------------------------------------------------------------------
+	MATRIX_MULT4x3 = m->m[0];
+	MATRIX_MULT4x3 = m->m[1];
+	MATRIX_MULT4x3 = m->m[2];
+	MATRIX_MULT4x3 = m->m[3];
 
-  MATRIX_MULT4x3 = m->m[4];
-  MATRIX_MULT4x3 = m->m[5];
-  MATRIX_MULT4x3 = m->m[6];
-  MATRIX_MULT4x3 = m->m[7];
+	MATRIX_MULT4x3 = m->m[4];
+	MATRIX_MULT4x3 = m->m[5];
+	MATRIX_MULT4x3 = m->m[6];
+	MATRIX_MULT4x3 = m->m[7];
 
-  MATRIX_MULT4x3 = m->m[8];
-  MATRIX_MULT4x3 = m->m[9];
-  MATRIX_MULT4x3 = m->m[10];
-  MATRIX_MULT4x3 = m->m[11];
+	MATRIX_MULT4x3 = m->m[8];
+	MATRIX_MULT4x3 = m->m[9];
+	MATRIX_MULT4x3 = m->m[10];
+	MATRIX_MULT4x3 = m->m[11];
+ 
+}
 
+//---------------------------------------------------------------------------------
+void glMultMatrix3x3(m3x3* m) {
+//---------------------------------------------------------------------------------
+	MATRIX_MULT3x3 = m->m[0];
+	MATRIX_MULT3x3 = m->m[1];
+	MATRIX_MULT3x3 = m->m[2];
   
-}void glMultMatrix3x3(m3x3* m)
-{
-  MATRIX_MULT3x3 = m->m[0];
-  MATRIX_MULT3x3 = m->m[1];
-  MATRIX_MULT3x3 = m->m[2];
+	MATRIX_MULT3x3 = m->m[3];
+	MATRIX_MULT3x3 = m->m[4];
+	MATRIX_MULT3x3 = m->m[5];
   
-  MATRIX_MULT3x3 = m->m[3];
-  MATRIX_MULT3x3 = m->m[4];
-  MATRIX_MULT3x3 = m->m[5];
-  
-  MATRIX_MULT3x3 = m->m[6];
-  MATRIX_MULT3x3 = m->m[7];
-  MATRIX_MULT3x3 = m->m[8];
+	MATRIX_MULT3x3 = m->m[6];
+	MATRIX_MULT3x3 = m->m[7];
+	MATRIX_MULT3x3 = m->m[8];
 }
 
-//////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
 // Integer rotation (not gl standard)
 //	based on 512 degree circle
-void glRotateZi(int angle)
-{
+//---------------------------------------------------------------------------------
+void glRotateZi(int angle) {
+//---------------------------------------------------------------------------------
+	f32 sine = SIN[angle &  LUT_MASK];
+	f32 cosine = COS[angle & LUT_MASK];
 
-  f32 sine = SIN[angle &  LUT_MASK];
-  f32 cosine = COS[angle & LUT_MASK];
+	MATRIX_MULT3x3 = cosine;
+	MATRIX_MULT3x3 = sine;
+	MATRIX_MULT3x3 = 0;
 
-  MATRIX_MULT3x3 = cosine;
-  MATRIX_MULT3x3 = sine;
-  MATRIX_MULT3x3 = 0;
-
-  MATRIX_MULT3x3 = - sine;
-  MATRIX_MULT3x3 = cosine;
-  MATRIX_MULT3x3 = 0;
+	MATRIX_MULT3x3 = - sine;
+	MATRIX_MULT3x3 = cosine;
+	MATRIX_MULT3x3 = 0;
   
-  MATRIX_MULT3x3 = 0;
-  MATRIX_MULT3x3 = 0;
-  MATRIX_MULT3x3 = intof32(1);
+	MATRIX_MULT3x3 = 0;
+	MATRIX_MULT3x3 = 0;
+	MATRIX_MULT3x3 = intof32(1);
 }
 
-//////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
+void glRotateYi(int angle) {
+//---------------------------------------------------------------------------------
+	f32 sine = SIN[angle &  LUT_MASK];
+	f32 cosine = COS[angle & LUT_MASK];
 
-void glRotateYi(int angle)
-{
-  f32 sine = SIN[angle &  LUT_MASK];
-  f32 cosine = COS[angle & LUT_MASK];
-
-  MATRIX_MULT3x3 = cosine;
-  MATRIX_MULT3x3 = 0;
-  MATRIX_MULT3x3 = -sine;
+	MATRIX_MULT3x3 = cosine;
+	MATRIX_MULT3x3 = 0;
+	MATRIX_MULT3x3 = -sine;
   
-  MATRIX_MULT3x3 = 0;
-  MATRIX_MULT3x3 = intof32(1);
-  MATRIX_MULT3x3 = 0;
+	MATRIX_MULT3x3 = 0;
+	MATRIX_MULT3x3 = intof32(1);
+	MATRIX_MULT3x3 = 0;
   
-  MATRIX_MULT3x3 = sine;
-  MATRIX_MULT3x3 = 0;
-  MATRIX_MULT3x3 = cosine;
+	MATRIX_MULT3x3 = sine;
+	MATRIX_MULT3x3 = 0;
+	MATRIX_MULT3x3 = cosine;
 }
 
-//////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
+void glRotateXi(int angle) {
+//---------------------------------------------------------------------------------
+	f32 sine = SIN[angle &  LUT_MASK];
+	f32 cosine = COS[angle & LUT_MASK];
 
-void glRotateXi(int angle)
-{
-  f32 sine = SIN[angle &  LUT_MASK];
-  f32 cosine = COS[angle & LUT_MASK];
+	MATRIX_MULT3x3 = intof32(1);
+	MATRIX_MULT3x3 = 0;
+	MATRIX_MULT3x3 = 0;
 
-  MATRIX_MULT3x3 = intof32(1);
-  MATRIX_MULT3x3 = 0;
-  MATRIX_MULT3x3 = 0;
-
-  MATRIX_MULT3x3 = 0;
-  MATRIX_MULT3x3 = cosine;
-  MATRIX_MULT3x3 = sine;
+	MATRIX_MULT3x3 = 0;
+	MATRIX_MULT3x3 = cosine;
+	MATRIX_MULT3x3 = sine;
   
-  MATRIX_MULT3x3 = 0;
-  MATRIX_MULT3x3 = -sine;
-  MATRIX_MULT3x3 = cosine;
+	MATRIX_MULT3x3 = 0;
+	MATRIX_MULT3x3 = -sine;
+	MATRIX_MULT3x3 = cosine;
 }
 
-//////////////////////////////////////////////////////////////////////
- 
+//---------------------------------------------------------------------------------
+void glRotatef32i(int angle, f32 x, f32 y, f32 z) {
+//---------------------------------------------------------------------------------
 
-void glRotatef32i(int angle, f32 x, f32 y, f32 z)
-{
+	f32 axis[3];
+	f32 sine = SIN[angle &  LUT_MASK];
+	f32 cosine = COS[angle & LUT_MASK];
+	f32 one_minus_cosine = intof32(1) - cosine;
 
-  f32 axis[3];
-  f32 sine = SIN[angle &  LUT_MASK];
-  f32 cosine = COS[angle & LUT_MASK];
-  f32 one_minus_cosine = intof32(1) - cosine;
+	axis[0]=x;
+	axis[1]=y;
+	axis[2]=z;
 
-  axis[0]=x;
-  axis[1]=y;
-  axis[2]=z;
+	normalizef32(axis);   // should require passed in normalized?
 
-  normalizef32(axis);   // should require passed in normalized?
+	MATRIX_MULT3x3 = cosine + mulf32(one_minus_cosine, mulf32(axis[0], axis[0]));
+	MATRIX_MULT3x3 = mulf32(one_minus_cosine, mulf32(axis[0], axis[1])) - mulf32(axis[2], sine);
+	MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[0]), axis[2]) + mulf32(axis[1], sine);
 
-  MATRIX_MULT3x3 = cosine + mulf32(one_minus_cosine, mulf32(axis[0], axis[0]));
-  MATRIX_MULT3x3 = mulf32(one_minus_cosine, mulf32(axis[0], axis[1])) - mulf32(axis[2], sine);
-  MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[0]), axis[2]) + mulf32(axis[1], sine);
+	MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[0]),  axis[1]) + mulf32(axis[2], sine);
+	MATRIX_MULT3x3 = cosine + mulf32(mulf32(one_minus_cosine, axis[1]), axis[1]);
+	MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[1]), axis[2]) - mulf32(axis[0], sine);
 
-  MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[0]),  axis[1]) + mulf32(axis[2], sine);
-  MATRIX_MULT3x3 = cosine + mulf32(mulf32(one_minus_cosine, axis[1]), axis[1]);
-  MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[1]), axis[2]) - mulf32(axis[0], sine);
-
-  MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[0]), axis[2]) - mulf32(axis[1], sine);
-  MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[1]), axis[2]) + mulf32(axis[0], sine);
-  MATRIX_MULT3x3 = cosine + mulf32(mulf32(one_minus_cosine, axis[2]), axis[2]);
+	MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[0]), axis[2]) - mulf32(axis[1], sine);
+	MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[1]), axis[2]) + mulf32(axis[0], sine);
+	MATRIX_MULT3x3 = cosine + mulf32(mulf32(one_minus_cosine, axis[2]), axis[2]);
 
 }
 
  
 
 
-void glRotatef32(float angle, f32 x, f32 y, f32 z)
-{
+//---------------------------------------------------------------------------------
+void glRotatef32(float angle, f32 x, f32 y, f32 z) {
+//---------------------------------------------------------------------------------
     glRotatef32i((int)(angle * LUT_SIZE / 360.0), x, y, z);
 }
 
-void glRotatef(float angle, float x, float y, float z)
-{
+//---------------------------------------------------------------------------------
+void glRotatef(float angle, float x, float y, float z) {
+//---------------------------------------------------------------------------------
 	glRotatef32(angle, floatof32(x), floatof32(y), floatof32(z));
 }
-//////////////////////////////////////////////////////////////////////
+
+
+//---------------------------------------------------------------------------------
 //	rotations wrapped in float...mainly for testing
-void glRotateX(float angle)
-{
+//---------------------------------------------------------------------------------
+void glRotateX(float angle) {
+//---------------------------------------------------------------------------------
 	glRotateXi((int)(angle * LUT_SIZE / 360.0));
 }
-//////////////////////////////////////////////////////////////////////
 
-void glRotateY(float angle)
-{
+//---------------------------------------------------------------------------------
+void glRotateY(float angle) {
+//---------------------------------------------------------------------------------
 	glRotateYi((int)(angle * LUT_SIZE / 360.0));
 }
-///////////////////////////////////////////////////////////////////////
-void glRotateZ(float angle)
-{
+
+//---------------------------------------------------------------------------------
+void glRotateZ(float angle) {
+//---------------------------------------------------------------------------------
 	glRotateZi((int)(angle * LUT_SIZE / 360.0));
 }
 
+//---------------------------------------------------------------------------------
 //float wrappers for porting
-void glVertex3f(float x, float y, float z)
-{
+//---------------------------------------------------------------------------------
+void glVertex3f(float x, float y, float z) {
+//---------------------------------------------------------------------------------
 	glVertex3v16(floatov16(x), floatov16(y), floatov16(z));
 }
-void glTexCoord2f(float s, float t)
-{
+
+//---------------------------------------------------------------------------------
+void glTexCoord2f(float s, float t) {
+//---------------------------------------------------------------------------------
 	glTexCoord2t16(floatot16(s*127), floatot16(t*127));
 }
 
-void glColor3f(float r, float g, float b)
-{
+//---------------------------------------------------------------------------------
+void glColor3f(float r, float g, float b) {
+//---------------------------------------------------------------------------------
 	glColor3b((uint8)(r*255), (uint8)(g*255), (uint8)(b*255));
 }
-void glScalef(float x, float y, float z)
-{
+
+//---------------------------------------------------------------------------------
+void glScalef(float x, float y, float z) {
+//---------------------------------------------------------------------------------
 	MATRIX_SCALE = floatof32(x);
 	MATRIX_SCALE = floatof32(y);
 	MATRIX_SCALE = floatof32(z);
 }
-void glTranslatef(float x, float y, float z)
-{
+
+//---------------------------------------------------------------------------------
+void glTranslatef(float x, float y, float z) {
+//---------------------------------------------------------------------------------
 	MATRIX_TRANSLATE = floatof32(x);
     MATRIX_TRANSLATE = floatof32(y);
     MATRIX_TRANSLATE = floatof32(z);
 }
 
-void glNormal3f(float x, float y, float z)
-{
+//---------------------------------------------------------------------------------
+void glNormal3f(float x, float y, float z) {
+//---------------------------------------------------------------------------------
 	if(x >= 1 || x <= -1) x *= .95;
 	if(y >= 1 || y <= -1) y *= .95;
 	if(z >= 1 || z <= -1) z *= .95;
 
 	glNormal(NORMAL_PACK(floatov10(x), floatov10(y), floatov10(z)));
 }
-//////////////////////////////////////////////////////////////////////
+
+//---------------------------------------------------------------------------------
 // Fixed point look at function, it appears to work as expected although 
 //	testing is recomended
-void gluLookAtf32(f32 eyex, f32 eyey, f32 eyez, f32 lookAtx, f32 lookAty, f32 lookAtz, f32 upx, f32 upy, f32 upz) 
-{ 
-  f32 side[3], forward[3], up[3]; 
+//---------------------------------------------------------------------------------
+void gluLookAtf32(f32 eyex, f32 eyey, f32 eyez, f32 lookAtx, f32 lookAty, f32 lookAtz, f32 upx, f32 upy, f32 upz)  { 
+//---------------------------------------------------------------------------------
+	f32 side[3], forward[3], up[3]; 
 
-  forward[0] = lookAtx - eyex; 
-  forward[1] = lookAty - eyey; 
-  forward[2] = lookAtz - eyez; 
+	forward[0] = lookAtx - eyex; 
+	forward[1] = lookAty - eyey; 
+	forward[2] = lookAtz - eyez; 
 
-  normalizef32(forward); 
+	normalizef32(forward); 
 
-  up[0] = upx; 
-  up[1] = upy; 
-  up[2] = upz; 
+	up[0] = upx; 
+	up[1] = upy; 
+	up[2] = upz; 
 
-  crossf32(forward, up, side); 
+	crossf32(forward, up, side); 
 
-  normalizef32(side); 
+	normalizef32(side); 
 
-  crossf32(side, forward, up); 
+	crossf32(side, forward, up); 
 
-  glMatrixMode(GL_MODELVIEW); 
+	glMatrixMode(GL_MODELVIEW); 
 
  
-  // should we use MATRIX_MULT4x3 as in ogl|es?? 
+	// should we use MATRIX_MULT4x3 as in ogl|es?? 
 
-  MATRIX_LOAD4x3 =  side[0]; 
-  MATRIX_LOAD4x3 =  up[0]; 
-  MATRIX_LOAD4x3 = -forward[0]; 
+	MATRIX_LOAD4x3 =  side[0]; 
+	MATRIX_LOAD4x3 =  up[0]; 
+	MATRIX_LOAD4x3 = -forward[0]; 
 
-  MATRIX_LOAD4x3 =  side[1]; 
-  MATRIX_LOAD4x3 =  up[1]; 
-  MATRIX_LOAD4x3 = -forward[1]; 
+	MATRIX_LOAD4x3 =  side[1]; 
+	MATRIX_LOAD4x3 =  up[1]; 
+	MATRIX_LOAD4x3 = -forward[1]; 
 
-  MATRIX_LOAD4x3 =  side[2]; 
-  MATRIX_LOAD4x3 =  up[2]; 
-  MATRIX_LOAD4x3 = -forward[2]; 
+	MATRIX_LOAD4x3 =  side[2]; 
+	MATRIX_LOAD4x3 =  up[2]; 
+	MATRIX_LOAD4x3 = -forward[2]; 
 
-  MATRIX_LOAD4x3 = -eyex; 
-  MATRIX_LOAD4x3 = -eyey; 
-  MATRIX_LOAD4x3 = -eyez; 
+	MATRIX_LOAD4x3 = -eyex; 
+	MATRIX_LOAD4x3 = -eyey; 
+	MATRIX_LOAD4x3 = -eyez; 
 
 }
 
  
 
 
-///////////////////////////////////////
+//---------------------------------------------------------------------------------
 //  glu wrapper for standard float call
-void gluLookAt(float eyex, float eyey, float eyez, float lookAtx, float lookAty, float lookAtz, float upx, float upy, float upz)
-{
+//---------------------------------------------------------------------------------
+void gluLookAt(	float eyex, float eyey, float eyez,
+				float lookAtx, float lookAty, float lookAtz,
+				float upx, float upy, float upz) {
+//---------------------------------------------------------------------------------
 	gluLookAtf32(floatof32(eyex), floatof32(eyey), floatof32(eyez), floatof32(lookAtx), floatof32(lookAty), floatof32(lookAtz),
 					floatof32(upx), floatof32(upy), floatof32(upz));
 }
-//////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//---------------------------------------------------------------------------------
 //	frustrum has only been tested as part of perspective
-void gluFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far)
-{
+//---------------------------------------------------------------------------------
+void gluFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far) {
+//---------------------------------------------------------------------------------
   
-   glMatrixMode(GL_PROJECTION);
+	glMatrixMode(GL_PROJECTION);
 
-   MATRIX_LOAD4x4 = divf32(2*near, right - left);     
-   MATRIX_LOAD4x4 = 0;  
-   MATRIX_LOAD4x4 = divf32(right + left, right - left);      
-   MATRIX_LOAD4x4 = 0;
+	MATRIX_LOAD4x4 = divf32(2*near, right - left);     
+	MATRIX_LOAD4x4 = 0;  
+	MATRIX_LOAD4x4 = divf32(right + left, right - left);      
+	MATRIX_LOAD4x4 = 0;
 
-   MATRIX_LOAD4x4 = 0;  
-   MATRIX_LOAD4x4 = divf32(2*near, top - bottom);     
-   MATRIX_LOAD4x4 = divf32(top + bottom, top - bottom);      
-   MATRIX_LOAD4x4 = 0;
+	MATRIX_LOAD4x4 = 0;  
+	MATRIX_LOAD4x4 = divf32(2*near, top - bottom);     
+	MATRIX_LOAD4x4 = divf32(top + bottom, top - bottom);      
+	MATRIX_LOAD4x4 = 0;
    
-   MATRIX_LOAD4x4 = 0;  
-   MATRIX_LOAD4x4 = 0;  
-   MATRIX_LOAD4x4 = -divf32(far + near, far - near);     
-   MATRIX_LOAD4x4 = floatof32(-1.0F);
+	MATRIX_LOAD4x4 = 0;  
+	MATRIX_LOAD4x4 = 0;  
+	MATRIX_LOAD4x4 = -divf32(far + near, far - near);     
+	MATRIX_LOAD4x4 = floatof32(-1.0F);
    
-   MATRIX_LOAD4x4 = 0;  
-   MATRIX_LOAD4x4 = 0;  
-   MATRIX_LOAD4x4 = -divf32(2 * mulf32(far, near), far - near);  
-   MATRIX_LOAD4x4 = 0;
+	MATRIX_LOAD4x4 = 0;  
+	MATRIX_LOAD4x4 = 0;  
+	MATRIX_LOAD4x4 = -divf32(2 * mulf32(far, near), far - near);  
+	MATRIX_LOAD4x4 = 0;
 	
-   glStoreMatrix(0);
+	glStoreMatrix(0);
 }
-///////////////////////////////////////
+
+
+//---------------------------------------------------------------------------------
 //  Frustrum wrapper
-void gluFrustum(float left, float right, float bottom, float top, float near, float far)
-{
+//---------------------------------------------------------------------------------
+void gluFrustum(float left, float right, float bottom, float top, float near, float far) {
+//---------------------------------------------------------------------------------
 	gluFrustumf32(floatof32(left), floatof32(right), floatof32(bottom), floatof32(top), floatof32(near), floatof32(far));
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
 //	Fixed point perspective setting
-void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar)
-{
-   f32 xmin, xmax, ymin, ymax;
+//---------------------------------------------------------------------------------
+void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar) {
+//---------------------------------------------------------------------------------
+	f32 xmin, xmax, ymin, ymax;
 
-   ymax = mulf32(zNear, TAN[fovy & LUT_MASK]);
-   ymin = -ymax;
-   xmin = mulf32(ymin, aspect);
-   xmax = mulf32(ymax, aspect);
+	ymax = mulf32(zNear, TAN[fovy & LUT_MASK]);
+	ymin = -ymax;
+	xmin = mulf32(ymin, aspect);
+	xmax = mulf32(ymax, aspect);
 
-   gluFrustumf32(xmin, xmax, ymin, ymax, zNear, zFar);
+	gluFrustumf32(xmin, xmax, ymin, ymax, zNear, zFar);
 }
 
-///////////////////////////////////////
+//---------------------------------------------------------------------------------
 //  glu wrapper for floating point
-void gluPerspective(float fovy, float aspect, float zNear, float zFar)
-{
-	
-	 gluPerspectivef32((int)(fovy * LUT_SIZE / 360.0), floatof32(aspect), floatof32(zNear), floatof32(zFar));    
+//---------------------------------------------------------------------------------
+void gluPerspective(float fovy, float aspect, float zNear, float zFar) {
+//---------------------------------------------------------------------------------
+	gluPerspectivef32((int)(fovy * LUT_SIZE / 360.0), floatof32(aspect), floatof32(zNear), floatof32(zFar));    
 }
 
 
-void glMaterialf(int mode, rgb color)
-{
-  static uint32 diffuse_ambient = 0;
-  static uint32 specular_emission = 0;
+//---------------------------------------------------------------------------------
+void glMaterialf(int mode, rgb color) {
+//---------------------------------------------------------------------------------
+	static uint32 diffuse_ambient = 0;
+	static uint32 specular_emission = 0;
 
-  switch(mode) {
-    case GL_AMBIENT:
-      diffuse_ambient = (color << 16) | (diffuse_ambient & 0xFFFF);
-      break;
-    case GL_DIFFUSE:
-      diffuse_ambient = color | (diffuse_ambient & 0xFFFF0000);
-      break;
-    case GL_AMBIENT_AND_DIFFUSE:
-      diffuse_ambient= color + (color << 16);
-      break;
-    case GL_SPECULAR:
-      specular_emission = color | (specular_emission & 0xFFFF0000);
-      break;
-    case GL_SHININESS:
-      break;
-    case GL_EMISSION:
-      specular_emission = (color << 16) | (specular_emission & 0xFFFF);
-      break;
-  }
+	switch(mode) {
+
+		case GL_AMBIENT:
+			diffuse_ambient = (color << 16) | (diffuse_ambient & 0xFFFF);
+			break;
+
+		case GL_DIFFUSE:
+			diffuse_ambient = color | (diffuse_ambient & 0xFFFF0000);
+			break;
+
+		case GL_AMBIENT_AND_DIFFUSE:
+			diffuse_ambient= color + (color << 16);
+			break;
+
+		case GL_SPECULAR:
+			specular_emission = color | (specular_emission & 0xFFFF0000);
+			break;
+
+		case GL_SHININESS:
+			break;
+
+		case GL_EMISSION:
+			specular_emission = (color << 16) | (specular_emission & 0xFFFF);
+			break;
+	}
+
+	GFX_DIFFUSE_AMBIENT = diffuse_ambient;
+	GFX_SPECULAR_EMISSION = specular_emission;
+}
+
+//---------------------------------------------------------------------------------
+void glResetMatrixStack(void) {
+//---------------------------------------------------------------------------------
+	// stack overflow ack ?
+	GFX_STATUS |= 1 << 15;
+
+	// pop the stacks to the top...seems projection stack is only 1 deep??
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix((GFX_STATUS>>13) & 1);
   
-  GFX_DIFFUSE_AMBIENT = diffuse_ambient;
-  GFX_SPECULAR_EMISSION = specular_emission;
+	// 31 deep modelview matrix
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix((GFX_STATUS >> 8) & 0x1F);
 }
 
-//////////////////////////////////////////////////////////////////////
 
-void glResetMatrixStack(void)
-{
-  // stack overflow ack ?
-  GFX_STATUS |= 1 << 15;
-
-  // pop the stacks to the top...seems projection stack is only 1 deep??
-  glMatrixMode(GL_PROJECTION);
-  glPopMatrix((GFX_STATUS>>13) & 1);
-  
-  // 31 deep modelview matrix
-  glMatrixMode(GL_MODELVIEW);
-  glPopMatrix((GFX_STATUS >> 8) & 0x1F);
-}
-
-//////////////////////////////////////////////////////////////////////
-
-void glSetOutlineColor(int id, rgb color)
-{
+//---------------------------------------------------------------------------------
+void glSetOutlineColor(int id, rgb color) {
+//---------------------------------------------------------------------------------
 	GFX_EDGE_TABLE[id] = color;
 }
 
-//////////////////////////////////////////////////////////////////////
 
-void glSetToonTable(uint16 *table)
-{
+//---------------------------------------------------------------------------------
+void glSetToonTable(uint16 *table) {
+//---------------------------------------------------------------------------------
 	int i;
 	for( i = 0; i < 32; i++ )
 		GFX_TOON_TABLE[i] = table[i];
 }
 
-//////////////////////////////////////////////////////////////////////
 
-void glSetToonTableRange(int start, int end, rgb color)
-{
+//---------------------------------------------------------------------------------
+void glSetToonTableRange(int start, int end, rgb color) {
+//---------------------------------------------------------------------------------
 	int i;
 	for( i = start; i <= end; i++ )
 		GFX_TOON_TABLE[i] = color;
 }
 
-//////////////////////////////////////////////////////////////////////
 
-void glReset(void)
-{
-  while (GFX_STATUS & (1<<27)); // wait till gfx engine is not busy
+//---------------------------------------------------------------------------------
+void glReset(void) {
+//---------------------------------------------------------------------------------
+	while (GFX_STATUS & (1<<27)); // wait till gfx engine is not busy
   
-  // Clear the FIFO
-  GFX_STATUS |= (1<<29);
+	// Clear the FIFO
+	GFX_STATUS |= (1<<29);
 
-  // Clear overflows for list memory
-  GFX_CONTROL = enable_bits = ((1<<12) | (1<<13)) | GL_TEXTURE_2D;
-  glResetMatrixStack();
+	// Clear overflows for list memory
+	GFX_CONTROL = enable_bits = ((1<<12) | (1<<13)) | GL_TEXTURE_2D;
+	glResetMatrixStack();
 
-  GFX_TEX_FORMAT = 0;
-  GFX_POLY_FORMAT = 0;
+	GFX_TEX_FORMAT = 0;
+	GFX_POLY_FORMAT = 0;
   
-  glMatrixMode(GL_PROJECTION);
-  glIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glIdentity();
 
-  glMatrixMode(GL_MODELVIEW);
-  glIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glIdentity();
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
 // Texture
-/////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
 // Texture globals
+//---------------------------------------------------------------------------------
 
 uint32 textures[MAX_TEXTURES];
 
 uint32 activeTexture = 0;
 
-
 uint32* nextBlock = (uint32*)0x06800000;
-////////////////////////////////////
-void glResetTextures(void)
-{
+
+
+//---------------------------------------------------------------------------------
+void glResetTextures(void) {
+//---------------------------------------------------------------------------------
 	activeTexture = 0;
 	nextBlock = (uint32*)0x06800000;
 }
-///////////////////////////////////////
-// glGenTextures creates intiger names for your table
+
+//---------------------------------------------------------------------------------
+//	glGenTextures creates integer names for your table
 //	takes n as the number of textures to generate and 
 //	a pointer to the names array that it needs to fill.
 //  Returns 1 if succesful and 0 if out of texture names
-int glGenTextures(int n, int *names)
-{
+//---------------------------------------------------------------------------------
+int glGenTextures(int n, int *names) {
+//---------------------------------------------------------------------------------
 	static int name = 1;
 
 	int index = 0;
 
-	for(index = 0; index < n; index++)
-	{
+	for(index = 0; index < n; index++) {
+
 		if(name >= MAX_TEXTURES)
 			return 0;
 		else
@@ -995,11 +812,11 @@ int glTexImage2D(	int target, int empty1, int type,
 //---------------------------------------------------------------------------------
 void glTexLoadPal(u16* pal, u8 count) {
 //---------------------------------------------------------------------------------
-		vramSetBankE(VRAM_E_LCD);
+	vramSetBankE(VRAM_E_LCD);
 		
-		dmaCopyWords(3, (u32*)pal, (u32*)VRAM_E , count);
+	dmaCopyWords(3, (u32*)pal, (u32*)VRAM_E , count);
 
-		vramSetBankE(VRAM_E_TEX_PALETTE);
+	vramSetBankE(VRAM_E_TEX_PALETTE);
 
 }
 
