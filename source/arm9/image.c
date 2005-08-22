@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: image.c,v 1.3 2005-08-11 14:53:00 desktopman Exp $
+	$Id: image.c,v 1.4 2005-08-22 08:10:35 wntrmute Exp $
 
 
   Copyright (C) 2005
@@ -25,6 +25,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/08/11 14:53:00  desktopman
+	Added image24to16(sImage* img)
+	
 	Revision 1.2  2005/08/01 23:18:22  wntrmute
 	adjusted headers for logging
 	
@@ -38,8 +41,9 @@
 #include <nds/arm9/image.h>
 #include <malloc.h>
 
-void image24to16(sImage* img)
-{
+//---------------------------------------------------------------------------------
+void image24to16(sImage* img) {
+//---------------------------------------------------------------------------------
 
 	int x;
 	int y;
@@ -59,46 +63,52 @@ void image24to16(sImage* img)
 	img->data16 = temp;
 }
 
-void image8to16(sImage* img)
- {
-	 int i;
+//---------------------------------------------------------------------------------
+void image8to16(sImage* img) {
+//---------------------------------------------------------------------------------
+	int i;
 
-	 u16* temp = (u16*)malloc(img->height*img->width*2);
+	u16* temp = (u16*)malloc(img->height*img->width*2);
 	 
-	 for(i = 0; i < img->height * img->width; i++)
-		 temp[i] = img->palette[img->data8[i]] | (1<<15);
+	for(i = 0; i < img->height * img->width; i++)
+		temp[i] = img->palette[img->data8[i]] | (1<<15);
 
-	 free (img->data8);
-	 free (img->palette);
+	free (img->data8);
+	free (img->palette);
 
-	 img->bpp = 16;
-	 img->data16 = temp;
- }
-
-void image8to16trans(sImage* img, u8 transperentColor)
-{
-	 int i;
-	 u8 c;
-	 
-	 u16* temp = (u16*)malloc(img->height*img->width*2);
-	 
-	 for(i = 0; i < img->height * img->width; i++)
-	 {
-		 c = img->data8[i];		
-		 
-		 if(c != transperentColor) 
-			 temp[i] = img->palette[c] | (1<<15);
-		 else
-			temp[i] = img->palette[c]; 
-	 }
-	 free (img->data8);
-	 free (img->palette);
-
-	 img->bpp = 16;
-	 img->data16 = temp;
+	img->bpp = 16;
+	img->data16 = temp;
 }
-void imageDestroy(sImage* img)
-{
+
+//---------------------------------------------------------------------------------
+void image8to16trans(sImage* img, u8 transparentColor) {
+//---------------------------------------------------------------------------------
+	int i;
+	u8 c;
+	 
+	u16* temp = (u16*)malloc(img->height*img->width*2);
+	 
+	for(i = 0; i < img->height * img->width; i++) {
+
+		c = img->data8[i];		
+		 
+		if(c != transparentColor) 
+			temp[i] = img->palette[c] | (1<<15);
+		else
+			temp[i] = img->palette[c]; 
+	}
+
+	free (img->data8);
+	free (img->palette);
+
+	img->bpp = 16;
+	img->data16 = temp;
+}
+
+
+//---------------------------------------------------------------------------------
+void imageDestroy(sImage* img) {
+//---------------------------------------------------------------------------------
 	if(img->data8) free (img->data8);
 	if(img->palette && img->bpp == 8) free (img->palette);
 }
