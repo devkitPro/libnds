@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.5 2005-07-30 23:20:38 dovoto Exp $
+	$Id: console.c,v 1.6 2005-08-22 08:09:05 wntrmute Exp $
 
 	console code -- provides basic print functionality
 
@@ -26,13 +26,16 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/07/30 23:20:38  dovoto
+	Fixed an error with printf for strings that end with a formating character.
+	
 	Revision 1.4  2005/07/14 08:00:57  wntrmute
 	resynchronise with ndslib
 	
 
 ---------------------------------------------------------------------------------*/
 
-#include <nds.h>
+#include <nds/jtypes.h>
 #include <nds/arm9/console.h>
 
 #include <stdarg.h>
