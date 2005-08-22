@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: math.h,v 1.5 2005-08-01 23:18:22 wntrmute Exp $
+	$Id: math.h,v 1.6 2005-08-22 08:03:50 wntrmute Exp $
 
 	math functions
 
@@ -26,14 +26,16 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/08/01 23:18:22  wntrmute
+	adjusted headers for logging
+	
 
 ---------------------------------------------------------------------------------*/
 
 #ifndef MATH_ARM9_INCLUDE
 #define MATH_ARM9_INCLUDE
 
-#include "nds/arm9/videoGL.h"
-#include <nds/arm9/trig_lut.h>
+#include <nds/jtypes.h>
 
 /////////////////////////////////////////////////////////////
 //  Math coprocessor register definitions
