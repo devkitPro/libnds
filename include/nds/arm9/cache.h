@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: cache.h,v 1.2 2005-07-25 16:10:43 wntrmute Exp $
+	$Id: cache.h,v 1.3 2005-08-23 17:06:10 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/07/25 16:10:43  wntrmute
+	updated file header
+	
 
 ---------------------------------------------------------------------------------*/
 #ifndef	_cache_h_

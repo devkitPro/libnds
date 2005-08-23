@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: input.h,v 1.1 2005-08-03 17:37:28 wntrmute Exp $
+	$Id: input.h,v 1.2 2005-08-23 17:06:10 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -27,6 +27,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.1  2005/08/03 17:37:28  wntrmute
+	moved to input.h
+	
 	Revision 1.5  2005/08/01 23:18:22  wntrmute
 	adjusted headers for logging
 	

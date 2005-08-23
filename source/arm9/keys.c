@@ -1,11 +1,11 @@
 /*---------------------------------------------------------------------------------
-	$Id: keys.c,v 1.5 2005-08-03 18:07:55 wntrmute Exp $
+	$Id: keys.c,v 1.6 2005-08-23 17:06:10 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
 	Copyright (C) 2005
 			Christian Auby (DesktopMan)
-			Dave Murphy (WinterMute)
+			Dave Murphy (WinterMute)
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/08/03 18:07:55  wntrmute
+	don't use nds.h
+	
 	Revision 1.4  2005/07/25 02:31:07  wntrmute
 	made local variables static
 	added proper header to keys.h
@@ -67,7 +70,7 @@ void scanKeys() {
 	keysold=keys;
 	keys=KEYS_CUR;
 
-	if(abs(IPC->touchXpx - oldx)>20 || abs(IPC->touchYpx - oldy)>20)
+	if(abs(IPC->touchXpx - oldx)>20 || abs(IPC->touchYpx - oldy)>20)
 		keys&=~KEY_TOUCH;
 
 	oldx=IPC->touchXpx;

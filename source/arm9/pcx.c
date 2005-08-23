@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: pcx.c,v 1.5 2005-08-03 18:08:13 wntrmute Exp $
+	$Id: pcx.c,v 1.6 2005-08-23 17:06:10 wntrmute Exp $
 
  	Copyright (C) 2005
 		Jason Rogers (dovoto)
@@ -23,6 +23,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/08/03 18:08:13  wntrmute
+	*** empty log message ***
+	
 	Revision 1.4  2005/08/03 05:18:06  wntrmute
 	tidied formatting
 	

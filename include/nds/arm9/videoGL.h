@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.9 2005-08-22 08:05:53 wntrmute Exp $
+	$Id: videoGL.h,v 1.10 2005-08-23 17:06:10 wntrmute Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2005/08/22 08:05:53  wntrmute
+	moved inlines to separate file
+	
 	Revision 1.8  2005/07/27 15:54:57  wntrmute
 	Synchronise with ndslib.
 	

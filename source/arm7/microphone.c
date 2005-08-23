@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: microphone.c,v 1.2 2005-07-14 08:00:57 wntrmute Exp $
+	$Id: microphone.c,v 1.3 2005-08-23 17:06:10 wntrmute Exp $
 
 	Microphone control for the ARM7
 
@@ -27,6 +27,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/07/14 08:00:57  wntrmute
+	resynchronise with ndslib
+	
 	Revision 1.1  2005/07/12 17:32:20  wntrmute
 	added microphone functions
 

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: gbfs.c,v 1.1 2005-08-04 17:55:44 wntrmute Exp $
+	$Id: gbfs.c,v 1.2 2005-08-23 17:06:10 wntrmute Exp $
 
   access object in a GBFS file
 
@@ -28,6 +28,9 @@
 	IN THE SOFTWARE.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.1  2005/08/04 17:55:44  wntrmute
+	added gbfs
+	
 
 ---------------------------------------------------------------------------------*/
 

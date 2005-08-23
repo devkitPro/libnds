@@ -1,7 +1,7 @@
 /*
  *	SWI replacements for the slow libgcc division functions.
  *
- *	$Revision: 1.1 $
+ *	$Revision: 1.2 $
  *
  */
  

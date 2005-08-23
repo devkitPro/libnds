@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.1 2005-08-04 17:58:30 wntrmute Exp $
+	$Id: touch.c,v 1.2 2005-08-23 17:06:10 wntrmute Exp $
 
 	touch screen input code
 
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.1  2005/08/04 17:58:30  wntrmute
+	added touch co-ordinate wrapper
+	
 	
 
 ---------------------------------------------------------------------------------*/

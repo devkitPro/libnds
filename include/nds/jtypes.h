@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: jtypes.h,v 1.10 2005-08-22 08:09:48 wntrmute Exp $
+	$Id: jtypes.h,v 1.11 2005-08-23 17:06:10 wntrmute Exp $
 
 	jtypes.h -- Common types (and a few useful macros)
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.10  2005/08/22 08:09:48  wntrmute
+	added f32 here
+	
 	Revision 1.9  2005/08/03 17:38:05  wntrmute
 	added touch struct
 	

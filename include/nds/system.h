@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.3 2005-08-03 05:24:42 wntrmute Exp $
+	$Id: system.h,v 1.4 2005-08-23 17:06:10 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,6 +27,13 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/08/03 05:24:42  wntrmute
+	adjusted header for logging
+	tidied formatting
+	powerON sets not ORs
+	powerOFF inverts paramter
+	use BIT macro
+	
 
 ---------------------------------------------------------------------------------*/
 

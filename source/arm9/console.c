@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.6 2005-08-22 08:09:05 wntrmute Exp $
+	$Id: console.c,v 1.7 2005-08-23 17:06:10 wntrmute Exp $
 
 	console code -- provides basic print functionality
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.6  2005/08/22 08:09:05  wntrmute
+	removed unnecessary headers
+	
 	Revision 1.5  2005/07/30 23:20:38  dovoto
 	Fixed an error with printf for strings that end with a formating character.
 	

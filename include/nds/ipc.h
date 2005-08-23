@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: ipc.h,v 1.10 2005-08-03 05:26:42 wntrmute Exp $
+	$Id: ipc.h,v 1.11 2005-08-23 17:06:10 wntrmute Exp $
 
 	Inter Processor Communication
 
@@ -26,6 +26,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.10  2005/08/03 05:26:42  wntrmute
+	use BIT macro
+	corrected header include
+	
 	Revision 1.9  2005/07/27 02:20:05  wntrmute
 	resynchronise with ndslib
 	Updated GL with float wrappers for NeHe

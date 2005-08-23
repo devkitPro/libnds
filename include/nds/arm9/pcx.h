@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: pcx.h,v 1.2 2005-08-01 23:18:22 wntrmute Exp $
+	$Id: pcx.h,v 1.3 2005-08-23 17:06:10 wntrmute Exp $
 
 
 	Copyright (C) 2005
@@ -15,15 +15,18 @@
 	redistribute it freely, subject to the following restrictions:
 
 	1.	The origin of this software must not be misrepresented; you
-		must not claim that you wrote the original software. If you use
-		this software in a product, an acknowledgment in the product
+		must not claim that you wrote the original software. If you use
+		this software in a product, an acknowledgment in the product
 		documentation would be appreciated but is not required.
-	2.	Altered source versions must be plainly marked as such, and
+	2.	Altered source versions must be plainly marked as such, and
 		must not be misrepresented as being the original software.
-	3.	This notice may not be removed or altered from any source
+	3.	This notice may not be removed or altered from any source
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/08/01 23:18:22  wntrmute
+	adjusted headers for logging
+	
 	Revision 1.1  2005/07/27 02:20:52  wntrmute
 	add image functions
 	

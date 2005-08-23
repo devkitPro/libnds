@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.5 2005-08-01 23:12:17 wntrmute Exp $
+	$Id: touch.c,v 1.6 2005-08-23 17:06:10 wntrmute Exp $
 
 	Touch screen control for the ARM7
 
@@ -26,6 +26,9 @@
 			distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/08/01 23:12:17  wntrmute
+	extended touchReadXY to return touchscreen co-ordinates as well as screen co-ordinates
+	
 	Revision 1.4  2005/07/29 00:57:40  wntrmute
 	updated file headers
 	added touchReadXY function

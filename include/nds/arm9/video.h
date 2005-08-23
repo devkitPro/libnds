@@ -1,11 +1,11 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.10 2005-08-01 23:18:22 wntrmute Exp $
+	$Id: video.h,v 1.11 2005-08-23 17:06:10 wntrmute Exp $
 
 	Video registers and defines
-
-	Copyright (C) 2005
-		Michael Noland (joat)
-		Jason Rogers (dovoto)
+
+	Copyright (C) 2005
+		Michael Noland (joat)
+		Jason Rogers (dovoto)
 		Dave Murphy (WinterMute)
 
 	This software is provided 'as-is', without any express or implied
@@ -17,15 +17,18 @@
 	redistribute it freely, subject to the following restrictions:
 
 	1.	The origin of this software must not be misrepresented; you
-		must not claim that you wrote the original software. If you use
-		this software in a product, an acknowledgment in the product
+		must not claim that you wrote the original software. If you use
+		this software in a product, an acknowledgment in the product
 		documentation would be appreciated but is not required.
-	2.	Altered source versions must be plainly marked as such, and
+	2.	Altered source versions must be plainly marked as such, and
 		must not be misrepresented as being the original software.
-	3.	This notice may not be removed or altered from any source
+	3.	This notice may not be removed or altered from any source
 		distribution.
-
+
 	$Log: not supported by cvs2svn $
+	Revision 1.10  2005/08/01 23:18:22  wntrmute
+	adjusted headers for logging
+	
 
 ---------------------------------------------------------------------------------*/
 
