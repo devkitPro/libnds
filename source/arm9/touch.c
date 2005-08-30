@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.2 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: touch.c,v 1.3 2005-08-30 17:53:11 wntrmute Exp $
 
 	touch screen input code
 
@@ -24,21 +24,25 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/08/23 17:06:10  wntrmute
+	converted all endings to unix
+
 	Revision 1.1  2005/08/04 17:58:30  wntrmute
 	added touch co-ordinate wrapper
-	
-	
+
+
 
 ---------------------------------------------------------------------------------*/
 
-#include <nds.h>
+//#include <nds.h>
 
-#include "nds/arm9/input.h"
+#include <nds/ipc.h>
+#include <nds/arm9/input.h>
 
 //---------------------------------------------------------------------------------
 touchPosition touchReadXY() {
 //---------------------------------------------------------------------------------
-	
+
 	touchPosition touchPos;
 
 	touchPos.x = IPC->touchX;
