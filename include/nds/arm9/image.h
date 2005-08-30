@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: image.h,v 1.2 2005-08-11 14:53:00 desktopman Exp $
+	$Id: image.h,v 1.3 2005-08-30 17:56:21 wntrmute Exp $
 
 
   Copyright (C) 2005
@@ -24,35 +24,39 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/08/11 14:53:00  desktopman
+	Added image24to16(sImage* img)
+
 	Revision 1.1  2005/07/27 02:20:52  wntrmute
 	add image functions
-	
+
 
 ---------------------------------------------------------------------------------*/
 #ifndef IMAGE_H
 #define IMAGE_H
 
+#include <nds/arm9/video.h>
 
 //holds a rgb triplet
  typedef struct
  {
     unsigned char r,g,b;
  }__attribute__ ((packed)) RGB_24;
- 
+
  //holds a basic image type for loading image files
- typedef struct 
+ typedef struct
  {
     short height,width;
     int bpp;
     unsigned short* palette;
- 
+
     union
     {
        unsigned char* data8;
        unsigned short* data16;
        unsigned int* data32;
     };
- 
+
  } sImage, *psImage;
 
 #ifdef __cplusplus
