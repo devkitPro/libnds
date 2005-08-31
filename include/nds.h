@@ -1,7 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: nds.h,v 1.7 2005-08-23 17:06:09 wntrmute Exp $
-
-	BIOS functions
+	$Id: nds.h,v 1.8 2005-08-31 01:09:46 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -29,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2005/08/23 17:06:09  wntrmute
+	converted all endings to unix
+
 
 ---------------------------------------------------------------------------------*/
 
