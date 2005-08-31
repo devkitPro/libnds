@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.h,v 1.3 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: console.h,v 1.4 2005-08-31 01:10:33 wntrmute Exp $
 
 	console functions
 
@@ -26,9 +26,12 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/08/23 17:06:10  wntrmute
+	converted all endings to unix
+
 	Revision 1.2  2005/08/01 23:18:22  wntrmute
 	adjusted headers for logging
-	
+
 
 ---------------------------------------------------------------------------------*/
 #ifndef CONSOLE_H
@@ -43,17 +46,7 @@ extern "C" {
 void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16* map, u8 pal, u8 bitDepth);
 void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth);
 
-void consolePrintf(const char* s, ...);
-
-void consolePrintSet(int x, int y);
-
-void consolePrintChar(char c);
-
-void consolePutString(int x, int y, char* s);
-void consolePutInt(int x, int y, int d);
-void consolePutX(int x, int y, int d);
-void consolePutChar(int x, int y, char c);
-void consolePutBin(int x, int y, int b);
+void printAt(int x, int y);
 
 void consoleClear(void);
 
