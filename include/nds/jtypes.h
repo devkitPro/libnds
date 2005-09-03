@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: jtypes.h,v 1.11 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: jtypes.h,v 1.12 2005-09-03 17:07:25 wntrmute Exp $
 
 	jtypes.h -- Common types (and a few useful macros)
 
@@ -27,29 +27,32 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.11  2005/08/23 17:06:10  wntrmute
+	converted all endings to unix
+
 	Revision 1.10  2005/08/22 08:09:48  wntrmute
 	added f32 here
-	
+
 	Revision 1.9  2005/08/03 17:38:05  wntrmute
 	added touch struct
-	
+
 	Revision 1.8  2005/07/29 00:55:04  wntrmute
 	removed more useless section macros
-	
+
 	Revision 1.7  2005/07/29 00:40:50  wntrmute
 	removed useless section macros
 	added C++ compatible bool
-	
+
 	Revision 1.6  2005/07/28 03:54:19  dovoto
 	Adjusted trig_lut so that cos and sin look tables are visible to all.
-	
+
 	Math.h no includes the trig_lut header.
-	
+
 	added some typedefs to jtypes for compatibility with ndslib.
-	
+
 	Revision 1.5  2005/07/22 17:39:53  wntrmute
 	removed useless section macros
-	
+
 
 ---------------------------------------------------------------------------------*/
 #ifndef NDS_JTYPES_INCLUDE
@@ -84,7 +87,7 @@
 #define FALSE 0
 #endif
 
-#define ASSERT(arg) 
+#define ASSERT(arg)
 
 #define BIT(n) (1 << (n))
 
@@ -160,7 +163,7 @@ typedef struct touchPosition {
 typedef enum { false, true } bool;
 #endif
 
-
+typedef void ( * IntFn)(void);
 typedef void (* VoidFunctionPointer)(void);
 typedef void (* fp)(void);
 
