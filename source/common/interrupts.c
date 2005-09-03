@@ -1,111 +1,128 @@
-//////////////////////////////////////////////////////////////////////
-//
-// interrupts.cpp -- Default interrupt handler
-//
-// version 0.1, February 14, 2005
-//
-//  Copyright (C) 2005 Michael Noland (joat) and Jason Rogers (dovoto)
-//
-//  This software is provided 'as-is', without any express or implied
-//  warranty.  In no event will the authors be held liable for any
-//  damages arising from the use of this software.
-//
-//  Permission is granted to anyone to use this software for any
-//  purpose, including commercial applications, and to alter it and
-//  redistribute it freely, subject to the following restrictions:
-//
-//  1. The origin of this software must not be misrepresented; you
-//     must not claim that you wrote the original software. If you use
-//     this software in a product, an acknowledgment in the product
-//     documentation would be appreciated but is not required.
-//  2. Altered source versions must be plainly marked as such, and
-//     must not be misrepresented as being the original software.
-//  3. This notice may not be removed or altered from any source
-//     distribution.
-//
-// Changelog:
-//   0.1: First version
-//
-//////////////////////////////////////////////////////////////////////
+/*---------------------------------------------------------------------------------
+	$Id: interrupts.c,v 1.3 2005-09-03 17:09:35 wntrmute Exp $
+
+	Copyright (C) 2005
+		Dave Murphy (WinterMute)
+
+	This software is provided 'as-is', without any express or implied
+	warranty.  In no event will the authors be held liable for any
+	damages arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any
+	purpose, including commercial applications, and to alter it and
+	redistribute it freely, subject to the following restrictions:
+
+	1.	The origin of this software must not be misrepresented; you
+		must not claim that you wrote the original software. If you use
+		this software in a product, an acknowledgment in the product
+		documentation would be appreciated but is not required.
+	2.	Altered source versions must be plainly marked as such, and
+		must not be misrepresented as being the original software.
+	3.	This notice may not be removed or altered from any source
+		distribution.
+
+	$Log: not supported by cvs2svn $
+
+---------------------------------------------------------------------------------*/
 
 #include <nds/interrupts.h>
 #include <nds/system.h>
 
-void irqDummy(void)
-{
-	IF = IF;
-}
+//---------------------------------------------------------------------------------
+void irqDummy(void) {}
+//---------------------------------------------------------------------------------
 
-VoidFunctionPointer irqTable[32] = 
-{
-	irqDummy, irqDummy, irqDummy, irqDummy,
-	irqDummy, irqDummy, irqDummy, irqDummy,
-	irqDummy, irqDummy, irqDummy, irqDummy,
-	irqDummy, irqDummy, irqDummy, irqDummy,
-	
-	irqDummy, irqDummy, irqDummy, irqDummy,
-	irqDummy, irqDummy, irqDummy, irqDummy,
-	irqDummy, irqDummy, irqDummy, irqDummy,
-	irqDummy, irqDummy, irqDummy, irqDummy
-};
+#ifdef ARM9
+#define INT_TABLE_SECTION __attribute__((section(".sbss")))
+#else
+#define INT_TABLE_SECTION
+#endif
 
-void irqSet(int irq, VoidFunctionPointer handler)
-{
-	int i = 0;
-	
-	if(handler)
-		for (i = 0; i < 32; i++)
-			if(irq & (1 << i) )irqTable[i] = handler;
-	
-	if(irq & IRQ_VBLANK)
+struct IntTable irqTable[MAX_INTERRUPTS] INT_TABLE_SECTION;
+
+//---------------------------------------------------------------------------------
+void irqSet(int mask, IntFn handler) {
+//---------------------------------------------------------------------------------
+	if (!mask) return;
+
+	int i;
+
+	for	(i=0;i<MAX_INTERRUPTS;i++)
+		if	(!irqTable[i].mask || irqTable[i].mask == mask) break;
+
+	if ( i == MAX_INTERRUPTS ) return;
+
+	irqTable[i].handler	= handler;
+	irqTable[i].mask	= mask;
+
+	if(mask & IRQ_VBLANK)
 		DISP_SR |= DISP_VBLANK_IRQ ;
-	if(irq & IRQ_HBLANK)
+	if(mask & IRQ_HBLANK)
 		DISP_SR |= DISP_HBLANK_IRQ ;
 
-	IE |= irq;
-}
-void irqClear(int irq)
-{
-	int i = 0;
-
-	for (i = 0; i < 32; i++)
-		if(irq & (1 << i) )irqTable[i] = irqDummy;
-	
-
-	IE &= ~irq;
+	IE |= mask;
 }
 
-void irqDefaultHandler(void)
-{
-	int i = 0;
+//---------------------------------------------------------------------------------
+void irqInit() {
+//---------------------------------------------------------------------------------
+	int i;
 
-	for (i = 0; i < 32; i++)
+	// Set all interrupts to dummy functions.
+	for(i = 0; i < MAX_INTERRUPTS; i ++)
 	{
-		if(IF & (1 << i) )irqTable[i]();
+		irqTable[i].handler = irqDummy;
+		irqTable[i].mask = 0;
 	}
-	
-	VBLANK_INTR_WAIT_FLAGS = IF | IE;
+
+	IRQ_HANDLER = IntrMain;
+
 }
 
-void irqInitHandler(VoidFunctionPointer handler)
-{
+
+//---------------------------------------------------------------------------------
+void irqClear(int mask) {
+//---------------------------------------------------------------------------------
+	int i = 0;
+
+	for	(i=0;i<MAX_INTERRUPTS;i++)
+		if	(irqTable[i].mask == mask) break;
+
+	if ( i == MAX_INTERRUPTS ) return;
+
+	irqTable[i].handler	= irqDummy;
+
+	if(mask & IRQ_VBLANK)
+		DISP_SR &= ~DISP_VBLANK_IRQ ;
+	if(mask & IRQ_HBLANK)
+		DISP_SR &= ~DISP_HBLANK_IRQ ;
+
+	IE &= ~mask;
+}
+
+
+//---------------------------------------------------------------------------------
+void irqInitHandler(IntFn handler) {
+//---------------------------------------------------------------------------------
 	IME = 0;
-	IE = 0;
 	IF = ~0;
+	IE = 0;
 
 	IRQ_HANDLER = handler;
-	
+
 	IME = 1;
 }
 
-void irqEnable(int irq)
-{
+//---------------------------------------------------------------------------------
+void irqEnable(int irq) {
+//---------------------------------------------------------------------------------
 	IE |= irq;
 	IME = 1;
 }
 
-void irqDisable(int irq)
-{
+//---------------------------------------------------------------------------------
+void irqDisable(int irq) {
+//---------------------------------------------------------------------------------
 	IE &= ~irq;
 }
 

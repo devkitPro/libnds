@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.4 2005-08-03 05:17:26 wntrmute Exp $
+	$Id: interrupts.h,v 1.5 2005-09-03 17:09:35 wntrmute Exp $
 
 	Interrupt registers and vector pointers
 
@@ -27,9 +27,12 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/08/03 05:17:26  wntrmute
+	use BIT macro for consistency
+
 	Revision 1.3  2005/08/01 23:18:22  wntrmute
 	adjusted headers for logging
-	
+
 
 ---------------------------------------------------------------------------------*/
 
@@ -54,10 +57,16 @@
 #define IRQ_KEYS			BIT(12)
 #define IRQ_CART			BIT(13)
 #define IRQ_IPC_SYNC		BIT(16)
-#define IRQ_FIFO_FULL		BIT(17)
+#define IRQ_FIFO_EMPTY		BIT(17)
 #define IRQ_FIFO_NOT_EMPTY	BIT(18)
 #define IRQ_CARD			BIT(19)
 #define IRQ_CARD_LINE		BIT(20)
+#define IRQ_GEOMETRY_FIFO	BIT(21)
+#define IRQ_SCREENS			BIT(22)
+#define IRQ_SPI				BIT(23)
+#define IRQ_WIFI			BIT(24)
+
+#define MAX_INTERRUPTS		24
 
 #define IRQ_ALL			(~0)
 
@@ -106,12 +115,15 @@ extern "C" {
 #endif
 
 
+struct IntTable{IntFn handler; u32 mask;};
+
+void irqInit();
 void irqSet(int irq, VoidFunctionPointer handler);
 void irqClear(int irq);
 void irqInitHandler(VoidFunctionPointer handler);
-void irqDefaultHandler(void);
 void irqEnable(int irq);
 void irqDisable(int irq);
+void IntrMain();
 
 #ifdef __cplusplus
 }
