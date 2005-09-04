@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.8 2005-08-31 01:10:33 wntrmute Exp $
+	$Id: console.c,v 1.9 2005-09-04 00:24:44 wntrmute Exp $
 
 	console code -- provides basic print functionality
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2005/08/31 01:10:33  wntrmute
+	reworked console into stdio
+
 	Revision 1.7  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 
@@ -45,6 +48,7 @@
 #include <nds/arm9/console.h>
 #include <default_font_bin.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #include <sys/iosupport.h>
 
@@ -209,7 +213,7 @@ void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth) {
 }
 
 //---------------------------------------------------------------------------------
-void printAt(int x, int y) {
+void consoleSetPos(int x, int y) {
 //---------------------------------------------------------------------------------
 	if(y < CONSOLE_HEIGHT)
 		row = y;
@@ -273,10 +277,10 @@ void consolePrintChar(char c) {
 void consoleClear(void) {
 //---------------------------------------------------------------------------------
 	int i = 0;
-	printAt(0,0);
+	consoleSetPos(0,0);
 
 	while(i++ < CONSOLE_HEIGHT * CONSOLE_WIDTH)
 		consolePrintChar(' ');
 
-	printAt(0,0);
+	consoleSetPos(0,0);
 }

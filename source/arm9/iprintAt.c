@@ -1,7 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.h,v 1.5 2005-09-04 00:24:44 wntrmute Exp $
-
-	console functions
+	$Id: iprintAt.c,v 1.1 2005-09-04 00:24:44 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -26,37 +24,22 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
-	Revision 1.4  2005/08/31 01:10:33  wntrmute
-	reworked console into stdio
-
-	Revision 1.3  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-
-	Revision 1.2  2005/08/01 23:18:22  wntrmute
-	adjusted headers for logging
-
 
 ---------------------------------------------------------------------------------*/
-#ifndef CONSOLE_H
-#define CONSOLE_H
 
-#define CONSOLE_USE_COLOR255 16
+#include <nds/jtypes.h>
+#include <nds/arm9/console.h>
+#include <stdio.h>
+#include <stdarg.h>
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+//---------------------------------------------------------------------------------
+void iprintAt(int x, int y, char *str, ...) {
+//---------------------------------------------------------------------------------
+	va_list args;
 
-void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16* map, u8 pal, u8 bitDepth);
-void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth);
-void consoleSetPos(int x, int y);
+	consoleSetPos(x,y);
+	va_start(args, str);
+	viprintf(str,args);
+	va_end(args);
 
-void printAt(int x, int y, char *str, ...);
-void iprintAt(int x, int y, char *str, ...);
-
-void consoleClear(void);
-
-#ifdef __cplusplus
 }
-#endif
-
-#endif
