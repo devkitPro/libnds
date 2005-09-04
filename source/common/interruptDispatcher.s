@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interruptDispatcher.s,v 1.1 2005-09-03 17:09:35 wntrmute Exp $
+	$Id: interruptDispatcher.s,v 1.2 2005-09-04 16:37:01 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.1  2005/09/03 17:09:35  wntrmute
+	added interworking aware interrupt dispatcher
+	
 
 ---------------------------------------------------------------------------------*/
 
@@ -33,7 +36,7 @@
 	.section	.itcm,"ax",%progbits
 #endif
 
-	.extern	IntrTable
+	.extern	irqTable
 	.code 32
 
 	.global	IntrMain
@@ -79,17 +82,20 @@ findIRQ:
 no_handler:
 @---------------------------------------------------------------------------------
 	str	r1, [r3, #0x214]	@ IF Clear
-        ldmfd   sp!, {r0-r1,r3,lr}	@ {spsr, IME, REG_BASE, lr}
-	mov	pc,lr
+@---------------------------------------------------------------------------------
+null_handler:
+@---------------------------------------------------------------------------------
+	ldmfd   sp!, {r0-r1,r3,pc}	@ {spsr, IME, REG_BASE, lr}
 
 @---------------------------------------------------------------------------------
 jump_intr:
 @---------------------------------------------------------------------------------
-	ldr	r0, [r2]		@ user IRQ handler address
-	cmp	r0,#0
-	beq	no_handler
+	str	r0, [r3, #0x214]	@ IF Clear
 
-	str	r1, [r3, #0x214]	@ IF Clear
+	ldr	r0, [r2]		@ user IRQ handler address
+	cmp	r0, #0
+	beq	null_handler
+
 
 	mrs	r2, cpsr
 	bic	r2, r2, #0xdf		@ \__
@@ -110,7 +116,7 @@ IntrRet:
 	orr	r3, r3, #0x92		@ /  --> Disable IRQ. Enable FIQ. Set CPU mode to IRQ.
 	msr	cpsr, r3
 
-        ldmfd   sp!, {r0-r1,r3,lr}	@ {spsr, IME, REG_BASE, lr}
+	ldmfd   sp!, {r0-r1,r3,lr}	@ {spsr, IME, REG_BASE, lr}
 	strh	r1, [r3, #0x8]		@ restore REG_IME
 	msr	spsr, r0		@ restore spsr
 	mov	pc,lr
