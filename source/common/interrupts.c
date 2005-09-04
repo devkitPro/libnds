@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.c,v 1.3 2005-09-03 17:09:35 wntrmute Exp $
+	$Id: interrupts.c,v 1.4 2005-09-04 16:28:04 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/09/03 17:09:35  wntrmute
+	added interworking aware interrupt dispatcher
+	
 
 ---------------------------------------------------------------------------------*/
 
@@ -32,11 +35,13 @@
 void irqDummy(void) {}
 //---------------------------------------------------------------------------------
 
-#ifdef ARM9
-#define INT_TABLE_SECTION __attribute__((section(".sbss")))
-#else
+// Placing the irqTable in dtcm fails, currently no idea why.
+
+//#ifdef ARM9
+//#define INT_TABLE_SECTION __attribute__((section(".sbss")))
+//#else
 #define INT_TABLE_SECTION
-#endif
+//#endif
 
 struct IntTable irqTable[MAX_INTERRUPTS] INT_TABLE_SECTION;
 
