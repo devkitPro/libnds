@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.5 2005-09-03 17:09:35 wntrmute Exp $
+	$Id: interrupts.h,v 1.6 2005-09-04 16:27:22 wntrmute Exp $
 
 	Interrupt registers and vector pointers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/09/03 17:09:35  wntrmute
+	added interworking aware interrupt dispatcher
+	
 	Revision 1.4  2005/08/03 05:17:26  wntrmute
 	use BIT macro for consistency
 
@@ -62,11 +65,11 @@
 #define IRQ_CARD			BIT(19)
 #define IRQ_CARD_LINE		BIT(20)
 #define IRQ_GEOMETRY_FIFO	BIT(21)
-#define IRQ_SCREENS			BIT(22)
+#define IRQ_LID				BIT(22)
 #define IRQ_SPI				BIT(23)
 #define IRQ_WIFI			BIT(24)
 
-#define MAX_INTERRUPTS		24
+#define MAX_INTERRUPTS		25
 
 #define IRQ_ALL			(~0)
 
