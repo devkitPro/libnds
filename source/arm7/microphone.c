@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: microphone.c,v 1.3 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: microphone.c,v 1.4 2005-09-07 18:06:27 wntrmute Exp $
 
 	Microphone control for the ARM7
 
@@ -27,9 +27,12 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/08/23 17:06:10  wntrmute
+	converted all endings to unix
+
 	Revision 1.2  2005/07/14 08:00:57  wntrmute
 	resynchronise with ndslib
-	
+
 	Revision 1.1  2005/07/12 17:32:20  wntrmute
 	added microphone functions
 
@@ -42,17 +45,14 @@
 //---------------------------------------------------------------------------------
 void PM_SetAmp(u8 control) {
 //---------------------------------------------------------------------------------
-  while(SERIAL_CR & SERIAL_BUSY)
-    swiDelay(1);
+	SerialWaitBusy();
+	REG_SPICNT = SPI_ENABLE | SPI_DEVICE_POWER | SPI_BAUD_1MHz | SPI_CONTINUOUS;
+	REG_SPIDATA = PM_AMP_OFFSET;
 
-  SERIAL_CR = SERIAL_ENABLE | SPI_DEVICE_POWER | SPI_BAUDRATE_1Mhz | SPI_CONTINUOUS;
-  SERIAL_DATA = PM_AMP_OFFSET;
+	SerialWaitBusy();
 
-  while(SERIAL_CR & SERIAL_BUSY)
-    swiDelay(1);
-
-  SERIAL_CR = SERIAL_ENABLE | SPI_DEVICE_POWER | SPI_BAUDRATE_1Mhz;
-  SERIAL_DATA = control;
+	REG_SPICNT = SPI_ENABLE | SPI_DEVICE_POWER | SPI_BAUD_1MHz;
+	REG_SPIDATA = control;
 }
 
 //---------------------------------------------------------------------------------
@@ -60,32 +60,28 @@ void PM_SetAmp(u8 control) {
 //---------------------------------------------------------------------------------
 u8 MIC_ReadData() {
 //---------------------------------------------------------------------------------
-  u16 result, result2;
-  
-  while(SERIAL_CR & SERIAL_BUSY)
-    swiDelay(1);
- 
-  SERIAL_CR = SERIAL_ENABLE | SPI_DEVICE_TOUCH | SPI_BAUDRATE_2Mhz | SPI_CONTINUOUS;
-  SERIAL_DATA = 0xEC;  // Touchscreen command format for AUX
-  
-  while(SERIAL_CR & SERIAL_BUSY)
-    swiDelay(1);
+	u16 result, result2;
 
-  SERIAL_DATA = 0x00;
+	SerialWaitBusy();
 
-  while(SERIAL_CR & SERIAL_BUSY)
-    swiDelay(1);
+	REG_SPICNT = SPI_ENABLE | SPI_DEVICE_MICROPHONE | SPI_BAUD_2MHz | SPI_CONTINUOUS;
+	REG_SPIDATA = 0xEC;  // Touchscreen command format for AUX
 
-  result = SERIAL_DATA;
-  SERIAL_CR = SERIAL_ENABLE | SPI_DEVICE_TOUCH | SPI_BAUDRATE_2Mhz;
-  SERIAL_DATA = 0x00; 
+	SerialWaitBusy();
 
-  while(SERIAL_CR & SERIAL_BUSY)
-    swiDelay(1);
+	REG_SPIDATA = 0x00;
 
-  result2 = SERIAL_DATA;
+	SerialWaitBusy();
 
-  return (((result & 0x7F) << 1) | ((result2>>7)&1));
+	result = REG_SPIDATA;
+  	REG_SPICNT = SPI_ENABLE | SPI_DEVICE_TOUCH | SPI_BAUD_2MHz;
+	REG_SPIDATA = 0x00;
+
+	SerialWaitBusy();
+
+	result2 = REG_SPIDATA;
+
+	return (((result & 0x7F) << 1) | ((result2>>7)&1));
 }
 
 static u8* microphone_buffer = 0;

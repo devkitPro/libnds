@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: keys.c,v 1.6 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: keys.c,v 1.7 2005-09-07 18:06:27 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -25,21 +25,24 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.6  2005/08/23 17:06:10  wntrmute
+	converted all endings to unix
+
 	Revision 1.5  2005/08/03 18:07:55  wntrmute
 	don't use nds.h
-	
+
 	Revision 1.4  2005/07/25 02:31:07  wntrmute
 	made local variables static
 	added proper header to keys.h
-	
+
 	Revision 1.3  2005/07/25 02:19:01  desktopman
 	Added support for KEY_LID in keys.c.
 	Moved KEYS_CUR from header to source file.
 	Changed from the custom abs() to stdlib.h's abs().
-	
+
 	Revision 1.2  2005/07/14 08:00:57  wntrmute
 	resynchronise with ndslib
-	
+
 
 ---------------------------------------------------------------------------------*/
 
@@ -49,7 +52,7 @@
 #include <nds/system.h>
 #include <nds/arm9/input.h>
 
-#define KEYS_CUR (( ((~KEYS)&0x3ff) | (((~IPC->buttons)&3)<<10) | (((~IPC->buttons)<<6) & (KEY_TOUCH|KEY_LID) ))^KEY_LID)
+#define KEYS_CUR (( ((~REG_KEYINPUT)&0x3ff) | (((~IPC->buttons)&3)<<10) | (((~IPC->buttons)<<6) & (KEY_TOUCH|KEY_LID) ))^KEY_LID)
 
 static u16 keys=0;
 static u16 keysold=0;
@@ -70,12 +73,9 @@ void scanKeys() {
 	keysold=keys;
 	keys=KEYS_CUR;
 
-	if(abs(IPC->touchXpx - oldx)>20 || abs(IPC->touchYpx - oldy)>20)
-		keys&=~KEY_TOUCH;
-
 	oldx=IPC->touchXpx;
 	oldy=IPC->touchYpx;
-	
+
 }
 
 //---------------------------------------------------------------------------------
