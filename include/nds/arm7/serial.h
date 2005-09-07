@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: serial.h,v 1.5 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: serial.h,v 1.6 2005-09-07 18:02:07 wntrmute Exp $
 
 	ARM7 serial control
 
@@ -26,12 +26,15 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/08/23 17:06:10  wntrmute
+	converted all endings to unix
+
 	Revision 1.4  2005/08/03 05:16:02  wntrmute
 	added PM control definitions
-	
+
 	Revision 1.3  2005/08/01 23:18:22  wntrmute
 	adjusted headers for logging
-	
+
 
 ---------------------------------------------------------------------------------*/
 
@@ -46,7 +49,7 @@
 
 // Networking
 #define R_CR            (*(vuint16*)0x04000134)
-#define XKEYS           (*(vuint16*)0x04000136)
+#define REG_KEYXY		(*(vuint16*)0x04000136)
 #define RTC_CR          (*(vuint16*)0x04000138)
 #define RTC_CR8         (*(vuint8*)0x04000138)
 
@@ -63,22 +66,26 @@
 #define SIO_MULTI_SEND  (*(vuint16*)0x0400012A)
 
 
-#define SERIAL_CR      (*(vuint16*)0x040001C0)
-#define SERIAL_CR32    (*(vuint32*)0x040001C0)
-#define SERIAL_DATA    (*(vuint16*)0x040001C2)
-#define SERIAL_DATA8   (*(vuint8*)0x040001C2)
+#define REG_SPICNT		(*(vuint16*)0x040001C0)
+#define REG_SPIDATA		(*(vuint16*)0x040001C2)
 
-#define SERIAL_ENABLE   0x8000
-#define SERIAL_BUSY     0x80
+#define SPI_ENABLE	BIT(15)
+#define SPI_IRQ		BIT(14)
+#define SPI_BUSY	BIT(7)
 
-#define SPI_DEVICE_POWER  (0 << 8)
-#define SPI_DEVICE_TOUCH  (2 << 8)
-#define SPI_BAUDRATE_2Mhz 1
-#define SPI_BAUDRATE_1Mhz 2
-#define SPI_CONTINUOUS    (1<<11)
+#define SPI_BAUD_4MHz	0
+#define SPI_BAUD_2MHz	1
+#define SPI_BAUD_1MHz	2
+#define SPI_BAUD_512KHz	3
+
+#define SPI_DEVICE_POWER		(0 << 8)
+#define SPI_DEVICE_NVRAM		(1 << 8)
+#define SPI_DEVICE_TOUCH		(2 << 8)
+#define SPI_DEVICE_MICROPHONE	(2 << 8)
+
+#define SPI_CONTINUOUS	BIT(11)
 
 
-#define PM_CONTROL		0
 
 #define PM_SOUND_PWR		BIT(0)
 #define PM_SOUND_VOL		BIT(1)
@@ -91,7 +98,7 @@
 #define PM_AMP_ON	1
 #define PM_AMP_OFF	0
 
-static inline void SerialWaitBusy() {   while (SERIAL_CR & SERIAL_BUSY) swiDelay(1); }
+static inline void SerialWaitBusy() {   while (REG_SPICNT & SPI_BUSY) swiDelay(1); }
 
 #endif
 
