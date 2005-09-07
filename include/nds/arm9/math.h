@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: math.h,v 1.7 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: math.h,v 1.8 2005-09-07 18:07:29 wntrmute Exp $
 
 	math functions
 
@@ -26,12 +26,15 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2005/08/23 17:06:10  wntrmute
+	converted all endings to unix
+
 	Revision 1.6  2005/08/22 08:03:50  wntrmute
 	removed unnecessary includes
-	
+
 	Revision 1.5  2005/08/01 23:18:22  wntrmute
 	adjusted headers for logging
-	
+
 
 ---------------------------------------------------------------------------------*/
 
@@ -80,7 +83,7 @@
 static inline f32 divf32(f32 num, f32 den)
 {
 	DIV_CR = DIV_64_32;
-	
+
 	while(DIV_CR & DIV_BUSY);
 
 	DIV_NUMERATOR64 = ((int64)num) << 12;
@@ -110,11 +113,11 @@ static inline f32 sqrtf32(f32 a)
 	SQRT_CR = SQRT_64;
 
 	while(SQRT_CR & SQRT_BUSY);
-	
+
 	SQRT_PARAM64 = ((int64)a) << 12;
-	
+
 	while(SQRT_CR & SQRT_BUSY);
-	
+
 	return SQRT_RESULT32;
 }
 
@@ -128,7 +131,7 @@ static inline f32 sqrtf32(f32 a)
 static inline int32 div32(int32 num, int32 den)
 {
 	DIV_CR = DIV_32_32;
-	
+
 	while(DIV_CR & DIV_BUSY);
 
 	DIV_NUMERATOR32 = num;
@@ -146,7 +149,7 @@ static inline int32 div32(int32 num, int32 den)
 static inline int32 mod32(int32 num, int32 den)
 {
 	DIV_CR = DIV_32_32;
-	
+
 	while(DIV_CR & DIV_BUSY);
 
 	DIV_NUMERATOR32 = num;
@@ -163,8 +166,8 @@ static inline int32 mod32(int32 num, int32 den)
 //  denominator are returns 32 bit result
 static inline int32 div64(int64 num, int32 den)
 {
-	DIV_CR = DIV_32_32;
-	
+	DIV_CR = DIV_64_32;
+
 	while(DIV_CR & DIV_BUSY);
 
 	DIV_NUMERATOR64 = num;
@@ -181,8 +184,8 @@ static inline int32 div64(int64 num, int32 den)
 //  denominator are returns 32 bit result
 static inline int32 mod64(int64 num, int32 den)
 {
-	DIV_CR = DIV_32_32;
-	
+	DIV_CR = DIV_64_32;
+
 	while(DIV_CR & DIV_BUSY);
 
 	DIV_NUMERATOR64 = num;
@@ -194,18 +197,18 @@ static inline int32 mod64(int64 num, int32 den)
 }
 ///////////////////////////////////////
 //  Integer square root
-//  takes a 32 bit integer and returns 
+//  takes a 32 bit integer and returns
 //	32 bit result
 static inline int32 sqrt32(int a)
 {
 	SQRT_CR = SQRT_32;
 
 	while(SQRT_CR & SQRT_BUSY);
-	
+
 	SQRT_PARAM32 = a;
-	
+
 	while(SQRT_CR & SQRT_BUSY);
-	
+
 	return SQRT_RESULT32;
 }
 
@@ -233,7 +236,7 @@ static inline f32 dotf32(f32 *a, f32 *b)
 }
 
 ///////////////////////////////////////
-// Normalize 
+// Normalize
 // Ax = Ax / mag
 // Ay = Ay / mag
 // Az = Az / mag
@@ -241,7 +244,7 @@ static inline void normalizef32(f32* a)
 {
 	// magnitude = sqrt ( Ax^2 + Ay^2 + Az^2 )
 	f32 magnitude = sqrtf32( mulf32(a[0], a[0]) + mulf32(a[1], a[1]) + mulf32(a[2], a[2]) );
-	
+
 	a[0] = divf32(a[0], magnitude);
 	a[1] = divf32(a[1], magnitude);
 	a[2] = divf32(a[2], magnitude);
