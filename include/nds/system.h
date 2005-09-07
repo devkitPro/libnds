@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.4 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: system.h,v 1.5 2005-09-07 18:03:36 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,13 +27,16 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/08/23 17:06:10  wntrmute
+	converted all endings to unix
+
 	Revision 1.3  2005/08/03 05:24:42  wntrmute
 	adjusted header for logging
 	tidied formatting
 	powerON sets not ORs
 	powerOFF inverts paramter
 	use BIT macro
-	
+
 
 ---------------------------------------------------------------------------------*/
 
@@ -85,36 +88,35 @@ static inline void lcdSwap(void) { POWER_CR ^= POWER_SWAP_LCDS; }
 
 typedef struct tPERSONAL_DATA {
   u8  RESERVED0[2];           //0x023FFC80  05 00 ?
- 
+
   u8  theme;                  //0x027FFC82  favorite color (0-15)
   u8  birthMonth;             //0x027FFC83  birthday month (1-12)
   u8  birthDay;               //0x027FFC84  birthday day (1-31)
- 
+
   u8  RESERVED1[1];           //0x027FFC85  ???
- 
+
   s16 name[10];               //0x027FFC86  name, UTF-16?
   u16 nameLen;                //0x027FFC9A  length of name in characters
- 
+
   s16 message[26];            //0x027FFC9C  message, UTF-16?
   u16 messageLen;             //0x027FFCD0  length of message in characters
- 
+
   u8  alarmHour;              //0x027FFCD2  alarm hour
   u8  alarmMinute;            //0x027FFCD3  alarm minute
- 
+
   u8  RESERVED2[4];           //0x027FFCD4  ??
- 
- 
+
   //calibration information
   u16 calX1;                  //0x027FFCD8
   u16 calY1;                  //0x027FFCDA
   u8  calX1px;                //0x027FFCDC
   u8  calY1px;                //0x027FFCDD
- 
+
   u16 calX2;                  //0x027FFCDE
   u16 calY2;                  //0x027FFCE0
   u8  calX2px;                //0x027FFCE2
   u8  calY2px;                //0x027FFCE3
- 
+
   packed_struct {             //0x027FFCE4
     unsigned language    : 3; //            language
     unsigned gbaScreen   : 1; //            GBA mode screen selection. 0=upper, 1=lower
@@ -124,25 +126,10 @@ typedef struct tPERSONAL_DATA {
   };
 } PACKED PERSONAL_DATA ;
 
-// Keyboard
 
-#define KEY_A          BIT(0)
-#define KEY_B          BIT(1)
-#define KEY_SELECT     BIT(2)
-#define KEY_START      BIT(3)
-#define KEY_RIGHT      BIT(4)
-#define KEY_LEFT       BIT(5)
-#define KEY_UP         BIT(6)
-#define KEY_DOWN       BIT(7)
-#define KEY_R          BIT(8)
-#define KEY_L          BIT(9)
-
-#define KEYS           (*(vuint16*)0x04000130)
-#define KEYS_CR        (*(vuint16*)0x04000132)
-
-#define READ_KEYS      ((~(KEYS)) & 0x3FF)
+#define	REG_KEYINPUT	(*(vu16*)0x04000130)
+#define	REG_KEYCNT		(*(vu16*)0x04000132)
 
 #define PersonalData ((PERSONAL_DATA*)0x27FFC80)
 
 #endif
-//////////////////////////////////////////////////////////////////////
