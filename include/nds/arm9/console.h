@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.h,v 1.5 2005-09-04 00:24:44 wntrmute Exp $
+	$Id: console.h,v 1.6 2005-09-12 06:50:23 wntrmute Exp $
 
 	console functions
 
@@ -26,6 +26,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/09/04 00:24:44  wntrmute
+	exposed consoleSetPos
+	move iprintAt and printAt to separate files
+
 	Revision 1.4  2005/08/31 01:10:33  wntrmute
 	reworked console into stdio
 
@@ -48,12 +52,6 @@ extern "C" {
 
 void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16* map, u8 pal, u8 bitDepth);
 void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth);
-void consoleSetPos(int x, int y);
-
-void printAt(int x, int y, char *str, ...);
-void iprintAt(int x, int y, char *str, ...);
-
-void consoleClear(void);
 
 #ifdef __cplusplus
 }

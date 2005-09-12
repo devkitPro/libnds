@@ -1,7 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.9 2005-09-04 00:24:44 wntrmute Exp $
-
-	console code -- provides basic print functionality
+	$Id: console.c,v 1.10 2005-09-12 06:50:23 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -26,6 +24,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2005/09/04 00:24:44  wntrmute
+	exposed consoleSetPos
+	move iprintAt and printAt to separate files
+
 	Revision 1.8  2005/08/31 01:10:33  wntrmute
 	reworked console into stdio
 
@@ -62,7 +64,8 @@
 static u16* fontMap;
 
 //	location of cursor
-static u8 row, col;
+static int row, col;
+static int savedX, savedY;
 
 //	font may not start on a character base boundry
 static u16 fontOffset;
@@ -97,10 +100,28 @@ int con_open(struct _reent *r,const char *path,int flags,int mode) {
 }
 
 //---------------------------------------------------------------------------------
+static void consoleCls() {
+//---------------------------------------------------------------------------------
+
+	row = 0;
+	col = 0;
+
+	int i = 0;
+
+	while(i++ < CONSOLE_HEIGHT * CONSOLE_WIDTH)
+		consolePrintChar(' ');
+
+	row = 0;
+	col = 0;
+
+}
+//---------------------------------------------------------------------------------
 int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 //---------------------------------------------------------------------------------
 
 	if (!consoleInitialised) return -1;
+
+	char chr;
 
 	int i, count = 0;
 	char *tmp = (char*)ptr;
@@ -109,9 +130,73 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 
 	i = 0;
 	while(*tmp!='\0' && i<len) {
-		consolePrintChar(*tmp++);
-		count++;
-		i++;
+
+		chr = *(tmp++);
+		i++; count++;
+
+		if ( chr == 0x1b && *tmp == '[' ) {
+			bool escaping = true;
+			char *escapeseq	= tmp;
+			int escapelen = 0;
+
+			do {
+				chr = *(tmp++);
+				i++; count++; escapelen++;
+				int parameter;
+				switch (chr) {
+					case 'H':
+						sscanf(escapeseq,"[%d;%dH", &row, &col);
+						escaping = false;
+						break;
+					case 'f':
+						sscanf(escapeseq,"[%d;%df", &row, &col);
+						escaping = false;
+						break;
+					case 'A':
+						sscanf(escapeseq,"[%dA", &parameter);
+						row =  (row - parameter) < 0 ? 0 : row - parameter;
+						escaping = false;
+						break;
+					case 'B':
+						sscanf(escapeseq,"[%dB", &parameter);
+						row =  (row + parameter) > CONSOLE_HEIGHT - 1 ? CONSOLE_HEIGHT - 1 : row + parameter;
+						escaping = false;
+						break;
+					case 'C':
+						sscanf(escapeseq,"[%dC", &parameter);
+						col =  (col + parameter) > CONSOLE_WIDTH - 1 ? CONSOLE_WIDTH - 1 : col + parameter;
+						escaping = false;
+						break;
+					case 'D':
+						sscanf(escapeseq,"[%dC", &parameter);
+						col =  (col - parameter) < 0 ? 0 : col - parameter;
+						escaping = false;
+						break;
+					case 'K':
+						escaping = false;
+						break;
+					case 's':
+						savedX = col;
+						savedY = row;
+						escaping = false;
+						break;
+					case 'u':
+						col = savedX;
+						row = savedY;
+						escaping = false;
+						break;
+					case 'J':
+						if ( escapeseq[escapelen-2] == '2') {
+							consoleCls();
+						}
+						escaping = false;
+					break;
+				}
+			} while (escaping);
+		continue;
+		}
+
+		consolePrintChar(chr);
 	}
 
 	return count;
@@ -202,6 +287,7 @@ void consoleInit(	u16* font, u16* charBase,
 	devoptab_list[STD_ERR] = &dotab_stderr;
 	setvbuf(stderr, NULL , _IONBF, 0);
 	setvbuf(stdout, NULL , _IONBF, 0);
+	consoleCls();
 	consoleInitialised = 1;
 
 }
@@ -210,20 +296,6 @@ void consoleInit(	u16* font, u16* charBase,
 void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth) {
 //---------------------------------------------------------------------------------
 	consoleInit((u16*)default_font_bin, charBase, 256, 0, map, CONSOLE_USE_COLOR255, bitDepth);
-}
-
-//---------------------------------------------------------------------------------
-void consoleSetPos(int x, int y) {
-//---------------------------------------------------------------------------------
-	if(y < CONSOLE_HEIGHT)
-		row = y;
-	else
-		row = CONSOLE_HEIGHT - 1;
-
-	if(x < CONSOLE_WIDTH)
-		col = x;
-	else
-		col = CONSOLE_WIDTH - 1;
 }
 
 //---------------------------------------------------------------------------------
@@ -273,14 +345,3 @@ void consolePrintChar(char c) {
 }
 
 
-//---------------------------------------------------------------------------------
-void consoleClear(void) {
-//---------------------------------------------------------------------------------
-	int i = 0;
-	consoleSetPos(0,0);
-
-	while(i++ < CONSOLE_HEIGHT * CONSOLE_WIDTH)
-		consolePrintChar(' ');
-
-	consoleSetPos(0,0);
-}
