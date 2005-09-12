@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: sound.c,v 1.2 2005-08-04 17:57:58 wntrmute Exp $
+	$Id: sound.c,v 1.3 2005-09-12 06:53:27 wntrmute Exp $
 
 	Sound Functions
 
@@ -24,9 +24,12 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/08/04 17:57:58  wntrmute
+	playSoundBlock internal only
+
 	Revision 1.1  2005/08/03 05:28:07  wntrmute
 	added arm9 sound functions
-	
+
 
 ---------------------------------------------------------------------------------*/
 #include <nds/arm9/sound.h>
@@ -60,7 +63,7 @@ void playSound( pTransferSoundData sound) {
 //---------------------------------------------------------------------------------
 	Snd.count = 1;
 
-	memcpy( &SndDat, sound, sizeof(TransferSoundData) );
+	memcpy( &Snd.data[0], sound, sizeof(TransferSoundData) );
 
 	playSoundBlock(&Snd);
 
