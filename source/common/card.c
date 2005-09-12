@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: card.c,v 1.2 2005-08-30 17:52:24 wntrmute Exp $
+	$Id: card.c,v 1.3 2005-09-12 06:55:21 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/08/30 17:52:24  wntrmute
+	corrected CARD_CR1
+	fixed cardReadEeprom
+
 
 ---------------------------------------------------------------------------------*/
 #include "nds/card.h"
@@ -116,7 +120,11 @@ int cardReadID(uint32 flags) {
 }
 
 
-#define EepromWaitBusy()	while (CARD_CR1 & /*BUSY*/0x80);
+//---------------------------------------------------------------------------------
+static inline void EepromWaitBusy()	{
+//---------------------------------------------------------------------------------
+	while (CARD_CR1 & /*BUSY*/0x80);
+}
 
 //---------------------------------------------------------------------------------
 void cardReadEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype) {
@@ -151,8 +159,6 @@ void cardReadEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype)
 //---------------------------------------------------------------------------------
 void cardWriteEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype) {
 //---------------------------------------------------------------------------------
-
-
 
 	uint32 address_end = address + length;
 	int i;
