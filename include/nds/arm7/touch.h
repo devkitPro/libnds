@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.h,v 1.6 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: touch.h,v 1.7 2005-09-12 06:51:58 wntrmute Exp $
 
 	Microphone control for the ARM7
 
@@ -26,17 +26,20 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.6  2005/08/23 17:06:10  wntrmute
+	converted all endings to unix
+
 	Revision 1.5  2005/08/03 17:36:23  wntrmute
 	moved touch struct to ipc
-	
+
 	Revision 1.4  2005/08/01 23:12:17  wntrmute
 	extended touchReadXY to return touchscreen co-ordinates as well as screen co-ordinates
-	
+
 	Revision 1.3  2005/07/29 00:57:40  wntrmute
 	updated file headers
 	added touchReadXY function
 	made header C++ compatible
-	
+
 
 ---------------------------------------------------------------------------------*/
 #ifndef ARM7_TOUCH_INCLUDE

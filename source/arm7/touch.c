@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.7 2005-09-07 18:05:37 wntrmute Exp $
+	$Id: touch.c,v 1.8 2005-09-12 06:51:58 wntrmute Exp $
 
 	Touch screen control for the ARM7
 
@@ -26,6 +26,9 @@
 			distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2005/09/07 18:05:37  wntrmute
+	use macros for device settings
+
 	Revision 1.6  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 
@@ -86,11 +89,8 @@ uint32 touchReadTemperature(int * t1, int * t2) {
 
 
 
-
-// linear mapping can be used to go from touchscreen position to pixel position
-
 static bool touchInit = false;
-static u32 xscale, yscale;
+static s32 xscale, yscale;
 static s32 xoffset, yoffset;
 
 // reading pixel position:
@@ -105,21 +105,32 @@ touchPosition touchReadXY() {
 	if ( !touchInit ) {
 
 
-		xscale = ((PersonalData->calX2px - PersonalData->calX1px) << 16) / (PersonalData->calX2 - PersonalData->calX1);
-		yscale = ((PersonalData->calY2px - PersonalData->calY1px) << 16) / (PersonalData->calY2 - PersonalData->calY1);
+		xscale = ((PersonalData->calX2px - PersonalData->calX1px) << 16) / ((PersonalData->calX2 & -8) - (PersonalData->calX1 & -8));
+		yscale = ((PersonalData->calY2px - PersonalData->calY1px) << 16) / ((PersonalData->calY2 & -8) - (PersonalData->calY1 & -8));
 
-		xoffset = PersonalData->calX1 * xscale - (PersonalData->calX1px << 16);
-		yoffset = PersonalData->calY1 * yscale - (PersonalData->calY1px << 16);
+		xoffset = (PersonalData->calX1 & -8) * xscale - (PersonalData->calX1px << 16);
+		yoffset = (PersonalData->calY1 & -8) * yscale - (PersonalData->calY1px << 16);
 
 		touchInit = true;
 
 	}
 
-	touchPos.x = touchRead(TSC_MEASURE_X);
-	touchPos.y = touchRead(TSC_MEASURE_Y);
 
-	touchPos.px = ( touchPos.x * xscale - xoffset ) >>16;
-	touchPos.py = ( touchPos.y * yscale - yoffset ) >>16;
+	touchPos.x = touchRead(TSC_MEASURE_X) & -8;
+	touchPos.y = touchRead(TSC_MEASURE_Y) & -8;
+
+
+	s16 px = ( touchPos.x * xscale - xoffset + xscale/2 ) >>16;
+	s16 py = ( touchPos.y * yscale - yoffset + yscale/2 ) >>16;
+
+
+	if ( px < 0) px = 0;
+	if ( py < 0) py = 0;
+	if ( px > (SCREEN_WIDTH -1)) px = SCREEN_WIDTH -1;
+	if ( py > (SCREEN_HEIGHT -1)) px = SCREEN_HEIGHT -1;
+
+	touchPos.px = px;
+	touchPos.py = py;
 
 	return touchPos;
 
