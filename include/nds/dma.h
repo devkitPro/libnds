@@ -1,39 +1,36 @@
-//////////////////////////////////////////////////////////////////////
-//
-// DMA.h -- Direct Memory Access channel control
-//
-// version 0.1, February 14, 2005
-//
-//  Copyright (C) 2005 Michael Noland (joat) and Jason Rogers (dovoto)
-//
-//  This software is provided 'as-is', without any express or implied
-//  warranty.  In no event will the authors be held liable for any
-//  damages arising from the use of this software.
-//
-//  Permission is granted to anyone to use this software for any
-//  purpose, including commercial applications, and to alter it and
-//  redistribute it freely, subject to the following restrictions:
-//
-//  1. The origin of this software must not be misrepresented; you
-//     must not claim that you wrote the original software. If you use
-//     this software in a product, an acknowledgment in the product
-//     documentation would be appreciated but is not required.
-//  2. Altered source versions must be plainly marked as such, and
-//     must not be misrepresented as being the original software.
-//  3. This notice may not be removed or altered from any source
-//     distribution.
-//
-// Changelog:
-//   0.1: First version
-//
-//////////////////////////////////////////////////////////////////////
+/*---------------------------------------------------------------------------------
+	$Id: dma.h,v 1.2 2005-09-14 06:19:36 wntrmute Exp $
+
+	Copyright (C) 2005
+		Jason Rogers (dovoto)
+		Dave Murphy (WinterMute)
+
+	This software is provided 'as-is', without any express or implied
+	warranty.  In no event will the authors be held liable for any
+	damages arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any
+	purpose, including commercial applications, and to alter it and
+	redistribute it freely, subject to the following restrictions:
+
+	1.	The origin of this software must not be misrepresented; you
+		must not claim that you wrote the original software. If you use
+		this software in a product, an acknowledgment in the product
+		documentation would be appreciated but is not required.
+
+	2.	Altered source versions must be plainly marked as such, and
+		must not be misrepresented as being the original software.
+
+	3.	This notice may not be removed or altered from any source
+		distribution.
+
+	$Log: not supported by cvs2svn $
+
+---------------------------------------------------------------------------------*/
 
 #ifndef NDS_DMA_INCLUDE
 #define NDS_DMA_INCLUDE
 
-//////////////////////////////////////////////////////////////////////
-// DMA ///////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////
 
 #define DMA0_SRC       (*(vuint32*)0x040000B0)
 #define DMA0_DEST      (*(vuint32*)0x040000B4)
@@ -55,7 +52,6 @@
 #define DMA_DEST(n)    (*(vuint32*)(0x040000B4+(n*12)))
 #define DMA_CR(n)      (*(vuint32*)(0x040000B8+(n*12)))
 
-//////////////////////////////////////////////////////////////////////
 
 // DMA control register contents
 // The defaults are 16-bit, increment source/dest addresses, no irq
@@ -96,57 +92,53 @@
 #define DMA_COPY_HALFWORDS (DMA_ENABLE | DMA_16_BIT | DMA_START_NOW)
 #define DMA_FIFO	(DMA_ENABLE | DMA_32_BIT  | DMA_DST_FIX | DMA_START_FIFO)
 
-static inline void dmaCopyWords(uint8 channel, const void* src, void* dest, uint32 size)
-{
+static inline void dmaCopyWords(uint8 channel, const void* src, void* dest, uint32 size) {
 	DMA_SRC(channel) = (uint32)src;
 	DMA_DEST(channel) = (uint32)dest;
 	DMA_CR(channel) = DMA_COPY_WORDS | (size>>2);
 	while(DMA_CR(channel) & DMA_BUSY);
 }
-static inline void dmaCopyHalfWords(uint8 channel, const void* src, void* dest, uint32 size)
-{
+
+static inline void dmaCopyHalfWords(uint8 channel, const void* src, void* dest, uint32 size) {
 	DMA_SRC(channel) = (uint32)src;
 	DMA_DEST(channel) = (uint32)dest;
 	DMA_CR(channel) = DMA_COPY_HALFWORDS | (size>>1);
 	while(DMA_CR(channel) & DMA_BUSY);
 }
-static inline void dmaCopy(const void * source, void * dest, uint32 size)
-{
+
+static inline void dmaCopy(const void * source, void * dest, uint32 size) {
 	DMA_SRC(3) = (uint32)source;
 	DMA_DEST(3) = (uint32)dest;
 	DMA_CR(3) = DMA_COPY_HALFWORDS | (size>>1);
 	while(DMA_CR(3) & DMA_BUSY);
 }
 
-static inline void dmaCopyWordsAsynch(uint8 channel, const void* src, void* dest, uint32 size)
-{
+static inline void dmaCopyWordsAsynch(uint8 channel, const void* src, void* dest, uint32 size) {
 	DMA_SRC(channel) = (uint32)src;
 	DMA_DEST(channel) = (uint32)dest;
 	DMA_CR(channel) = DMA_COPY_WORDS | (size>>2);
 
 }
-static inline void dmaCopyHalfWordsAsynch(uint8 channel, const void* src, void* dest, uint32 size)
-{
+
+static inline void dmaCopyHalfWordsAsynch(uint8 channel, const void* src, void* dest, uint32 size) {
 	DMA_SRC(channel) = (uint32)src;
 	DMA_DEST(channel) = (uint32)dest;
 	DMA_CR(channel) = DMA_COPY_HALFWORDS | (size>>1);
 }
-static inline void dmaCopyAsynch(const void * source, void * dest, uint32 size)
-{
+
+static inline void dmaCopyAsynch(const void * source, void * dest, uint32 size) {
 	DMA_SRC(3) = (uint32)source;
 	DMA_DEST(3) = (uint32)dest;
 	DMA_CR(3) = DMA_COPY_HALFWORDS | (size>>1);
 }
-static inline int dmaBusy(uint8 channel)
-{
-	if (DMA_CR(channel) & DMA_BUSY) 
+
+static inline int dmaBusy(uint8 channel) {
+	if (DMA_CR(channel) & DMA_BUSY)
 		return 1;
 	else
 		return 0;
 }
 
-//////////////////////////////////////////////////////////////////////
 
 #endif
 
-//////////////////////////////////////////////////////////////////////
