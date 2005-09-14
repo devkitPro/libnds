@@ -14,10 +14,10 @@ Include Sub Directories=1
 [Open Files]
 Open File0=
 Active File Display Mode=-1
-Open File Pos0=3963
-Open File Line0=3726
+Open File Pos0=0
+Open File Line0=5272
 Active File Index=0
-Open File Window Pos0=2,3,-1,-1,-4,-23,110,110,1018,469
+Open File Window Pos0=2,3,-1,-1,-4,-23,22,22,930,381
 Open File1=
 Open File Pos1=575
 Open File Line1=0
@@ -108,7 +108,7 @@ Open File Line22=4362
 Open File Window Pos22=0,1,-1,-1,-4,-23,154,154,1031,598
 Open File23=
 [File View]
-Current Select=Project Files\source\arm9\console.c
+Current Select=Project Files
 Scroll Position=0
 [Files]
 0=include\
