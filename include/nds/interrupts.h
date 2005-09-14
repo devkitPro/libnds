@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.6 2005-09-04 16:27:22 wntrmute Exp $
+	$Id: interrupts.h,v 1.7 2005-09-14 06:20:57 wntrmute Exp $
 
 	Interrupt registers and vector pointers
 
@@ -27,9 +27,12 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.6  2005/09/04 16:27:22  wntrmute
+	added 1 to MAX_INTERRUPTS
+
 	Revision 1.5  2005/09/03 17:09:35  wntrmute
 	added interworking aware interrupt dispatcher
-	
+
 	Revision 1.4  2005/08/03 05:17:26  wntrmute
 	use BIT macro for consistency
 
@@ -45,33 +48,34 @@
 #include <nds/jtypes.h>
 
 // Interrupt flags for IE and IF
-#define IRQ_VBLANK			BIT(0)
-#define IRQ_HBLANK			BIT(1)
-#define IRQ_YTRIGGER		BIT(2)
-#define IRQ_TIMER0			BIT(3)
-#define IRQ_TIMER1			BIT(4)
-#define IRQ_TIMER2			BIT(5)
-#define IRQ_TIMER3			BIT(6)
-#define IRQ_NETWORK			BIT(7)
-#define IRQ_DMA0			BIT(8)
-#define IRQ_DMA1			BIT(9)
-#define IRQ_DMA2			BIT(10)
-#define IRQ_DMA3			BIT(11)
-#define IRQ_KEYS			BIT(12)
-#define IRQ_CART			BIT(13)
-#define IRQ_IPC_SYNC		BIT(16)
-#define IRQ_FIFO_EMPTY		BIT(17)
-#define IRQ_FIFO_NOT_EMPTY	BIT(18)
-#define IRQ_CARD			BIT(19)
-#define IRQ_CARD_LINE		BIT(20)
-#define IRQ_GEOMETRY_FIFO	BIT(21)
-#define IRQ_LID				BIT(22)
-#define IRQ_SPI				BIT(23)
-#define IRQ_WIFI			BIT(24)
+enum IRQ_MASKS {
+	IRQ_VBLANK			=	BIT(0),
+	IRQ_HBLANK			=	BIT(1),
+	IRQ_YTRIGGER		=	BIT(2),
+	IRQ_TIMER0			=	BIT(3),
+	IRQ_TIMER1			=	BIT(4),
+	IRQ_TIMER2			=	BIT(5),
+	IRQ_TIMER3			=	BIT(6),
+	IRQ_NETWORK			=	BIT(7),
+	IRQ_DMA0			=	BIT(8),
+	IRQ_DMA1			=	BIT(9),
+	IRQ_DMA2			=	BIT(10),
+	IRQ_DMA3			=	BIT(11),
+	IRQ_KEYS			=	BIT(12),
+	IRQ_CART			=	BIT(13),
+	IRQ_IPC_SYNC		=	BIT(16),
+	IRQ_FIFO_EMPTY		=	BIT(17),
+	IRQ_FIFO_NOT_EMPTY	=	BIT(18),
+	IRQ_CARD			=	BIT(19),
+	IRQ_CARD_LINE		=	BIT(20),
+	IRQ_GEOMETRY_FIFO	=	BIT(21),
+	IRQ_LID				=	BIT(22),
+	IRQ_SPI				=	BIT(23),
+	IRQ_WIFI			=	BIT(24),
+	IRQ_ALL				=	(~0)
+};
 
-#define MAX_INTERRUPTS		25
-
-#define IRQ_ALL			(~0)
+#define MAX_INTERRUPTS  25
 
 
 /*---------------------------------------------------------------------------------
@@ -96,10 +100,10 @@
 ---------------------------------------------------------------------------------*/
 #define IME            (*(vuint16*)0x04000208)
 
-// Values for IME
-#define IME_DISABLED   (0)
-#define IME_ENABLED    (1)
-
+enum IME_VALUES {
+	IME_DISABLED = 0,
+	IME_ENABLED = 1,
+};
 
 
 #ifdef ARM7
