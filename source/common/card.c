@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: card.c,v 1.3 2005-09-12 06:55:21 wntrmute Exp $
+	$Id: card.c,v 1.4 2005-09-14 06:21:58 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/09/12 06:55:21  wntrmute
+	replaced EepromWaitBusy macro with static inline
+
 	Revision 1.2  2005/08/30 17:52:24  wntrmute
 	corrected CARD_CR1
 	fixed cardReadEeprom
@@ -94,10 +97,10 @@ void cardRead00(uint32 address, uint32 * destination, uint32 length, uint32 flag
 //---------------------------------------------------------------------------------
 	uint8 command[8];
 	command[7] = 0;
-	command[6] = address >> 24;
-	command[5] = address >> 16;
-	command[4] = address >> 8;
-	command[3] = address;
+	command[6] = (address >> 24) & 0xff;
+	command[5] = (address >> 16) & 0xff;
+	command[4] = (address >> 8) & 0xff;
+	command[3] = address & 0xff;
 	command[2] = 0;
 	command[1] = 0;
 	command[0] = 0;
