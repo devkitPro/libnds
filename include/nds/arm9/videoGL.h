@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.10 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: videoGL.h,v 1.11 2005-09-19 20:59:47 dovoto Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.10  2005/08/23 17:06:10  wntrmute
+	converted all endings to unix
+	
 	Revision 1.9  2005/08/22 08:05:53  wntrmute
 	moved inlines to separate file
 	
@@ -249,6 +252,8 @@ void glRotateY(float angle);
 void glRotateZ(float angle);
 void glRotatef32i(int angle, f32 x, f32 y, f32 z);
 
+void glOrthof32(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar);
+void glOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
 
 void gluLookAtf32(f32 eyex, f32 eyey, f32 eyez, f32 lookAtx, f32 lookAty, f32 lookAtz, f32 upx, f32 upy, f32 upz);
 void gluLookAt(float eyex, float eyey, float eyez, float lookAtx, float lookAty, float lookAtz, float upx, float upy, float upz);

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.7 2005-09-14 06:20:57 wntrmute Exp $
+	$Id: interrupts.h,v 1.8 2005-09-19 20:59:47 dovoto Exp $
 
 	Interrupt registers and vector pointers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2005/09/14 06:20:57  wntrmute
+	use enum for IRQ_MASKS and IME_VALUES
+	
 	Revision 1.6  2005/09/04 16:27:22  wntrmute
 	added 1 to MAX_INTERRUPTS
 

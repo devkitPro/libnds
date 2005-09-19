@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.12 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: videoGL.c,v 1.13 2005-09-19 20:59:47 dovoto Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.12  2005/08/23 17:06:10  wntrmute
+	converted all endings to unix
+	
 	Revision 1.11  2005/08/22 08:05:53  wntrmute
 	moved inlines to separate file
 	
@@ -350,6 +353,43 @@ void glNormal3f(float x, float y, float z) {
 	if(z >= 1 || z <= -1) z *= .95;
 
 	glNormal(NORMAL_PACK(floatov10(x), floatov10(y), floatov10(z)));
+}
+
+
+
+//---------------------------------------------------------------------------------
+void glOrthof32(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar) {
+//---------------------------------------------------------------------------------
+	glMatrixMode(GL_PROJECTION);
+
+	MATRIX_LOAD4x4 = divf32(intof32(2), right - left);     
+	MATRIX_LOAD4x4 = 0;  
+	MATRIX_LOAD4x4 = 0;      
+	MATRIX_LOAD4x4 = divf32(right + left, right - left);
+
+	MATRIX_LOAD4x4 = 0;  
+	MATRIX_LOAD4x4 = divf32(intof32(2), top - bottom);     
+	MATRIX_LOAD4x4 = 0;    
+	MATRIX_LOAD4x4 = divf32(top + bottom, top - bottom); 
+   
+	MATRIX_LOAD4x4 = 0;  
+	MATRIX_LOAD4x4 = 0;  
+	MATRIX_LOAD4x4 = divf32(intof32(-2), zFar - zNear);     
+	MATRIX_LOAD4x4 = divf32(zFar + zNear, zFar - zNear);
+   
+	MATRIX_LOAD4x4 = 0;  
+	MATRIX_LOAD4x4 = 0;  
+	MATRIX_LOAD4x4 = 0;  
+	MATRIX_LOAD4x4 = floatof32(1.0F);
+	
+	glStoreMatrix(0);
+}
+
+//---------------------------------------------------------------------------------
+void glOrtho(float left, float right, float bottom, float top, float zNear, float zFar) {
+//---------------------------------------------------------------------------------
+	glOrthof32(floatof32(left), floatof32(right), floatof32(bottom), floatof32(top), floatof32(zNear), floatof32(zFar));
+
 }
 
 //---------------------------------------------------------------------------------
