@@ -49,7 +49,7 @@ export BASEFLAGS	:=	-g -Wall -O2\
 				-I$(INCDIR)
 
 
-.PHONEY:	all libs dist
+.PHONY:	all libs dist docs
 
 #---------------------------------------------------------------------------------
 all:	$(DEPENDS)/arm7 $(DEPENDS)/arm9 lib $(BUILD)/arm9 $(BUILD)/arm7
@@ -90,7 +90,13 @@ dist: all
 	@tar --exclude=*CVS* -cvjf libnds-src-$(DATESTRING).tar.bz2 source include license.txt Makefile Makefile.arm9 Makefile.arm7
 	@tar --exclude=*CVS* -cvjf libnds-$(DATESTRING).tar.bz2 include lib license.txt
 
+#---------------------------------------------------------------------------------
 install: dist
+#---------------------------------------------------------------------------------
 	mkdir -p $(DEVKITPRO)/libnds
 	bzip2 -cd libnds-$(DATESTRING).tar.bz2 | tar -xv -C $(DEVKITPRO)/libnds
 
+#---------------------------------------------------------------------------------
+docs:
+#---------------------------------------------------------------------------------
+	doxygen libnds.dox
