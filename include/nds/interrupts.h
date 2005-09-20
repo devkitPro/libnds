@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.8 2005-09-19 20:59:47 dovoto Exp $
+	$Id: interrupts.h,v 1.9 2005-09-20 05:15:35 wntrmute Exp $
 
 	Interrupt registers and vector pointers
 
@@ -27,9 +27,12 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2005/09/19 20:59:47  dovoto
+	Added glOrtho and glOrthof32.  No change to interrupts.h
+
 	Revision 1.7  2005/09/14 06:20:57  wntrmute
 	use enum for IRQ_MASKS and IME_VALUES
-	
+
 	Revision 1.6  2005/09/04 16:27:22  wntrmute
 	added 1 to MAX_INTERRUPTS
 
@@ -45,30 +48,41 @@
 
 ---------------------------------------------------------------------------------*/
 
+/*! \file interrupts.h
+
+    \brief nds interrupt support.
+
+
+
+*/
+
 #ifndef NDS_INTERRUPTS_INCLUDE
 #define NDS_INTERRUPTS_INCLUDE
 
 #include <nds/jtypes.h>
 
-// Interrupt flags for IE and IF
+/*! \enum IRQ_MASK
+	\brief values allowed for REG_IE and REG_IF
+
+*/
 enum IRQ_MASKS {
-	IRQ_VBLANK			=	BIT(0),
-	IRQ_HBLANK			=	BIT(1),
-	IRQ_YTRIGGER		=	BIT(2),
-	IRQ_TIMER0			=	BIT(3),
-	IRQ_TIMER1			=	BIT(4),
-	IRQ_TIMER2			=	BIT(5),
-	IRQ_TIMER3			=	BIT(6),
-	IRQ_NETWORK			=	BIT(7),
-	IRQ_DMA0			=	BIT(8),
-	IRQ_DMA1			=	BIT(9),
-	IRQ_DMA2			=	BIT(10),
-	IRQ_DMA3			=	BIT(11),
-	IRQ_KEYS			=	BIT(12),
-	IRQ_CART			=	BIT(13),
-	IRQ_IPC_SYNC		=	BIT(16),
-	IRQ_FIFO_EMPTY		=	BIT(17),
-	IRQ_FIFO_NOT_EMPTY	=	BIT(18),
+	IRQ_VBLANK			=	BIT(0),		/*!< vertical blank interrupt mask */
+	IRQ_HBLANK			=	BIT(1),		/*!< horizontal blank interrupt mask */
+	IRQ_VCOUNT			=	BIT(2),		/*!< vcount match interrupt mask */
+	IRQ_TIMER0			=	BIT(3),		/*!< timer 0 interrupt mask */
+	IRQ_TIMER1			=	BIT(4),		/*!< timer 1 interrupt mask */
+	IRQ_TIMER2			=	BIT(5),		/*!< timer 2 interrupt mask */
+	IRQ_TIMER3			=	BIT(6),		/*!< timer 3 interrupt mask */
+	IRQ_NETWORK			=	BIT(7),		/*!< serial interrupt mask */
+	IRQ_DMA0			=	BIT(8),		/*!< DMA 0 interrupt mask */
+	IRQ_DMA1			=	BIT(9),		/*!< DMA 1 interrupt mask */
+	IRQ_DMA2			=	BIT(10),	/*!< DMA 2 interrupt mask */
+	IRQ_DMA3			=	BIT(11),	/*!< DMA 3 interrupt mask */
+	IRQ_KEYS			=	BIT(12),	/*!< Keypad interrupt mask */
+	IRQ_CART			=	BIT(13),	/*!< GBA cartridge interrupt mask */
+	IRQ_IPC_SYNC		=	BIT(16),	/*!< IPC sync interrupt mask */
+	IRQ_FIFO_EMPTY		=	BIT(17),	/*!< Send FIFO empty interrupt mask */
+	IRQ_FIFO_NOT_EMPTY	=	BIT(18),	/*!< Receive FIFO empty interrupt mask */
 	IRQ_CARD			=	BIT(19),
 	IRQ_CARD_LINE		=	BIT(20),
 	IRQ_GEOMETRY_FIFO	=	BIT(21),
@@ -80,32 +94,45 @@ enum IRQ_MASKS {
 
 #define MAX_INTERRUPTS  25
 
+typedef enum IRQ_MASKS IRQ_MASK;
 
-/*---------------------------------------------------------------------------------
-	IE: Interrupt Enable Register
+/*! \def REG_IE
+
+    \brief Interrupt Enable Register.
+
 	This is the activation mask for the internal interrupts.  Unless
 	the corresponding bit is set, the IRQ will be masked out.
----------------------------------------------------------------------------------*/
-#define IE             (*(vuint32*)0x04000210)
+*/
+#define REG_IE	(*(vuint32*)0x04000210)
 
-/*---------------------------------------------------------------------------------
-	IF: Interrupt Flags Register
+/*! \def REG_IF
+
+    \brief Interrupt Flag Register.
+
 	Since there is only one hardware interrupt vector, the IF register
-	contains flags to indicate when a particular sort of interrupt
-	has occured.
----------------------------------------------------------------------------------*/
-#define IF             (*(vuint32*)0x04000214)
+	contains flags to indicate when a particular of interrupt has occured.
+	To acknowledge processing interrupts, set IF to the value of the
+	interrupt handled.
 
-/*---------------------------------------------------------------------------------
-	IME: Interrupt Master Enable Register
+*/
+#define REG_IF	(*(vuint32*)0x04000214)
+
+/*! \def REG_IME
+
+    \brief Interrupt Master Enable Register.
+
 	When bit 0 is clear, all interrupts are masked.  When it is 1,
-	interrupts will occur if not masked out.
----------------------------------------------------------------------------------*/
-#define IME            (*(vuint16*)0x04000208)
+	interrupts will occur if not masked out in REG_IE.
 
-enum IME_VALUES {
-	IME_DISABLED = 0,
-	IME_ENABLED = 1,
+*/
+#define REG_IME	(*(vuint16*)0x04000208)
+
+/*! \enum IME_VALUE
+	\brief values allowed for REG_IME
+*/
+enum IME_VALUE {
+	IME_DISABLE = 0, 	/*!< Disable all interrupts. */
+	IME_ENABLE = 1,	/*!< Enable all interrupts not masked out in REG_IE */
 };
 
 
@@ -127,12 +154,41 @@ extern "C" {
 
 struct IntTable{IntFn handler; u32 mask;};
 
+/*! \fn irqInit()
+	\brief Initialise the libnds interrupt system.
+
+	Call this function at the start of any aplication which requires interrupt support.
+*/
 void irqInit();
-void irqSet(int irq, VoidFunctionPointer handler);
-void irqClear(int irq);
+/*! \fn irqSet(IRQ_MASK irq, VoidFunctionPointer handler)
+	\brief Add a handler for the given interrupt mask.
+
+	Specify the handler to use for the given interrupt. This only works with
+	the default interrupt handler, do not mix the use of this routine with a
+	user-installed IRQ handler.
+
+	\note
+	When any handler specifies using IRQ_VBLANK or IRQ_HBLANK, DISP_SR
+	is automatically updated to include the corresponding DISP_VBLANK_IRQ or DISP_HBLANK_IRQ.
+
+	\warning Only one IRQ_MASK can be specified with this function.
+*/
+void irqSet(IRQ_MASK irq, VoidFunctionPointer handler);
+void irqClear(IRQ_MASK irq);
 void irqInitHandler(VoidFunctionPointer handler);
-void irqEnable(int irq);
-void irqDisable(int irq);
+/*! \fn irqEnable(IRQ_MASK irq)
+	\brief Allow the given interrupt to occur.
+	\param irq The set of interrupt masks to enable.
+	\note Specify multiple interrupts to enable by ORing several IRQ_MASKS.
+*/
+void irqEnable(IRQ_MASK irq);
+/*! \fn irqDisable(IRQ_MASK irq)
+	\brief Prevent the given interrupt from occuring.
+	\param irq The set of interrupt masks to disable.
+	\note Specify multiple interrupts to disable by ORing several IRQ_MASKS.
+*/
+void irqDisable(IRQ_MASK irq);
+
 void IntrMain();
 
 #ifdef __cplusplus
