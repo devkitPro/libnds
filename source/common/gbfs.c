@@ -1,12 +1,12 @@
 /*---------------------------------------------------------------------------------
-	$Id: gbfs.c,v 1.2 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: gbfs.c,v 1.3 2005-09-20 04:59:44 wntrmute Exp $
 
-  access object in a GBFS file
+	access object in a GBFS file
 
 	Copyright 2002-2005 Damian Yerrick
 
 	Additional code Dave Murphy
-	
+
 	Permission is hereby granted, free of charge, to any person obtaining
 	a copy of this software and associated documentation files (the
 	"Software"), to deal in the Software without restriction, including
@@ -28,9 +28,12 @@
 	IN THE SOFTWARE.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/08/23 17:06:10  wntrmute
+	converted all endings to unix
+
 	Revision 1.1  2005/08/04 17:55:44  wntrmute
 	added gbfs
-	
+
 
 ---------------------------------------------------------------------------------*/
 
@@ -73,7 +76,7 @@ void gbfs_search_range(	u32 gbfs_1st_limit,
 	if ( NULL != gbfs_2nd_limit ) GBFS_2ND_SEARCH_LIMIT = (u32 *)gbfs_2nd_limit;
 	if ( NULL != gbfs_2nd_start ) GBFS_2ND_SEARCH_START = (u32 *)gbfs_2nd_start;
 	if ( NULL != gbfs_stride ) GBFS_STRIDE = gbfs_stride;
-		 
+
 }
 
 //---------------------------------------------------------------------------------
