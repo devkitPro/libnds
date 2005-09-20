@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.c,v 1.4 2005-09-04 16:28:04 wntrmute Exp $
+	$Id: interrupts.c,v 1.5 2005-09-20 05:00:24 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,9 +22,12 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/09/04 16:28:04  wntrmute
+	place irqTable in ewram
+
 	Revision 1.3  2005/09/03 17:09:35  wntrmute
 	added interworking aware interrupt dispatcher
-	
+
 
 ---------------------------------------------------------------------------------*/
 
@@ -65,7 +68,7 @@ void irqSet(int mask, IntFn handler) {
 	if(mask & IRQ_HBLANK)
 		DISP_SR |= DISP_HBLANK_IRQ ;
 
-	IE |= mask;
+	REG_IE |= mask;
 }
 
 //---------------------------------------------------------------------------------
@@ -102,32 +105,32 @@ void irqClear(int mask) {
 	if(mask & IRQ_HBLANK)
 		DISP_SR &= ~DISP_HBLANK_IRQ ;
 
-	IE &= ~mask;
+	REG_IE &= ~mask;
 }
 
 
 //---------------------------------------------------------------------------------
 void irqInitHandler(IntFn handler) {
 //---------------------------------------------------------------------------------
-	IME = 0;
-	IF = ~0;
-	IE = 0;
+	REG_IME = 0;
+	REG_IF = ~0;
+	REG_IE = 0;
 
 	IRQ_HANDLER = handler;
 
-	IME = 1;
+	REG_IME = 1;
 }
 
 //---------------------------------------------------------------------------------
 void irqEnable(int irq) {
 //---------------------------------------------------------------------------------
-	IE |= irq;
-	IME = 1;
+	REG_IE |= irq;
+	REG_IME = 1;
 }
 
 //---------------------------------------------------------------------------------
 void irqDisable(int irq) {
 //---------------------------------------------------------------------------------
-	IE &= ~irq;
+	REG_IE &= ~irq;
 }
 
