@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interruptDispatcher.s,v 1.2 2005-09-04 16:37:01 wntrmute Exp $
+	$Id: interruptDispatcher.s,v 1.3 2005-09-27 18:21:53 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/09/04 16:37:01  wntrmute
+	check for NULL handler
+	
 	Revision 1.1  2005/09/03 17:09:35  wntrmute
 	added interworking aware interrupt dispatcher
 	
@@ -45,7 +48,8 @@ IntrMain:
 @---------------------------------------------------------------------------------
 	mov	r3, #0x4000000		@ REG_BASE
 
-	ldrh	r1, [r3, #0x8]		@ r1 = IME
+	ldr	r1, [r3, #0x208]	@ r1 = IME
+	str	r3, [r3, #0x208]	@ disable IME
 	mrs	r0, spsr
 	stmfd	sp!, {r0-r1,r3,lr}	@ {spsr, IME, REG_BASE, lr}
 
@@ -81,47 +85,51 @@ findIRQ:
 @---------------------------------------------------------------------------------
 no_handler:
 @---------------------------------------------------------------------------------
-	str	r1, [r3, #0x214]	@ IF Clear
-@---------------------------------------------------------------------------------
-null_handler:
-@---------------------------------------------------------------------------------
-	ldmfd   sp!, {r0-r1,r3,pc}	@ {spsr, IME, REG_BASE, lr}
+	str	r1, [r3, #0x0214]		@ IF Clear
+        ldmfd   sp!, {r0-r1,r3,lr}		@ {spsr, IME, REG_BASE, lr}
+	mov	pc,lr
 
 @---------------------------------------------------------------------------------
 jump_intr:
 @---------------------------------------------------------------------------------
-	str	r0, [r3, #0x214]	@ IF Clear
-
-	ldr	r0, [r2]		@ user IRQ handler address
-	cmp	r0, #0
-	beq	null_handler
-
+	ldr	r1, [r2]			@ user IRQ handler address
+	cmp	r1, #0
+	bne	got_handler
+	mov	r1, r0
+	b	no_handler
+@---------------------------------------------------------------------------------
+got_handler:
+@---------------------------------------------------------------------------------
 
 	mrs	r2, cpsr
-	bic	r2, r2, #0xdf		@ \__
-	orr	r2, r2, #0x1f		@ /  --> Enable IRQ & FIQ. Set CPU mode to System.
+	bic	r2, r2, #0xdf			@ \__
+	orr	r2, r2, #0x1f			@ /  --> Enable IRQ & FIQ. Set CPU mode to System.
 	msr	cpsr,r2
 
-	stmfd	sp!, {lr}
+	ldr	r2, [r3,#0x210]			@ REG_IE
+	stmfd	sp!, {r0,r2, r3,lr}		
+	bic	r2, r2, r0			@ disable interrupt about to be serviced
+	str	r2, [r3,#0x210]
+
 	adr	lr, IntrRet
-	bx	r0
+	bx	r1
 
 @---------------------------------------------------------------------------------
 IntrRet:
 @---------------------------------------------------------------------------------
-	ldmfd	sp!, {lr}
+	ldmfd	sp!, {r0,r2, r3,lr}
+	str	r2, [r3,#0x210]
+	str	r0, [r3, #0x0214]		@ IF Clear
 
 	mrs	r3, cpsr
-	bic	r3, r3, #0xdf		@ \__
-	orr	r3, r3, #0x92		@ /  --> Disable IRQ. Enable FIQ. Set CPU mode to IRQ.
+	bic	r3, r3, #0xdf			@ \__
+	orr	r3, r3, #0x92			@ /  --> Disable IRQ. Enable FIQ. Set CPU mode to IRQ.
 	msr	cpsr, r3
 
-	ldmfd   sp!, {r0-r1,r3,lr}	@ {spsr, IME, REG_BASE, lr}
-	strh	r1, [r3, #0x8]		@ restore REG_IME
-	msr	spsr, r0		@ restore spsr
+        ldmfd   sp!, {r0-r1,r3,lr}		@ {spsr, IME, REG_BASE, lr}
+	str	r1, [r3, #0x208]		@ restore REG_IME
+	msr	spsr, r0			@ restore spsr
 	mov	pc,lr
 
 	.pool
 	.end
-
-
