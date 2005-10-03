@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.h,v 1.7 2005-09-12 06:51:58 wntrmute Exp $
+	$Id: touch.h,v 1.8 2005-10-03 21:19:34 wntrmute Exp $
 
 	Microphone control for the ARM7
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2005/09/12 06:51:58  wntrmute
+	tidied touch code
+	
 	Revision 1.6  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 
@@ -63,11 +66,11 @@ extern "C" {
 
 
 #define TSC_MEASURE_TEMP1    0x84
-#define TSC_MEASURE_Y        0x94
+#define TSC_MEASURE_Y        0x90
 #define TSC_MEASURE_BATTERY  0xA4
 #define TSC_MEASURE_Z1       0xB4
 #define TSC_MEASURE_Z2       0xC4
-#define TSC_MEASURE_X        0xD4
+#define TSC_MEASURE_X        0xD0
 #define TSC_MEASURE_AUX      0xE4
 #define TSC_MEASURE_TEMP2    0xF4
 

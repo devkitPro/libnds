@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.8 2005-09-12 06:51:58 wntrmute Exp $
+	$Id: touch.c,v 1.9 2005-10-03 21:19:34 wntrmute Exp $
 
 	Touch screen control for the ARM7
 
@@ -26,6 +26,9 @@
 			distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2005/09/12 06:51:58  wntrmute
+	tidied touch code
+	
 	Revision 1.7  2005/09/07 18:05:37  wntrmute
 	use macros for device settings
 
@@ -115,14 +118,22 @@ touchPosition touchReadXY() {
 
 	}
 
+	int x,y;
+	
+	x =  touchRead(TSC_MEASURE_X | 1);
+	y =  touchRead(TSC_MEASURE_Y | 1);
+	x += 3 * touchRead(TSC_MEASURE_X | 1);
+	y += 3 * touchRead(TSC_MEASURE_Y | 1);
+	x += 5 * touchRead(TSC_MEASURE_X | 1);
+	y += 5 * touchRead(TSC_MEASURE_Y | 1);
+	x += 7 * touchRead(TSC_MEASURE_X);
+	y += 7 * touchRead(TSC_MEASURE_Y);
 
-	touchPos.x = touchRead(TSC_MEASURE_X) & -8;
-	touchPos.y = touchRead(TSC_MEASURE_Y) & -8;
-
+	touchPos.x = x/16;
+	touchPos.y = y/16;
 
 	s16 px = ( touchPos.x * xscale - xoffset + xscale/2 ) >>16;
 	s16 py = ( touchPos.y * yscale - yoffset + yscale/2 ) >>16;
-
 
 	if ( px < 0) px = 0;
 	if ( py < 0) py = 0;
