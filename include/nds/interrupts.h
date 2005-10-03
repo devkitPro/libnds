@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.9 2005-09-20 05:15:35 wntrmute Exp $
+	$Id: interrupts.h,v 1.10 2005-10-03 21:21:21 wntrmute Exp $
 
 	Interrupt registers and vector pointers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2005/09/20 05:15:35  wntrmute
+	added doxygen tagging
+	
 	Revision 1.8  2005/09/19 20:59:47  dovoto
 	Added glOrtho and glOrthof32.  No change to interrupts.h
 
@@ -51,8 +54,6 @@
 /*! \file interrupts.h
 
     \brief nds interrupt support.
-
-
 
 */
 
@@ -83,12 +84,12 @@ enum IRQ_MASKS {
 	IRQ_IPC_SYNC		=	BIT(16),	/*!< IPC sync interrupt mask */
 	IRQ_FIFO_EMPTY		=	BIT(17),	/*!< Send FIFO empty interrupt mask */
 	IRQ_FIFO_NOT_EMPTY	=	BIT(18),	/*!< Receive FIFO empty interrupt mask */
-	IRQ_CARD			=	BIT(19),
-	IRQ_CARD_LINE		=	BIT(20),
-	IRQ_GEOMETRY_FIFO	=	BIT(21),
-	IRQ_LID				=	BIT(22),
-	IRQ_SPI				=	BIT(23),
-	IRQ_WIFI			=	BIT(24),
+	IRQ_CARD			=	BIT(19),	/*!< interrupt mask */
+	IRQ_CARD_LINE		=	BIT(20),	/*!< interrupt mask */
+	IRQ_GEOMETRY_FIFO	=	BIT(21),	/*!< geometry FIFO interrupt mask */
+	IRQ_LID				=	BIT(22),	/*!< interrupt mask */
+	IRQ_SPI				=	BIT(23),	/*!< SPI interrupt mask */
+	IRQ_WIFI			=	BIT(24),	/*!< WIFI interrupt mask (ARM7)*/
 	IRQ_ALL				=	(~0)
 };
 
