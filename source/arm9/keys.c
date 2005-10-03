@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: keys.c,v 1.7 2005-09-07 18:06:27 wntrmute Exp $
+	$Id: keys.c,v 1.8 2005-10-03 21:21:59 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2005/09/07 18:06:27  wntrmute
+	use new register names
+	
 	Revision 1.6  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 
@@ -79,19 +82,19 @@ void scanKeys() {
 }
 
 //---------------------------------------------------------------------------------
-u32 keysHeld() {
+enum KEYPAD_BITS keysHeld() {
 //---------------------------------------------------------------------------------
 	return keys;
 }
 
 //---------------------------------------------------------------------------------
-u32 keysDown() {
+enum KEYPAD_BITS keysDown() {
 //---------------------------------------------------------------------------------
 	return (keys^keysold)&keys;
 }
 
 //---------------------------------------------------------------------------------
-u32 keysUp() {
+enum KEYPAD_BITS keysUp() {
 //---------------------------------------------------------------------------------
 	return (keys^keysold)&(~keys);
 }
