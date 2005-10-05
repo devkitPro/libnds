@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.11 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: video.h,v 1.12 2005-10-05 21:56:58 wntrmute Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.11  2005/08/23 17:06:10  wntrmute
+	converted all endings to unix
+	
 	Revision 1.10  2005/08/01 23:18:22  wntrmute
 	adjusted headers for logging
 	
@@ -35,24 +38,20 @@
 #ifndef VIDEO_ARM9_INCLUDE
 #define VIDEO_ARM9_INCLUDE
 
-//////////////////////////////////////////////////////////////////////
 
 #ifndef ARM9
 #error Video is only available on the ARM9
 #endif
 
-//////////////////////////////////////////////////////////////////////
 
 #include <nds/jtypes.h>
 
-//////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 	
-//////////////////////////////////////////////////////////////////////
 
 // macro creates a 15 bit color from 3x5 bit components
 #define RGB15(r,g,b)  ((r)|((g)<<5)|((b)<<10))
@@ -60,7 +59,6 @@ extern "C" {
 
 #define SCREEN_HEIGHT 192
 #define SCREEN_WIDTH  256
-//////////////////////////////////////////////////////////////////////
 //	Vram Control
 #define VRAM_CR			(*(vuint32*)0x04000240)
 #define VRAM_A_CR       (*(vuint8*)0x04000240)
@@ -346,8 +344,8 @@ void vramSetBankI(VRAM_I_TYPE i);
 #define BG_BMP8_256x256 (BG_RS_32x32 | BG_256_COLOR)
 #define BG_BMP8_512x256 (BG_RS_64x64 | BG_256_COLOR)
 #define BG_BMP8_512x512 (BG_RS_128x128 | BG_256_COLOR)
-#define BG_BMP8_1024x512 0
-#define BG_BMP8_512x1024 BIT(14)
+#define BG_BMP8_1024x512 BIT(14)
+#define BG_BMP8_512x1024 0
 
 #define BG_BMP16_128x128 (BG_RS_16x16 | BG_256_COLOR | BIT(2))
 #define BG_BMP16_256x256 (BG_RS_32x32 | BG_256_COLOR | BIT(2))
