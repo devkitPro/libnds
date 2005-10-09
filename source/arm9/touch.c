@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.3 2005-08-30 17:53:11 wntrmute Exp $
+	$Id: touch.c,v 1.4 2005-10-09 20:27:23 wntrmute Exp $
 
 	touch screen input code
 
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/08/30 17:53:11  wntrmute
+	only include required headers
+	
 	Revision 1.2  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 
@@ -42,7 +45,8 @@
 //---------------------------------------------------------------------------------
 touchPosition touchReadXY() {
 //---------------------------------------------------------------------------------
-
+	while (IPC->mailBusy);
+	
 	touchPosition touchPos;
 
 	touchPos.x = IPC->touchX;
