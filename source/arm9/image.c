@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: image.c,v 1.5 2005-08-30 17:54:45 wntrmute Exp $
+	$Id: image.c,v 1.6 2005-10-11 05:05:26 dovoto Exp $
 
 
 	Copyright (C) 2005
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/08/30 17:54:45  wntrmute
+	only include required headers
+	
 	Revision 1.4  2005/08/22 08:10:35  wntrmute
 	reformatted for consistency
 
@@ -41,6 +44,9 @@
 ---------------------------------------------------------------------------------*/
 #include <nds/jtypes.h>
 #include <nds/arm9/image.h>
+#include <nds/dma.h>
+
+
 #include <malloc.h>
 
 //---------------------------------------------------------------------------------
@@ -106,7 +112,36 @@ void image8to16trans(sImage* img, u8 transparentColor) {
 	img->bpp = 16;
 	img->data16 = temp;
 }
+//---------------------------------------------------------------------------------
+void imageTileData(sImage* img) {
+//---------------------------------------------------------------------------------
+	u32* temp;
+	
+	int ix, iy, tx, ty;
 
+	int th, tw;
+
+	int i = 0;
+	
+	//can only tile 8 bit data that is a multiple of 8 in dimention
+	if(img->bpp != 8 || (img->height & 3) != 0 || (img->width & 3) != 0) return;
+
+	th = img->height >> 3;
+	tw = img->width >> 3;
+
+	//buffer to hold data
+	temp = (u32*)malloc(img->height * img->width);	
+
+	for(ty = 0; ty < th; ty++)
+		for(tx = 0; tx < tw; tx++)
+			for(iy = 0; iy < 8; iy++)
+				for(ix = 0; ix < 2; ix++)
+					temp[i++] = img->data32[ix + tx * 2 + (iy + ty * 8) * tw * 2 ]; 
+
+	free(img->data32);
+	
+	img->data32 = temp;
+}
 
 //---------------------------------------------------------------------------------
 void imageDestroy(sImage* img) {

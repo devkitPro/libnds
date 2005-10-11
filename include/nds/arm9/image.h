@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: image.h,v 1.3 2005-08-30 17:56:21 wntrmute Exp $
+	$Id: image.h,v 1.4 2005-10-11 05:05:26 dovoto Exp $
 
 
   Copyright (C) 2005
@@ -24,6 +24,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/08/30 17:56:21  wntrmute
+	add video.h
+	
 	Revision 1.2  2005/08/11 14:53:00  desktopman
 	Added image24to16(sImage* img)
 
@@ -67,7 +70,7 @@ void image24to16(sImage* img);
 void image8to16(sImage* img);
 void image8to16trans(sImage* img, u8 transperentColor);
 void imageDestroy(sImage* img);
-
+void imageTileData(sImage* img);
 
 #ifdef __cplusplus
 }
