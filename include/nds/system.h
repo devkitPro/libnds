@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.5 2005-09-07 18:03:36 wntrmute Exp $
+	$Id: system.h,v 1.6 2005-10-11 03:08:58 dovoto Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,6 +27,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/09/07 18:03:36  wntrmute
+	renamed key input registers
+	moved key bit definitions to input.h
+	
 	Revision 1.4  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 
@@ -79,6 +83,8 @@ static inline void powerOFF(int off) { POWER_CR &= ~off;}
 #define POWER_ALL		 (POWER_ALL_2D | POWER_3D_CORE | POWER_MATRIX)
 
 static inline void lcdSwap(void) { POWER_CR ^= POWER_SWAP_LCDS; }
+static inline void lcdMainOnTop(void) { POWER_CR |= POWER_SWAP_LCDS; }
+static inline void lcdMainOnBottom(void) { POWER_CR &= ~POWER_SWAP_LCDS; }
 #endif
 
 #ifdef ARM7
