@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.11 2005-09-19 20:59:47 dovoto Exp $
+	$Id: videoGL.h,v 1.12 2005-10-13 16:32:09 dovoto Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.11  2005/09/19 20:59:47  dovoto
+	Added glOrtho and glOrthof32.  No change to interrupts.h
+	
 	Revision 1.10  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 	
@@ -263,7 +266,7 @@ void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar);
 void gluPerspective(float fovy, float aspect, float zNear, float zFar);
 
 int glTexImage2D(int target, int empty1, int type, int sizeX, int sizeY, int empty2, int param, uint8* texture);
-void glTexLoadPal(u16* pal, u8 count);
+void glTexLoadPal(u16* pal, u8 count, u8 slot);
 void glBindTexture(int target, int name);
 int glGenTextures(int n, int *names);
 void glResetTextures(void);

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.13 2005-09-19 20:59:47 dovoto Exp $
+	$Id: videoGL.c,v 1.14 2005-10-13 16:32:09 dovoto Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.13  2005/09/19 20:59:47  dovoto
+	Added glOrtho and glOrthof32.  No change to interrupts.h
+	
 	Revision 1.12  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 	
@@ -56,6 +59,7 @@
 
 #include <nds/jtypes.h>
 #include <nds/memory.h>
+#include <nds/bios.h>
 #include <nds/arm9/math.h>
 #include <nds/arm9/video.h>
 #include <nds/arm9/videoGL.h>
@@ -790,7 +794,6 @@ int glTexImage2D(	int target, int empty1, int type,
 //---------------------------------------------------------------------------------
 	uint16 alpha = 0;
 	uint32 size = 0;
-	uint16 palette = 0;
 	uint32* addr;
 	uint32 vramTemp;
 
@@ -809,15 +812,11 @@ int glTexImage2D(	int target, int empty1, int type,
 		break;
 	case GL_RGB4:
 		size = size >> 2;
-		palette = 4 * 2;
 		break;
 	case GL_RGB16:
 		size = size >> 1;
-		palette = 16 * 2;
 		break;
-	case GL_RGB256:
-		palette = 256 * 2;
-		break;
+
 	default:
 		break;
 	}
@@ -832,32 +831,21 @@ int glTexImage2D(	int target, int empty1, int type,
 	//unlock texture memory
 	vramTemp = vramSetMainBanks(VRAM_A_LCD,VRAM_B_LCD,VRAM_C_LCD,VRAM_D_LCD);
 
-	dmaCopyWords(3, (uint32*)texture, addr , size);
+	swiCopy((uint32*)texture, addr , size / 4 | COPY_MODE_WORD);
 	
 	vramRestorMainBanks(vramTemp);
 
-	/*if(palette)
-	{
-		u32* temp = (u32)(texture+size);
 
-		vramSetBankE(VRAM_E_LCD);
-
-		
-		swiCpuCopy( texture + size, VRAM_E, COPY_MODE_WORD | palette);
-
-		vramSetBankE(VRAM_E_TEX_PALETTE);
-	}
-*/
 	return 1;
 }
 
 
 //---------------------------------------------------------------------------------
-void glTexLoadPal(u16* pal, u8 count) {
+void glTexLoadPal(u16* pal, u8 count, u8 slot) {
 //---------------------------------------------------------------------------------
 	vramSetBankE(VRAM_E_LCD);
 		
-	dmaCopyWords(3, (u32*)pal, (u32*)VRAM_E , count);
+	swiCopy( pal, &VRAM_E[slot << 8] , count / 2 | COPY_MODE_WORD);
 
 	vramSetBankE(VRAM_E_TEX_PALETTE);
 
