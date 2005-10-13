@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: input.h,v 1.4 2005-10-03 21:21:21 wntrmute Exp $
+	$Id: input.h,v 1.5 2005-10-13 16:30:11 dovoto Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -27,6 +27,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/10/03 21:21:21  wntrmute
+	doxygenation
+	
 	Revision 1.3  2005/09/07 18:03:36  wntrmute
 	renamed key input registers
 	moved key bit definitions to input.h
@@ -73,7 +76,7 @@
 	\brief bit values for keypad buttons
 
 */
-enum KEYPAD_BITS {
+typedef enum {
 	KEY_A		=	BIT(0),	/*!< keypad A button */
 	KEY_B		=	BIT(1),	/*!< keypad B button */
 	KEY_SELECT	=	BIT(2),	/*!< keypad SELECT button*/
@@ -105,17 +108,17 @@ void keysInit();
 	\brief obtain the current keypad held state.
 
 */
-enum KEYPAD_BITS keysHeld();
+KEYPAD_BITS keysHeld();
 /*! \fn KEYPAD_BITS keysDown()
 	\brief obtain the current keypad pressed state.
 
 */
-enum KEYPAD_BITS keysDown();
+KEYPAD_BITS keysDown();
 /*! \fn KEYPAD_BITS keysUp()
 	\brief obtain the current keypad released state.
 
 */
-enum KEYPAD_BITS keysUp();
+KEYPAD_BITS keysUp();
 
 
 /*! \fn touchPosition touchReadXY()
