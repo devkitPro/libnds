@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: input.h,v 1.5 2005-10-13 16:30:11 dovoto Exp $
+	$Id: input.h,v 1.6 2005-10-18 04:17:04 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -27,6 +27,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/10/13 16:30:11  dovoto
+	Changed KEYPAD_BITS to a typedef enum, this resolved some issues with multiple redefinition of KEYPAD_BITS (although this error did not allways occur).
+	
 	Revision 1.4  2005/10/03 21:21:21  wntrmute
 	doxygenation
 	
@@ -59,9 +62,14 @@
 ---------------------------------------------------------------------------------*/
 /*! \file input.h
 
+
+
     \brief nds input support.
 
+
+
 */
+
 
 //---------------------------------------------------------------------------------
 #ifndef	_input_h_
@@ -73,10 +81,14 @@
 // Keyboard
 
 /*! \enum KEYPAD_BITS
+
 	\brief bit values for keypad buttons
 
+
+
 */
-typedef enum {
+
+typedef enum KEYPAD_BITS {
 	KEY_A		=	BIT(0),	/*!< keypad A button */
 	KEY_B		=	BIT(1),	/*!< keypad B button */
 	KEY_SELECT	=	BIT(2),	/*!< keypad SELECT button*/
@@ -98,33 +110,54 @@ typedef enum {
 extern "C" {
 #endif
 /*! \fn scanKeys()
+
 	\brief obtain the current keypad states.
 
+
+
 	Call this function once per main loop in order to use the keypad functions.
+
 */
+
 void scanKeys();
 void keysInit();
 /*! \fn KEYPAD_BITS keysHeld()
+
 	\brief obtain the current keypad held state.
 
+
+
 */
+
 KEYPAD_BITS keysHeld();
 /*! \fn KEYPAD_BITS keysDown()
+
 	\brief obtain the current keypad pressed state.
 
-*/
-KEYPAD_BITS keysDown();
-/*! \fn KEYPAD_BITS keysUp()
-	\brief obtain the current keypad released state.
+
 
 */
+
+KEYPAD_BITS keysDown();
+/*! \fn KEYPAD_BITS keysUp()
+
+	\brief obtain the current keypad released state.
+
+
+
+*/
+
 KEYPAD_BITS keysUp();
 
 
 /*! \fn touchPosition touchReadXY()
+
 	\brief obtain the current touchscreen co-ordinates.
 
+
+
 */
+
 touchPosition touchReadXY();
 
 #ifdef __cplusplus
