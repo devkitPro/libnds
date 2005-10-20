@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.10 2005-09-12 06:50:23 wntrmute Exp $
+	$Id: console.c,v 1.11 2005-10-20 20:54:44 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.10  2005/09/12 06:50:23  wntrmute
+	removed *printAt
+	added ansi escape sequences
+	
 	Revision 1.9  2005/09/04 00:24:44  wntrmute
 	exposed consoleSetPos
 	move iprintAt and printAt to separate files
@@ -145,30 +149,30 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 				int parameter;
 				switch (chr) {
 					case 'H':
-						sscanf(escapeseq,"[%d;%dH", &row, &col);
+						siscanf(escapeseq,"[%d;%dH", &row, &col);
 						escaping = false;
 						break;
 					case 'f':
-						sscanf(escapeseq,"[%d;%df", &row, &col);
+						siscanf(escapeseq,"[%d;%df", &row, &col);
 						escaping = false;
 						break;
 					case 'A':
-						sscanf(escapeseq,"[%dA", &parameter);
+						siscanf(escapeseq,"[%dA", &parameter);
 						row =  (row - parameter) < 0 ? 0 : row - parameter;
 						escaping = false;
 						break;
 					case 'B':
-						sscanf(escapeseq,"[%dB", &parameter);
+						siscanf(escapeseq,"[%dB", &parameter);
 						row =  (row + parameter) > CONSOLE_HEIGHT - 1 ? CONSOLE_HEIGHT - 1 : row + parameter;
 						escaping = false;
 						break;
 					case 'C':
-						sscanf(escapeseq,"[%dC", &parameter);
+						siscanf(escapeseq,"[%dC", &parameter);
 						col =  (col + parameter) > CONSOLE_WIDTH - 1 ? CONSOLE_WIDTH - 1 : col + parameter;
 						escaping = false;
 						break;
 					case 'D':
-						sscanf(escapeseq,"[%dC", &parameter);
+						siscanf(escapeseq,"[%dC", &parameter);
 						col =  (col - parameter) < 0 ? 0 : col - parameter;
 						escaping = false;
 						break;

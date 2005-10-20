@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.h,v 1.6 2005-09-12 06:50:23 wntrmute Exp $
+	$Id: console.h,v 1.7 2005-10-20 20:54:44 wntrmute Exp $
 
 	console functions
 
@@ -26,6 +26,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.6  2005/09/12 06:50:23  wntrmute
+	removed *printAt
+	added ansi escape sequences
+	
 	Revision 1.5  2005/09/04 00:24:44  wntrmute
 	exposed consoleSetPos
 	move iprintAt and printAt to separate files
@@ -41,6 +45,11 @@
 
 
 ---------------------------------------------------------------------------------*/
+
+/*! \file console.h
+    \brief nds stdio support.
+*/
+
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
@@ -49,8 +58,31 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+/*! \fn void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16* map, u8 pal, u8 bitDepth)
+	\brief Initialise the console.
+	\param font	base address of the 16 color font to use
+	\param charBase	VRAM address to load the font
+	\param numCharacters number of characters in the font
+	\param charStart ascii code of the first character in the font
+	\param map base address of the map to use for printing
+	\param pal 16 color palette index to use
+	\param bitDepth 256/16 color tile flag. 
+	
+	Initialises the console with the given parameters. When pal is greater than 15 and
+	bitDepth is 16 then	all non zero entries in the font are set to index 255. When bitDepth
+	is not 16 then the font tiles are created as 8bit (256 color).
+ 
+*/
 void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16* map, u8 pal, u8 bitDepth);
+/*! \fn void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth)
+	\brief Initialise the console with some default parameters.
+	\param charBase	VRAM address to load the font
+	\param map base address of the map to use for printing
+	\param bitDepth 256/16 color tile flag
+
+	This function calls consoleInit() with the default built in font and character ranges, the parameters given
+	are as for that function. 
+*/
 void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth);
 
 #ifdef __cplusplus
