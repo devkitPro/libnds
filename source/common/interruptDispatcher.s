@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interruptDispatcher.s,v 1.3 2005-09-27 18:21:53 wntrmute Exp $
+	$Id: interruptDispatcher.s,v 1.4 2005-10-21 22:43:42 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/09/27 18:21:53  wntrmute
+	safer nested interrupt support
+	
 	Revision 1.2  2005/09/04 16:37:01  wntrmute
 	check for NULL handler
 	
@@ -64,7 +67,7 @@ IntrMain:
 #endif
 
 #ifdef ARM9
-	ldr	r0,=0x00803FF8
+	ldr	r0,=0x00803FF8		@ Bios irq flags on ARM9
 	ldr	r2,[r0]
 	orr	r2,r2,r1
 	str	r2,[r0]
@@ -87,6 +90,7 @@ no_handler:
 @---------------------------------------------------------------------------------
 	str	r1, [r3, #0x0214]		@ IF Clear
         ldmfd   sp!, {r0-r1,r3,lr}		@ {spsr, IME, REG_BASE, lr}
+	str	r1, [r3, #0x208]		@ restore REG_IME
 	mov	pc,lr
 
 @---------------------------------------------------------------------------------
