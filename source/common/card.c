@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: card.c,v 1.4 2005-09-14 06:21:58 wntrmute Exp $
+	$Id: card.c,v 1.5 2005-10-21 22:43:06 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/09/14 06:21:58  wntrmute
+	and address bytes in cardRead00
+	
 	Revision 1.3  2005/09/12 06:55:21  wntrmute
 	replaced EepromWaitBusy macro with static inline
 
@@ -70,7 +73,6 @@ void cardPolledTransfer(uint32 flags, uint32 * destination, uint32 length, uint8
 //---------------------------------------------------------------------------------
 void cardStartTransfer(uint8 * command, uint32 * destination, int channel, uint32 flags) {
 //---------------------------------------------------------------------------------
-	//ASSERT((channel >= 0) && (channel < 4))
 	cardWriteCommand(command);
 
 	// Set up a DMA channel to transfer a word every time the card makes one

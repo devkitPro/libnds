@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: jtypes.h,v 1.12 2005-09-03 17:07:25 wntrmute Exp $
+	$Id: jtypes.h,v 1.13 2005-10-21 22:43:05 wntrmute Exp $
 
 	jtypes.h -- Common types (and a few useful macros)
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.12  2005/09/03 17:07:25  wntrmute
+	added function pointer for interrupts
+	
 	Revision 1.11  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 
@@ -86,8 +89,6 @@
 #define TRUE 1
 #define FALSE 0
 #endif
-
-#define ASSERT(arg)
 
 #define BIT(n) (1 << (n))
 

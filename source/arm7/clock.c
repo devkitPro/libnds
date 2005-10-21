@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: clock.c,v 1.3 2005-09-20 05:05:52 wntrmute Exp $
+	$Id: clock.c,v 1.4 2005-10-21 22:43:06 wntrmute Exp $
 
 
 	Copyright (C) 2005
@@ -25,6 +25,10 @@
 			distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/09/20 05:05:52  wntrmute
+	added header logging
+	tidied formatting
+	
 
 ---------------------------------------------------------------------------------*/
 
@@ -51,10 +55,6 @@ void rtcTransaction(uint8 * command, uint32 commandLength, uint8 * result, uint3
 //---------------------------------------------------------------------------------
 	uint32 bit;
 	uint8 data;
-
-// Validate the parameters
-//  ASSERT(( (!(*command & 1)) && (!resultLength) && (commandLength > 0) )    // Valid write
-//    || ( (*command & 1) && (resultLength > 0) && (commandLength == 1)) ); // Vaild read
 
 	// Raise CS
 	RTC_CR8 = CS_0 | SCK_1 | SIO_1;
