@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.11 2005-10-20 20:54:44 wntrmute Exp $
+	$Id: console.c,v 1.12 2005-10-26 05:22:34 bigredpimp Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.11  2005/10/20 20:54:44  wntrmute
+	doxygenation
+	use siscanf
+	
 	Revision 1.10  2005/09/12 06:50:23  wntrmute
 	removed *printAt
 	added ansi escape sequences
@@ -104,20 +108,114 @@ int con_open(struct _reent *r,const char *path,int flags,int mode) {
 }
 
 //---------------------------------------------------------------------------------
-static void consoleCls() {
+static void consoleCls(char mode) {
 //---------------------------------------------------------------------------------
 
-	row = 0;
-	col = 0;
+	int i = 0;
+	int colTemp,rowTemp;
+
+	switch (mode)
+	{
+		case '0':
+		{
+			colTemp = col;
+			rowTemp = row;
+
+			while(++i < ((CONSOLE_HEIGHT * CONSOLE_WIDTH) - (rowTemp * CONSOLE_WIDTH + colTemp))) consolePrintChar(' ');
+
+			col = colTemp;
+			row = rowTemp;
+			break;
+		}	
+		case '1':
+		{
+			colTemp = col;
+			rowTemp = row;
+
+			row = 0;
+			col = 0;
+
+			while (++i < (rowTemp * CONSOLE_WIDTH + colTemp)) consolePrintChar(' ');
+
+			col = colTemp;
+			row = rowTemp;
+			break;
+		}	
+		case '2':
+		{
+			row = 0;
+			col = 0;
+
+			while(++i < CONSOLE_HEIGHT * CONSOLE_WIDTH) consolePrintChar(' ');
+
+			row = 0;
+			col = 0;
+			break;
+		}	
+	}
+}
+//---------------------------------------------------------------------------------
+static void consoleClearLine(char mode) {
+//---------------------------------------------------------------------------------
 
 	int i = 0;
+	int colTemp;
 
-	while(i++ < CONSOLE_HEIGHT * CONSOLE_WIDTH)
-		consolePrintChar(' ');
+	switch (mode)
+	{
+		case '0':
+		{
+			colTemp = col;
 
-	row = 0;
-	col = 0;
+			while(i++ < (CONSOLE_WIDTH - colTemp)) {
+				consolePrintChar(' ');
+			}
 
+			col = colTemp;
+
+			break;
+		}	
+		case '1':
+		{
+			colTemp = col;
+
+			col = 0;
+
+			while(i++ < ((CONSOLE_WIDTH - colTemp)-2)) {
+				consolePrintChar(' ');
+			}
+
+			col = colTemp;
+
+			break;
+		}	
+		case '2':
+		{
+			colTemp = col;
+
+			col = 0;
+
+			while(i++ < CONSOLE_WIDTH) {
+				consolePrintChar(' ');
+			}
+
+			col = colTemp;
+
+			break;
+		}
+		default:
+		{
+			colTemp = col;
+
+			while(i++ < (CONSOLE_WIDTH - colTemp)) {
+				consolePrintChar(' ');
+			}
+
+			col = colTemp;
+
+			break;
+		}
+	}
 }
 //---------------------------------------------------------------------------------
 int con_write(struct _reent *r,int fd,const char *ptr,int len) {
@@ -177,6 +275,7 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 						escaping = false;
 						break;
 					case 'K':
+						consoleClearLine(escapeseq[escapelen-2]);
 						escaping = false;
 						break;
 					case 's':
@@ -190,9 +289,7 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 						escaping = false;
 						break;
 					case 'J':
-						if ( escapeseq[escapelen-2] == '2') {
-							consoleCls();
-						}
+						consoleCls(escapeseq[escapelen-2]);
 						escaping = false;
 					break;
 				}
@@ -291,7 +388,7 @@ void consoleInit(	u16* font, u16* charBase,
 	devoptab_list[STD_ERR] = &dotab_stderr;
 	setvbuf(stderr, NULL , _IONBF, 0);
 	setvbuf(stdout, NULL , _IONBF, 0);
-	consoleCls();
+	consoleCls('2');
 	consoleInitialised = 1;
 
 }
