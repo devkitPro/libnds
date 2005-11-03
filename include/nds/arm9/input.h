@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: input.h,v 1.6 2005-10-18 04:17:04 wntrmute Exp $
+	$Id: input.h,v 1.7 2005-11-03 23:38:49 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -27,6 +27,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.6  2005/10/18 04:17:04  wntrmute
+	doxygenation
+	
 	Revision 1.5  2005/10/13 16:30:11  dovoto
 	Changed KEYPAD_BITS to a typedef enum, this resolved some issues with multiple redefinition of KEYPAD_BITS (although this error did not allways occur).
 	
@@ -120,34 +123,26 @@ extern "C" {
 */
 
 void scanKeys();
-void keysInit();
-/*! \fn KEYPAD_BITS keysHeld()
+/*! \fn u16 keysHeld()
 
 	\brief obtain the current keypad held state.
-
-
-
 */
 
-KEYPAD_BITS keysHeld();
-/*! \fn KEYPAD_BITS keysDown()
+u16 keysHeld();
+/*! \fn u16 keysDown()
 
 	\brief obtain the current keypad pressed state.
 
-
-
 */
 
-KEYPAD_BITS keysDown();
-/*! \fn KEYPAD_BITS keysUp()
+u16 keysDown();
+/*! \fn u16 keysUp()
 
 	\brief obtain the current keypad released state.
 
-
-
 */
 
-KEYPAD_BITS keysUp();
+u16 keysUp();
 
 
 /*! \fn touchPosition touchReadXY()
