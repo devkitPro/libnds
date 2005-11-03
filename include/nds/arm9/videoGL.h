@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.12 2005-10-13 16:32:09 dovoto Exp $
+	$Id: videoGL.h,v 1.13 2005-11-03 23:34:14 wntrmute Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.12  2005/10/13 16:32:09  dovoto
+	Altered glTexLoadPal to accept a texture slot to allow multiple texture palettes.
+	
 	Revision 1.11  2005/09/19 20:59:47  dovoto
 	Added glOrtho and glOrthof32.  No change to interrupts.h
 	
@@ -123,7 +126,7 @@ typedef struct {
 
 typedef struct {
   f32 x,y,z;
-} vector;
+} GLvector;
 
 
 
@@ -307,8 +310,8 @@ void glNormal3f(float x, float y, float z);
 	void glPopMatrix(int32 index);
 	void glRestoreMatrix(int32 index);
 	void glStoreMatrix(int32 index);
-	void glScalev(vector* v);
-	void glTranslatev(vector* v);
+	void glScalev(GLvector* v);
+	void glTranslatev(GLvector* v);
 	void glTranslate3f32(f32 x, f32 y, f32 z);
 	void glScalef32(f32 factor);
 	void glTranslatef32(f32 delta);

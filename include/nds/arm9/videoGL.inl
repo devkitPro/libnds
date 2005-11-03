@@ -52,7 +52,7 @@ GL_STATIC_INL void glRestoreMatrix(int32 index) { MATRIX_RESTORE = index; }
 GL_STATIC_INL void glStoreMatrix(int32 index) { MATRIX_STORE = index; }
 
 //---------------------------------------------------------------------------------
-GL_STATIC_INL void glScalev(vector* v) { 
+GL_STATIC_INL void glScalev(GLvector* v) { 
 //---------------------------------------------------------------------------------
 	MATRIX_SCALE = v->x;
 	MATRIX_SCALE = v->y;
@@ -61,7 +61,7 @@ GL_STATIC_INL void glScalev(vector* v) {
 
 
 //---------------------------------------------------------------------------------
-GL_STATIC_INL void glTranslatev(vector* v) {
+GL_STATIC_INL void glTranslatev(GLvector* v) {
 //---------------------------------------------------------------------------------
 	MATRIX_TRANSLATE = v->x;
 	MATRIX_TRANSLATE = v->y;
