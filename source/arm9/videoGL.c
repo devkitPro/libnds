@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.14 2005-10-13 16:32:09 dovoto Exp $
+	$Id: videoGL.c,v 1.15 2005-11-07 04:16:24 dovoto Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.14  2005/10/13 16:32:09  dovoto
+	Altered glTexLoadPal to accept a texture slot to allow multiple texture palettes.
+	
 	Revision 1.13  2005/09/19 20:59:47  dovoto
 	Added glOrtho and glOrthof32.  No change to interrupts.h
 	
@@ -369,21 +372,21 @@ void glOrthof32(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar) {
 	MATRIX_LOAD4x4 = divf32(intof32(2), right - left);     
 	MATRIX_LOAD4x4 = 0;  
 	MATRIX_LOAD4x4 = 0;      
-	MATRIX_LOAD4x4 = divf32(right + left, right - left);
+	MATRIX_LOAD4x4 = 0;//
 
 	MATRIX_LOAD4x4 = 0;  
 	MATRIX_LOAD4x4 = divf32(intof32(2), top - bottom);     
 	MATRIX_LOAD4x4 = 0;    
-	MATRIX_LOAD4x4 = divf32(top + bottom, top - bottom); 
+	MATRIX_LOAD4x4 = 0;//
    
 	MATRIX_LOAD4x4 = 0;  
 	MATRIX_LOAD4x4 = 0;  
 	MATRIX_LOAD4x4 = divf32(intof32(-2), zFar - zNear);     
-	MATRIX_LOAD4x4 = divf32(zFar + zNear, zFar - zNear);
+	MATRIX_LOAD4x4 = 0;
    
-	MATRIX_LOAD4x4 = 0;  
-	MATRIX_LOAD4x4 = 0;  
-	MATRIX_LOAD4x4 = 0;  
+	MATRIX_LOAD4x4 = -divf32(right + left, right - left);//0;  
+	MATRIX_LOAD4x4 = -divf32(top + bottom, top - bottom); //0;  
+	MATRIX_LOAD4x4 = -divf32(zFar + zNear, zFar - zNear);//0;  
 	MATRIX_LOAD4x4 = floatof32(1.0F);
 	
 	glStoreMatrix(0);
@@ -850,4 +853,35 @@ void glTexLoadPal(u16* pal, u8 count, u8 slot) {
 	vramSetBankE(VRAM_E_TEX_PALETTE);
 
 }
+//---------------------------------------------------------------------------------
+void glGetInt(GL_GET_TYPE param, int* i) {
+//---------------------------------------------------------------------------------
+	switch (param)
+	{
+	case GL_GET_POLYGON_RAM_COUNT:
+		*i = GFX_POLYGON_RAM_USAGE;
+		break;
+	case GL_GET_VERTEX_RAM_COUNT:
+		*i = GFX_VERTEX_RAM_USAGE;
+		break;
+	default: break;
+	}
+}
+//---------------------------------------------------------------------------------
+void glGetFixed(GL_GET_TYPE param, fixed* f) {
+//---------------------------------------------------------------------------------
+	int i;
 
+	switch (param)
+	{
+	case GL_GET_MATRIX_ROTATION:
+		for(i = 0; i < 9; i++)
+			f[i] = MATRIX_READ_ROTATION[i];
+		break;
+	case GL_GET_MATRIX_PROJECTION:
+		for(i = 0; i < 16; i++)
+			f[i] = MATRIX_READ_PROJECTION[i];
+		break;
+	default: break;
+	}
+}

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.13 2005-11-03 23:34:14 wntrmute Exp $
+	$Id: videoGL.h,v 1.14 2005-11-07 04:16:24 dovoto Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.13  2005/11/03 23:34:14  wntrmute
+	killed vector type, replaced with GLvector
+	
 	Revision 1.12  2005/10/13 16:32:09  dovoto
 	Altered glTexLoadPal to accept a texture slot to allow multiple texture palettes.
 	
@@ -54,7 +57,10 @@
 	resynchronise with ndslib
 
 ---------------------------------------------------------------------------------*/
+/*! \file videoGL.h 
+\brief openGL (ish) interface to DS 3D hardware. 
 
+*/
 #ifndef VIDEOGL_ARM9_INCLUDE
 #define VIDEOGL_ARM9_INCLUDE
 
@@ -204,6 +210,15 @@ typedef struct {
 #define GL_RGB16	3	//16 color palette
 #define GL_COMPRESSED	5 //compressed texture
 
+typedef enum
+{
+	GL_GET_VERTEX_RAM_COUNT,	//returns a count of vertexes currently stored in hardware vertex ram
+	GL_GET_POLYGON_RAM_COUNT,	//returns a count of polygons currently stored in hardware polygon ram
+	GL_GET_MATRIX_ROTATION,		//returns the current 3x3 rotation matrix
+	GL_GET_MATRIX_PROJECTION	//returns the current 4x4 projection matrix
+
+}GL_GET_TYPE;
+
 //---------------------------------------------------------------------------------
 //Fifo commands
 //---------------------------------------------------------------------------------
@@ -242,45 +257,250 @@ extern "C" {
 #endif
 
 
-
+/*! \fn void glEnable(int bits)
+\brief Enables various gl states (blend, alpha test, etc..)
+\param bits A bit mask of desired attributes
+*/
 void glEnable(int bits);
+/*! \fn void glDisable(int bits)
+\brief Disables various gl states (blend, alpha test, etc..)
+\param bits A bit mask of desired attributes
+*/
+
 void glDisable(int bits);
+/*! \fn void glLoadMatrix4x4(m4x4 * m)
+\brief Loads a 4x4 matrix into the current matrix
+\param m4x4 a pointer to a 4x4 matrix
+*/
+
 void glLoadMatrix4x4(m4x4 * m);
+/*! \fn void glLoadMatrix4x3(m4x3 * m)
+\brief Loads a 4x3 matrix into the current matrix
+\param m4x3 a pointer to a 4x4 matrix
+*/
+
 void glLoadMatrix4x3(m4x3 * m);
+/*! \fn void glMultMatrix4x4(m4x4 * m)
+\brief Multiplies the current matrix by m
+\param m4x4 a pointer to a 4x4 matrix
+*/
+
 void glMultMatrix4x4(m4x4 * m);
+/*! \fn void glMultMatrix4x3(m4x3 * m)
+\brief multiplies the current matrix by
+\param m4x3 a pointer to a 4x3 matrix
+*/
+
 void glMultMatrix4x3(m4x3 * m);
+/*! \fn void glMultMatrix3x3(m3x3 * m)
+\brief multiplies the current matrix by m
+\param m3x3 a pointer to a 3x3 matrix
+*/
+
 void glMultMatrix3x3(m3x3 * m);
+/*! \fn void glRotateXi(int angle)
+\brief Rotates the current modelview matrix by angle degrees about the x axis 
+\param angle The angle to rotate by (angle is 0-511)
+*/
+
 void glRotateXi(int angle);
+/*! \fn void glRotateYi(int angle)
+\brief Rotates the current modelview matrix by angle degrees about the y axis 
+\param angle The angle to rotate by (angle is 0-511)
+*/
+
 void glRotateYi(int angle);
+/*! \fn void glRotateZi(int angle)
+\brief Rotates the current modelview matrix by angle degrees about the z axis 
+\param angle The angle to rotate by (angle is 0-511)
+*/
+
 void glRotateZi(int angle);
+/*! \fn void glRotateX(float angle)
+\brief Rotates the current modelview matrix by angle degrees about the x axis 
+\param angle The angle to rotate by 
+*/
+
 void glRotateX(float angle);
+/*! \fn void glRotateY(float angle)
+\brief Rotates the current modelview matrix by angle degrees about the y axis 
+\param angle The angle to rotate by 
+*/
+
 void glRotateY(float angle);
+/*! \fn void glRotateZ(float angle)
+\brief Rotates the current modelview matrix by angle degrees about the z axis 
+\param angle The angle to rotate by 
+*/
+
 void glRotateZ(float angle);
+/*! \fn void glRotatef32i(int angle, f32 x, f32 y, f32 z)
+\brief Rotates the model view matrix by angle about the specified unit vector
+\param angle The angle to rotate by
+\param x <x y z> forms a unit vector axis to rotate about
+\param y <x y z> forms a unit vector axis to rotate about
+\param z <x y z> forms a unit vector axis to rotate about
+*/
+
 void glRotatef32i(int angle, f32 x, f32 y, f32 z);
+/*! \fn void glOrthof32(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar)
+\breif Places projection matrix into ortho graphic mode
+*/
 
 void glOrthof32(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar);
+/*! \fn void glOrtho(float left, float right, float bottom, float top, float zNear, float zFar)
+\breif Places projection matrix into ortho graphic mode
+*/
+
 void glOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
+/*! \fn void gluLookAtf32(f32 eyex, f32 eyey, f32 eyez, f32 lookAtx, f32 lookAty, f32 lookAtz, f32 upx, f32 upy, f32 upz)
+\brief Places the camera at the specified location and orientation (fixed point version)
+\param eyex (eyex, eyey, eyez) Location of the camera.
+\param eyey (eyex, eyey, eyez) Location of the camera.
+\param eyez (eyex, eyey, eyez) Location of the camera.
+\param lookAtx (lookAtx, lookAty, lookAtz) Where the camera is looking.
+\param lookAty (lookAtx, lookAty, lookAtz) Where the camera is looking.
+\param lookAtz (lookAtx, lookAty, lookAtz) Where the camera is looking.
+\param upx <upx, upy, upz> Unit vector describing which direction is up for the camera.
+\param upy <upx, upy, upz> Unit vector describing which direction is up for the camera.
+\param upz <upx, upy, upz> Unit vector describing which direction is up for the camera.
+*/
 
 void gluLookAtf32(f32 eyex, f32 eyey, f32 eyez, f32 lookAtx, f32 lookAty, f32 lookAtz, f32 upx, f32 upy, f32 upz);
+/*! \fn void gluLookAt(float eyex, float eyey, float eyez, float lookAtx, float lookAty, float lookAtz, float upx, float upy, float upz)
+\brief Places the camera at the specified location and orientation (floating point version)
+\param eyex (eyex, eyey, eyez) Location of the camera.
+\param eyey (eyex, eyey, eyez) Location of the camera.
+\param eyez (eyex, eyey, eyez) Location of the camera.
+\param lookAtx (lookAtx, lookAty, lookAtz) Where the camera is looking.
+\param lookAty (lookAtx, lookAty, lookAtz) Where the camera is looking.
+\param lookAtz (lookAtx, lookAty, lookAtz) Where the camera is looking.
+\param upx <upx, upy, upz> Unit vector describing which direction is up for the camera.
+\param upy <upx, upy, upz> Unit vector describing which direction is up for the camera.
+\param upz <upx, upy, upz> Unit vector describing which direction is up for the camera.
+*/
+
 void gluLookAt(float eyex, float eyey, float eyez, float lookAtx, float lookAty, float lookAtz, float upx, float upy, float upz);
+/*! \fn void gluFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far)
+\brief Specifies the viewing frustrum for the projection matrix (fixed point version)
+\param left left right top and bottom describe a rectangle located at the near cliping plane
+\param right left right top and bottom describe a rectangle located at the near cliping plane
+\param top left right top and bottom describe a rectangle located at the near cliping plane
+\param bottom left right top and bottom describe a rectangle located at the near cliping plane
+\param near Location of a the near cliping plane (parallel to viewing window)
+\param far Location of a the far cliping plane (parallel to viewing window)
+*/
+
 void gluFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far);
+/*! \fn void gluFrustum(float left, float right, float bottom, float top, float near, float far)
+\brief Specifies the viewing frustrum for the projection matrix (floating point version)
+\param left left right top and bottom describe a rectangle located at the near cliping plane
+\param right left right top and bottom describe a rectangle located at the near cliping plane
+\param top left right top and bottom describe a rectangle located at the near cliping plane
+\param bottom left right top and bottom describe a rectangle located at the near cliping plane
+\param near Location of a the near cliping plane (parallel to viewing window)
+\param far Location of a the far cliping plane (parallel to viewing window)
+*/
+
 void gluFrustum(float left, float right, float bottom, float top, float near, float far);
+/*! \fn void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar)
+\brief Utility function which sets up the projection matrix (fixed point version)
+\param fovy Specifies the field of view in degrees (0 -511) 
+\param aspect Specifies the aspect ratio of the screen (normaly screen width/screen height)
+\param zNear Specifies the near cliping plane
+\param zFar Specifies the far clipping plane
+*/
+
 void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar);
+/*! \fn void gluPerspective(float fovy, float aspect, float zNear, float zFar)
+\brief Utility function which sets up the projection matrix (floating point version)
+\param fovy Specifies the field of view in degrees  
+\param aspect Specifies the aspect ratio of the screen (normaly screen width/screen height)
+\param zNear Specifies the near cliping plane
+\param zFar Specifies the far clipping plane
+*/
+
 void gluPerspective(float fovy, float aspect, float zNear, float zFar);
+/*! \fn int glTexImage2D(int target, int empty1, int type, int sizeX, int sizeY, int empty2, int param, uint8* texture)
+\brief Loads a 2D texture into texture memory and sets the currently bound texture ID to the attributes specified
+*/
 
 int glTexImage2D(int target, int empty1, int type, int sizeX, int sizeY, int empty2, int param, uint8* texture);
+/*! \fn void glTexLoadPal(u16* pal, u8 count, u8 slot)
+\brief Loads a palette into the specified texture slot
+*/
+
 void glTexLoadPal(u16* pal, u8 count, u8 slot);
+/*! \fn void glBindTexture(int target, int name)
+\brief Binds the state machine to the specified texture ID
+*/
+
 void glBindTexture(int target, int name);
+/*! \fn int glGenTextures(int n, int *names)
+\brief Creates room for the specified number of textures
+*/
+
 int glGenTextures(int n, int *names);
+/*! \fn void glResetTextures(void)
+\brief Resets the gl texture state freeing all texture memory
+*/
+
 void glResetTextures(void);
+/*! \fn void glTexCoord2f32(f32 u, f32 v)
+\brief Sends texture coordinates to graphics chip
+*/
+
 void glTexCoord2f32(f32 u, f32 v);
+/*! \fn void glMaterialf(int mode, rgb color)
+\brief specify the material properties to be used in rendering lit polygons
+*/
 
 void glMaterialf(int mode, rgb color);
+/*! \fn void glResetMatrixStack(void)
+\brief Resets matrix stack to top level
+*/
+
 void glResetMatrixStack(void);
+/*! \fn void glSetOutlineColor(int id, rgb color)
+\brief Specifies an edge color for polygons
+*/
+
 void glSetOutlineColor(int id, rgb color);
+/*! \fn void glSetToonTable(uint16 *table)
+\brief Species a toon table
+*/
+
 void glSetToonTable(uint16 *table);
+/*! \fn void glSetToonTableRange(int start, int end, rgb color)
+\brief Sets the toon table range
+*/
+
 void glSetToonTableRange(int start, int end, rgb color);
+/*! \fn void glReset(void)
+\brief Resets the gl state machine (must be called once per frame)
+*/
+
 void glReset(void);
+
+/*! \fn void glGetInt(GL_GET_TYPE param, int* i)
+\brief Grabs various integer state variabls from openGL
+
+\param param The state variable to retriev
+\param i A pointer with room to hold the requested data
+
+
+*/
+void glGetInt(GL_GET_TYPE param, int* i);
+
+/*! \fn void glGetFixed(GL_GET_TYPE param, fixed* f)
+\brief Grabs various fixed point state variabls from openGL
+
+\param param The state variable to retriev
+\param f A pointer with room to hold the requested data
+
+
+*/
+void glGetFixed(GL_GET_TYPE param, fixed* f);
 
 //---------------------------------------------------------------------------------
 //float wrappers for porting
