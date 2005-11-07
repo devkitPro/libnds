@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.14 2005-11-07 04:16:24 dovoto Exp $
+	$Id: videoGL.h,v 1.15 2005-11-07 04:44:25 dovoto Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.14  2005/11/07 04:16:24  dovoto
+	Added glGetInt and glGetFixed, Fixed glOrtho, Began Doxygenation
+	
 	Revision 1.13  2005/11/03 23:34:14  wntrmute
 	killed vector type, replaced with GLvector
 	
@@ -382,32 +385,32 @@ void gluLookAtf32(f32 eyex, f32 eyey, f32 eyez, f32 lookAtx, f32 lookAty, f32 lo
 
 void gluLookAt(float eyex, float eyey, float eyez, float lookAtx, float lookAty, float lookAtz, float upx, float upy, float upz);
 /*! \fn void gluFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far)
-\brief Specifies the viewing frustrum for the projection matrix (fixed point version)
-\param left left right top and bottom describe a rectangle located at the near cliping plane
-\param right left right top and bottom describe a rectangle located at the near cliping plane
-\param top left right top and bottom describe a rectangle located at the near cliping plane
-\param bottom left right top and bottom describe a rectangle located at the near cliping plane
-\param near Location of a the near cliping plane (parallel to viewing window)
-\param far Location of a the far cliping plane (parallel to viewing window)
+\brief Specifies the viewing frustum for the projection matrix (fixed point version)
+\param left left right top and bottom describe a rectangle located at the near clipping plane
+\param right left right top and bottom describe a rectangle located at the near clipping plane
+\param top left right top and bottom describe a rectangle located at the near clipping plane
+\param bottom left right top and bottom describe a rectangle located at the near clipping plane
+\param near Location of a the near clipping plane (parallel to viewing window)
+\param far Location of a the far clipping plane (parallel to viewing window)
 */
 
 void gluFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far);
 /*! \fn void gluFrustum(float left, float right, float bottom, float top, float near, float far)
-\brief Specifies the viewing frustrum for the projection matrix (floating point version)
-\param left left right top and bottom describe a rectangle located at the near cliping plane
-\param right left right top and bottom describe a rectangle located at the near cliping plane
-\param top left right top and bottom describe a rectangle located at the near cliping plane
-\param bottom left right top and bottom describe a rectangle located at the near cliping plane
-\param near Location of a the near cliping plane (parallel to viewing window)
-\param far Location of a the far cliping plane (parallel to viewing window)
+\brief Specifies the viewing frustum for the projection matrix (floating point version)
+\param left left right top and bottom describe a rectangle located at the near clipping plane
+\param right left right top and bottom describe a rectangle located at the near clipping plane
+\param top left right top and bottom describe a rectangle located at the near clipping plane
+\param bottom left right top and bottom describe a rectangle located at the near clipping plane
+\param near Location of a the near clipping plane (parallel to viewing window)
+\param far Location of a the far clipping plane (parallel to viewing window)
 */
 
 void gluFrustum(float left, float right, float bottom, float top, float near, float far);
 /*! \fn void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar)
 \brief Utility function which sets up the projection matrix (fixed point version)
 \param fovy Specifies the field of view in degrees (0 -511) 
-\param aspect Specifies the aspect ratio of the screen (normaly screen width/screen height)
-\param zNear Specifies the near cliping plane
+\param aspect Specifies the aspect ratio of the screen (normally screen width/screen height)
+\param zNear Specifies the near clipping plane
 \param zFar Specifies the far clipping plane
 */
 
@@ -415,8 +418,8 @@ void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar);
 /*! \fn void gluPerspective(float fovy, float aspect, float zNear, float zFar)
 \brief Utility function which sets up the projection matrix (floating point version)
 \param fovy Specifies the field of view in degrees  
-\param aspect Specifies the aspect ratio of the screen (normaly screen width/screen height)
-\param zNear Specifies the near cliping plane
+\param aspect Specifies the aspect ratio of the screen (normally screen width/screen height)
+\param zNear Specifies the near clipping plane
 \param zFar Specifies the far clipping plane
 */
 
@@ -483,9 +486,9 @@ void glSetToonTableRange(int start, int end, rgb color);
 void glReset(void);
 
 /*! \fn void glGetInt(GL_GET_TYPE param, int* i)
-\brief Grabs various integer state variabls from openGL
+\brief Grabs various integer state variables from openGL
 
-\param param The state variable to retriev
+\param param The state variable to retrieve
 \param i A pointer with room to hold the requested data
 
 
@@ -493,9 +496,9 @@ void glReset(void);
 void glGetInt(GL_GET_TYPE param, int* i);
 
 /*! \fn void glGetFixed(GL_GET_TYPE param, fixed* f)
-\brief Grabs various fixed point state variabls from openGL
+\brief Grabs various fixed point state variables from openGL
 
-\param param The state variable to retriev
+\param param The state variable to retrieve
 \param f A pointer with room to hold the requested data
 
 
