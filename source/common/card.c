@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: card.c,v 1.5 2005-10-21 22:43:06 wntrmute Exp $
+	$Id: card.c,v 1.6 2005-11-07 01:09:53 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/10/21 22:43:06  wntrmute
+	Removed bogus ASSERT
+	
 	Revision 1.4  2005/09/14 06:21:58  wntrmute
 	and address bytes in cardRead00
 	
@@ -113,7 +116,7 @@ void cardRead00(uint32 address, uint32 * destination, uint32 length, uint32 flag
 //---------------------------------------------------------------------------------
 void cardReadHeader(uint8 * header) {
 //---------------------------------------------------------------------------------
-	cardRead00(0, (uint32 *)header, 512, 0x093F1FFF);
+	cardRead00(0, (uint32 *)header, 512, 0xA93F1FFF);
 }
 
 
