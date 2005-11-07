@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.12 2005-10-26 05:22:34 bigredpimp Exp $
+	$Id: console.c,v 1.13 2005-11-07 04:11:53 dovoto Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,17 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.12  2005/10/26 05:22:34  bigredpimp
+	Added Line Clearing escape sequences
+	- "\x1b[K" & "\x1b[0K" = clear from cursor to end of line
+	- "\x1b[1K" = clear from cursor to beginning of line
+	- "\x1b[2K" = clear entire line
+	
+	Changed & Added to Screen Clearing escape sequences
+	- "\x1b[0J" = clear from cursor to end of screen
+	- "\x1b[1J" = clear from cursor to beginning of screen
+	- "\x1b[2J" = clear whole screen and set cursor at 0,0
+	
 	Revision 1.11  2005/10/20 20:54:44  wntrmute
 	doxygenation
 	use siscanf
@@ -56,6 +67,8 @@
 
 #include <nds/jtypes.h>
 #include <nds/arm9/console.h>
+#include <nds/arm9/video.h>
+#include <nds/memory.h>
 #include <default_font_bin.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -391,6 +404,22 @@ void consoleInit(	u16* font, u16* charBase,
 	consoleCls('2');
 	consoleInitialised = 1;
 
+}
+
+//---------------------------------------------------------------------------------
+// Places the console in a default mode using bg0 of the sub display, and vram c for 
+// font and map..this is provided for rapid prototyping and nothing more
+void consoleDemoInit(void) {
+//---------------------------------------------------------------------------------
+	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE);	//sub bg 0 will be used to print text
+	vramSetBankC(VRAM_C_SUB_BG); 
+
+	SUB_BG0_CR = BG_MAP_BASE(31);
+
+	BG_PALETTE_SUB[255] = RGB15(31,31,31);	//by default font will be rendered with color 255
+
+	//consoleInit() is a lot more flexible but this gets you up and running quick
+	consoleInitDefault((u16*)SCREEN_BASE_BLOCK_SUB(31), (u16*)CHAR_BASE_BLOCK_SUB(0), 16);
 }
 
 //---------------------------------------------------------------------------------

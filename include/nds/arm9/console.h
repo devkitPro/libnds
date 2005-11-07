@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.h,v 1.7 2005-10-20 20:54:44 wntrmute Exp $
+	$Id: console.h,v 1.8 2005-11-07 04:11:53 dovoto Exp $
 
 	console functions
 
@@ -26,6 +26,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2005/10/20 20:54:44  wntrmute
+	doxygenation
+	use siscanf
+	
 	Revision 1.6  2005/09/12 06:50:23  wntrmute
 	removed *printAt
 	added ansi escape sequences
@@ -68,14 +72,14 @@ extern "C" {
 	\param pal 16 color palette index to use
 	\param bitDepth 256/16 color tile flag. 
 	
-	Initialises the console with the given parameters. When pal is greater than 15 and
+	Initializes the console with the given parameters. When pal is greater than 15 and
 	bitDepth is 16 then	all non zero entries in the font are set to index 255. When bitDepth
 	is not 16 then the font tiles are created as 8bit (256 color).
  
 */
 void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16* map, u8 pal, u8 bitDepth);
 /*! \fn void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth)
-	\brief Initialise the console with some default parameters.
+	\brief Initialize the console with some default parameters.
 	\param charBase	VRAM address to load the font
 	\param map base address of the map to use for printing
 	\param bitDepth 256/16 color tile flag
@@ -84,6 +88,14 @@ void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16*
 	are as for that function. 
 */
 void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth);
+
+/*! \fn void consoleDemoInit(void)
+\breif Initialize the console do a default state for prototyping.
+This function sets the console to use sub display, VRAM_C, and BG0 and enables MODE_0_2D on the
+sub display.  It is intended for use in prototyping applications which need print ability and not actual
+game use.  Print functionality can be utilized with just this call.
+*/
+void consoleDemoInit(void);
 
 #ifdef __cplusplus
 }
