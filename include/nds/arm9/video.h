@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.12 2005-10-05 21:56:58 wntrmute Exp $
+	$Id: video.h,v 1.13 2005-11-07 04:13:41 dovoto Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.12  2005/10/05 21:56:58  wntrmute
+	corrected BG_BMP8_1024x512 & BG_BMP8_512x1024 defines
+	
 	Revision 1.11  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 	
@@ -590,6 +593,12 @@ typedef struct sSpriteRotation {
 #define GFX_VIEWPORT          (*(vuint32*) 0x04000580)
 #define GFX_TOON_TABLE		  ((vuint16*)  0x04000380)
 #define GFX_EDGE_TABLE		  ((vuint16*)  0x04000330)
+#define GFX_BOX_TEST		  (*(vfixed*)  0x040005C0)
+
+#define GFX_BUSY (GFX_STATUS & BIT(27))
+
+#define GFX_VERTEX_RAM_USAGE		  (*(u16*)  0x04000606)
+#define GFX_POLYGON_RAM_USAGE		  (*(u16*)  0x04000604)
 
 // Matrix processor control
 
@@ -606,6 +615,12 @@ typedef struct sSpriteRotation {
 #define MATRIX_MULT4x4    (*(vfixed*) 0x04000460)
 #define MATRIX_MULT4x3    (*(vfixed*) 0x04000464)
 #define MATRIX_MULT3x3    (*(vfixed*) 0x04000468)
+
+//matrix operation results
+#define MATRIX_READ_PROJECTION			((vfixed*) (0x04000640))
+#define MATRIX_READ_ROTATION		((vfixed*) (0x04000680))
+#define POINT_RESULT		((vfixed*) (0x04000620))
+#define VECTOR_RESULT		((vuint16*)(0x04000630))
 
 #ifdef __cplusplus
 }
