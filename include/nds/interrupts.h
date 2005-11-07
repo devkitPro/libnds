@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.10 2005-10-03 21:21:21 wntrmute Exp $
+	$Id: interrupts.h,v 1.11 2005-11-07 01:11:08 wntrmute Exp $
 
 	Interrupt registers and vector pointers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.10  2005/10/03 21:21:21  wntrmute
+	doxygenation
+	
 	Revision 1.9  2005/09/20 05:15:35  wntrmute
 	added doxygen tagging
 	
@@ -62,7 +65,7 @@
 
 #include <nds/jtypes.h>
 
-/*! \enum IRQ_MASK
+/*! \enum IRQ_MASKS
 	\brief values allowed for REG_IE and REG_IF
 
 */
@@ -158,7 +161,9 @@ struct IntTable{IntFn handler; u32 mask;};
 /*! \fn irqInit()
 	\brief Initialise the libnds interrupt system.
 
-	Call this function at the start of any aplication which requires interrupt support.
+	Call this function at the start of any application which requires interrupt support.
+	This function should be used in preference to irqInitHandler.
+	 
 */
 void irqInit();
 /*! \fn irqSet(IRQ_MASK irq, VoidFunctionPointer handler)
@@ -167,7 +172,8 @@ void irqInit();
 	Specify the handler to use for the given interrupt. This only works with
 	the default interrupt handler, do not mix the use of this routine with a
 	user-installed IRQ handler.
-
+	\param irq Mask associated with the interrupt.
+	\param handler Address of the function to use as an interrupt service routine
 	\note
 	When any handler specifies using IRQ_VBLANK or IRQ_HBLANK, DISP_SR
 	is automatically updated to include the corresponding DISP_VBLANK_IRQ or DISP_HBLANK_IRQ.
@@ -175,7 +181,20 @@ void irqInit();
 	\warning Only one IRQ_MASK can be specified with this function.
 */
 void irqSet(IRQ_MASK irq, VoidFunctionPointer handler);
+/*! \fn irqClear(IRQ_MASK irq)
+	\brief remove the handler associated with the interrupt mask irq.
+	\param irq Mask associated with the interrupt.
+*/
 void irqClear(IRQ_MASK irq);
+/*! \fn irqInitHandler(VoidFunctionPointer handler)
+	\brief Install a user interrupt dispatcher.
+
+	This function installs the main interrupt function, all interrupts are serviced through this routine. For most
+	purposes the libnds interrupt dispacther should be used in preference to user code unless you know *exactly* what you're doing.
+	
+	\param handler Address of the function to use as an interrupt dispatcher
+	\note the function *must* be ARM code
+*/
 void irqInitHandler(VoidFunctionPointer handler);
 /*! \fn irqEnable(IRQ_MASK irq)
 	\brief Allow the given interrupt to occur.
@@ -190,7 +209,6 @@ void irqEnable(IRQ_MASK irq);
 */
 void irqDisable(IRQ_MASK irq);
 
-void IntrMain();
 
 #ifdef __cplusplus
 }

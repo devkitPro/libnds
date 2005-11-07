@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.c,v 1.5 2005-09-20 05:00:24 wntrmute Exp $
+	$Id: interrupts.c,v 1.6 2005-11-07 01:11:08 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/09/20 05:00:24  wntrmute
+	use new register definitions
+	
 	Revision 1.4  2005/09/04 16:28:04  wntrmute
 	place irqTable in ewram
 
@@ -33,6 +36,8 @@
 
 #include <nds/interrupts.h>
 #include <nds/system.h>
+
+void IntrMain();	// Prototype for assembly interrupt dispatcher
 
 //---------------------------------------------------------------------------------
 void irqDummy(void) {}
