@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: pcx.c,v 1.7 2005-10-11 05:05:26 dovoto Exp $
+	$Id: pcx.c,v 1.8 2005-11-07 04:12:34 dovoto Exp $
 
  	Copyright (C) 2005
 		Jason Rogers (dovoto)
@@ -23,6 +23,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2005/10/11 05:05:26  dovoto
+	Added imageTileData(sImage* img) to allow loading of pcx as sprite data.
+	Updated pcx.c to set image bit per pixel field
+	
 	Revision 1.6  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 	
@@ -96,7 +100,11 @@ int loadPCX(unsigned char* pcx, sImage* image) {
 	image->bpp = 8;
 
 	for(i = 0; i < 256; i++)
-		image->palette[i] = RGB15((pal[i].r + 4) >> 3 ,(pal[i].g + 4) >> 3 , (pal[i].b + 4) >> 3) ;
-	
+	{
+		u8 r = (pal[i].r + 4 > 255) ? 255 : (pal[i].r + 4);
+		u8 g = (pal[i].g + 4 > 255) ? 255 : (pal[i].g + 4);
+		u8 b = (pal[i].b + 4 > 255) ? 255 : (pal[i].b + 4);
+		image->palette[i] = RGB15(r >> 3 , g >> 3 , b >> 3) ;
+	}
 	return 1;
 }
