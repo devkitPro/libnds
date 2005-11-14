@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.h,v 1.8 2005-11-07 04:11:53 dovoto Exp $
+	$Id: console.h,v 1.9 2005-11-14 11:57:16 wntrmute Exp $
 
 	console functions
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2005/11/07 04:11:53  dovoto
+	Added consoleDemoInit for prototyping
+	
 	Revision 1.7  2005/10/20 20:54:44  wntrmute
 	doxygenation
 	use siscanf
@@ -90,7 +93,7 @@ void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16*
 void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth);
 
 /*! \fn void consoleDemoInit(void)
-\breif Initialize the console do a default state for prototyping.
+\brief Initialize the console to a default state for prototyping.
 This function sets the console to use sub display, VRAM_C, and BG0 and enables MODE_0_2D on the
 sub display.  It is intended for use in prototyping applications which need print ability and not actual
 game use.  Print functionality can be utilized with just this call.
