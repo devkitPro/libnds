@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.15 2005-11-07 04:44:25 dovoto Exp $
+	$Id: videoGL.h,v 1.16 2005-11-14 12:01:27 wntrmute Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.15  2005/11/07 04:44:25  dovoto
+	Corrected some spelling
+	
 	Revision 1.14  2005/11/07 04:16:24  dovoto
 	Added glGetInt and glGetFixed, Fixed glOrtho, Began Doxygenation
 	
@@ -273,7 +276,7 @@ void glEnable(int bits);
 void glDisable(int bits);
 /*! \fn void glLoadMatrix4x4(m4x4 * m)
 \brief Loads a 4x4 matrix into the current matrix
-\param m4x4 a pointer to a 4x4 matrix
+\param m a pointer to a 4x4 matrix
 */
 
 void glLoadMatrix4x4(m4x4 * m);
@@ -285,19 +288,19 @@ void glLoadMatrix4x4(m4x4 * m);
 void glLoadMatrix4x3(m4x3 * m);
 /*! \fn void glMultMatrix4x4(m4x4 * m)
 \brief Multiplies the current matrix by m
-\param m4x4 a pointer to a 4x4 matrix
+\param m a pointer to a 4x4 matrix
 */
 
 void glMultMatrix4x4(m4x4 * m);
 /*! \fn void glMultMatrix4x3(m4x3 * m)
 \brief multiplies the current matrix by
-\param m4x3 a pointer to a 4x3 matrix
+\param m a pointer to a 4x3 matrix
 */
 
 void glMultMatrix4x3(m4x3 * m);
 /*! \fn void glMultMatrix3x3(m3x3 * m)
 \brief multiplies the current matrix by m
-\param m3x3 a pointer to a 3x3 matrix
+\param m a pointer to a 3x3 matrix
 */
 
 void glMultMatrix3x3(m3x3 * m);
@@ -340,19 +343,19 @@ void glRotateZ(float angle);
 /*! \fn void glRotatef32i(int angle, f32 x, f32 y, f32 z)
 \brief Rotates the model view matrix by angle about the specified unit vector
 \param angle The angle to rotate by
-\param x <x y z> forms a unit vector axis to rotate about
-\param y <x y z> forms a unit vector axis to rotate about
-\param z <x y z> forms a unit vector axis to rotate about
+\param x X component of the unit vector axis.
+\param y Y component of the unit vector axis.
+\param z Z component of the unit vector axis.
 */
 
 void glRotatef32i(int angle, f32 x, f32 y, f32 z);
 /*! \fn void glOrthof32(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar)
-\breif Places projection matrix into ortho graphic mode
+\brief Places projection matrix into ortho graphic mode
 */
 
 void glOrthof32(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar);
 /*! \fn void glOrtho(float left, float right, float bottom, float top, float zNear, float zFar)
-\breif Places projection matrix into ortho graphic mode
+\brief Places projection matrix into ortho graphic mode
 */
 
 void glOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
@@ -558,4 +561,3 @@ void glNormal3f(float x, float y, float z);
 
 #endif
 
-//////////////////////////////////////////////////////////////////////
