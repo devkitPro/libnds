@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.16 2005-11-14 12:01:27 wntrmute Exp $
+	$Id: videoGL.h,v 1.17 2005-11-18 14:31:58 wntrmute Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.16  2005/11/14 12:01:27  wntrmute
+	Correct spelling and parameters in doxygen comments
+	
 	Revision 1.15  2005/11/07 04:44:25  dovoto
 	Corrected some spelling
 	
@@ -282,7 +285,7 @@ void glDisable(int bits);
 void glLoadMatrix4x4(m4x4 * m);
 /*! \fn void glLoadMatrix4x3(m4x3 * m)
 \brief Loads a 4x3 matrix into the current matrix
-\param m4x3 a pointer to a 4x4 matrix
+\param m a pointer to a 4x4 matrix
 */
 
 void glLoadMatrix4x3(m4x3 * m);
