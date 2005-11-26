@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.15 2005-11-07 04:16:24 dovoto Exp $
+	$Id: videoGL.c,v 1.16 2005-11-26 19:17:40 dovoto Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.15  2005/11/07 04:16:24  dovoto
+	Added glGetInt and glGetFixed, Fixed glOrtho, Began Doxygenation
+	
 	Revision 1.14  2005/10/13 16:32:09  dovoto
 	Altered glTexLoadPal to accept a texture slot to allow multiple texture palettes.
 	
@@ -795,21 +798,17 @@ int glTexImage2D(	int target, int empty1, int type,
 									int empty2, int param,
 									uint8* texture) {
 //---------------------------------------------------------------------------------
-	uint16 alpha = 0;
 	uint32 size = 0;
 	uint32* addr;
 	uint32 vramTemp;
 
 	size = 1 << (sizeX + sizeY + 6) ;
 	
-	if(type == GL_RGB)
-	{
-		alpha = (1 << 15);
-		type--;
-	}
+	
 	
 	switch (type)
 	{
+	case GL_RGB:
 	case GL_RGBA:
 		size = size << 1;
 		break;
@@ -829,13 +828,31 @@ int glTexImage2D(	int target, int empty1, int type,
 	if(!addr)
 		return 0;
 
-	glTexParameter(sizeX, sizeY, addr, type, param);
-	
 	//unlock texture memory
 	vramTemp = vramSetMainBanks(VRAM_A_LCD,VRAM_B_LCD,VRAM_C_LCD,VRAM_D_LCD);
 
-	swiCopy((uint32*)texture, addr , size / 4 | COPY_MODE_WORD);
+
+	if(type == GL_RGBA)
+	{
+		u16* src = (u16*)texture;
+		u32* dest = (u16*)addr;
+		
+		glTexParameter(sizeX, sizeY, addr, GL_RGBA, param);
+		
+		while(size--)
+		{
+			*dest++ = *src | (1 << 15);
+			src++;
+		}
 	
+	}
+	else
+	{
+		glTexParameter(sizeX, sizeY, addr, type, param);
+	
+	
+		swiCopy((uint32*)texture, addr , size / 4 | COPY_MODE_WORD);
+	}
 	vramRestorMainBanks(vramTemp);
 
 

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.17 2005-11-18 14:31:58 wntrmute Exp $
+	$Id: videoGL.h,v 1.18 2005-11-26 19:17:40 dovoto Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.17  2005/11/18 14:31:58  wntrmute
+	corrected parameter for doxygen in glLoadMatrix4x3
+	
 	Revision 1.16  2005/11/14 12:01:27  wntrmute
 	Correct spelling and parameters in doxygen comments
 	
@@ -217,6 +220,8 @@ typedef struct {
 #define GL_RGB4		2	//4 color palette
 #define GL_RGB256	4	//256 color palette
 #define GL_RGB16	3	//16 color palette
+#define GL_5A3C		1	//5 bit alpha 3 bit color
+#define GL_3A5C		6	//3 bit alpha 5 bit color
 #define GL_COMPRESSED	5 //compressed texture
 
 typedef enum
