@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.16 2005-11-26 19:17:40 dovoto Exp $
+	$Id: videoGL.c,v 1.17 2005-11-26 20:33:00 joatski Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -213,7 +213,7 @@ void glRotateZi(int angle) {
   
 	MATRIX_MULT3x3 = 0;
 	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = intof32(1);
+	MATRIX_MULT3x3 = inttof32(1);
 }
 
 //---------------------------------------------------------------------------------
@@ -227,7 +227,7 @@ void glRotateYi(int angle) {
 	MATRIX_MULT3x3 = -sine;
   
 	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = intof32(1);
+	MATRIX_MULT3x3 = inttof32(1);
 	MATRIX_MULT3x3 = 0;
   
 	MATRIX_MULT3x3 = sine;
@@ -241,7 +241,7 @@ void glRotateXi(int angle) {
 	f32 sine = SIN[angle &  LUT_MASK];
 	f32 cosine = COS[angle & LUT_MASK];
 
-	MATRIX_MULT3x3 = intof32(1);
+	MATRIX_MULT3x3 = inttof32(1);
 	MATRIX_MULT3x3 = 0;
 	MATRIX_MULT3x3 = 0;
 
@@ -261,7 +261,7 @@ void glRotatef32i(int angle, f32 x, f32 y, f32 z) {
 	f32 axis[3];
 	f32 sine = SIN[angle &  LUT_MASK];
 	f32 cosine = COS[angle & LUT_MASK];
-	f32 one_minus_cosine = intof32(1) - cosine;
+	f32 one_minus_cosine = inttof32(1) - cosine;
 
 	axis[0]=x;
 	axis[1]=y;
@@ -295,7 +295,7 @@ void glRotatef32(float angle, f32 x, f32 y, f32 z) {
 //---------------------------------------------------------------------------------
 void glRotatef(float angle, float x, float y, float z) {
 //---------------------------------------------------------------------------------
-	glRotatef32(angle, floatof32(x), floatof32(y), floatof32(z));
+	glRotatef32(angle, floattof32(x), floattof32(y), floattof32(z));
 }
 
 
@@ -324,13 +324,13 @@ void glRotateZ(float angle) {
 //---------------------------------------------------------------------------------
 void glVertex3f(float x, float y, float z) {
 //---------------------------------------------------------------------------------
-	glVertex3v16(floatov16(x), floatov16(y), floatov16(z));
+	glVertex3v16(floattov16(x), floattov16(y), floattov16(z));
 }
 
 //---------------------------------------------------------------------------------
 void glTexCoord2f(float s, float t) {
 //---------------------------------------------------------------------------------
-	glTexCoord2t16(floatot16(s*127), floatot16(t*127));
+	glTexCoord2t16(floattot16(s*127), floattot16(t*127));
 }
 
 //---------------------------------------------------------------------------------
@@ -342,17 +342,17 @@ void glColor3f(float r, float g, float b) {
 //---------------------------------------------------------------------------------
 void glScalef(float x, float y, float z) {
 //---------------------------------------------------------------------------------
-	MATRIX_SCALE = floatof32(x);
-	MATRIX_SCALE = floatof32(y);
-	MATRIX_SCALE = floatof32(z);
+  MATRIX_SCALE = floattof32(x);
+  MATRIX_SCALE = floattof32(y);
+  MATRIX_SCALE = floattof32(z);
 }
 
 //---------------------------------------------------------------------------------
 void glTranslatef(float x, float y, float z) {
 //---------------------------------------------------------------------------------
-	MATRIX_TRANSLATE = floatof32(x);
-    MATRIX_TRANSLATE = floatof32(y);
-    MATRIX_TRANSLATE = floatof32(z);
+  MATRIX_TRANSLATE = floattof32(x);
+  MATRIX_TRANSLATE = floattof32(y);
+  MATRIX_TRANSLATE = floattof32(z);
 }
 
 //---------------------------------------------------------------------------------
@@ -362,7 +362,7 @@ void glNormal3f(float x, float y, float z) {
 	if(y >= 1 || y <= -1) y *= .95;
 	if(z >= 1 || z <= -1) z *= .95;
 
-	glNormal(NORMAL_PACK(floatov10(x), floatov10(y), floatov10(z)));
+	glNormal(NORMAL_PACK(floattov10(x), floattov10(y), floattov10(z)));
 }
 
 
@@ -372,25 +372,25 @@ void glOrthof32(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar) {
 //---------------------------------------------------------------------------------
 	glMatrixMode(GL_PROJECTION);
 
-	MATRIX_LOAD4x4 = divf32(intof32(2), right - left);     
+	MATRIX_LOAD4x4 = divf32(inttof32(2), right - left);     
 	MATRIX_LOAD4x4 = 0;  
 	MATRIX_LOAD4x4 = 0;      
 	MATRIX_LOAD4x4 = 0;//
 
 	MATRIX_LOAD4x4 = 0;  
-	MATRIX_LOAD4x4 = divf32(intof32(2), top - bottom);     
+	MATRIX_LOAD4x4 = divf32(inttof32(2), top - bottom);     
 	MATRIX_LOAD4x4 = 0;    
 	MATRIX_LOAD4x4 = 0;//
    
 	MATRIX_LOAD4x4 = 0;  
 	MATRIX_LOAD4x4 = 0;  
-	MATRIX_LOAD4x4 = divf32(intof32(-2), zFar - zNear);     
+	MATRIX_LOAD4x4 = divf32(inttof32(-2), zFar - zNear);     
 	MATRIX_LOAD4x4 = 0;
    
 	MATRIX_LOAD4x4 = -divf32(right + left, right - left);//0;  
 	MATRIX_LOAD4x4 = -divf32(top + bottom, top - bottom); //0;  
 	MATRIX_LOAD4x4 = -divf32(zFar + zNear, zFar - zNear);//0;  
-	MATRIX_LOAD4x4 = floatof32(1.0F);
+	MATRIX_LOAD4x4 = floattof32(1.0F);
 	
 	glStoreMatrix(0);
 }
@@ -398,8 +398,7 @@ void glOrthof32(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar) {
 //---------------------------------------------------------------------------------
 void glOrtho(float left, float right, float bottom, float top, float zNear, float zFar) {
 //---------------------------------------------------------------------------------
-	glOrthof32(floatof32(left), floatof32(right), floatof32(bottom), floatof32(top), floatof32(zNear), floatof32(zFar));
-
+	glOrthof32(floattof32(left), floattof32(right), floattof32(bottom), floattof32(top), floattof32(zNear), floattof32(zFar));
 }
 
 //---------------------------------------------------------------------------------
@@ -459,8 +458,9 @@ void gluLookAt(	float eyex, float eyey, float eyez,
 				float lookAtx, float lookAty, float lookAtz,
 				float upx, float upy, float upz) {
 //---------------------------------------------------------------------------------
-	gluLookAtf32(floatof32(eyex), floatof32(eyey), floatof32(eyez), floatof32(lookAtx), floatof32(lookAty), floatof32(lookAtz),
-					floatof32(upx), floatof32(upy), floatof32(upz));
+	gluLookAtf32(floattof32(eyex), floattof32(eyey), floattof32(eyez),
+               floattof32(lookAtx), floattof32(lookAty), floattof32(lookAtz),
+					     floattof32(upx), floattof32(upy), floattof32(upz));
 }
 
 //---------------------------------------------------------------------------------
@@ -484,7 +484,7 @@ void gluFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far) 
 	MATRIX_LOAD4x4 = 0;  
 	MATRIX_LOAD4x4 = 0;  
 	MATRIX_LOAD4x4 = -divf32(far + near, far - near);     
-	MATRIX_LOAD4x4 = floatof32(-1.0F);
+	MATRIX_LOAD4x4 = floattof32(-1.0F);
    
 	MATRIX_LOAD4x4 = 0;  
 	MATRIX_LOAD4x4 = 0;  
@@ -500,7 +500,7 @@ void gluFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far) 
 //---------------------------------------------------------------------------------
 void gluFrustum(float left, float right, float bottom, float top, float near, float far) {
 //---------------------------------------------------------------------------------
-	gluFrustumf32(floatof32(left), floatof32(right), floatof32(bottom), floatof32(top), floatof32(near), floatof32(far));
+	gluFrustumf32(floattof32(left), floattof32(right), floattof32(bottom), floattof32(top), floattof32(near), floattof32(far));
 }
 
 //---------------------------------------------------------------------------------
@@ -523,7 +523,7 @@ void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar) {
 //---------------------------------------------------------------------------------
 void gluPerspective(float fovy, float aspect, float zNear, float zFar) {
 //---------------------------------------------------------------------------------
-	gluPerspectivef32((int)(fovy * LUT_SIZE / 360.0), floatof32(aspect), floatof32(zNear), floatof32(zFar));    
+	gluPerspectivef32((int)(fovy * LUT_SIZE / 360.0), floattof32(aspect), floattof32(zNear), floattof32(zFar));    
 }
 
 
@@ -688,12 +688,12 @@ void glBindTexture(int target, int name) {
 //---------------------------------------------------------------------------------
 void glTexCoord2f32(f32 u, f32 v) { 
 //---------------------------------------------------------------------------------
-	int x=0,y=0; 
+  int x, y; 
    
-	x = ((0x00700000) & textures[activeTexture]) >> 20; 
-	y = ((0x03800000) & textures[activeTexture]) >> 23; 
+  x = ((textures[activeTexture]) >> 20) & 7; 
+  y = ((textures[activeTexture]) >> 23) & 7; 
 
-	glTexCoord2t16(f32tot16 (mulf32(u,intof32(1<<(3+x)))), f32tot16 (mulf32(v,intof32(1<<(3+y))))); 
+  glTexCoord2t16(f32tot16 (mulf32(u,inttof32(8<<x))), f32tot16 (mulf32(v,inttof32(8<<y)))); 
 }
 
 
@@ -790,75 +790,65 @@ uint32* getNextTextureSlot(int size) {
 
 //---------------------------------------------------------------------------------
 // Similer to glTextImage2D from gl it takes a pointer to data
-//	Empty fields and target are unused but provided for code compatibility.
-//	type is simply the texture type (GL_RGB, GL_RGB8 ect...)
+//  Empty fields and target are unused but provided for code compatibility.
+//  type is simply the texture type (GL_RGB, GL_RGB8 ect...)
 //---------------------------------------------------------------------------------
-int glTexImage2D(	int target, int empty1, int type,
-									int sizeX, int sizeY,
-									int empty2, int param,
-									uint8* texture) {
+int glTexImage2D(int target, int empty1, int type,
+                 int sizeX, int sizeY,
+                 int empty2, int param,
+                 uint8* texture) {
 //---------------------------------------------------------------------------------
-	uint32 size = 0;
-	uint32* addr;
-	uint32 vramTemp;
+  uint32 size = 0;
+  uint32* addr;
+  uint32 vramTemp;
 
-	size = 1 << (sizeX + sizeY + 6) ;
-	
-	
-	
-	switch (type)
-	{
-	case GL_RGB:
-	case GL_RGBA:
-		size = size << 1;
-		break;
-	case GL_RGB4:
-		size = size >> 2;
-		break;
-	case GL_RGB16:
-		size = size >> 1;
-		break;
+  size = 1 << (sizeX + sizeY + 6);
 
-	default:
-		break;
-	}
-	
-	addr = getNextTextureSlot(size);
-	
-	if(!addr)
-		return 0;
+  switch (type) {
+    case GL_RGB:
+    case GL_RGBA:
+      size = size << 1;
+      break;
+    case GL_RGB4:
+      size = size >> 2;
+      break;
+    case GL_RGB16:
+      size = size >> 1;
+      break;
 
-	//unlock texture memory
-	vramTemp = vramSetMainBanks(VRAM_A_LCD,VRAM_B_LCD,VRAM_C_LCD,VRAM_D_LCD);
+    default:
+      break;
+  }
+  
+  addr = getNextTextureSlot(size);
+  
+  if(!addr)
+    return 0;
 
+  // unlock texture memory
+  vramTemp = vramSetMainBanks(VRAM_A_LCD,VRAM_B_LCD,VRAM_C_LCD,VRAM_D_LCD);
 
-	if(type == GL_RGBA)
-	{
-		u16* src = (u16*)texture;
-		u32* dest = (u16*)addr;
-		
-		glTexParameter(sizeX, sizeY, addr, GL_RGBA, param);
-		
-		while(size--)
-		{
-			*dest++ = *src | (1 << 15);
-			src++;
-		}
-	
-	}
-	else
-	{
-		glTexParameter(sizeX, sizeY, addr, type, param);
-	
-	
-		swiCopy((uint32*)texture, addr , size / 4 | COPY_MODE_WORD);
-	}
-	vramRestorMainBanks(vramTemp);
+  if (type == GL_RGB) {
+    // We do GL_RGB as GL_RGBA, but we set each alpha bit to 1 during the copy
+    u16 * src = (u16*)texture;
+    u16 * dest = (u16*)addr;
+    
+    glTexParameter(sizeX, sizeY, addr, GL_RGBA, param);
+    
+    while (size--) {
+      *dest++ = *src | (1 << 15);
+      src++;
+    }
+  } else {
+    // For everything else, we do a straight copy
+    glTexParameter(sizeX, sizeY, addr, type, param);
+    swiCopy((uint32*)texture, addr , size / 4 | COPY_MODE_WORD);
+  }
 
+  vramRestoreMainBanks(vramTemp);
 
-	return 1;
+  return 1;
 }
-
 
 //---------------------------------------------------------------------------------
 void glTexLoadPal(u16* pal, u8 count, u8 slot) {
@@ -873,32 +863,59 @@ void glTexLoadPal(u16* pal, u8 count, u8 slot) {
 //---------------------------------------------------------------------------------
 void glGetInt(GL_GET_TYPE param, int* i) {
 //---------------------------------------------------------------------------------
-	switch (param)
-	{
-	case GL_GET_POLYGON_RAM_COUNT:
-		*i = GFX_POLYGON_RAM_USAGE;
-		break;
-	case GL_GET_VERTEX_RAM_COUNT:
-		*i = GFX_VERTEX_RAM_USAGE;
-		break;
-	default: break;
-	}
+  switch (param) {
+    case GL_GET_POLYGON_RAM_COUNT:
+      *i = GFX_POLYGON_RAM_USAGE;
+      break;
+    case GL_GET_VERTEX_RAM_COUNT:
+      *i = GFX_VERTEX_RAM_USAGE;
+      break;
+    case GL_GET_TEXTURE_WIDTH:
+      *i = 8 << (((textures[activeTexture]) >> 20) & 7);
+      break;
+    case GL_GET_TEXTURE_HEIGHT:
+      *i = 8 << (((textures[activeTexture]) >> 23) & 7);
+      break;
+    default:
+      break;
+  }
 }
+
 //---------------------------------------------------------------------------------
 void glGetFixed(GL_GET_TYPE param, fixed* f) {
 //---------------------------------------------------------------------------------
-	int i;
+  int i;
 
-	switch (param)
-	{
-	case GL_GET_MATRIX_ROTATION:
-		for(i = 0; i < 9; i++)
-			f[i] = MATRIX_READ_ROTATION[i];
-		break;
-	case GL_GET_MATRIX_PROJECTION:
-		for(i = 0; i < 16; i++)
-			f[i] = MATRIX_READ_PROJECTION[i];
-		break;
-	default: break;
-	}
+  switch (param) {
+    case GL_GET_MATRIX_ROTATION:
+      for(i = 0; i < 9; i++)
+        f[i] = MATRIX_READ_ROTATION[i];
+      break;
+    case GL_GET_MATRIX_PROJECTION:
+      for(i = 0; i < 16; i++)
+        f[i] = MATRIX_READ_PROJECTION[i];
+      break;
+    default: 
+      break;
+  }
 }
+
+//////////////////////////////////////////////////////////////////////
+// Function replacements for the obsolete coversion macros
+// remove in a revision or two -- joat
+// Needed because the depreciate attribute doesn't work on macros.
+//////////////////////////////////////////////////////////////////////
+
+f32 intof32(int n)      { return ((n) << 12); }
+f32 floatof32(float n)  { return ((f32)((n) * (1 << 12))); }
+
+t16 intot16(int n)      { return n << 4; }
+t16 floatot16(float n)  { return ((t16)((n) * (1 << 4))); }
+
+v16 intov16(int n)     { return ((n) << 12); }
+v16 floatov16(float n) { return ((v16)((n) * (1 << 12))); }
+
+v10 intov10(int n)     { return ((n) << 9); }
+v10 floatov10(float n) { return ((v10)((n) * (1 << 9))); }
+
+//////////////////////////////////////////////////////////////////////

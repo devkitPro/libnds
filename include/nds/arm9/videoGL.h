@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.18 2005-11-26 19:17:40 dovoto Exp $
+	$Id: videoGL.h,v 1.19 2005-11-26 20:33:00 joatski Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -98,35 +98,52 @@
 #define GLuint u32
 #define GLfloat float
 
+//////////////////////////////////////////////////////////////////////
 
-#define intof32(n)           ((n) << 12)
+#define inttof32(n)          ((n) << 12)
 #define f32toint(n)          ((n) >> 12)
-#define floatof32(n)         ((f32)((n) * (1 << 12)))
+#define floattof32(n)        ((f32)((n) * (1 << 12)))
 #define f32tofloat(n)        (((float)(n)) / (float)(1<<12))
 
-typedef short int t16;       // text coordinate 1.11.4 fixed point
+typedef short int t16;       // text coordinate 12.4 fixed point
 
-#define f32tot16(n)             ((t16)(n >> 8))
-#define intot16(n)           ((n) << 4)
+#define f32tot16(n)          ((t16)(n >> 8))
+#define inttot16(n)          ((n) << 4)
 #define t16toint(n)          ((n) >> 4)
-#define floatot16(n)         ((t16)((n) * (1 << 4)))
+#define floattot16(n)        ((t16)((n) * (1 << 4)))
 #define TEXTURE_PACK(u,v)    (((u) << 16) | (v & 0xFFFF))
 
-typedef short int v16;       // vertex 1.3.12 fixed format
-#define intov16(n)           ((n) << 12)
-#define f32tov16(n)             (n)
+typedef short int v16;       // vertex 4.12 fixed format
+#define inttov16(n)          ((n) << 12)
+#define f32tov16(n)          (n)
 #define v16toint(n)          ((n) >> 12)
-#define floatov16(n)         ((v16)((n) * (1 << 12)))
-#define VERTEX_PACK(x,y)		(((y) << 16) | ((x) & 0xFFFF))
+#define floattov16(n)         ((v16)((n) * (1 << 12)))
+#define VERTEX_PACK(x,y)		 (((y) << 16) | ((x) & 0xFFFF))
 
-
-typedef short int v10;       // vertex 1.0.9 fixed point
-#define intov10(n)           ((n) << 9)
+typedef short int v10;       // vertex .10 fixed point
+#define inttov10(n)          ((n) << 9)
 #define f32tov10(n)          ((v10)(n >> 3))
 #define v10toint(n)          ((n) >> 9)
-#define floatov10(n)         ((v10)((n) * (1 << 9)))
+#define floattov10(n)        ((v10)((n) * (1 << 9)))
 #define NORMAL_PACK(x,y,z)   (((x) & 0x3FF) | (((y) & 0x3FF) << 10) | ((z) << 20))
 
+//////////////////////////////////////////////////////////////////////
+// deprecated versions of some macros, remove in a few versions -- joat
+//////////////////////////////////////////////////////////////////////
+
+f32 intof32(int n) __attribute__((deprecated));
+f32 floatof32(float n) __attribute__((deprecated));
+
+t16 intot16(int n) __attribute__((deprecated));
+t16 floatot16(float n) __attribute__((deprecated));
+
+v16 intov16(int n) __attribute__((deprecated));
+v16 floatov16(float n) __attribute__((deprecated));
+
+v10 intov10(int n) __attribute__((deprecated));
+v10 floatov10(float n) __attribute__((deprecated));
+
+//////////////////////////////////////////////////////////////////////
 
 typedef unsigned short rgb;
 
@@ -146,15 +163,15 @@ typedef struct {
   f32 x,y,z;
 } GLvector;
 
+//////////////////////////////////////////////////////////////////////
 
-
-#define GL_FALSE				0
-#define GL_TRUE					1
+#define GL_FALSE     0
+#define GL_TRUE      1
 
 #define GL_TRIANGLE        0
 #define GL_QUAD            1
-#define GL_TRIANGLES        0
-#define GL_QUADS            1
+#define GL_TRIANGLES       0
+#define GL_QUADS           1
 #define GL_TRIANGLE_STRIP  2
 #define GL_QUAD_STRIP      3
 
@@ -162,21 +179,21 @@ typedef struct {
 #define GL_PROJECTION      0
 #define GL_TEXTURE         3
 
-#define GL_AMBIENT              1
-#define GL_DIFFUSE              2
-#define GL_AMBIENT_AND_DIFFUSE  3
-#define GL_SPECULAR             4
-#define GL_SHININESS            8
+#define GL_AMBIENT              0x01
+#define GL_DIFFUSE              0x02
+#define GL_AMBIENT_AND_DIFFUSE  0x03
+#define GL_SPECULAR             0x04
+#define GL_SHININESS            0x08
 #define GL_EMISSION             0x10
 
-#define GL_LIGHTING				1
+#define GL_LIGHTING    1
 
 #define POLY_ALPHA(n)  ((n) << 16)
 #define POLY_TOON_SHADING     0x20
 #define POLY_CULL_BACK        0x80
 #define POLY_CULL_FRONT       0x40
 #define POLY_CULL_NONE        0xC0
-#define POLY_ID(n)		((n)<<24)
+#define POLY_ID(n)	((n)<<24)
 
 
 #define POLY_FORMAT_LIGHT0      0x1
@@ -196,42 +213,41 @@ typedef struct {
 #define TEXTURE_SIZE_1024  7 
 
 
-#define TEXGEN_OFF			(0<<30)			//unmodified texcoord
-#define TEXGEN_TEXCOORD		(1<<30)			//texcoord * texture-matrix
-#define TEXGEN_NORMAL		(2<<30)			//normal * texture-matrix
-#define TEXGEN_POSITION		(3<<30)			//vertex * texture-matrix
+#define TEXGEN_OFF      (0<<30)  //unmodified texcoord
+#define TEXGEN_TEXCOORD (1<<30)  //texcoord * texture-matrix
+#define TEXGEN_NORMAL   (2<<30)  //normal * texture-matrix
+#define TEXGEN_POSITION (3<<30)  //vertex * texture-matrix
 
 #define GL_TEXTURE_WRAP_S (1 << 16)
 #define GL_TEXTURE_WRAP_T (1 << 17)
 #define GL_TEXTURE_FLIP_S (1 << 18)
 #define GL_TEXTURE_FLIP_T (1 << 19)
 
-#define GL_TEXTURE_2D		1
+#define GL_TEXTURE_2D   1
 
-#define GL_TOON_HIGHLIGHT	(1<<1)
-#define GL_ANTIALIAS		(1<<4)			//not fully figured out
-#define GL_OUTLINE			(1<<5)
-#define GL_BLEND			(1<<3)
-#define GL_ALPHA_TEST		(1<<2)
+#define GL_TOON_HIGHLIGHT (1<<1)
+#define GL_ANTIALIAS      (1<<4)  //not fully figured out
+#define GL_OUTLINE        (1<<5)
+#define GL_BLEND          (1<<3)
+#define GL_ALPHA_TEST     (1<<2)
 #define GL_TEXTURE_ALPHA_MASK (1 << 29)
 
-#define GL_RGB		8
-#define GL_RGBA		7	//15 bit color + alpha bit
-#define GL_RGB4		2	//4 color palette
-#define GL_RGB256	4	//256 color palette
-#define GL_RGB16	3	//16 color palette
-#define GL_5A3C		1	//5 bit alpha 3 bit color
-#define GL_3A5C		6	//3 bit alpha 5 bit color
-#define GL_COMPRESSED	5 //compressed texture
+#define GL_RGB        8
+#define GL_RGBA       7 //15 bit color + alpha bit
+#define GL_RGB4       2 //4 color palette
+#define GL_RGB256     4 //256 color palette
+#define GL_RGB16      3 //16 color palette
+#define GL_COMPRESSED 5 //compressed texture
 
 typedef enum
 {
-	GL_GET_VERTEX_RAM_COUNT,	//returns a count of vertexes currently stored in hardware vertex ram
-	GL_GET_POLYGON_RAM_COUNT,	//returns a count of polygons currently stored in hardware polygon ram
-	GL_GET_MATRIX_ROTATION,		//returns the current 3x3 rotation matrix
-	GL_GET_MATRIX_PROJECTION	//returns the current 4x4 projection matrix
-
-}GL_GET_TYPE;
+	GL_GET_VERTEX_RAM_COUNT,	// returns a count of vertexes currently stored in hardware vertex ram
+	GL_GET_POLYGON_RAM_COUNT,	// returns a count of polygons currently stored in hardware polygon ram
+	GL_GET_MATRIX_ROTATION,		// returns the current 3x3 rotation matrix
+	GL_GET_MATRIX_PROJECTION,	// returns the current 4x4 projection matrix
+  GL_GET_TEXTURE_WIDTH,     // returns the width of the currently bound texture
+  GL_GET_TEXTURE_HEIGHT     // returns the height of the currently bound texture
+} GL_GET_TYPE;
 
 //---------------------------------------------------------------------------------
 //Fifo commands
