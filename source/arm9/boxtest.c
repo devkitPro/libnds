@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-$Id: boxtest.c,v 1.1 2005-11-07 04:11:10 dovoto Exp $
+$Id: boxtest.c,v 1.2 2005-11-26 20:33:43 joatski Exp $
 
 BoxTest.c -- Code for performing hardware box test against viewing frustrum
 
@@ -37,50 +37,53 @@ $Log:
 void BoxTest_Asynch(v16 x, v16 y, v16 z, v16 height, v16 width, v16 depth)
 //---------------------------------------------------------------------------------
 {
-	glPolyFmt(BIT(12) | BIT(13));
-	glBegin(GL_TRIANGLES);
-	glEnd();
+  glPolyFmt(BIT(12) | BIT(13));
+  glBegin(GL_TRIANGLES);
+  glEnd();
 
-	GFX_BOX_TEST = VERTEX_PACK(x, y);
-	GFX_BOX_TEST = VERTEX_PACK(z, height);
-	GFX_BOX_TEST = VERTEX_PACK(width, depth);
-
-
+  GFX_BOX_TEST = VERTEX_PACK(x, y);
+  GFX_BOX_TEST = VERTEX_PACK(z, height);
+  GFX_BOX_TEST = VERTEX_PACK(width, depth);
 }
+
 //---------------------------------------------------------------------------------
 void BoxTestf_Asynch(float x, float y, float z, float height, float width, float depth)
 //---------------------------------------------------------------------------------
 {
-	BoxTest_Asynch(floatov16(x), floatov16(y), floatov16(z), floatov16(height), floatov16(width), floatov16(depth));
+  BoxTest_Asynch(floattov16(x), floattov16(y), floattov16(z),
+                 floattov16(height), floattov16(width), floattov16(depth));
 }
 
 //---------------------------------------------------------------------------------
 int BoxTestResult(void)
 //---------------------------------------------------------------------------------
 {
-	while(GFX_STATUS & BIT(0));
+  while(GFX_STATUS & BIT(0));
 
-	return (GFX_STATUS & BIT(1));
+  return (GFX_STATUS & BIT(1));
 }
+
 //---------------------------------------------------------------------------------
 int BoxTest(v16 x, v16 y, v16 z, v16 height, v16 width, v16 depth)
 //---------------------------------------------------------------------------------
 {
-	glPolyFmt(BIT(12) | BIT(13));
-	glBegin(GL_TRIANGLES);
-	glEnd();
+  glPolyFmt(BIT(12) | BIT(13));
+  glBegin(GL_TRIANGLES);
+  glEnd();
 
-	GFX_BOX_TEST = VERTEX_PACK(x, y);
-	GFX_BOX_TEST = VERTEX_PACK(z, height);
-	GFX_BOX_TEST = VERTEX_PACK(width, depth);
+  GFX_BOX_TEST = VERTEX_PACK(x, y);
+  GFX_BOX_TEST = VERTEX_PACK(z, height);
+  GFX_BOX_TEST = VERTEX_PACK(width, depth);
 
-	while(GFX_STATUS & BIT(0));
+  while(GFX_STATUS & BIT(0));
 
-	return (GFX_STATUS & BIT(1));
+  return (GFX_STATUS & BIT(1));
 }
+
 //---------------------------------------------------------------------------------
 int BoxTestf(float x, float y, float z, float height, float width, float depth)
 //---------------------------------------------------------------------------------
 {
-	return BoxTest(floatov16(x), floatov16(y), floatov16(z), floatov16(height), floatov16(width), floatov16(depth));
+  return BoxTest(floattov16(x), floattov16(y), floattov16(z), 
+                 floattov16(height), floattov16(width), floattov16(depth));
 }
