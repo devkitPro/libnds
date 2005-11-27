@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: keys.c,v 1.10 2005-11-03 23:38:49 wntrmute Exp $
+	$Id: keys.c,v 1.11 2005-11-27 07:48:45 joatski Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.10  2005/11/03 23:38:49  wntrmute
+	don't use enum for key function returns
+	
 	Revision 1.9  2005/10/13 16:30:11  dovoto
 	Changed KEYPAD_BITS to a typedef enum, this resolved some issues with multiple redefinition of KEYPAD_BITS (although this error did not allways occur).
 	
@@ -61,39 +64,40 @@
 #include <nds/system.h>
 #include <nds/arm9/input.h>
 
-#define KEYS_CUR (( ((~REG_KEYINPUT)&0x3ff) | (((~IPC->buttons)&3)<<10) | (((~IPC->buttons)<<6) & (KEY_TOUCH|KEY_LID) ))^KEY_LID)
+//---------------------------------------------------------------------------------
 
-static u16 keys=0;
-static u16 keysold=0;
+#define KEYS_CUR (( ((~KEYS)&0x3ff) | (((~IPC->buttons)&3)<<10) | (((~IPC->buttons)<<6) & (KEY_TOUCH|KEY_LID) ))^KEY_LID)
 
-static u16 oldx=0;
-static u16 oldy=0;
+static uint16 keys = 0;
+static uint16 keysold = 0;
+
+static uint16 oldx = 0;
+static uint16 oldy = 0;
 
 //---------------------------------------------------------------------------------
-void scanKeys() {
+void scanKeys(void) {
 //---------------------------------------------------------------------------------
-	keysold=keys;
-	keys=KEYS_CUR;
+	keysold = keys;
+	keys = KEYS_CUR;
 
-	oldx=IPC->touchXpx;
-	oldy=IPC->touchYpx;
-
+	oldx = IPC->touchXpx;
+	oldy = IPC->touchYpx;
 }
 
 //---------------------------------------------------------------------------------
-u16 keysHeld() {
+uint32 keysHeld(void) {
 //---------------------------------------------------------------------------------
 	return keys;
 }
 
 //---------------------------------------------------------------------------------
-u16 keysDown() {
+uint32 keysDown(void) {
 //---------------------------------------------------------------------------------
-	return (keys^keysold)&keys;
+	return (keys ^ keysold) & keys;
 }
 
 //---------------------------------------------------------------------------------
-u16 keysUp() {
+uint32 keysUp(void) {
 //---------------------------------------------------------------------------------
-	return (keys^keysold)&(~keys);
+	return (keys ^ keysold) & (~keys);
 }

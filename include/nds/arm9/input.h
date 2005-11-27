@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: input.h,v 1.8 2005-11-14 11:59:49 wntrmute Exp $
+	$Id: input.h,v 1.9 2005-11-27 07:48:45 joatski Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -17,16 +17,19 @@
 	purpose, including commercial applications, and to alter it and
 	redistribute it freely, subject to the following restrictions:
 
-	1.	The origin of this software must not be misrepresented; you
-		must not claim that you wrote the original software. If you use
-		this software in a product, an acknowledgment in the product
-		documentation would be appreciated but is not required.
-	2.	Altered source versions must be plainly marked as such, and
-		must not be misrepresented as being the original software.
-	3.	This notice may not be removed or altered from any source
-		distribution.
+  1. The origin of this software must not be misrepresented; you
+     must not claim that you wrote the original software. If you use
+     this software in a product, an acknowledgment in the product
+     documentation would be appreciated but is not required.
+  2. Altered source versions must be plainly marked as such, and
+     must not be misrepresented as being the original software.
+  3. This notice may not be removed or altered from any source
+     distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2005/11/14 11:59:49  wntrmute
+	reformat for consistency
+	
 	Revision 1.7  2005/11/03 23:38:49  wntrmute
 	don't use enum for key function returns
 	
@@ -68,18 +71,13 @@
 ---------------------------------------------------------------------------------*/
 /*! \file input.h
 
-
-
     \brief nds input support.
-
-
 
 */
 
-
 //---------------------------------------------------------------------------------
-#ifndef	_input_h_
-#define	_input_h_
+#ifndef	INPUT_HEADER_INCLUDE
+#define	INPUT_HEADER_INCLUDE
 //---------------------------------------------------------------------------------
 
 #include <nds/jtypes.h>
@@ -89,27 +87,23 @@
 /*! \enum KEYPAD_BITS
 
 	\brief bit values for keypad buttons
-
-
-
 */
 
 typedef enum KEYPAD_BITS {
-	KEY_A		=	BIT(0),	/*!< keypad A button */
-	KEY_B		=	BIT(1),	/*!< keypad B button */
-	KEY_SELECT	=	BIT(2),	/*!< keypad SELECT button*/
-	KEY_START	=	BIT(3),	/*!< keypad START button*/
-	KEY_RIGHT	=	BIT(4),	/*!< keypad RIGHT button*/
-	KEY_LEFT	=	BIT(5),	/*!< keypad LEFT button*/
-	KEY_UP		=	BIT(6),	/*!< keypad UP button*/
-	KEY_DOWN	=	BIT(7),	/*!< keypad DOWN button*/
-	KEY_R		=	BIT(8),	/*!< RIGHT shoulder button*/
-	KEY_L		=	BIT(9),	/*!< LEFT shoulder button*/
-	
-	KEY_X		=	(1<<10),	/*!< keypad X button*/
-	KEY_Y		=	(1<<11),	/*!< keypad Y button*/
-	KEY_TOUCH	=	(1<<12),	/*!< touchscreen pendown*/
-	KEY_LID		=	(1<<13)		/*!< lid state*/
+  KEY_A      = BIT(0),  /*!< keypad A button */
+  KEY_B      = BIT(1),  /*!< keypad B button */
+  KEY_SELECT = BIT(2),  /*!< keypad SELECT button*/
+  KEY_START  = BIT(3),  /*!< keypad START button*/
+  KEY_RIGHT  = BIT(4),  /*!< keypad RIGHT button*/
+  KEY_LEFT   = BIT(5),  /*!< keypad LEFT button*/
+  KEY_UP     = BIT(6),  /*!< keypad UP button*/
+  KEY_DOWN   = BIT(7),  /*!< keypad DOWN button*/
+  KEY_R      = BIT(8),  /*!< RIGHT shoulder button*/
+  KEY_L      = BIT(9),  /*!< LEFT shoulder button*/
+  KEY_X      = BIT(10), /*!< keypad X button*/
+  KEY_Y      = BIT(11), /*!< keypad Y button*/
+  KEY_TOUCH  = BIT(12), /*!< touchscreen pendown*/
+  KEY_LID    = BIT(13)  /*!< lid state*/
 } KEYPAD_BITS;
 
 #ifdef __cplusplus
@@ -124,33 +118,31 @@ extern "C" {
 */
 
 void scanKeys();
-/*! \fn u16 keysHeld()
+/*! \fn uint32 keysHeld()
 
 	\brief obtain the current keypad held state.
 */
 
-u16 keysHeld();
-/*! \fn u16 keysDown()
+uint32 keysHeld(void);
+/*! \fn uint32 keysDown(void)
 
 	\brief obtain the current keypad pressed state.
 
 */
 
-u16 keysDown();
-/*! \fn u16 keysUp()
+uint32 keysDown(void);
+/*! \fn uint32 keysUp()
 
 	\brief obtain the current keypad released state.
 
 */
 
-u16 keysUp();
+uint32 keysUp(void);
 
 
 /*! \fn touchPosition touchReadXY()
 
 	\brief obtain the current touchscreen co-ordinates.
-
-
 
 */
 
@@ -161,5 +153,5 @@ touchPosition touchReadXY();
 #endif
 
 //---------------------------------------------------------------------------------
-#endif // _keys_h_
+#endif // INPUT_HEADER_INCLUDE
 //---------------------------------------------------------------------------------
