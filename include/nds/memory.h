@@ -40,6 +40,15 @@
 // WAIT_CR: Wait State Control Register
 #define WAIT_CR       (*(vuint16*)0x04000204)
 
+#define ARM9_OWNS_SRAM BIT(15)
+#define ARM9_OWNS_CARD BIT(11)
+#define ARM9_OWNS_ROM  BIT(7)
+#define ARM7_OWNS_SRAM 0
+#define ARM7_OWNS_CARD 0
+#define ARM7_OWNS_ROM  0
+
+//////////////////////////////////////////////////////////////////////
+
 // Protection register (write-once sadly)
 #ifdef ARM7
 #define PROTECTION    (*(vuint32*)0x04000308)
@@ -55,7 +64,10 @@
 
 // fixme: shared RAM
 
+// GBA_BUS is volatile, while GBAROM is not
+#define GBA_BUS       ((vuint16 *)(0x08000000))
 #define GBAROM        ((uint16*)0x08000000)
+
 #define SRAM          ((uint8*)0x0A000000)
 
 #ifdef ARM9
@@ -92,15 +104,41 @@
 
 //////////////////////////////////////////////////////////////////////
 
+typedef struct sGBAHeader {
+  __attribute__ ((__packed__)) uint32 entryPoint;
+  __attribute__ ((__packed__)) uint8 logo[156];
+  __attribute__ ((__packed__)) char title[0xC];
+  __attribute__ ((__packed__)) char gamecode[0x4];
+  __attribute__ ((__packed__)) uint16 makercode;
+  __attribute__ ((__packed__)) uint8 is96h;
+  __attribute__ ((__packed__)) uint8 unitcode;
+  __attribute__ ((__packed__)) uint8 devicecode;
+  __attribute__ ((__packed__)) uint8 unused[7];
+  __attribute__ ((__packed__)) uint8 version;
+  __attribute__ ((__packed__)) uint8 complement;
+  __attribute__ ((__packed__)) uint16 checksum;
+} tGBAHeader;
+#define GBA_HEADER (*(tGBAHeader *)0x08000000)
+//////////////////////////////////////////////////////////////////////
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 //////////////////////////////////////////////////////////////////////
 
-// Copies floor(size/4) words from source to dest (i.e. size in bytes)
-// Utilizes DMA channel 3
+#ifdef ARM9
 
+#define BUS_OWNER_ARM9 true
+#define BUS_OWNER_ARM7 false
+
+// Changes the owernship for all three busses
+void sysSetBusOwners(bool arm9rom, bool arm9sram, bool arm9card);
+
+// Changes only the gba rom cartridge ownership
+void sysSetCartOwner(bool arm9);
+
+#endif
 
 //////////////////////////////////////////////////////////////////////
 
