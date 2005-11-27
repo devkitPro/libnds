@@ -23,9 +23,10 @@
 //  3. This notice may not be removed or altered from any source
 //     distribution.
 //
-// Changelog:
-//   0.1: First version
-//
+/*
+  $Log: 
+
+*/
 //////////////////////////////////////////////////////////////////////
 
 #ifndef NDS_MEMORY_INCLUDE
