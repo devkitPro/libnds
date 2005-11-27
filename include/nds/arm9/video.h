@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.14 2005-11-26 20:31:15 joatski Exp $
+	$Id: video.h,v 1.15 2005-11-27 04:37:00 joatski Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.14  2005/11/26 20:31:15  joatski
+	vramRestorMainBanks changed to vramRestoreMainBanks
+	Added some comment lines between defines
+	
 	Revision 1.13  2005/11/07 04:13:41  dovoto
 	Added register definitions for box test and matrix reading
 	
@@ -464,6 +468,22 @@ void vramSetBankI(VRAM_I_TYPE i);
 #define BLEND_DST_BACKDROP (1<<13)
 
 //////////////////////////////////////////////////////////////////////
+// Display capture control
+//////////////////////////////////////////////////////////////////////
+
+#define	DISP_CAPTURE  (*(vuint32*)0x04000064)
+
+#define DCAP_ENABLE    BIT(31)
+#define DCAP_MODE(n)   (((n) & 3) << 29)
+#define DCAP_DST(n)    (((n) & 3) << 26)
+#define DCAP_SRC(n)    (((n) & 3) << 24)
+#define DCAP_SIZE(n)   (((n) & 3) << 20)
+#define DCAP_OFFSET(n) (((n) & 3) << 18)
+#define DCAP_BANK(n)   (((n) & 3) << 16)
+#define DCAP_B(n)      (((n) & 0x1F) << 8)
+#define DCAP_A(n)      (((n) & 0x1F) << 0)
+
+//////////////////////////////////////////////////////////////////////
 // Background control defines
 //////////////////////////////////////////////////////////////////////
 
@@ -585,7 +605,7 @@ typedef struct sSpriteRotation {
 #define GFX_SHININESS         (*(vuint32*) 0x040004D0)
 
 #define GFX_POLY_FORMAT       (*(vuint32*) 0x040004A4)
-#define GFX_ALPHA             (*(vuint16*) 0x04000340)
+#define GFX_ALPHA_TEST        (*(vuint16*) 0x04000340)
 
 #define GFX_BEGIN             (*(vuint32*) 0x04000500)
 #define GFX_END               (*(vuint32*) 0x04000504)
@@ -597,8 +617,10 @@ typedef struct sSpriteRotation {
 
 #define GFX_BUSY (GFX_STATUS & BIT(27))
 
-#define GFX_VERTEX_RAM_USAGE		  (*(u16*)  0x04000606)
-#define GFX_POLYGON_RAM_USAGE		  (*(u16*)  0x04000604)
+#define GFX_VERTEX_RAM_USAGE		  (*(uint16*)  0x04000606)
+#define GFX_POLYGON_RAM_USAGE		  (*(uint16*)  0x04000604)
+
+#define GFX_CUTOFF_DEPTH          (*(uint16*)0x04000610)
 
 //////////////////////////////////////////////////////////////////////
 // Matrix processor control
