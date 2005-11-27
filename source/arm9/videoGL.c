@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.17 2005-11-26 20:33:00 joatski Exp $
+	$Id: videoGL.c,v 1.18 2005-11-27 04:23:19 joatski Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,11 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.17  2005/11/26 20:33:00  joatski
+	Changed spelling of fixed-point macros.  Old ones are present but deprecated.
+	Fixed difference between GL_RGB and GL_RGBA
+	Added GL_GET_WIDTH and GL_GET_HEIGHT
+	
 	Revision 1.15  2005/11/07 04:16:24  dovoto
 	Added glGetInt and glGetFixed, Fixed glOrtho, Began Doxygenation
 	
@@ -917,5 +922,24 @@ v16 floatov16(float n) { return ((v16)((n) * (1 << 12))); }
 
 v10 intov10(int n)     { return ((n) << 9); }
 v10 floatov10(float n) { return ((v10)((n) * (1 << 9))); }
+
+//////////////////////////////////////////////////////////////////////
+
+// deprecated, remove in a couple versions -- joat
+void glSetAlpha(int alpha) {
+  GFX_ALPHA_TEST = alpha;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void glAlphaFunc(int alphaThreshold) {
+  GFX_ALPHA_TEST = alphaThreshold;
+}
+
+//////////////////////////////////////////////////////////////////////
+
+void glCutoffDepth(fixed12d3 depth) {
+  GFX_CUTOFF_DEPTH = depth;
+}
 
 //////////////////////////////////////////////////////////////////////

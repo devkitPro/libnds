@@ -8,8 +8,6 @@
 
 #endif
 
-GL_STATIC_INL void glSetAlpha(int alpha) { GFX_ALPHA = alpha; }
-
 GL_STATIC_INL void glBegin(int mode) { GFX_BEGIN = mode; }
 
 GL_STATIC_INL void glEnd( void) { GFX_END = 0; }

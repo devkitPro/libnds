@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.19 2005-11-26 20:33:00 joatski Exp $
+	$Id: videoGL.h,v 1.20 2005-11-27 04:23:19 joatski Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,11 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.19  2005/11/26 20:33:00  joatski
+	Changed spelling of fixed-point macros.  Old ones are present but deprecated.
+	Fixed difference between GL_RGB and GL_RGBA
+	Added GL_GET_WIDTH and GL_GET_HEIGHT
+	
 	Revision 1.17  2005/11/18 14:31:58  wntrmute
 	corrected parameter for doxygen in glLoadMatrix4x3
 	
@@ -99,6 +104,17 @@
 #define GLfloat float
 
 //////////////////////////////////////////////////////////////////////
+// Fixed point / floating point / integer conversion macros
+//////////////////////////////////////////////////////////////////////
+
+// Used for depth (glClearDepth, glCutoffDepth)
+typedef uint16 fixed12d3;
+
+#define int_to_12d3(n)    ((n) << 3)
+#define float_to_12d3(n)  ((fixed12d3)((n) * (1 << 3)))
+#define GL_MAX_DEPTH      0x7FFF
+
+//////////////////////////////////////////////////////////////////////
 
 #define inttof32(n)          ((n) << 12)
 #define f32toint(n)          ((n) >> 12)
@@ -168,6 +184,10 @@ typedef struct {
 #define GL_FALSE     0
 #define GL_TRUE      1
 
+//////////////////////////////////////////////////////////////////////
+// glBegin constants
+//////////////////////////////////////////////////////////////////////
+
 #define GL_TRIANGLE        0
 #define GL_QUAD            1
 #define GL_TRIANGLES       0
@@ -175,9 +195,17 @@ typedef struct {
 #define GL_TRIANGLE_STRIP  2
 #define GL_QUAD_STRIP      3
 
-#define GL_MODELVIEW       2
+//////////////////////////////////////////////////////////////////////
+// glMatrixMode constants
+//////////////////////////////////////////////////////////////////////
+
 #define GL_PROJECTION      0
+#define GL_MODELVIEW       2
 #define GL_TEXTURE         3
+
+//////////////////////////////////////////////////////////////////////
+// glMaterialf constants
+//////////////////////////////////////////////////////////////////////
 
 #define GL_AMBIENT              0x01
 #define GL_DIFFUSE              0x02
@@ -186,7 +214,9 @@ typedef struct {
 #define GL_SHININESS            0x08
 #define GL_EMISSION             0x10
 
-#define GL_LIGHTING    1
+////////////////////////////////////////////////////////////
+// glPolyFmt constants
+////////////////////////////////////////////////////////////
 
 #define POLY_ALPHA(n)  ((n) << 16)
 #define POLY_TOON_SHADING     0x20
@@ -195,14 +225,18 @@ typedef struct {
 #define POLY_CULL_NONE        0xC0
 #define POLY_ID(n)	((n)<<24)
 
-
 #define POLY_FORMAT_LIGHT0      0x1
 #define POLY_FORMAT_LIGHT1      0x2
 #define POLY_FORMAT_LIGHT2      0x4
 #define POLY_FORMAT_LIGHT3      0x8
 
-#define MAX_TEXTURES 2048  //this should be enough ! but feel free to change
+////////////////////////////////////////////////////////////
+// glTexImage2d constants
+////////////////////////////////////////////////////////////
 
+#define GL_TEXTURE_2D   1
+
+// size bits
 #define TEXTURE_SIZE_8     0
 #define TEXTURE_SIZE_16    1 
 #define TEXTURE_SIZE_32    2
@@ -212,35 +246,46 @@ typedef struct {
 #define TEXTURE_SIZE_512   6
 #define TEXTURE_SIZE_1024  7 
 
+// parameter bits
+#define GL_TEXTURE_WRAP_S (1 << 16)
+#define GL_TEXTURE_WRAP_T (1 << 17)
+#define GL_TEXTURE_FLIP_S (1 << 18)
+#define GL_TEXTURE_FLIP_T (1 << 19)
+
+// these two are the same thing!
+#define GL_TEXTURE_COLOR0_TRANSPARENT (1<<29)
+#define GL_TEXTURE_ALPHA_MASK (1 << 29)
 
 #define TEXGEN_OFF      (0<<30)  //unmodified texcoord
 #define TEXGEN_TEXCOORD (1<<30)  //texcoord * texture-matrix
 #define TEXGEN_NORMAL   (2<<30)  //normal * texture-matrix
 #define TEXGEN_POSITION (3<<30)  //vertex * texture-matrix
 
-#define GL_TEXTURE_WRAP_S (1 << 16)
-#define GL_TEXTURE_WRAP_T (1 << 17)
-#define GL_TEXTURE_FLIP_S (1 << 18)
-#define GL_TEXTURE_FLIP_T (1 << 19)
+// mode bits
+#define GL_RGB32_A3   1 // 32 color palette, 3 bits of alpha
+#define GL_RGB4       2 // 4 color palette
+#define GL_RGB16      3 // 16 color palette
+#define GL_RGB256     4 // 256 color palette
+#define GL_COMPRESSED 5 // compressed texture
+#define GL_RGB8_A5    6 // 8 color palette, 5 bits of alpha
+#define GL_RGBA       7 // 15 bit direct color, 1 bit of alpha
+#define GL_RGB        8 // 15 bit direct color, alpha bit autoset to 1
 
-#define GL_TEXTURE_2D   1
+////////////////////////////////////////////////////////////
+// glEnable / glDisable constants
+////////////////////////////////////////////////////////////
 
 #define GL_TOON_HIGHLIGHT (1<<1)
+#define GL_ALPHA_TEST     (1<<2)  // enables/disables fragment testing of post-blend alpha >= gfx_alpha_test
+#define GL_BLEND          (1<<3)
 #define GL_ANTIALIAS      (1<<4)  //not fully figured out
 #define GL_OUTLINE        (1<<5)
-#define GL_BLEND          (1<<3)
-#define GL_ALPHA_TEST     (1<<2)
-#define GL_TEXTURE_ALPHA_MASK (1 << 29)
 
-#define GL_RGB        8
-#define GL_RGBA       7 //15 bit color + alpha bit
-#define GL_RGB4       2 //4 color palette
-#define GL_RGB256     4 //256 color palette
-#define GL_RGB16      3 //16 color palette
-#define GL_COMPRESSED 5 //compressed texture
+////////////////////////////////////////////////////////////
+// glGet constants
+////////////////////////////////////////////////////////////
 
-typedef enum
-{
+typedef enum {
 	GL_GET_VERTEX_RAM_COUNT,	// returns a count of vertexes currently stored in hardware vertex ram
 	GL_GET_POLYGON_RAM_COUNT,	// returns a count of polygons currently stored in hardware polygon ram
 	GL_GET_MATRIX_ROTATION,		// returns the current 3x3 rotation matrix
@@ -249,9 +294,18 @@ typedef enum
   GL_GET_TEXTURE_HEIGHT     // returns the height of the currently bound texture
 } GL_GET_TYPE;
 
+////////////////////////////////////////////////////////////
+// Misc. constants
+////////////////////////////////////////////////////////////
+
+#define MAX_TEXTURES 2048  //this should be enough ! but feel free to change
+#define GL_LIGHTING    1   // no idea what this is for / who defined it
+
+
 //---------------------------------------------------------------------------------
 //Fifo commands
 //---------------------------------------------------------------------------------
+
 #define FIFO_COMMAND_PACK(c1,c2,c3,c4) (((c4) << 24) | ((c3) << 16) | ((c2) << 8) | (c1))
 
 #define REG2ID(r)						(u8)( ( ((u32)(&(r)))-0x04000400 ) >> 2 )
@@ -549,7 +603,7 @@ void glNormal3f(float x, float y, float z);
 	void glBegin(int mode);
 	void glEnd( void);
 	void glClearColor(uint8 red, uint8 green, uint8 blue);
-	void glClearDepth(uint16 depth);
+	void glClearDepth(fixed12d3 depth);
 	void glColor3b(uint8 red, uint8 green, uint8 blue);
 	void glColor(rgb color);
 	void glVertex3v16(v16 x, v16 y, v16 z);
@@ -573,12 +627,15 @@ void glNormal3f(float x, float y, float z);
 	void glFlush(void);
 	void glMaterialShinnyness(void);
 	void glPolyFmt(int alpha); 
-
 #else
-
 	#include "videoGL.inl"
-	
 #endif  //endif #no inline
+
+void glSetAlpha(int alpha) __attribute__((deprecated));
+void glAlphaFunc(int alphaThreshold);
+
+void glCutoffDepth(fixed12d3 depth);
+
 #ifdef __cplusplus
 }
 #endif
