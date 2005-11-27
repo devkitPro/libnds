@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: keys.c,v 1.11 2005-11-27 07:48:45 joatski Exp $
+	$Id: keys.c,v 1.12 2005-11-27 12:30:25 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -25,6 +25,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.11  2005/11/27 07:48:45  joatski
+	Renamed REG_KEYINPUT and REG_KEYCNT back to KEYS and KEYS_CR, as the alternatives are defined in registers_alt.h.
+	Changed function returns to uint32
+	
 	Revision 1.10  2005/11/03 23:38:49  wntrmute
 	don't use enum for key function returns
 	
@@ -66,7 +70,7 @@
 
 //---------------------------------------------------------------------------------
 
-#define KEYS_CUR (( ((~KEYS)&0x3ff) | (((~IPC->buttons)&3)<<10) | (((~IPC->buttons)<<6) & (KEY_TOUCH|KEY_LID) ))^KEY_LID)
+#define KEYS_CUR (( ((~REG_KEYINPUT)&0x3ff) | (((~IPC->buttons)&3)<<10) | (((~IPC->buttons)<<6) & (KEY_TOUCH|KEY_LID) ))^KEY_LID)
 
 static uint16 keys = 0;
 static uint16 keysold = 0;

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.8 2005-11-27 07:55:14 joatski Exp $
+	$Id: system.h,v 1.9 2005-11-27 12:30:24 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2005/11/27 07:55:14  joatski
+	Fixed my mistake in the changelogs
+	
 	Revision 1.7  2005/11/27 07:49:19  joatski
 	Renamed REG_KEYINPUT and REG_KEYCNT back to KEYS and KEYS_CR, as the alternatives are defined in registers_alt.h.
 	
@@ -139,9 +142,8 @@ typedef struct tPERSONAL_DATA {
 } PACKED PERSONAL_DATA ;
 
 
-// REG_KEYINPUT defined in registers_alt, which is where it belongs
-#define KEYS      (*(vuint16*)0x04000130)
-#define	KEYS_CR   (*(vuint16*)0x04000132)
+#define	REG_KEYINPUT	(*(vuint16*)0x04000130)
+#define	REG_KEYCNT		(*(vuint16*)0x04000132)
 
 #define PersonalData ((PERSONAL_DATA*)0x27FFC80)
 
