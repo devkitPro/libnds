@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.6 2005-10-11 03:08:58 dovoto Exp $
+	$Id: system.h,v 1.7 2005-11-27 07:49:19 joatski Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.6  2005/10/11 03:08:58  dovoto
+	added lcdMainOnTop() and llcdMainOnBottom()
+	
 	Revision 1.5  2005/09/07 18:03:36  wntrmute
 	renamed key input registers
 	moved key bit definitions to input.h
@@ -133,8 +136,9 @@ typedef struct tPERSONAL_DATA {
 } PACKED PERSONAL_DATA ;
 
 
-#define	REG_KEYINPUT	(*(vu16*)0x04000130)
-#define	REG_KEYCNT		(*(vu16*)0x04000132)
+// REG_KEYINPUT defined in registers_alt, which is where it belongs
+#define KEYS      (*(vuint16*)0x04000130)
+#define	KEYS_CR   (*(vuint16*)0x04000132)
 
 #define PersonalData ((PERSONAL_DATA*)0x27FFC80)
 
