@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.7 2005-11-27 07:49:19 joatski Exp $
+	$Id: system.h,v 1.8 2005-11-27 07:55:14 joatski Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2005/11/27 07:49:19  joatski
+	Renamed REG_KEYINPUT and REG_KEYCNT back to KEYS and KEYS_CR, as the alternatives are defined in registers_alt.h.
+	
 	Revision 1.6  2005/10/11 03:08:58  dovoto
 	added lcdMainOnTop() and llcdMainOnBottom()
 	

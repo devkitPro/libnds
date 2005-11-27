@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: input.h,v 1.9 2005-11-27 07:48:45 joatski Exp $
+	$Id: input.h,v 1.10 2005-11-27 07:55:14 joatski Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -27,6 +27,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2005/11/27 07:48:45  joatski
+	Changed function returns to uint32
+	
 	Revision 1.8  2005/11/14 11:59:49  wntrmute
 	reformat for consistency
 	
