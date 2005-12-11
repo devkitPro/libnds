@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.10 2005-10-17 15:35:56 wntrmute Exp $
+	$Id: touch.c,v 1.11 2005-12-11 22:49:53 wntrmute Exp $
 
 	Touch screen control for the ARM7
 
@@ -26,6 +26,9 @@
 			distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.10  2005/10/17 15:35:56  wntrmute
+	use weighted averaging
+	
 	Revision 1.9  2005/10/03 21:19:34  wntrmute
 	use ratiometric mode
 	lock touchscreen on and average several readings
@@ -115,9 +118,12 @@ touchPosition touchReadXY() {
 		xscale = ((PersonalData->calX2px - PersonalData->calX1px) << 19) / ((PersonalData->calX2) - (PersonalData->calX1));
 		yscale = ((PersonalData->calY2px - PersonalData->calY1px) << 19) / ((PersonalData->calY2) - (PersonalData->calY1));
 
-		xoffset = (PersonalData->calX1) * xscale - (PersonalData->calX1px << 19);
-		yoffset = (PersonalData->calY1) * yscale - (PersonalData->calY1px << 19);
+//		xoffset = (PersonalData->calX1) * xscale - (PersonalData->calX1px << 19);
+//		yoffset = (PersonalData->calY1) * yscale - (PersonalData->calY1px << 19);
 
+
+		xoffset = ((PersonalData->calX1 + PersonalData->calX2) * xscale  - ((PersonalData->calX1px + PersonalData->calX2px) << 19) ) / 2;
+		yoffset = ((PersonalData->calY1 + PersonalData->calY2) * xscale  - ((PersonalData->calY1px + PersonalData->calY2px) << 19) ) / 2;
 		touchInit = true;
 
 	}

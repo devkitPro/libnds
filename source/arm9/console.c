@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.13 2005-11-07 04:11:53 dovoto Exp $
+	$Id: console.c,v 1.14 2005-12-11 22:49:53 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.13  2005/11/07 04:11:53  dovoto
+	Added consoleDemoInit for prototyping
+	
 	Revision 1.12  2005/10/26 05:22:34  bigredpimp
 	Added Line Clearing escape sequences
 	- "\x1b[K" & "\x1b[0K" = clear from cursor to end of line
@@ -316,8 +319,8 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 	return count;
 }
 
-const devoptab_t dotab_stdout = {"stdout",con_open,con_close,con_write,con_read,NULL,NULL};
-const devoptab_t dotab_stderr = {"stderr",con_open,con_close,con_write,con_read,NULL,NULL};
+const devoptab_t dotab_stdout = {"con",con_open,con_close,con_write,con_read,NULL,NULL};
+const devoptab_t dotab_stderr = {"con",con_open,con_close,con_write,con_read,NULL,NULL};
 
 
 /*---------------------------------------------------------------------------------
