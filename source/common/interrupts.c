@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.c,v 1.6 2005-11-07 01:11:08 wntrmute Exp $
+	$Id: interrupts.c,v 1.7 2005-12-12 13:03:29 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,6 +22,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.6  2005/11/07 01:11:08  wntrmute
+	more doxygen
+	moved IntrMain declaration to C file
+	
 	Revision 1.5  2005/09/20 05:00:24  wntrmute
 	use new register definitions
 	
@@ -129,6 +133,10 @@ void irqInitHandler(IntFn handler) {
 //---------------------------------------------------------------------------------
 void irqEnable(int irq) {
 //---------------------------------------------------------------------------------
+	if(irq & IRQ_VBLANK)
+		DISP_SR |= DISP_VBLANK_IRQ ;
+	if(irq & IRQ_HBLANK)
+		DISP_SR |= DISP_HBLANK_IRQ ;
 	REG_IE |= irq;
 	REG_IME = 1;
 }
@@ -136,6 +144,10 @@ void irqEnable(int irq) {
 //---------------------------------------------------------------------------------
 void irqDisable(int irq) {
 //---------------------------------------------------------------------------------
+	if(irq & IRQ_VBLANK)
+		DISP_SR &= ~DISP_VBLANK_IRQ ;
+	if(irq & IRQ_HBLANK)
+		DISP_SR &= ~DISP_HBLANK_IRQ ;
 	REG_IE &= ~irq;
 }
 
