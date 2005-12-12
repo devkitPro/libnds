@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.15 2005-11-27 04:37:00 joatski Exp $
+	$Id: video.h,v 1.16 2005-12-12 14:36:03 wntrmute Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,11 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.15  2005/11/27 04:37:00  joatski
+	Added DISP_CAPTURE and associated macros
+	Added GFX_CUTOFF_DEPTH
+	Renamed GFX_ALPHA to GFX_ALPHA_TEST
+	
 	Revision 1.14  2005/11/26 20:31:15  joatski
 	vramRestorMainBanks changed to vramRestoreMainBanks
 	Added some comment lines between defines
@@ -71,71 +76,70 @@ extern "C" {
 #define SCREEN_WIDTH  256
 //	Vram Control
 #define VRAM_CR			(*(vuint32*)0x04000240)
-#define VRAM_A_CR       (*(vuint8*)0x04000240)
-#define VRAM_B_CR       (*(vuint8*)0x04000241)
-#define VRAM_C_CR       (*(vuint8*)0x04000242)
-#define VRAM_D_CR       (*(vuint8*)0x04000243)
-#define VRAM_E_CR       (*(vuint8*)0x04000244)
-#define VRAM_F_CR       (*(vuint8*)0x04000245)
-#define VRAM_G_CR       (*(vuint8*)0x04000246)
+#define VRAM_A_CR		(*(vuint8*)0x04000240)
+#define VRAM_B_CR		(*(vuint8*)0x04000241)
+#define VRAM_C_CR		(*(vuint8*)0x04000242)
+#define VRAM_D_CR		(*(vuint8*)0x04000243)
+#define VRAM_E_CR		(*(vuint8*)0x04000244)
+#define VRAM_F_CR		(*(vuint8*)0x04000245)
+#define VRAM_G_CR		(*(vuint8*)0x04000246)
 #define WRAM_CR			(*(vuint8*)0x04000247)
-#define VRAM_H_CR       (*(vuint8*)0x04000248)
-#define VRAM_I_CR       (*(vuint8*)0x04000249)
+#define VRAM_H_CR		(*(vuint8*)0x04000248)
+#define VRAM_I_CR		(*(vuint8*)0x04000249)
 
-#define VRAM_ENABLE   (1<<7)
+#define VRAM_ENABLE		(1<<7)
 
-#define VRAM_OFFSET(n)  ((n)<<3)
+#define VRAM_OFFSET(n)	((n)<<3)
 
-//////////////////////////////////////////////////////////////////////
 
 typedef enum {
-	VRAM_A_LCD = 0,
+	VRAM_A_LCD	=	0,
 	VRAM_A_MAIN_BG  = 1,
-	VRAM_A_MAIN_BG_0x6000000  = 1 | VRAM_OFFSET(0),
-	VRAM_A_MAIN_BG_0x6020000  = 1 | VRAM_OFFSET(1),
-	VRAM_A_MAIN_BG_0x6040000  = 1 | VRAM_OFFSET(2),
-	VRAM_A_MAIN_BG_0x6060000  = 1 | VRAM_OFFSET(3),
+	VRAM_A_MAIN_BG_0x6000000	= 1 | VRAM_OFFSET(0),
+	VRAM_A_MAIN_BG_0x6020000	= 1 | VRAM_OFFSET(1),
+	VRAM_A_MAIN_BG_0x6040000	= 1 | VRAM_OFFSET(2),
+	VRAM_A_MAIN_BG_0x6060000	= 1 | VRAM_OFFSET(3),
 	VRAM_A_MAIN_SPRITE = 2,
 	VRAM_A_TEXTURE = 3,
-	VRAM_A_TEXTURE_SLOT0 = 3 | VRAM_OFFSET(0),
-	VRAM_A_TEXTURE_SLOT1 = 3 | VRAM_OFFSET(1),
-	VRAM_A_TEXTURE_SLOT2 = 3 | VRAM_OFFSET(2),
-	VRAM_A_TEXTURE_SLOT3 = 3 | VRAM_OFFSET(3)
+	VRAM_A_TEXTURE_SLOT0	= 3 | VRAM_OFFSET(0),
+	VRAM_A_TEXTURE_SLOT1	= 3 | VRAM_OFFSET(1),
+	VRAM_A_TEXTURE_SLOT2	= 3 | VRAM_OFFSET(2),
+	VRAM_A_TEXTURE_SLOT3	= 3 | VRAM_OFFSET(3)
 } VRAM_A_TYPE;
 
 typedef enum {
 	VRAM_B_LCD = 0,
-	VRAM_B_MAIN_BG  = 1 | VRAM_OFFSET(1),
-	VRAM_B_MAIN_BG_0x6000000  = 1 | VRAM_OFFSET(0),
-	VRAM_B_MAIN_BG_0x6020000  = 1 | VRAM_OFFSET(1),
-	VRAM_B_MAIN_BG_0x6040000  = 1 | VRAM_OFFSET(2),
-	VRAM_B_MAIN_BG_0x6060000  = 1 | VRAM_OFFSET(3),
-	VRAM_B_MAIN_SPRITE = 2,
-	VRAM_B_TEXTURE = 3 | VRAM_OFFSET(1),
-	VRAM_B_TEXTURE_SLOT0 = 3 | VRAM_OFFSET(0),
-	VRAM_B_TEXTURE_SLOT1 = 3 | VRAM_OFFSET(1),
-	VRAM_B_TEXTURE_SLOT2 = 3 | VRAM_OFFSET(2),
-	VRAM_B_TEXTURE_SLOT3 = 3 | VRAM_OFFSET(3)
+	VRAM_B_MAIN_BG	= 1 | VRAM_OFFSET(1),
+	VRAM_B_MAIN_BG_0x6000000	= 1 | VRAM_OFFSET(0),
+	VRAM_B_MAIN_BG_0x6020000	= 1 | VRAM_OFFSET(1),
+	VRAM_B_MAIN_BG_0x6040000	= 1 | VRAM_OFFSET(2),
+	VRAM_B_MAIN_BG_0x6060000	= 1 | VRAM_OFFSET(3),
+	VRAM_B_MAIN_SPRITE	= 2,
+	VRAM_B_TEXTURE	= 3 | VRAM_OFFSET(1),
+	VRAM_B_TEXTURE_SLOT0	= 3 | VRAM_OFFSET(0),
+	VRAM_B_TEXTURE_SLOT1	= 3 | VRAM_OFFSET(1),
+	VRAM_B_TEXTURE_SLOT2	= 3 | VRAM_OFFSET(2),
+	VRAM_B_TEXTURE_SLOT3	= 3 | VRAM_OFFSET(3)
 } VRAM_B_TYPE;	
 
 typedef enum {
 	VRAM_C_LCD = 0,
 	VRAM_C_MAIN_BG  = 1 | VRAM_OFFSET(2),
-	VRAM_C_MAIN_BG_0x6000000  = 1 | VRAM_OFFSET(0),
-	VRAM_C_MAIN_BG_0x6020000  = 1 | VRAM_OFFSET(1),
-	VRAM_C_MAIN_BG_0x6040000  = 1 | VRAM_OFFSET(2),
-	VRAM_C_MAIN_BG_0x6060000  = 1 | VRAM_OFFSET(3),
-	VRAM_C_ARM7 = 2,
-	VRAM_C_SUB_BG  = 4,
-	VRAM_C_SUB_BG_0x6200000  = 4 | VRAM_OFFSET(0),
-	VRAM_C_SUB_BG_0x6220000  = 4 | VRAM_OFFSET(1),
-	VRAM_C_SUB_BG_0x6240000  = 4 | VRAM_OFFSET(2),
-	VRAM_C_SUB_BG_0x6260000  = 4 | VRAM_OFFSET(3),
-	VRAM_C_TEXTURE = 3 | VRAM_OFFSET(2),
-	VRAM_C_TEXTURE_SLOT0 = 3 | VRAM_OFFSET(0),
-	VRAM_C_TEXTURE_SLOT1 = 3 | VRAM_OFFSET(1),
-	VRAM_C_TEXTURE_SLOT2 = 3 | VRAM_OFFSET(2),
-	VRAM_C_TEXTURE_SLOT3 = 3 | VRAM_OFFSET(3)
+	VRAM_C_MAIN_BG_0x6000000	= 1 | VRAM_OFFSET(0),
+	VRAM_C_MAIN_BG_0x6020000	= 1 | VRAM_OFFSET(1),
+	VRAM_C_MAIN_BG_0x6040000	= 1 | VRAM_OFFSET(2),
+	VRAM_C_MAIN_BG_0x6060000	= 1 | VRAM_OFFSET(3),
+	VRAM_C_ARM7	= 2,
+	VRAM_C_SUB_BG	= 4,
+	VRAM_C_SUB_BG_0x6200000	= 4 | VRAM_OFFSET(0),
+	VRAM_C_SUB_BG_0x6220000	= 4 | VRAM_OFFSET(1),
+	VRAM_C_SUB_BG_0x6240000	= 4 | VRAM_OFFSET(2),
+	VRAM_C_SUB_BG_0x6260000	= 4 | VRAM_OFFSET(3),
+	VRAM_C_TEXTURE	= 3 | VRAM_OFFSET(2),
+	VRAM_C_TEXTURE_SLOT0	= 3 | VRAM_OFFSET(0),
+	VRAM_C_TEXTURE_SLOT1	= 3 | VRAM_OFFSET(1),
+	VRAM_C_TEXTURE_SLOT2	= 3 | VRAM_OFFSET(2),
+	VRAM_C_TEXTURE_SLOT3	= 3 | VRAM_OFFSET(3)
 } VRAM_C_TYPE;
 
 typedef enum {	
@@ -155,46 +159,44 @@ typedef enum {
 } VRAM_D_TYPE;
 
 typedef enum {
-  VRAM_E_LCD             = 0,
-  VRAM_E_MAIN_BG         = 1,
-  VRAM_E_MAIN_SPRITE     = 2,
-  VRAM_E_TEX_PALETTE     = 3,
-  VRAM_E_BG_EXT_PALETTE  = 4,
-  VRAM_E_OBJ_EXT_PALETTE = 5,
+	VRAM_E_LCD             = 0,
+	VRAM_E_MAIN_BG         = 1,
+	VRAM_E_MAIN_SPRITE     = 2,
+	VRAM_E_TEX_PALETTE     = 3,
+	VRAM_E_BG_EXT_PALETTE  = 4,
+	VRAM_E_OBJ_EXT_PALETTE = 5,
 } VRAM_E_TYPE;
 
 typedef enum {
-  VRAM_F_LCD             = 0,
-  VRAM_F_MAIN_BG         = 1,
-  VRAM_F_MAIN_SPRITE     = 2,
-  VRAM_F_TEX_PALETTE     = 3,
-  VRAM_F_BG_EXT_PALETTE  = 4,
-  VRAM_F_OBJ_EXT_PALETTE = 5,
+	VRAM_F_LCD             = 0,
+	VRAM_F_MAIN_BG         = 1,
+	VRAM_F_MAIN_SPRITE     = 2,
+	VRAM_F_TEX_PALETTE     = 3,
+	VRAM_F_BG_EXT_PALETTE  = 4,
+	VRAM_F_OBJ_EXT_PALETTE = 5,
 } VRAM_F_TYPE;
 
 typedef enum {
-  VRAM_G_LCD             = 0,
-  VRAM_G_MAIN_BG         = 1,
-  VRAM_G_MAIN_SPRITE     = 2,
-  VRAM_G_TEX_PALETTE     = 3,
-  VRAM_G_BG_EXT_PALETTE  = 4,
-  VRAM_G_OBJ_EXT_PALETTE = 5,
+	VRAM_G_LCD             = 0,
+	VRAM_G_MAIN_BG         = 1,
+	VRAM_G_MAIN_SPRITE     = 2,
+	VRAM_G_TEX_PALETTE     = 3,
+	VRAM_G_BG_EXT_PALETTE  = 4,
+	VRAM_G_OBJ_EXT_PALETTE = 5,
 } VRAM_G_TYPE;
 
 typedef enum {
-  VRAM_H_LCD                = 0,
-  VRAM_H_SUB_BG             = 1,
-  VRAM_H_SUB_BG_EXT_PALETTE = 2,
+	VRAM_H_LCD                = 0,
+	VRAM_H_SUB_BG             = 1,
+	VRAM_H_SUB_BG_EXT_PALETTE = 2,
 } VRAM_H_TYPE;
 
 typedef enum {
-  VRAM_I_LCD                    = 0,
-  VRAM_I_SUB_BG                 = 1,
-  VRAM_I_SUB_SPRITE             = 2,
-  VRAM_I_SUB_SPRITE_EXT_PALETTE = 3,
+	VRAM_I_LCD                    = 0,
+	VRAM_I_SUB_BG                 = 1,
+	VRAM_I_SUB_SPRITE             = 2,
+	VRAM_I_SUB_SPRITE_EXT_PALETTE = 3,
 }VRAM_I_TYPE;
-
-//////////////////////////////////////////////////////////////////////
 
 uint32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d);
 void vramRestoreMainBanks(uint32 vramTemp);
@@ -210,7 +212,6 @@ void vramSetBankG(VRAM_G_TYPE g);
 void vramSetBankH(VRAM_H_TYPE h);
 void vramSetBankI(VRAM_I_TYPE i);
 
-//////////////////////////////////////////////////////////////////////
 
 // Display control registers
 #define DISPLAY_CR       (*(vuint32*)0x04000000)
@@ -276,23 +277,17 @@ void vramSetBankI(VRAM_I_TYPE i);
 
 #define DISPLAY_SCREEN_OFF     (1 << 7)
 
-//////////////////////////////////////////////////////////////////////
-
 #define videoSetMode(mode)  (DISPLAY_CR = (mode))
 #define videoSetModeSub(mode)  (SUB_DISPLAY_CR = (mode))
-
-//////////////////////////////////////////////////////////////////////
 
 #define BRIGHTNESS     (*(vuint16*)0x0400006C)
 #define SUB_BRIGHTNESS (*(vuint16*)0x0400106C)
 
-//////////////////////////////////////////////////////////////////////
-
-#define BG_CR		    ((vuint16*)0x04000008)
-#define BG0_CR         (*(vuint16*)0x04000008)
-#define BG1_CR         (*(vuint16*)0x0400000A)
-#define BG2_CR         (*(vuint16*)0x0400000C)
-#define BG3_CR         (*(vuint16*)0x0400000E)
+#define BG_CR			((vuint16*)0x04000008)
+#define BG0_CR		(*(vuint16*)0x04000008)
+#define BG1_CR		(*(vuint16*)0x0400000A)
+#define BG2_CR		(*(vuint16*)0x0400000C)
+#define BG3_CR		(*(vuint16*)0x0400000E)
 
 #define SUB_BG_CR		((vuint16*)0x04001008)
 #define SUB_BG0_CR     (*(vuint16*)0x04001008)
@@ -401,8 +396,6 @@ void vramSetBankI(VRAM_I_TYPE i);
 #define SUB_BG3_CX     (*(vuint32*)0x04001038)
 #define SUB_BG3_CY     (*(vuint32*)0x0400103C)
 
-//////////////////////////////////////////////////////////////////////
-
 // Window 0
 #define WIN0_X0        (*(vuint8*)0x04000041)
 #define WIN0_X1        (*(vuint8*)0x04000040)
@@ -433,12 +426,8 @@ void vramSetBankI(VRAM_I_TYPE i);
 #define SUB_WIN_IN     (*(vuint16*)0x04001048)
 #define SUB_WIN_OUT    (*(vuint16*)0x0400104A)
 
-//////////////////////////////////////////////////////////////////////
-
 #define MOSAIC_CR      (*(vuint16*)0x0400004C)
 #define SUB_MOSAIC_CR  (*(vuint16*)0x0400104C)
-
-//////////////////////////////////////////////////////////////////////
 
 #define BLEND_CR       (*(vuint16*)0x04000050)
 #define BLEND_AB       (*(vuint16*)0x04000052)
@@ -467,9 +456,7 @@ void vramSetBankI(VRAM_I_TYPE i);
 #define BLEND_DST_SPRITE   (1<<12)
 #define BLEND_DST_BACKDROP (1<<13)
 
-//////////////////////////////////////////////////////////////////////
 // Display capture control
-//////////////////////////////////////////////////////////////////////
 
 #define	DISP_CAPTURE  (*(vuint32*)0x04000064)
 
@@ -483,9 +470,7 @@ void vramSetBankI(VRAM_I_TYPE i);
 #define DCAP_B(n)      (((n) & 0x1F) << 8)
 #define DCAP_A(n)      (((n) & 0x1F) << 0)
 
-//////////////////////////////////////////////////////////////////////
 // Background control defines
-//////////////////////////////////////////////////////////////////////
 
 // BGxCNT defines ///
 #define BG_MOSAIC_ENABLE    0x40
@@ -511,9 +496,7 @@ void vramSetBankI(VRAM_I_TYPE i);
 
 #define WRAPAROUND              0x1
 
-//////////////////////////////////////////////////////////////////////
 // Sprite control defines
-//////////////////////////////////////////////////////////////////////
 
 // Attribute 0 consists of 8 bits of Y plus the following flags:
 #define ATTR0_NORMAL          (0<<8)
@@ -573,9 +556,7 @@ typedef struct sSpriteRotation {
   uint16 vdy;
 } SpriteRotation, * pSpriteRotation;
 
-//////////////////////////////////////////////////////////////////////
 // 3D core control
-//////////////////////////////////////////////////////////////////////
 
 #define GFX_CONTROL           (*(vuint16*) 0x04000060)
 
@@ -584,10 +565,10 @@ typedef struct sSpriteRotation {
 #define GFX_COLOR             (*(vuint32*) 0x04000480)
 
 #define GFX_VERTEX10          (*(vuint32*) 0x04000490)
-#define GFX_VERTEX_XY          (*(vuint32*) 0x04000494)
-#define GFX_VERTEX_XZ          (*(vuint32*) 0x04000498)
-#define GFX_VERTEX_YZ          (*(vuint32*) 0x0400049C)
-#define GFX_VERTEX_DIFF          (*(vuint32*) 0x040004A0)
+#define GFX_VERTEX_XY         (*(vuint32*) 0x04000494)
+#define GFX_VERTEX_XZ         (*(vuint32*) 0x04000498)
+#define GFX_VERTEX_YZ         (*(vuint32*) 0x0400049C)
+#define GFX_VERTEX_DIFF       (*(vuint32*) 0x040004A0)
 
 #define GFX_VERTEX16          (*(vuint32*) 0x0400048C)
 #define GFX_TEX_COORD         (*(vuint32*) 0x04000488)
@@ -607,46 +588,42 @@ typedef struct sSpriteRotation {
 #define GFX_POLY_FORMAT       (*(vuint32*) 0x040004A4)
 #define GFX_ALPHA_TEST        (*(vuint16*) 0x04000340)
 
-#define GFX_BEGIN             (*(vuint32*) 0x04000500)
+#define GFX_BEGIN							(*(vuint32*) 0x04000500)
 #define GFX_END               (*(vuint32*) 0x04000504)
 #define GFX_FLUSH             (*(vuint32*) 0x04000540)
 #define GFX_VIEWPORT          (*(vuint32*) 0x04000580)
-#define GFX_TOON_TABLE		  ((vuint16*)  0x04000380)
-#define GFX_EDGE_TABLE		  ((vuint16*)  0x04000330)
-#define GFX_BOX_TEST		  (*(vfixed*)  0x040005C0)
+#define GFX_TOON_TABLE		    ((vuint16*)  0x04000380)
+#define GFX_EDGE_TABLE		    ((vuint16*)  0x04000330)
+#define GFX_BOX_TEST		      (*(vfixed*)  0x040005C0)
 
 #define GFX_BUSY (GFX_STATUS & BIT(27))
 
-#define GFX_VERTEX_RAM_USAGE		  (*(uint16*)  0x04000606)
-#define GFX_POLYGON_RAM_USAGE		  (*(uint16*)  0x04000604)
+#define GFX_VERTEX_RAM_USAGE		(*(uint16*)  0x04000606)
+#define GFX_POLYGON_RAM_USAGE		(*(uint16*)  0x04000604)
 
-#define GFX_CUTOFF_DEPTH          (*(uint16*)0x04000610)
+#define GFX_CUTOFF_DEPTH				(*(uint16*)0x04000610)
 
-//////////////////////////////////////////////////////////////////////
 // Matrix processor control
-//////////////////////////////////////////////////////////////////////
 
-#define MATRIX_CONTROL    (*(vuint32*)0x04000440)
-#define MATRIX_PUSH       (*(vuint32*)0x04000444)
-#define MATRIX_POP        (*(vuint32*)0x04000448)
-#define MATRIX_SCALE      (*(vfixed*) 0x0400046C)
-#define MATRIX_TRANSLATE  (*(vfixed*) 0x04000470)
-#define MATRIX_RESTORE    (*(vuint32*)0x04000450)
-#define MATRIX_STORE      (*(vuint32*)0x0400044C)
-#define MATRIX_IDENTITY   (*(vuint32*)0x04000454)
-#define MATRIX_LOAD4x4    (*(vfixed*) 0x04000458)
-#define MATRIX_LOAD4x3    (*(vfixed*) 0x0400045C)
-#define MATRIX_MULT4x4    (*(vfixed*) 0x04000460)
-#define MATRIX_MULT4x3    (*(vfixed*) 0x04000464)
-#define MATRIX_MULT3x3    (*(vfixed*) 0x04000468)
+#define MATRIX_CONTROL		(*(vuint32*)0x04000440)
+#define MATRIX_PUSH				(*(vuint32*)0x04000444)
+#define MATRIX_POP				(*(vuint32*)0x04000448)
+#define MATRIX_SCALE			(*(vfixed*) 0x0400046C)
+#define MATRIX_TRANSLATE	(*(vfixed*) 0x04000470)
+#define MATRIX_RESTORE		(*(vuint32*)0x04000450)
+#define MATRIX_STORE			(*(vuint32*)0x0400044C)
+#define MATRIX_IDENTITY		(*(vuint32*)0x04000454)
+#define MATRIX_LOAD4x4		(*(vfixed*) 0x04000458)
+#define MATRIX_LOAD4x3		(*(vfixed*) 0x0400045C)
+#define MATRIX_MULT4x4		(*(vfixed*) 0x04000460)
+#define MATRIX_MULT4x3		(*(vfixed*) 0x04000464)
+#define MATRIX_MULT3x3		(*(vfixed*) 0x04000468)
 
 //matrix operation results
-#define MATRIX_READ_PROJECTION			((vfixed*) (0x04000640))
+#define MATRIX_READ_PROJECTION	((vfixed*) (0x04000640))
 #define MATRIX_READ_ROTATION		((vfixed*) (0x04000680))
-#define POINT_RESULT		((vfixed*) (0x04000620))
-#define VECTOR_RESULT		((vuint16*)(0x04000630))
-
-//////////////////////////////////////////////////////////////////////
+#define POINT_RESULT						((vfixed*) (0x04000620))
+#define VECTOR_RESULT						((vuint16*)(0x04000630))
 
 #ifdef __cplusplus
 }

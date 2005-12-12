@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: math.h,v 1.8 2005-09-07 18:07:29 wntrmute Exp $
+	$Id: math.h,v 1.9 2005-12-12 14:36:03 wntrmute Exp $
 
 	math functions
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2005/09/07 18:07:29  wntrmute
+	corrected fdiv64 and mod64
+	
 	Revision 1.7  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 
@@ -43,25 +46,23 @@
 
 #include <nds/jtypes.h>
 
-/////////////////////////////////////////////////////////////
 //  Math coprocessor register definitions
 
-#define DIV_CR				(*(vuint16*)(0x04000280))
+#define DIV_CR						(*(vuint16*)(0x04000280))
 #define DIV_NUMERATOR64		(*(vint64*) (0x04000290))
 #define DIV_NUMERATOR32		(*(vint32*) (0x04000290))
 #define DIV_DENOMINATOR64	(*(vint64*) (0x04000298))
 #define DIV_DENOMINATOR32	(*(vint32*) (0x04000298))
-#define DIV_RESULT64		(*(vint64*) (0x040002A0))
-#define DIV_RESULT32		(*(vint32*) (0x040002A0))
+#define DIV_RESULT64			(*(vint64*) (0x040002A0))
+#define DIV_RESULT32			(*(vint32*) (0x040002A0))
 #define DIV_REMANDER64		(*(vint64*) (0x040002A8))
 #define DIV_REMANDER32		(*(vint32*) (0x040002A8))
 
-#define SQRT_CR				(*(vuint16*)(0x040002B0))
-#define SQRT_PARAM64		(*(vint64*) (0x040002B8))
-#define SQRT_RESULT32		(*(vint32*) (0x040002B4))
-#define SQRT_PARAM32		(*(vint32*) (0x040002B8))
+#define SQRT_CR						(*(vuint16*)(0x040002B0))
+#define SQRT_PARAM64			(*(vint64*) (0x040002B8))
+#define SQRT_RESULT32			(*(vint32*) (0x040002B4))
+#define SQRT_PARAM32			(*(vint32*) (0x040002B8))
 
-///////////////////////////////////////////////////////////////
 //  Math coprocessor modes
 
 #define DIV_64_64			2
@@ -73,10 +74,8 @@
 #define SQRT_32				0
 #define SQRT_BUSY			(1<<15)
 
-///////////////////////////////////////////////////////////////
 //  Fixed Point versions
 
-///////////////////////////////////////
 //  Fixed point divide
 //  Takes 1.19.12 numerator and denominator
 //  and returns 1.19.12 result
@@ -94,7 +93,6 @@ static inline f32 divf32(f32 num, f32 den)
 	return (DIV_RESULT32);
 }
 
-///////////////////////////////////////
 //  Fixed point multiply
 //	Takes 1.19.12 values and returns
 //	1.19.12 result
@@ -104,7 +102,6 @@ static inline f32 mulf32(f32 a, f32 b)
 	return (f32)(result >> 12);
 }
 
-///////////////////////////////////////
 //  Fixed point square root
 //	Takes 1.19.12 fixed point value and
 //	returns the fixed point result
@@ -121,10 +118,8 @@ static inline f32 sqrtf32(f32 a)
 	return SQRT_RESULT32;
 }
 
-///////////////////////////////////////////////////////////////
 //  Integer versions
 
-///////////////////////////////////////
 //  Integer divide
 //  Takes a 32 bit numerator and 32 bit
 //	denominator and returns 32 bit result
@@ -142,8 +137,7 @@ static inline int32 div32(int32 num, int32 den)
 	return (DIV_RESULT32);
 }
 
-///////////////////////////////////////
-//  Interger divide
+//  Integer divide
 //  Takes a 32 bit numerator and 32 bit
 //	denominator and returns 32 bit result
 static inline int32 mod32(int32 num, int32 den)
@@ -160,7 +154,6 @@ static inline int32 mod32(int32 num, int32 den)
 	return (DIV_REMANDER32);
 }
 
-///////////////////////////////////////
 //  Integer divide
 //	Takes a 64 bit numerator and 32 bit
 //  denominator are returns 32 bit result
@@ -178,7 +171,6 @@ static inline int32 div64(int64 num, int32 den)
 	return (DIV_RESULT32);
 }
 
-///////////////////////////////////////
 //  Integer divide
 //	Takes a 64 bit numerator and 32 bit
 //  denominator are returns 32 bit result
@@ -195,7 +187,7 @@ static inline int32 mod64(int64 num, int32 den)
 
 	return (DIV_REMANDER32);
 }
-///////////////////////////////////////
+
 //  Integer square root
 //  takes a 32 bit integer and returns
 //	32 bit result
@@ -212,10 +204,8 @@ static inline int32 sqrt32(int a)
 	return SQRT_RESULT32;
 }
 
-///////////////////////////////////////////////////////////////
 //  Trig Functions  1.19.12 fixed point
 
-///////////////////////////////////////
 // Cross product
 // x = Ay * Bz - By * Az
 // y = Az * Bx - Bz * Ax
@@ -227,7 +217,6 @@ static inline void crossf32(f32 *a, f32 *b, f32 *result)
 	result[2] = mulf32(a[0], b[1]) - mulf32(b[0], a[1]);
 }
 
-///////////////////////////////////////
 // Dot Product
 // result = Ax * Bx + Ay * By + Az * Bz
 static inline f32 dotf32(f32 *a, f32 *b)
@@ -235,7 +224,6 @@ static inline f32 dotf32(f32 *a, f32 *b)
 	return mulf32(a[0], b[0]) + mulf32(a[1], b[1]) + mulf32(a[2], b[2]);
 }
 
-///////////////////////////////////////
 // Normalize
 // Ax = Ax / mag
 // Ay = Ay / mag
