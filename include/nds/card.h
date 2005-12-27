@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: card.h,v 1.2 2005-08-30 17:52:24 wntrmute Exp $
+	$Id: card.h,v 1.3 2005-12-27 00:57:51 darkfader Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/08/30 17:52:24  wntrmute
+	corrected CARD_CR1
+	fixed cardReadEeprom
+	
 
 ---------------------------------------------------------------------------------*/
 
@@ -40,7 +44,6 @@
 #define CARD_CR2       (*(vuint32*)0x040001A4)
 #define CARD_COMMAND   ((vuint8*)0x040001A8)
 
-#define CARD_DATA      (*(vuint32*)0x04100000)
 #define CARD_DATA_RD   (*(vuint32*)0x04100010)
 
 #define CARD_1B0       (*(vuint32*)0x040001B0)
