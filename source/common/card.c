@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: card.c,v 1.6 2005-11-07 01:09:53 wntrmute Exp $
+	$Id: card.c,v 1.7 2006-01-05 04:05:40 dovoto Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.6  2005/11/07 01:09:53  wntrmute
+	corrected card read header address
+	corrected line endings
+	
 	Revision 1.5  2005/10/21 22:43:06  wntrmute
 	Removed bogus ASSERT
 	
@@ -93,13 +97,13 @@ uint32 cardWriteAndRead(uint8 * command, uint32 flags) {
 	cardWriteCommand(command);
 	CARD_CR2 = flags | CARD_ACTIVATE | CARD_nRESET | 0x07000000;
 	while (!(CARD_CR2 & CARD_DATA_READY)) ;
-	return CARD_DATA;
+	return CARD_DATA_RD;
 }
 
 
 //---------------------------------------------------------------------------------
 void cardRead00(uint32 address, uint32 * destination, uint32 length, uint32 flags) {
-//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------f
 	uint8 command[8];
 	command[7] = 0;
 	command[6] = (address >> 24) & 0xff;
