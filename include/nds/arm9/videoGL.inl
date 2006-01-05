@@ -8,11 +8,13 @@
 
 #endif
 
+#include <nds/memory.h>
+
 GL_STATIC_INL void glBegin(int mode) { GFX_BEGIN = mode; }
 
 GL_STATIC_INL void glEnd( void) { GFX_END = 0; }
 
-GL_STATIC_INL void glClearColor(uint8 red, uint8 green, uint8 blue) { GFX_CLEAR_COLOR = RGB15(red, green, blue); }
+GL_STATIC_INL void glClearColor(uint8 red, uint8 green, uint8 blue) { BG_PALETTE[0] = RGB15(red, green, blue);}
 
 GL_STATIC_INL void glClearDepth(uint16 depth) { GFX_CLEAR_DEPTH = depth; }
 
