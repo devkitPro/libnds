@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.18 2005-11-27 04:23:19 joatski Exp $
+	$Id: videoGL.c,v 1.19 2006-01-05 08:13:26 dovoto Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,12 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.18  2005/11/27 04:23:19  joatski
+	Renamed glAlpha to glAlphaFunc (old name is present but deprecated)
+	Added new texture formats
+	Added glCutoffDepth
+	Changed type input of glClearDepth to fixed12d3, added conversion functions
+	
 	Revision 1.17  2005/11/26 20:33:00  joatski
 	Changed spelling of fixed-point macros.  Old ones are present but deprecated.
 	Fixed difference between GL_RGB and GL_RGBA
@@ -412,44 +418,47 @@ void glOrtho(float left, float right, float bottom, float top, float zNear, floa
 //---------------------------------------------------------------------------------
 void gluLookAtf32(f32 eyex, f32 eyey, f32 eyez, f32 lookAtx, f32 lookAty, f32 lookAtz, f32 upx, f32 upy, f32 upz)  { 
 //---------------------------------------------------------------------------------
-	f32 side[3], forward[3], up[3]; 
+	f32 side[3], forward[3], up[3], eye[3];
 
-	forward[0] = lookAtx - eyex; 
-	forward[1] = lookAty - eyey; 
-	forward[2] = lookAtz - eyez; 
+	forward[0] = eyex - lookAtx; 
+	forward[1] = eyey - lookAty; 
+	forward[2] = eyez - lookAtz; 
 
 	normalizef32(forward); 
 
 	up[0] = upx; 
 	up[1] = upy; 
 	up[2] = upz; 
+	eye[0] = eyex; 
+	eye[1] = eyey; 
+	eye[2] = eyez; 
 
-	crossf32(forward, up, side); 
+	crossf32(up, forward, side); 
 
 	normalizef32(side); 
 
-	crossf32(side, forward, up); 
+	// Recompute local up
+	crossf32(forward, side, up);
 
 	glMatrixMode(GL_MODELVIEW); 
 
  
-	// should we use MATRIX_MULT4x3 as in ogl|es?? 
+	// should we use MATRIX_MULT4x3? 
+	MATRIX_LOAD4x3 = side[0]; 
+	MATRIX_LOAD4x3 = up[0]; 
+	MATRIX_LOAD4x3 = forward[0]; 
 
-	MATRIX_LOAD4x3 =  side[0]; 
-	MATRIX_LOAD4x3 =  up[0]; 
-	MATRIX_LOAD4x3 = -forward[0]; 
+	MATRIX_LOAD4x3 = side[1]; 
+	MATRIX_LOAD4x3 = up[1]; 
+	MATRIX_LOAD4x3 = forward[1]; 
 
-	MATRIX_LOAD4x3 =  side[1]; 
-	MATRIX_LOAD4x3 =  up[1]; 
-	MATRIX_LOAD4x3 = -forward[1]; 
+	MATRIX_LOAD4x3 = side[2]; 
+	MATRIX_LOAD4x3 = up[2]; 
+	MATRIX_LOAD4x3 = forward[2]; 
 
-	MATRIX_LOAD4x3 =  side[2]; 
-	MATRIX_LOAD4x3 =  up[2]; 
-	MATRIX_LOAD4x3 = -forward[2]; 
-
-	MATRIX_LOAD4x3 = -eyex; 
-	MATRIX_LOAD4x3 = -eyey; 
-	MATRIX_LOAD4x3 = -eyez; 
+	MATRIX_LOAD4x3 = -dotf32(eye,side); 
+	MATRIX_LOAD4x3 = -dotf32(eye,up); 
+	MATRIX_LOAD4x3 = -dotf32(eye,forward); 
 
 }
 
@@ -642,13 +651,14 @@ uint32 textures[MAX_TEXTURES];
 uint32 activeTexture = 0;
 
 uint32* nextBlock = (uint32*)0x06800000;
-
+uint32  nextPBlock = 0;
 
 //---------------------------------------------------------------------------------
 void glResetTextures(void) {
 //---------------------------------------------------------------------------------
 	activeTexture = 0;
 	nextBlock = (uint32*)0x06800000;
+	nextPBlock = 0;
 }
 
 //---------------------------------------------------------------------------------
@@ -689,7 +699,17 @@ void glBindTexture(int target, int name) {
 	
 	activeTexture = name;
 }
-
+//---------------------------------------------------------------------------------
+// glColorTable establishes the location of the current palette.
+//	Roughly follows glColorTableEXT. Association of palettes with 
+//	named textures is left to the application. 
+//---------------------------------------------------------------------------------
+void glColorTable( uint8 format, uint32 addr ) {
+//---------------------------------------------------------------------------------
+	GFX_PAL_FORMAT = addr>>(4-(format==GL_RGB4));
+}
+                     
+//---------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------
 void glTexCoord2f32(f32 u, f32 v) { 
 //---------------------------------------------------------------------------------
@@ -715,6 +735,34 @@ void glTexParameter(	uint8 sizeX, uint8 sizeY,
 	textures[activeTexture] = param | (sizeX << 20) | (sizeY << 23) | (((uint32)addr >> 3) & 0xFFFF) | (mode << 26);
 }
 
+//---------------------------------------------------------------------------------
+u32 glGetTexParameter(){
+//---------------------------------------------------------------------------------
+  return textures[activeTexture];
+}
+
+
+//---------------------------------------------------------------------------------
+inline uint32 alignVal( uint32 val, uint32 to )
+{
+  return (val & (to-1))? (val & ~(to-1)) + to : val;
+}
+//---------------------------------------------------------------------------------
+int getNextPaletteSlot(u16 count, uint8 format){
+//---------------------------------------------------------------------------------
+  // ensure the result aligns on a palette block for this format
+  uint32 result = alignVal(nextPBlock, 1<<(4-(format==GL_RGB4)));
+  
+  // convert count to bytes and align to next (smallest format) palette block
+  count = alignVal( count<<1, 1<<3 ); 
+
+  // ensure that end is within palette video mem
+  if( result+count > 0x10000 )   // VRAM_F - VRAM_E
+    return -1;
+
+  nextPBlock = result+count;
+  return (int)result;
+} 
 
 //---------------------------------------------------------------------------------
 uint16* vramGetBank(uint16 *addr) {
@@ -855,16 +903,27 @@ int glTexImage2D(int target, int empty1, int type,
   return 1;
 }
 
-//---------------------------------------------------------------------------------
-void glTexLoadPal(u16* pal, u8 count, u8 slot) {
-//---------------------------------------------------------------------------------
-	vramSetBankE(VRAM_E_LCD);
-		
-	swiCopy( pal, &VRAM_E[slot << 8] , count / 2 | COPY_MODE_WORD);
-
-	vramSetBankE(VRAM_E_TEX_PALETTE);
-
+ //---------------------------------------------------------------------------------
+void glTexLoadPal(u16* pal, u16 count, u32 addr) {
+ //---------------------------------------------------------------------------------
+ 	vramSetBankE(VRAM_E_LCD);
+ 		
+	swiCopy( pal, &VRAM_E[addr>>1] , count / 2 | COPY_MODE_WORD);
+ 
+ 	vramSetBankE(VRAM_E_TEX_PALETTE);
 }
+ 
+//---------------------------------------------------------------------------------
+int gluTexLoadPal(u16* pal, u16 count, uint8 format) {
+//---------------------------------------------------------------------------------
+  int addr = getNextPaletteSlot(count, format);
+  
+  if( addr>=0 )
+    glTexLoadPal(pal, count, (u32) addr);
+  
+  return addr;
+ }
+
 //---------------------------------------------------------------------------------
 void glGetInt(GL_GET_TYPE param, int* i) {
 //---------------------------------------------------------------------------------

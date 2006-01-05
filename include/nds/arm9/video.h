@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.16 2005-12-12 14:36:03 wntrmute Exp $
+	$Id: video.h,v 1.17 2006-01-05 08:13:26 dovoto Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.16  2005/12/12 14:36:03  wntrmute
+	*** empty log message ***
+	
 	Revision 1.15  2005/11/27 04:37:00  joatski
 	Added DISP_CAPTURE and associated macros
 	Added GFX_CUTOFF_DEPTH
@@ -573,6 +576,7 @@ typedef struct sSpriteRotation {
 #define GFX_VERTEX16          (*(vuint32*) 0x0400048C)
 #define GFX_TEX_COORD         (*(vuint32*) 0x04000488)
 #define GFX_TEX_FORMAT        (*(vuint32*) 0x040004A8)
+#define GFX_PAL_FORMAT        (*(vuint32*) 0x040004AC)
 
 #define GFX_CLEAR_COLOR       (*(vuint32*) 0x04000350)
 #define GFX_CLEAR_DEPTH       (*(vuint16*) 0x04000354)

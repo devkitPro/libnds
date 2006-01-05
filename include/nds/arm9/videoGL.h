@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.20 2005-11-27 04:23:19 joatski Exp $
+	$Id: videoGL.h,v 1.21 2006-01-05 08:13:26 dovoto Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,12 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.20  2005/11/27 04:23:19  joatski
+	Renamed glAlpha to glAlphaFunc (old name is present but deprecated)
+	Added new texture formats
+	Added glCutoffDepth
+	Changed type input of glClearDepth to fixed12d3, added conversion functions
+	
 	Revision 1.19  2005/11/26 20:33:00  joatski
 	Changed spelling of fixed-point macros.  Old ones are present but deprecated.
 	Fixed difference between GL_RGB and GL_RGBA
@@ -317,6 +323,7 @@ typedef enum {
 #define FIFO_VERTEX16			REG2ID(GFX_VERTEX16)          
 #define FIFO_TEX_COORD			REG2ID(GFX_TEX_COORD)         
 #define FIFO_TEX_FORMAT			REG2ID(GFX_TEX_FORMAT)        
+#define FIFO_PAL_FORMAT			REG2ID(GFX_PAL_FORMAT)
 
 #define FIFO_CLEAR_COLOR		REG2ID(GFX_CLEAR_COLOR)       
 #define FIFO_CLEAR_DEPTH		REG2ID(GFX_CLEAR_DEPTH)       
@@ -510,11 +517,31 @@ void gluPerspective(float fovy, float aspect, float zNear, float zFar);
 */
 
 int glTexImage2D(int target, int empty1, int type, int sizeX, int sizeY, int empty2, int param, uint8* texture);
-/*! \fn void glTexLoadPal(u16* pal, u8 count, u8 slot)
-\brief Loads a palette into the specified texture slot
-*/
 
-void glTexLoadPal(u16* pal, u8 count, u8 slot);
+  /*! \fn void glTexLoadPal(u16* pal, u16 count, u32 addr )
+  \brief Loads a palette into the specified texture addr
+  */
+
+  void glTexLoadPal(u16* pal, u16 count, u32 addr );
+  /*! \fn int gluTexLoadPal(u16* pal, u16 count, uint8 format)
+  \brief Loads a palette into the next available palette slot, returns
+the addr on
+  success or -1
+  */
+
+  int gluTexLoadPal(u16* pal, u16 count, uint8 format);
+  /*! \fn void glColorTable(uint8 format, uint32 addr)
+  \brief Establishes the location of the current palette.
+  */
+
+  /*! \fn void glGetTexParameter(void)
+  \brief Returns the active texture parameter (constructed from
+internal call to
+  glTexParameter)
+  */
+
+  u32 glGetTexParameter();
+  void glColorTable(uint8 format, uint32 addr);
 /*! \fn void glBindTexture(int target, int name)
 \brief Binds the state machine to the specified texture ID
 */
