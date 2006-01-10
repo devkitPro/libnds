@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: input.h,v 1.11 2006-01-10 05:45:24 dovoto Exp $
+	$Id: input.h,v 1.12 2006-01-10 05:50:24 dovoto Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -27,6 +27,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.11  2006/01/10 05:45:24  dovoto
+	KEY_L and KEY_R were swapped
+	
 	Revision 1.10  2005/11/27 07:55:14  joatski
 	Fixed my mistake in the changelogs
 	
@@ -104,8 +107,8 @@ typedef enum KEYPAD_BITS {
   KEY_LEFT   = BIT(5),  /*!< keypad LEFT button*/
   KEY_UP     = BIT(6),  /*!< keypad UP button*/
   KEY_DOWN   = BIT(7),  /*!< keypad DOWN button*/
-  KEY_R      = BIT(9),  /*!< LEFT shoulder button*/
-  KEY_L      = BIT(8),  /*!< RIGHT shoulder button*/
+  KEY_R      = BIT(8),  /*!< RIGHT shoulder button*/
+  KEY_L      = BIT(9),  /*!< LEFT shoulder button*/
   KEY_X      = BIT(10), /*!< keypad X button*/
   KEY_Y      = BIT(11), /*!< keypad Y button*/
   KEY_TOUCH  = BIT(12), /*!< touchscreen pendown*/
