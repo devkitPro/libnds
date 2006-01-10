@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.14 2005-12-11 22:49:53 wntrmute Exp $
+	$Id: console.c,v 1.15 2006-01-10 05:45:02 dovoto Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.14  2005/12/11 22:49:53  wntrmute
+	use con for console device name
+	
 	Revision 1.13  2005/11/07 04:11:53  dovoto
 	Added consoleDemoInit for prototyping
 	
@@ -475,6 +478,12 @@ void consolePrintChar(char c) {
 		break;
 
 	}
+}
+
+//---------------------------------------------------------------------------------
+void consoleClear(void) {
+//---------------------------------------------------------------------------------
+	iprintf("\x1b[2J");
 }
 
 

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.h,v 1.9 2005-11-14 11:57:16 wntrmute Exp $
+	$Id: console.h,v 1.10 2006-01-10 05:45:02 dovoto Exp $
 
 	console functions
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2005/11/14 11:57:16  wntrmute
+	Corrected doxygen comments
+	
 	Revision 1.8  2005/11/07 04:11:53  dovoto
 	Added consoleDemoInit for prototyping
 	
@@ -99,7 +102,10 @@ sub display.  It is intended for use in prototyping applications which need prin
 game use.  Print functionality can be utilized with just this call.
 */
 void consoleDemoInit(void);
-
+/*! \fn void consoleClear(void)
+\brief Clears the screan by iprintf("\x1b[2J");
+*/
+void consoleClear(void);
 #ifdef __cplusplus
 }
 #endif
