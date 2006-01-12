@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: input.h,v 1.12 2006-01-10 05:50:24 dovoto Exp $
+	$Id: input.h,v 1.13 2006-01-12 09:10:47 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -27,6 +27,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.12  2006/01/10 05:50:24  dovoto
+	uhmm...about that KEY_R vs KEY_L thing...lets pretend that never happened
+	
 	Revision 1.11  2006/01/10 05:45:24  dovoto
 	KEY_L and KEY_R were swapped
 	
@@ -140,6 +143,23 @@ uint32 keysHeld(void);
 */
 
 uint32 keysDown(void);
+/*! \fn uint32 keysDownRepeat(void)
+
+	\brief obtain the current keypad pressed or repeating state.
+
+*/
+
+uint32 keysDownRepeat(void);
+/*! \fn void keysSetRepeat( u8 setDelay, u8 setRepeat )
+
+	\brief set the key repeat parameters.
+
+    \param setDelay Number of scanKeys() calls before keys start to repeat.
+    \param setRepeat Number of scanKeys() calls before keys repeat.
+
+*/
+
+void keysSetRepeat( u8 setDelay, u8 setRepeat );
 /*! \fn uint32 keysUp()
 
 	\brief obtain the current keypad released state.

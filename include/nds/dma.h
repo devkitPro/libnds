@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: dma.h,v 1.2 2005-09-14 06:19:36 wntrmute Exp $
+	$Id: dma.h,v 1.3 2006-01-12 09:10:47 wntrmute Exp $
 
 	Copyright (C) 2005
 		Jason Rogers (dovoto)
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/09/14 06:19:36  wntrmute
+	added header logging
+	
 
 ---------------------------------------------------------------------------------*/
 
@@ -62,15 +65,16 @@
 #define DMA_START_NOW   0
 
 // fixme: is this arm7 only???
-#define DMA_START_CARD  0
 #ifdef ARM7
 #define DMA_START_VBL   BIT(27)
+#define DMA_START_CARD  0
 #endif
 
 #ifdef ARM9
 #define DMA_START_HBL   BIT(28)
 #define DMA_START_VBL   BIT(27)
-#define DMA_START_FIFO (7<<27)
+#define DMA_START_CARD	(5<<27)
+#define DMA_START_FIFO	(7<<27)
 #endif
 
 #define DMA_16_BIT      0
@@ -133,10 +137,7 @@ static inline void dmaCopyAsynch(const void * source, void * dest, uint32 size) 
 }
 
 static inline int dmaBusy(uint8 channel) {
-	if (DMA_CR(channel) & DMA_BUSY)
-		return 1;
-	else
-		return 0;
+	return (DMA_CR(channel) & DMA_BUSY)>>31;
 }
 
 
