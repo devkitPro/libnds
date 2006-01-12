@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.17 2006-01-05 08:13:26 dovoto Exp $
+	$Id: video.h,v 1.18 2006-01-12 09:13:14 wntrmute Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.17  2006/01/05 08:13:26  dovoto
+	Fixed gluLookAt (again)
+	Major update to palette handling (likely a breaking change if you were using the gl texture palettes from before)
+	
 	Revision 1.16  2005/12/12 14:36:03  wntrmute
 	*** empty log message ***
 	
@@ -502,22 +506,21 @@ void vramSetBankI(VRAM_I_TYPE i);
 // Sprite control defines
 
 // Attribute 0 consists of 8 bits of Y plus the following flags:
-#define ATTR0_NORMAL          (0<<8)
-#define ATTR0_ROTSCALE        (1<<8)
-#define ATTR0_DISABLED        (2<<8)
-#define ATTR0_ROTSCALE_DOUBLE (3<<8)
+#define ATTR0_NORMAL					(0<<8)
+#define ATTR0_ROTSCALE				(1<<8)
+#define ATTR0_DISABLED				(2<<8)
+#define ATTR0_ROTSCALE_DOUBLE	(3<<8)
 
-#define ATTR0_TYPE_NORMAL     (0<<10)
-#define ATTR0_TYPE_BLENDED    (1<<10)
-#define ATTR0_TYPE_WINDOWED   (2<<10)
-#define ATTR0_BMP			  (3<<10)
+#define ATTR0_TYPE_NORMAL			(0<<10)
+#define ATTR0_TYPE_BLENDED		(1<<10)
+#define ATTR0_TYPE_WINDOWED		(2<<10)
+#define ATTR0_BMP							(3<<10)
 
-#define ATTR0_MOSAIC          (1<<12)
+#define ATTR0_MOSAIC					(1<<12)
 
-#define ATTR0_COLOR_16        (0<<13) //16 color in tile mode...16 bit in bitmap mode
-#define ATTR0_COLOR_256       (1<<13)
+#define ATTR0_COLOR_16				(0<<13) //16 color in tile mode...16 bit in bitmap mode
+#define ATTR0_COLOR_256				(1<<13)
 
-#define ATTR0_BMP			  (3<<10)
 #define ATTR0_SQUARE          (0<<14)
 #define ATTR0_WIDE            (1<<14)
 #define ATTR0_TALL            (2<<14)
