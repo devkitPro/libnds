@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.12 2005-12-17 01:03:05 wntrmute Exp $
+	$Id: touch.c,v 1.13 2006-01-12 11:13:55 wntrmute Exp $
 
 	Touch screen control for the ARM7
 
@@ -26,6 +26,10 @@
 			distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.12  2005/12/17 01:03:05  wntrmute
+	corrected typos
+	changed to median values
+	
 	Revision 1.11  2005/12/11 22:49:53  wntrmute
 	use con for console device name
 	
@@ -135,14 +139,13 @@ touchPosition touchReadXY() {
 	
 	int i;
 	
-	for ( i=0; i<3; i++) {
-		x[i] =  touchRead(TSC_MEASURE_X | 1);
-		y[i] =  touchRead(TSC_MEASURE_Y | 1);
+	for ( i=0; i<4; i++) {
+		touchRead(TSC_MEASURE_X | 1);
+		x[i] =  touchRead(TSC_MEASURE_X);
+		touchRead(TSC_MEASURE_Y | 1);
+		y[i] =  touchRead(TSC_MEASURE_Y);
 	}
 
-	x[3] =  touchRead(TSC_MEASURE_X);
-	y[3] =  touchRead(TSC_MEASURE_Y);
-	
 	s32 temp;
 	
 	for ( i=1; i<3; i++ ) {
