@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: card.c,v 1.7 2006-01-05 04:05:40 dovoto Exp $
+	$Id: card.c,v 1.8 2006-01-17 00:10:11 dovoto Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2006/01/05 04:05:40  dovoto
+	Fixed a reference to CARD_DATA to be refer to CARD_DATA_RD
+	
 	Revision 1.6  2005/11/07 01:09:53  wntrmute
 	corrected card read header address
 	corrected line endings
@@ -63,14 +66,16 @@ void cardWriteCommand(uint8 * command) {
 //---------------------------------------------------------------------------------
 void cardPolledTransfer(uint32 flags, uint32 * destination, uint32 length, uint8 * command) {
 //---------------------------------------------------------------------------------
+	u32 data;;
 	cardWriteCommand(command);
-
 	CARD_CR2 = flags;
 	uint32 * target = destination + length;
 	do {
 		// Read data if available
 		if (CARD_CR2 & CARD_DATA_READY) {
-			if (destination < target) *destination = CARD_DATA_RD;
+			data=CARD_DATA_RD;
+			if (destination < target)
+				*destination = data;
 			destination++;
 		}
 	} while (CARD_CR2 & CARD_BUSY);
