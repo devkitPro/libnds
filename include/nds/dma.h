@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: dma.h,v 1.3 2006-01-12 09:10:47 wntrmute Exp $
+	$Id: dma.h,v 1.4 2006-01-17 00:44:10 dovoto Exp $
 
 	Copyright (C) 2005
 		Jason Rogers (dovoto)
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2006/01/12 09:10:47  wntrmute
+	Added key repeat as suggested by pepsiman
+	
 	Revision 1.2  2005/09/14 06:19:36  wntrmute
 	added header logging
 	
@@ -64,10 +67,10 @@
 
 #define DMA_START_NOW   0
 
-// fixme: is this arm7 only???
+#define DMA_START_CARD  (5<<27)
 #ifdef ARM7
 #define DMA_START_VBL   BIT(27)
-#define DMA_START_CARD  0
+
 #endif
 
 #ifdef ARM9
