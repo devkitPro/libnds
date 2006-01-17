@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: biosCalls.s,v 1.2 2005-09-03 13:47:13 wntrmute Exp $
+	$Id: biosCalls.s,v 1.3 2006-01-17 00:13:36 dovoto Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/09/03 13:47:13  wntrmute
+	added logging to header
+	reformatted for legibility
+	
 
 ---------------------------------------------------------------------------------*/
 	.text
@@ -92,7 +96,7 @@ swiSleep:
 	.global swiChangeSoundBias
 	.thumb_func
 @---------------------------------------------------------------------------------
-swiChangeSound:
+swiChangeSoundBias:
 @---------------------------------------------------------------------------------
 	swi	0x08
 	bx	lr
