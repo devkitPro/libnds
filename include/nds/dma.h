@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: dma.h,v 1.4 2006-01-17 00:44:10 dovoto Exp $
+	$Id: dma.h,v 1.5 2006-01-17 09:41:12 wntrmute Exp $
 
 	Copyright (C) 2005
 		Jason Rogers (dovoto)
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2006/01/17 00:44:10  dovoto
+	Fixed DMA_START_CARD
+	
 	Revision 1.3  2006/01/12 09:10:47  wntrmute
 	Added key repeat as suggested by pepsiman
 	
@@ -66,17 +69,15 @@
 #define DMA_IRQ_REQ     BIT(30)
 
 #define DMA_START_NOW   0
-
 #define DMA_START_CARD  (5<<27)
+
 #ifdef ARM7
 #define DMA_START_VBL   BIT(27)
-
 #endif
 
 #ifdef ARM9
 #define DMA_START_HBL   BIT(28)
 #define DMA_START_VBL   BIT(27)
-#define DMA_START_CARD	(5<<27)
 #define DMA_START_FIFO	(7<<27)
 #endif
 
