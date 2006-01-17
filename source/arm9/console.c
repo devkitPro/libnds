@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.15 2006-01-10 05:45:02 dovoto Exp $
+	$Id: console.c,v 1.16 2006-01-17 09:40:11 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.15  2006/01/10 05:45:02  dovoto
+	Added a consoleClear because i can....
+	
 	Revision 1.14  2005/12/11 22:49:53  wntrmute
 	use con for console device name
 	
@@ -140,7 +143,7 @@ static void consoleCls(char mode) {
 			colTemp = col;
 			rowTemp = row;
 
-			while(++i < ((CONSOLE_HEIGHT * CONSOLE_WIDTH) - (rowTemp * CONSOLE_WIDTH + colTemp))) consolePrintChar(' ');
+			while(i++ < ((CONSOLE_HEIGHT * CONSOLE_WIDTH) - (rowTemp * CONSOLE_WIDTH + colTemp))) consolePrintChar(' ');
 
 			col = colTemp;
 			row = rowTemp;
@@ -154,7 +157,7 @@ static void consoleCls(char mode) {
 			row = 0;
 			col = 0;
 
-			while (++i < (rowTemp * CONSOLE_WIDTH + colTemp)) consolePrintChar(' ');
+			while (i++ < (rowTemp * CONSOLE_WIDTH + colTemp)) consolePrintChar(' ');
 
 			col = colTemp;
 			row = rowTemp;
@@ -165,7 +168,7 @@ static void consoleCls(char mode) {
 			row = 0;
 			col = 0;
 
-			while(++i < CONSOLE_HEIGHT * CONSOLE_WIDTH) consolePrintChar(' ');
+			while(i++ < CONSOLE_HEIGHT * CONSOLE_WIDTH) consolePrintChar(' ');
 
 			row = 0;
 			col = 0;
