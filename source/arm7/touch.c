@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.13 2006-01-12 11:13:55 wntrmute Exp $
+	$Id: touch.c,v 1.14 2006-01-30 18:59:45 wntrmute Exp $
 
 	Touch screen control for the ARM7
 
@@ -26,6 +26,9 @@
 			distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.13  2006/01/12 11:13:55  wntrmute
+	modified touch reading code from suggesrions found here -> http://forum.gbadev.org/viewtopic.php?t=7980
+	
 	Revision 1.12  2005/12/17 01:03:05  wntrmute
 	corrected typos
 	changed to median values
@@ -69,6 +72,7 @@
 #include <nds/system.h>
 #include <nds/arm7/touch.h>
 
+#include <stdlib.h>
 
 //---------------------------------------------------------------------------------
 uint16 touchRead(uint32 command) {
@@ -105,63 +109,52 @@ uint32 touchReadTemperature(int * t1, int * t2) {
 }
 
 
-
 static bool touchInit = false;
 static s32 xscale, yscale;
 static s32 xoffset, yoffset;
+
+
+//---------------------------------------------------------------------------------
+s32 readTouchValue(int measure, int retry , int range) {
+//---------------------------------------------------------------------------------
+	int i;
+	s32 this_value=0, this_range;
+
+	s32 last_value = touchRead(measure | 1);
+
+	for ( i=0; i < retry; i++) {
+		this_value = touchRead(measure | 1);
+		this_range = abs(last_value - this_value);
+		if (this_range <= range) break;
+	}
+	
+	if ( i == range) this_value = 0;
+	return this_value;
+
+}
+
+static int _MaxRetry = 5;
+static int _MaxRange = 30;
 
 // reading pixel position:
 //---------------------------------------------------------------------------------
 touchPosition touchReadXY() {
 //---------------------------------------------------------------------------------
 
-
 	touchPosition touchPos;
 
-
 	if ( !touchInit ) {
-
 
 		xscale = ((PersonalData->calX2px - PersonalData->calX1px) << 19) / ((PersonalData->calX2) - (PersonalData->calX1));
 		yscale = ((PersonalData->calY2px - PersonalData->calY1px) << 19) / ((PersonalData->calY2) - (PersonalData->calY1));
 
-//		xoffset = (PersonalData->calX1) * xscale - (PersonalData->calX1px << 19);
-//		yoffset = (PersonalData->calY1) * yscale - (PersonalData->calY1px << 19);
-
-
 		xoffset = ((PersonalData->calX1 + PersonalData->calX2) * xscale  - ((PersonalData->calX1px + PersonalData->calX2px) << 19) ) / 2;
 		yoffset = ((PersonalData->calY1 + PersonalData->calY2) * yscale  - ((PersonalData->calY1px + PersonalData->calY2px) << 19) ) / 2;
 		touchInit = true;
-
 	}
 
-	s32 x[4],y[4];
-	
-	int i;
-	
-	for ( i=0; i<4; i++) {
-		touchRead(TSC_MEASURE_X | 1);
-		x[i] =  touchRead(TSC_MEASURE_X);
-		touchRead(TSC_MEASURE_Y | 1);
-		y[i] =  touchRead(TSC_MEASURE_Y);
-	}
-
-	s32 temp;
-	
-	for ( i=1; i<3; i++ ) {
-		temp = x[i];
-
-		if ( temp > x[3] ) { x[i] = x[3]; x[3] = temp; temp = x[i]; } 
-		if ( temp < x[0] ) { x[i] = x[0]; x[0] = temp; } 
-
-		temp = y[i];
-
-		if ( temp > y[3] ) { y[i] = y[3]; y[3] = temp; temp = y[i]; } 
-		if ( temp < y[0] ) { y[i] = y[0]; y[0] = temp; } 
-	}
-
-	touchPos.x = (x[1] + x[2])/2;
-	touchPos.y = (y[1] + y[2])/2;
+	touchPos.x = readTouchValue(TSC_MEASURE_X, _MaxRetry, _MaxRange);
+	touchPos.y = readTouchValue(TSC_MEASURE_Y, _MaxRetry, _MaxRange);
 
 	s16 px = ( touchPos.x * xscale - xoffset + xscale/2 ) >>19;
 	s16 py = ( touchPos.y * yscale - yoffset + yscale/2 ) >>19;
