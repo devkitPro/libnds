@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.18 2006-01-12 09:13:14 wntrmute Exp $
+	$Id: video.h,v 1.19 2006-02-02 00:11:57 wntrmute Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.18  2006/01/12 09:13:14  wntrmute
+	remove duplicate ATTR0_BMP
+	
 	Revision 1.17  2006/01/05 08:13:26  dovoto
 	Fixed gluLookAt (again)
 	Major update to palette handling (likely a breaking change if you were using the gl texture palettes from before)
@@ -331,8 +334,8 @@ void vramSetBankI(VRAM_I_TYPE i);
 #define BG_WRAP_ON     (1 << 13)
 
 #define BG_32x32       (0 << 14)
-#define BG_32x64       (1 << 14)
-#define BG_64x32       (2 << 14)
+#define BG_64x32       (1 << 14)
+#define BG_32x64       (2 << 14)
 #define BG_64x64       (3 << 14)
 
 #define BG_RS_16x16    (0 << 14)
