@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: dma.h,v 1.5 2006-01-17 09:41:12 wntrmute Exp $
+	$Id: dma.h,v 1.6 2006-02-10 00:13:00 desktopman Exp $
 
 	Copyright (C) 2005
 		Jason Rogers (dovoto)
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2006/01/17 09:41:12  wntrmute
+	finished correcting DMA_START_CARD
+	
 	Revision 1.4  2006/01/17 00:44:10  dovoto
 	Fixed DMA_START_CARD
 	
@@ -79,6 +82,7 @@
 #define DMA_START_HBL   BIT(28)
 #define DMA_START_VBL   BIT(27)
 #define DMA_START_FIFO	(7<<27)
+#define DMA_DISP_FIFO	(4<<27)
 #endif
 
 #define DMA_16_BIT      0
