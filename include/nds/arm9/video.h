@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.19 2006-02-02 00:11:57 wntrmute Exp $
+	$Id: video.h,v 1.20 2006-02-10 00:17:55 desktopman Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.19  2006/02/02 00:11:57  wntrmute
+	corrected BG_64x32 & BG_32x64 defines
+	
 	Revision 1.18  2006/01/12 09:13:14  wntrmute
 	remove duplicate ATTR0_BMP
 	
@@ -236,6 +239,7 @@ void vramSetBankI(VRAM_I_TYPE i);
 
 // main display only
 #define MODE_6_2D      0x10006
+#define MODE_FIFO      (3<<16)
 
 #define ENABLE_3D    (1<<3)
 
