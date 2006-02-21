@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.14 2006-01-30 18:59:45 wntrmute Exp $
+	$Id: touch.c,v 1.15 2006-02-21 00:28:32 wntrmute Exp $
 
 	Touch screen control for the ARM7
 
@@ -26,6 +26,9 @@
 			distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.14  2006/01/30 18:59:45  wntrmute
+	improved touch code
+	
 	Revision 1.13  2006/01/12 11:13:55  wntrmute
 	modified touch reading code from suggesrions found here -> http://forum.gbadev.org/viewtopic.php?t=7980
 	
@@ -77,7 +80,12 @@
 //---------------------------------------------------------------------------------
 uint16 touchRead(uint32 command) {
 //---------------------------------------------------------------------------------
-	uint16 result;
+	uint16 result, result2;
+
+	uint32 oldIME = REG_IME;
+
+	REG_IME = 0;
+	
 	SerialWaitBusy();
 
 	// Write the command and wait for it to complete
@@ -95,8 +103,12 @@ uint16 touchRead(uint32 command) {
 	REG_SPIDATA = 0;
 	SerialWaitBusy();
 
+	result2 = REG_SPIDATA >>3;
+
+	REG_IME = oldIME;
+
 	// Return the result
-	return ((result & 0x7F) << 5) | (REG_SPIDATA >> 3);
+	return ((result & 0x7F) << 5) | result2);
 }
 
 
