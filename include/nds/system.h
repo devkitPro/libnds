@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.9 2005-11-27 12:30:24 wntrmute Exp $
+	$Id: system.h,v 1.10 2006-02-21 00:06:41 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2005/11/27 12:30:24  wntrmute
+	reverted to correct hardware REGisters
+	
 	Revision 1.8  2005/11/27 07:55:14  joatski
 	Fixed my mistake in the changelogs
 	
@@ -76,7 +79,8 @@
 // arm7, bit 0 = sound power off/on
 #define POWER_CR       (*(vuint16*)0x04000304)
 
-static inline void powerON(int on) { POWER_CR = on;}
+static inline void powerON(int on) { POWER_CR |= on;}
+static inline void powerSET(int on) { POWER_CR = on;}
 static inline void powerOFF(int off) { POWER_CR &= ~off;}
 
 #ifdef ARM9
