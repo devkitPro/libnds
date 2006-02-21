@@ -1,42 +1,41 @@
-//////////////////////////////////////////////////////////////////////
-//
-// memory.h -- Declaration of memory regions
-//
-// version 0.1, February 14, 2005
-//
-//  Copyright (C) 2005 Michael Noland (joat) and Jason Rogers (dovoto)
-//
-//  This software is provided 'as-is', without any express or implied
-//  warranty.  In no event will the authors be held liable for any
-//  damages arising from the use of this software.
-//
-//  Permission is granted to anyone to use this software for any
-//  purpose, including commercial applications, and to alter it and
-//  redistribute it freely, subject to the following restrictions:
-//
-//  1. The origin of this software must not be misrepresented; you
-//     must not claim that you wrote the original software. If you use
-//     this software in a product, an acknowledgment in the product
-//     documentation would be appreciated but is not required.
-//  2. Altered source versions must be plainly marked as such, and
-//     must not be misrepresented as being the original software.
-//  3. This notice may not be removed or altered from any source
-//     distribution.
-//
-/*
-  $Log: not supported by cvs2svn $
+/*---------------------------------------------------------------------------------
 
-*/
-//////////////////////////////////////////////////////////////////////
+	memory.h -- Declaration of memory regions
+
+
+	Copyright (C) 2005 Michael Noland (joat) and Jason Rogers (dovoto)
+
+	This software is provided 'as-is', without any express or implied
+	warranty.  In no event will the authors be held liable for any
+	damages arising from the use of this software.
+
+	Permission is granted to anyone to use this software for any
+	purpose, including commercial applications, and to alter it and
+	redistribute it freely, subject to the following restrictions:
+
+	1.	The origin of this software must not be misrepresented; you
+		must not claim that you wrote the original software. If you use
+		this software in a product, an acknowledgment in the product
+		documentation would be appreciated but is not required.
+
+	2.	Altered source versions must be plainly marked as such, and
+		must not be misrepresented as being the original software.
+
+	3.	This notice may not be removed or altered from any source
+		distribution.
+
+  $Log: not supported by cvs2svn $
+  Revision 1.4  2005/11/27 07:54:23  joatski
+  Added log line, again!
+
+---------------------------------------------------------------------------------*/
 
 #ifndef NDS_MEMORY_INCLUDE
 #define NDS_MEMORY_INCLUDE
 
-//////////////////////////////////////////////////////////////////////
 
 #include "jtypes.h"
 
-//////////////////////////////////////////////////////////////////////
 
 // WAIT_CR: Wait State Control Register
 #define WAIT_CR       (*(vuint16*)0x04000204)
@@ -48,14 +47,12 @@
 #define ARM7_OWNS_CARD 0
 #define ARM7_OWNS_ROM  0
 
-//////////////////////////////////////////////////////////////////////
 
 // Protection register (write-once sadly)
 #ifdef ARM7
 #define PROTECTION    (*(vuint32*)0x04000308)
 #endif
 
-//////////////////////////////////////////////////////////////////////
 
 #define ALLRAM        ((uint8*)0x00000000)
 
@@ -103,30 +100,28 @@
 
 #endif
 
-//////////////////////////////////////////////////////////////////////
 
 typedef struct sGBAHeader {
-  __attribute__ ((__packed__)) uint32 entryPoint;
-  __attribute__ ((__packed__)) uint8 logo[156];
-  __attribute__ ((__packed__)) char title[0xC];
-  __attribute__ ((__packed__)) char gamecode[0x4];
-  __attribute__ ((__packed__)) uint16 makercode;
-  __attribute__ ((__packed__)) uint8 is96h;
-  __attribute__ ((__packed__)) uint8 unitcode;
-  __attribute__ ((__packed__)) uint8 devicecode;
-  __attribute__ ((__packed__)) uint8 unused[7];
-  __attribute__ ((__packed__)) uint8 version;
-  __attribute__ ((__packed__)) uint8 complement;
-  __attribute__ ((__packed__)) uint16 checksum;
-} tGBAHeader;
+	uint32 entryPoint;
+	uint8 logo[156];
+	char title[0xC];
+	char gamecode[0x4];
+	uint16 makercode;
+	uint8 is96h;
+	uint8 unitcode;
+	uint8 devicecode;
+	uint8 unused[7];
+	uint8 version;
+	uint8 complement;
+	uint16 checksum;
+} __attribute__ ((__packed__)) tGBAHeader;
+
 #define GBA_HEADER (*(tGBAHeader *)0x08000000)
-//////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-//////////////////////////////////////////////////////////////////////
 
 #ifdef ARM9
 
@@ -141,14 +136,11 @@ void sysSetCartOwner(bool arm9);
 
 #endif
 
-//////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 }
 #endif
 
-//////////////////////////////////////////////////////////////////////
 
 #endif
 
-//////////////////////////////////////////////////////////////////////
