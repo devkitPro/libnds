@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.c,v 1.7 2005-12-12 13:03:29 wntrmute Exp $
+	$Id: interrupts.c,v 1.8 2006-02-21 00:12:35 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2005/12/12 13:03:29  wntrmute
+	set/clear LCD interrupts in irqEnable/Disable
+	
 	Revision 1.6  2005/11/07 01:11:08  wntrmute
 	more doxygen
 	moved IntrMain declaration to C file
@@ -93,6 +96,10 @@ void irqInit() {
 	}
 
 	IRQ_HANDLER = IntrMain;
+
+	REG_IE	=	0;				// disable all interrupts
+	REG_IF	=	IRQ_ALL;	// clear all pending interrupts
+	REG_IME = 1;				// enable global interrupt
 
 }
 
