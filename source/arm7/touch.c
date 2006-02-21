@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.16 2006-02-21 20:25:49 dovoto Exp $
+	$Id: touch.c,v 1.17 2006-02-21 23:50:10 wntrmute Exp $
 
 	Touch screen control for the ARM7
 
@@ -26,6 +26,9 @@
 			distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.16  2006/02/21 20:25:49  dovoto
+	Fixed some compilation errors (missing paranthesis and missing include)
+	
 	Revision 1.15  2006/02/21 00:28:32  wntrmute
 	disable interrupts around touch screen reading
 	
@@ -112,7 +115,7 @@ uint16 touchRead(uint32 command) {
 	REG_IME = oldIME;
 
 	// Return the result
-	return (((result & 0x7F) << 5) | result2);
+	return ((result & 0x7F) << 5) | result2;
 }
 
 
