@@ -14,10 +14,10 @@ Include Sub Directories=1
 [Open Files]
 Open File0=
 Active File Display Mode=-1
-Open File Pos0=2903
-Open File Line0=2169
+Open File Pos0=2094
+Open File Line0=1424
 Active File Index=0
-Open File Window Pos0=2,3,-1,-1,-4,-23,66,66,823,540
+Open File Window Pos0=2,3,-1,-1,-4,-23,22,22,801,434
 Open File1=
 Open File Pos1=4701
 Open File Line1=4150
@@ -108,7 +108,7 @@ Open File Line22=4362
 Open File Window Pos22=0,1,-1,-1,-4,-23,154,154,1031,598
 Open File23=
 [File View]
-Current Select=Project Files
+Current Select=Project Files\source\arm7\touch.c
 Scroll Position=0
 [Files]
 0=include\

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.h,v 1.10 2006-01-10 05:45:02 dovoto Exp $
+	$Id: console.h,v 1.11 2006-02-23 00:14:02 wntrmute Exp $
 
 	console functions
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.10  2006/01/10 05:45:02  dovoto
+	Added a consoleClear because i can....
+	
 	Revision 1.9  2005/11/14 11:57:16  wntrmute
 	Corrected doxygen comments
 	
@@ -64,6 +67,8 @@
 #define CONSOLE_H
 
 #define CONSOLE_USE_COLOR255 16
+
+#include <nds/jtypes.h>
 
 #ifdef __cplusplus
 extern "C" {
