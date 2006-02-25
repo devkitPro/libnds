@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: gbfs.c,v 1.3 2005-09-20 04:59:44 wntrmute Exp $
+	$Id: gbfs.c,v 1.4 2006-02-25 02:31:12 wntrmute Exp $
 
 	access object in a GBFS file
 
@@ -28,6 +28,9 @@
 	IN THE SOFTWARE.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/09/20 04:59:44  wntrmute
+	*** empty log message ***
+	
 	Revision 1.2  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 
@@ -82,134 +85,133 @@ void gbfs_search_range(	u32 gbfs_1st_limit,
 //---------------------------------------------------------------------------------
 const GBFS_FILE * find_first_gbfs_file(const void *start) {
 //---------------------------------------------------------------------------------
-  /* align the pointer */
-  const u32 *here = (const u32 *)
-                      ((unsigned long)start & (-GBFS_STRIDE));
-  const char rest_of_magic[] = "ightGBFS\r\n\x1a\n";
+	/* align the pointer */
+	const u32 *here = (const u32 *)
+											((unsigned long)start & (-GBFS_STRIDE));
+	const char rest_of_magic[] = "ightGBFS\r\n\x1a\n";
 
-  /* Linear-search first in multiboot space. */
-  while(here < GBFS_1ST_SEARCH_LIMIT)
-  {
-    /* We have to keep the magic code in two pieces; otherwise,
-       this function may find itself and think it's a GBFS file.
-       This obviously won't work if your compiler stores this
-       numeric literal just before the literal string, but Devkit
-       Advance R4 and R5 seem to keep numeric constant pools
-       separate enough from string pools for this to work.
-    */
-    if(*here == 0x456e6950)  /* ASCII code for little endian "PinE" */
-    {
-      /* We've matched the first four bytes.
-         If the rest of the magic matches, then we've found a file. */
-      if(!memcmp(here + 1, rest_of_magic, 12))
-        return (const GBFS_FILE *)here;
-    }
-    here += GBFS_STRIDE / sizeof(here);
+	/* Linear-search first in multiboot space. */
+	while(here < GBFS_1ST_SEARCH_LIMIT)
+	{
+		/* We have to keep the magic code in two pieces; otherwise,
+			 this function may find itself and think it's a GBFS file.
+			 This obviously won't work if your compiler stores this
+			 numeric literal just before the literal string, but Devkit
+			 Advance R4 and R5 seem to keep numeric constant pools
+			 separate enough from string pools for this to work.
+		*/
+		if(*here == 0x456e6950)  /* ASCII code for little endian "PinE" */
+		{
+			/* We've matched the first four bytes.
+				 If the rest of the magic matches, then we've found a file. */
+			if(!memcmp(here + 1, rest_of_magic, 12))
+				return (const GBFS_FILE *)here;
+		}
+		here += GBFS_STRIDE / sizeof(here);
  }
 
-  /* Now search in ROM space. */
-  if(here < GBFS_2ND_SEARCH_START)
-    here = GBFS_2ND_SEARCH_START;
-  while(here < GBFS_2ND_SEARCH_LIMIT)
-  {
-    /* Search loop same as above. */
-    if(*here == 0x456e6950)  /* ASCII code for little endian "PinE" */
-    {
-      if(!memcmp(here + 1, rest_of_magic, 12))
-        return (const GBFS_FILE *)here;
-    }
-    here += GBFS_STRIDE / sizeof(*here);
-  }
-  return 0;
+	/* Now search in ROM space. */
+	if(here < GBFS_2ND_SEARCH_START)
+		here = GBFS_2ND_SEARCH_START;
+	while(here < GBFS_2ND_SEARCH_LIMIT)
+	{
+		/* Search loop same as above. */
+		if(*here == 0x456e6950)  /* ASCII code for little endian "PinE" */
+		{
+			if(!memcmp(here + 1, rest_of_magic, 12))
+				return (const GBFS_FILE *)here;
+		}
+		here += GBFS_STRIDE / sizeof(*here);
+	}
+	return 0;
 }
 
 
 //---------------------------------------------------------------------------------
 const void *skip_gbfs_file(const GBFS_FILE *file) {
 //---------------------------------------------------------------------------------
-  return ((char *)file + file->total_len);
+	return ((char *)file + file->total_len);
 }
 
 
 //---------------------------------------------------------------------------------
 static int namecmp(const void *a, const void *b) {
 //---------------------------------------------------------------------------------
-  return memcmp(a, b, 24);
+	return memcmp(a, b, 24);
 }
 
 
 //---------------------------------------------------------------------------------
-const void *gbfs_get_obj(const GBFS_FILE *file,
-                         const char *name,
-                         u32 *len) {
+const void *gbfs_get_obj(	const GBFS_FILE *file,
+							const char *name,
+							u32 *len) {
 //---------------------------------------------------------------------------------
-  char key[24] = {0};
+	char key[24] = {0};
 
-  const GBFS_ENTRY *dirbase = (const GBFS_ENTRY *)((const char *)file + file->dir_off);
-  size_t n_entries = file->dir_nmemb;
-  const GBFS_ENTRY *here;
+	const GBFS_ENTRY *dirbase = (const GBFS_ENTRY *)((const char *)file + file->dir_off);
+	size_t n_entries = file->dir_nmemb;
+	const GBFS_ENTRY *here;
 
-  strncpy(key, name, 24);
+	strncpy(key, name, 24);
 
-  here = bsearch(key, dirbase,
-                 n_entries, sizeof(GBFS_ENTRY),
-                 namecmp);
-  if(!here)
-    return NULL;
+	here = bsearch(	key, dirbase,
+					n_entries, sizeof(GBFS_ENTRY),
+					 namecmp);
+	if(!here)
+		return NULL;
 
-  if(len)
-    *len = here->len;
-  return (char *)file + here->data_offset;
+	if(len)
+		*len = here->len;
+	return (char *)file + here->data_offset;
 }
 
 
 //---------------------------------------------------------------------------------
-const void *gbfs_get_nth_obj(const GBFS_FILE *file,
-                             size_t n,
-                             char *name,
-                             u32 *len)
+const void *gbfs_get_nth_obj(	const GBFS_FILE *file,
+							 	size_t n,
+								char *name,
+								u32 *len)
 //---------------------------------------------------------------------------------
 {
-  const GBFS_ENTRY *dirbase = (const GBFS_ENTRY *)((const char *)file + file->dir_off);
-  size_t n_entries = file->dir_nmemb;
-  const GBFS_ENTRY *here = dirbase + n;
+	const GBFS_ENTRY *dirbase = (const GBFS_ENTRY *)((const char *)file + file->dir_off);
+	size_t n_entries = file->dir_nmemb;
+	const GBFS_ENTRY *here = dirbase + n;
 
-  if(n >= n_entries)
-    return NULL;
+	if(n >= n_entries)
+		return NULL;
 
-  if(name)
-  {
-    strncpy(name, here->name, 24);
-    name[24] = 0;
-  }
+	if(name)
+	{
+		strncpy(name, here->name, 24);
+		name[24] = 0;
+	}
 
-  if(len)
-    *len = here->len;
+	if(len)
+		*len = here->len;
 
-  return (char *)file + here->data_offset;
+	return (char *)file + here->data_offset;
 }
 
 
 //---------------------------------------------------------------------------------
-void *gbfs_copy_obj(void *dst,
-                    const GBFS_FILE *file,
-                    const char *name)
+void *gbfs_copy_obj(	void *dst,
+						const GBFS_FILE *file,
+						const char *name) {
 //---------------------------------------------------------------------------------
-{
-  u32 len;
-  const void *src = gbfs_get_obj(file, name, &len);
+	u32 len;
+	const void *src = gbfs_get_obj(file, name, &len);
 
-  if(!src)
-    return NULL;
+	if(!src)
+		return NULL;
 
-  memcpy(dst, src, len);
-  return dst;
+	memcpy(dst, src, len);
+	return dst;
 }
 
 
 //---------------------------------------------------------------------------------
 size_t gbfs_count_objs(const GBFS_FILE *file) {
 //---------------------------------------------------------------------------------
-  return file ? file->dir_nmemb : 0;
+	return file ? file->dir_nmemb : 0;
 }
 
