@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.10 2006-02-21 00:06:41 wntrmute Exp $
+	$Id: system.h,v 1.11 2006-02-25 02:18:53 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,6 +27,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.10  2006/02/21 00:06:41  wntrmute
+	changed powerON to OR values
+	added powerSET function to set value directly
+	
 	Revision 1.9  2005/11/27 12:30:24  wntrmute
 	reverted to correct hardware REGisters
 	
@@ -56,99 +60,190 @@
 
 ---------------------------------------------------------------------------------*/
 
+//!	NDS hardware definitions.
+/*!	\file system.h
+
+	These definitions are usually only touched during
+	the initialization of the program.
+*/
+
 #ifndef NDS_SYSTEM_INCLUDE
 #define NDS_SYSTEM_INCLUDE
 
-
+//!	LCD status register.
 #define DISP_SR        (*(vuint16*)0x04000004)
 
+//!	The display currently in a vertical blank.
 #define DISP_IN_VBLANK     BIT(0)
+
+//!	The display currently in a horizontal blank.
 #define DISP_IN_HBLANK     BIT(1)
+
+//!	Current scanline and %DISP_Y match.
 #define DISP_YTRIGGERED    BIT(2)
+
+//!	Interrupt on vertical blank.
 #define DISP_VBLANK_IRQ    BIT(3)
+
+//!	Interrupt on horizontal blank.
 #define DISP_HBLANK_IRQ    BIT(4)
+
+//!	Interrupt when current scanline and %DISP_Y match.
 #define DISP_YTRIGGER_IRQ  BIT(5)
 
+//!	Current display scanline.
 #define DISP_Y      (*(vuint16*)0x04000006)
 
 
-// Halt control register
+//!	Halt control register.
+/*!	Writing 0x40 to HALT_CR activates GBA mode.
+	%HALT_CR can only be accessed via the BIOS.
+*/
 #define HALT_CR       (*(vuint16*)0x04000300)
-// Writing 0x40 to HALT_CR activates GBA mode, single bit it seems
 
-// arm7, bit 0 = sound power off/on
+//!	Power control register.
+/*!	This register controls what hardware should
+	be turned on or off.
+*/
 #define POWER_CR       (*(vuint16*)0x04000304)
 
+//!	Turns on specified hardware.
+/*!	This function should only be called after %powerSET.
+
+	\param on What to power on.
+*/
 static inline void powerON(int on) { POWER_CR |= on;}
+
+//!	Turns on only the specified hardware.
+/*!	Use this function to power on basic hardware types you
+	wish to use throughout your program.
+
+	\param on What to power on.
+*/
 static inline void powerSET(int on) { POWER_CR = on;}
+
+//!	Turns off the specified hardware.
+/*!	\param off What to power off.
+*/
 static inline void powerOFF(int off) { POWER_CR &= ~off;}
 
 #ifdef ARM9
-// Power control register (arm9)
+#ifdef DOXYGEN
+//!	Power-controlled hardware devices accessable to the ARM9.
+/*!	Used with %powerON, %powerSET, and %powerOFF functions.
+	Note that these should only be used when programming for
+	the ARM9.  Trying to boot up these hardware devices via
+	the ARM7 would lead to unexpected results.
+*/
+enum ARM9_power
+{
+	POWER_LCD,			//!<	Controls the power for both LCD screens.
+	POWER_2D_A,			//!<	Controls the power for the main 2D core.
+	POWER_MATRIX,		//!<	Controls the power for the 3D matrix.
+	POWER_3D_CORE,		//!<	Controls the power for the main 3D core.
+	POWER_2D_B,			//!<	Controls the power for the sub 2D core.
+	POWER_SWAP_LCDS,	//!<	Controls which screen should use the main core.
+};
+#else
 #define POWER_LCD			BIT(0)
 #define POWER_2D_A			BIT(1)
 #define POWER_MATRIX		BIT(2)
 #define POWER_3D_CORE		BIT(3)
 #define POWER_2D_B			BIT(9)
 #define POWER_SWAP_LCDS		BIT(15)
+#endif /* DOXYGEN */
 
+//!	Enables power to all hardware required for 2D video.
 #define POWER_ALL_2D     (POWER_LCD |POWER_2D_A |POWER_2D_B)
+
+//!	Enables power to all hardware required for 3D video.
 #define POWER_ALL		 (POWER_ALL_2D | POWER_3D_CORE | POWER_MATRIX)
 
+//!	Switches the screens.
 static inline void lcdSwap(void) { POWER_CR ^= POWER_SWAP_LCDS; }
+
+//!	Forces the main core to display on the top.
 static inline void lcdMainOnTop(void) { POWER_CR |= POWER_SWAP_LCDS; }
+
+//!	Forces the main core to display on the bottom.
 static inline void lcdMainOnBottom(void) { POWER_CR &= ~POWER_SWAP_LCDS; }
 #endif
 
 #ifdef ARM7
+#ifdef DOXYGEN
+//!	Power-controlled hardware devices accessable to the ARM7.
+/*!	Note that these should only be used when programming for
+	the ARM7.  Trying to boot up these hardware devices via
+	the ARM9 would lead to unexpected results.
+*/
+enum ARM7_power
+{
+	POWER_SOUND,	//!<	Controls the power for the sound controller.
+	POWER_UNKNOWN,	//!<	Controls the power for an unknown device.
+};
+#else
 #define POWER_SOUND       BIT(0)
 #define POWER_UNKNOWN     BIT(1)
+#endif /* DOXYGEN */
 #endif
 
+//!	User's DS settings.
+/*!	\struct tPERSONAL_DATA
+
+	Defines the structure the DS firmware uses for transfer
+	of the user's settings to the booted program.
+*/
 typedef struct tPERSONAL_DATA {
-  u8  RESERVED0[2];           //0x023FFC80  05 00 ?
+  u8 RESERVED0[2];			//!<	??? (0x05 0x00).
 
-  u8  theme;                  //0x027FFC82  favorite color (0-15)
-  u8  birthMonth;             //0x027FFC83  birthday month (1-12)
-  u8  birthDay;               //0x027FFC84  birthday day (1-31)
+  u8 theme;					//!<	The user's theme color (0-15).
+  u8 birthMonth;			//!<	The user's birth month (1-12).
+  u8 birthDay;				//!<	The user's birth day (1-31).
 
-  u8  RESERVED1[1];           //0x027FFC85  ???
+  u8 RESERVED1[1];			//!<	???
 
-  s16 name[10];               //0x027FFC86  name, UTF-16?
-  u16 nameLen;                //0x027FFC9A  length of name in characters
+  s16 name[10];				//!<	The user's name in UTF-16 format.
+  u16 nameLen;				//!<	The length of the user's name in characters.
 
-  s16 message[26];            //0x027FFC9C  message, UTF-16?
-  u16 messageLen;             //0x027FFCD0  length of message in characters
+  s16 message[26];			//!<	The user's message.
+  u16 messageLen;			//!<	The length of the user's message in characters.
 
-  u8  alarmHour;              //0x027FFCD2  alarm hour
-  u8  alarmMinute;            //0x027FFCD3  alarm minute
+  u8 alarmHour;				//!<	What hour the alarm clock is set to (0-23).
+  u8 alarmMinute;			//!<	What minute the alarm clock is set to (0-59).
+            //0x027FFCD3  alarm minute
 
-  u8  RESERVED2[4];           //0x027FFCD4  ??
+  u8 RESERVED2[4];			//!<	???
+           //0x027FFCD4  ??
 
-  //calibration information
-  u16 calX1;                  //0x027FFCD8
-  u16 calY1;                  //0x027FFCDA
-  u8  calX1px;                //0x027FFCDC
-  u8  calY1px;                //0x027FFCDD
+  u16 calX1;				//!<	Touchscreen calibration: first X touch
+  u16 calY1;				//!<	Touchscreen calibration: first Y touch
+  u8 calX1px;				//!<	Touchscreen calibration: first X touch pixel
+  u8 calY1px;				//!<	Touchscreen calibration: first X touch pixel
 
-  u16 calX2;                  //0x027FFCDE
-  u16 calY2;                  //0x027FFCE0
-  u8  calX2px;                //0x027FFCE2
-  u8  calY2px;                //0x027FFCE3
+  u16 calX2;				//!<	Touchscreen calibration: second X touch
+  u16 calY2;				//!<	Touchscreen calibration: second Y touch
+  u8 calX2px;				//!<	Touchscreen calibration: second X touch pixel
+  u8 calY2px;				//!<	Touchscreen calibration: second Y touch pixel
 
-  packed_struct {             //0x027FFCE4
-    unsigned language    : 3; //            language
-    unsigned gbaScreen   : 1; //            GBA mode screen selection. 0=upper, 1=lower
-    unsigned RESERVED3   : 2; //            ??
-    unsigned autoMode    : 1; //            auto/manual mode. 0=manual, 1=auto
-    unsigned RESERVED4   : 1; //            ??
+  packed_struct {
+    unsigned language    : 3;	//!<	User's language.
+    unsigned gbaScreen   : 1;	//!<	GBA screen selection (lower screen if set, otherwise upper screen).
+    unsigned RESERVED3   : 2;	//!<	???
+    unsigned autoMode    : 1;	//!<	The DS should boot from the DS cart or GBA cart automatically if one is inserted.
+    unsigned RESERVED4   : 1;	//!<	???
   };
 } PACKED PERSONAL_DATA ;
 
-
+//!	Key input register.
+/*!	On the ARM9, the hinge "button," the touch status, and the
+	X and Y buttons cannot be accessed directly.
+*/
 #define	REG_KEYINPUT	(*(vuint16*)0x04000130)
+
+//!	Key input control register.
 #define	REG_KEYCNT		(*(vuint16*)0x04000132)
 
+//!	Default location for the user's personal data (see %PERSONAL_DATA).
 #define PersonalData ((PERSONAL_DATA*)0x27FFC80)
 
 #endif

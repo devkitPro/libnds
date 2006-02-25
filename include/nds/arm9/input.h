@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: input.h,v 1.13 2006-01-12 09:10:47 wntrmute Exp $
+	$Id: input.h,v 1.14 2006-02-25 02:18:53 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -27,6 +27,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.13  2006/01/12 09:10:47  wntrmute
+	Added key repeat as suggested by pepsiman
+	
 	Revision 1.12  2006/01/10 05:50:24  dovoto
 	uhmm...about that KEY_R vs KEY_L thing...lets pretend that never happened
 	
@@ -81,10 +84,8 @@
 
 
 ---------------------------------------------------------------------------------*/
+//!	NDS input support.
 /*! \file input.h
-
-    \brief nds input support.
-
 */
 
 //---------------------------------------------------------------------------------
@@ -96,85 +97,52 @@
 
 // Keyboard
 
-/*! \enum KEYPAD_BITS
-
-	\brief bit values for keypad buttons
-*/
-
+//!	Bit values for the keypad buttons.
 typedef enum KEYPAD_BITS {
-  KEY_A      = BIT(0),  /*!< keypad A button */
-  KEY_B      = BIT(1),  /*!< keypad B button */
-  KEY_SELECT = BIT(2),  /*!< keypad SELECT button*/
-  KEY_START  = BIT(3),  /*!< keypad START button*/
-  KEY_RIGHT  = BIT(4),  /*!< keypad RIGHT button*/
-  KEY_LEFT   = BIT(5),  /*!< keypad LEFT button*/
-  KEY_UP     = BIT(6),  /*!< keypad UP button*/
-  KEY_DOWN   = BIT(7),  /*!< keypad DOWN button*/
-  KEY_R      = BIT(8),  /*!< RIGHT shoulder button*/
-  KEY_L      = BIT(9),  /*!< LEFT shoulder button*/
-  KEY_X      = BIT(10), /*!< keypad X button*/
-  KEY_Y      = BIT(11), /*!< keypad Y button*/
-  KEY_TOUCH  = BIT(12), /*!< touchscreen pendown*/
-  KEY_LID    = BIT(13)  /*!< lid state*/
+  KEY_A      = BIT(0),  //!< Keypad A button.
+  KEY_B      = BIT(1),  //!< Keypad B button.
+  KEY_SELECT = BIT(2),  //!< Keypad SELECT button.
+  KEY_START  = BIT(3),  //!< Keypad START button.
+  KEY_RIGHT  = BIT(4),  //!< Keypad RIGHT button.
+  KEY_LEFT   = BIT(5),  //!< Keypad LEFT button.
+  KEY_UP     = BIT(6),  //!< Keypad UP button.
+  KEY_DOWN   = BIT(7),  //!< Keypad DOWN button.
+  KEY_R      = BIT(8),  //!< Right shoulder button.
+  KEY_L      = BIT(9),  //!< Left shoulder button.
+  KEY_X      = BIT(10), //!< Keypad X button.
+  KEY_Y      = BIT(11), //!< Keypad Y button.
+  KEY_TOUCH  = BIT(12), //!< Touchscreen pendown.
+  KEY_LID    = BIT(13)  //!< Lid state.
 } KEYPAD_BITS;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-/*! \fn scanKeys()
 
-	\brief obtain the current keypad states.
-
-	Call this function once per main loop in order to use the keypad functions.
-
+//!	Obtains the current keypad state.
+/*!	Call this function once per main loop in order to use the keypad functions.
 */
-
 void scanKeys();
-/*! \fn uint32 keysHeld()
 
-	\brief obtain the current keypad held state.
-*/
-
+//!	Obtains the current keypad held state.
 uint32 keysHeld(void);
-/*! \fn uint32 keysDown(void)
 
-	\brief obtain the current keypad pressed state.
-
-*/
-
+//!	Obtains the current keypad pressed state.
 uint32 keysDown(void);
-/*! \fn uint32 keysDownRepeat(void)
 
-	\brief obtain the current keypad pressed or repeating state.
-
-*/
-
+//!	Obtains the current keypad pressed or repeating state.
 uint32 keysDownRepeat(void);
-/*! \fn void keysSetRepeat( u8 setDelay, u8 setRepeat )
 
-	\brief set the key repeat parameters.
-
-    \param setDelay Number of scanKeys() calls before keys start to repeat.
-    \param setRepeat Number of scanKeys() calls before keys repeat.
-
+//!	Sets the key repeat parameters.
+/*!	\param setDelay Number of %scanKeys calls before keys start to repeat.
+	\param setRepeat Number of %scanKeys calls before keys repeat.
 */
-
 void keysSetRepeat( u8 setDelay, u8 setRepeat );
-/*! \fn uint32 keysUp()
 
-	\brief obtain the current keypad released state.
-
-*/
-
+//! Obtains the current keypad released state.
 uint32 keysUp(void);
 
-
-/*! \fn touchPosition touchReadXY()
-
-	\brief obtain the current touchscreen co-ordinates.
-
-*/
-
+//!	Obtains the current touchscreen co-ordinates.
 touchPosition touchReadXY();
 
 #ifdef __cplusplus
