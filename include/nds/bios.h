@@ -1,50 +1,58 @@
 /*---------------------------------------------------------------------------------
-	$Id: bios.h,v 1.5 2005-08-23 17:06:10 wntrmute Exp $
+  $Id: bios.h,v 1.6 2006-03-03 07:21:17 joatski Exp $
 
-	BIOS functions
+  BIOS functions
 
-	Copyright (C) 2005
-		Michael Noland (joat)
-		Jason Rogers (dovoto)
-		Dave Murphy (WinterMute)
+  Copyright (C) 2005
+    Michael Noland (joat)
+    Jason Rogers (dovoto)
+    Dave Murphy (WinterMute)
 
-	This software is provided 'as-is', without any express or implied
-	warranty.  In no event will the authors be held liable for any
-	damages arising from the use of this software.
+  This software is provided 'as-is', without any express or implied
+  warranty.  In no event will the authors be held liable for any
+  damages arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any
-	purpose, including commercial applications, and to alter it and
-	redistribute it freely, subject to the following restrictions:
+  Permission is granted to anyone to use this software for any
+  purpose, including commercial applications, and to alter it and
+  redistribute it freely, subject to the following restrictions:
 
-	1.	The origin of this software must not be misrepresented; you
-		must not claim that you wrote the original software. If you use
-		this software in a product, an acknowledgment in the product
-		documentation would be appreciated but is not required.
-	2.	Altered source versions must be plainly marked as such, and
-		must not be misrepresented as being the original software.
-	3.	This notice may not be removed or altered from any source
-		distribution.
+  1.  The origin of this software must not be misrepresented; you
+      must not claim that you wrote the original software. If you use
+      this software in a product, an acknowledgment in the product
+      documentation would be appreciated but is not required.
+  2.  Altered source versions must be plainly marked as such, and
+      must not be misrepresented as being the original software.
+  3.  This notice may not be removed or altered from any source
+      distribution.
 
-	$Log: not supported by cvs2svn $
-	Revision 1.4  2005/08/03 05:26:42  wntrmute
-	use BIT macro
-	corrected header include
-	
-	Revision 1.3  2005/08/01 23:18:22  wntrmute
-	adjusted headers for logging
-	
+  $Log: not supported by cvs2svn $
+  Revision 1.5  2005/08/23 17:06:10  wntrmute
+  converted all endings to unix
+  
+  Revision 1.4  2005/08/03 05:26:42  wntrmute
+  use BIT macro
+  corrected header include
+  
+  Revision 1.3  2005/08/01 23:18:22  wntrmute
+  adjusted headers for logging
+  
 
 ---------------------------------------------------------------------------------*/
 
-#ifndef _BIOS_INCLUDE_
-#define _BIOS_INCLUDE_
+#ifndef BIOS_H_INCLUDE
+#define BIOS_H_INCLUDE
+
+//////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+//////////////////////////////////////////////////////////////////////
+
 #include <nds/jtypes.h>
 
+//////////////////////////////////////////////////////////////////////
 
 typedef struct DecompressionStream {
   int (*getSize)(uint8 * source, uint16 * dest, uint32 r2);
@@ -60,64 +68,116 @@ typedef struct UnpackStruct {
   uint32 dataOffset;  
 } PACKED TUnpackStruct, * PUnpackStruct;
 
-// SoftReset (swi 0x00)
+//////////////////////////////////////////////////////////////////////
+//
+// swiSoftReset
+//
+// Note: swi 0x00 on both CPUs
+//
+//////////////////////////////////////////////////////////////////////
+
 extern void swiSoftReset(void);
-
-// DelayLoop (swi 0x03)
-extern void swiDelay(uint32 duration);
-
-
-/*---------------------------------------------------------------------------------
-	IntrWait (swi 0x04)
-
-	waitForSet -	0: Return if the interrupt has already occured
-					1: Wait until the interrupt has been set since the call
-	flags - interrupt sensitivity bitmask to wait for
----------------------------------------------------------------------------------*/
-void swiIntrWait(int waitForSet, uint32 flags);
-
-/*---------------------------------------------------------------------------------
-	WaitForVBlank (swi 0x05)
-	Identical to calling IntrWait(1, 1)
----------------------------------------------------------------------------------*/
-void swiWaitForVBlank(void);
-
-#ifdef ARM9
-/*---------------------------------------------------------------------------------
-	WaitForIRQ (swi 0x06)
-		mov r0, #0
-		MCR p15, 0, r0, c7, c0, 4
----------------------------------------------------------------------------------*/
-void swiWaitForIRQ(void);
-
-#endif // ARM9
-
-#ifdef ARM7
-/*---------------------------------------------------------------------------------
-	Halt (swi 0x06)
-	Identical to calling SetHaltCR(?)
----------------------------------------------------------------------------------*/
-void swiHalt(void);
-/*---------------------------------------------------------------------------------
-	Sleep (swi 0x07)
-	Identical to calling SetHaltCR(?)
----------------------------------------------------------------------------------*/
-void swiSleep(void);
-/*---------------------------------------------------------------------------------
-	SetHaltCR(uint32 data) (swi 0x1F)
-	Writes data to 0x04000300:32
----------------------------------------------------------------------------------*/
-void swiSetHaltCr(uint32 data);
-
-#endif //ARM7
 
 //////////////////////////////////////////////////////////////////////
 //
-// ChangeSound(int enabled, int delay)
+// swiDelay
+//   Delays for for a period X + Y*duration
+//   Where X is the swi overhead and Y is a cycle of
+//     loop:
+//       sub r0, #1
+//       bgt loop
+//  of thumb fetches in BIOS memory
+//
+// Notes:
+//   Duration should be 1 or more, a duration of 0 is a huge delay
+//   swi 0x03 on both CPUs
+//
+//////////////////////////////////////////////////////////////////////
+
+extern void swiDelay(uint32 duration);
+
+//////////////////////////////////////////////////////////////////////
+//
+// swiIntrWait(waitForSet, flags)
+//
+//  waitForSet - 0: Return if the interrupt has already occured
+//               1: Wait until the interrupt has been set since the call
+//  flags - interrupt sensitivity bitmask to wait for
+//
+// Note: swi 0x04 on both CPUs
+//
+//////////////////////////////////////////////////////////////////////
+
+void swiIntrWait(int waitForSet, uint32 flags);
+
+//////////////////////////////////////////////////////////////////////
+//
+// swiWaitForVBlank
+//   Identical to calling swiIntrWait(1, 1)
+//
+// Note: swi 0x05 on both CPUs
+//
+//////////////////////////////////////////////////////////////////////
+
+void swiWaitForVBlank(void);
+
+//////////////////////////////////////////////////////////////////////
+//
+// swiWaitForIRQ
+//    mov r0, #0
+//    MCR p15, 0, r0, c7, c0, 4
+//
+// Note: ARM9 exclusive swi 0x06
+//
+//////////////////////////////////////////////////////////////////////
+
+#ifdef ARM9
+void swiWaitForIRQ(void);
+#endif
+
+//////////////////////////////////////////////////////////////////////
+//
+// swiHalt (swi 0x06)
+//   Same as swiSetHaltCR(0x80)
+//
+// swiSleep (swi 0x07)
+//   Same as swiSetHaltCR(0xC0)
+//
+// swiSwitchToGBAMode (not a SWI)
+//   Same as swiSetHaltCR(0x40)
+//
+// swiSetHaltCR (swi 0x1F)
+//   Writes a byte of the data to 0x04000301:8
+//
+// Note: All of these are ARM7 exclusive
+//
+// swiSetHaltCR (swi 0x1F)
+//   Writes a word of the data to 0x04000300:32
+//
+// Note: This is on the ARM9, but works differently to the ARM7 function!
+//
+//////////////////////////////////////////////////////////////////////
+
+#ifdef ARM7
+void swiHalt(void);
+void swiSleep(void);
+void swiSwitchToGBAMode(void);
+void swiSetHaltCR(uint8 data);
+#endif
+
+#ifdef ARM9
+void swiSetHaltCR(uint32 data);
+#endif
+
+//////////////////////////////////////////////////////////////////////
+//
+// swiChangeSoundBias(int enabled, int delay)
 //   enabled
 //     0: decrement SOUND_BIAS once per delay until it reaches 0x000
 //     1: increment SOUND_BIAS once per delay until it reaches 0x200
-//   delay is in the same units of time as swiDelayLoop
+//   delay is in the same units of time as swiDelay
+//
+// Note: ARM7 exclusive SWI 0x08
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -125,11 +185,11 @@ void swiChangeSoundBias(int enabled, int delay);
 
 //////////////////////////////////////////////////////////////////////
 //
-// swi 0x09: Divide (returns result in r0, remainder in r1)
+// swi 0x09: swiDivide (returns result in r0, remainder in r1)
 //
 // int Divide(int numerator, int divisor);
 //   returns numerator / divisor
-//
+//  
 // int Remainder(int numerator, int divisor);
 //   returns numerator % divisor
 //
@@ -144,14 +204,14 @@ extern void swiDivMod(int numerator, int divisor, int * result, int * remainder)
 
 //////////////////////////////////////////////////////////////////////
 //
-// Copy (swi 0x0B)
+// swiCopy (swi 0x0B)
 //  source = pointer to transfer source
 //  dest = pointer to transfer destination
 //  flags(26) = transfer width (0: halfwords, 1: words)
 //  flags(24) = transfer mode (0: copy, 1: fill)
 //  flags(20..0) = tranfer count (always in words)
 //
-// FastCopy (swi 0x0C)
+// swiFastCopy (swi 0x0C)
 //  source = pointer to transfer source
 //  dest = pointer to transfer destination
 //  flags(24) = transfer mode (0: copy, 1: fill)
@@ -161,23 +221,25 @@ extern void swiDivMod(int numerator, int divisor, int * result, int * remainder)
 //
 //////////////////////////////////////////////////////////////////////
 
-#define COPY_MODE_HWORD	(0)
-#define COPY_MODE_WORD	(1<<26)
-#define COPY_MODE_COPY	(0)
-#define COPY_MODE_FILL	(1<<24)
+#define COPY_MODE_HWORD  (0)
+#define COPY_MODE_WORD  (1<<26)
+#define COPY_MODE_COPY  (0)
+#define COPY_MODE_FILL  (1<<24)
 
 extern void swiCopy(void * source, void * dest, int flags);
 extern void swiFastCopy(void * source, void * dest, int flags);
 
 //////////////////////////////////////////////////////////////////////
-// Sqrt (0x0D)
+//
+// swiSqrt (swi 0x0D)
+//
 //////////////////////////////////////////////////////////////////////
 
 extern int swiSqrt(int value);
 
 //////////////////////////////////////////////////////////////////////
 //
-// CRC16(uint16 crc, void * data, uint32 size) (swi 0x0E)
+// swiCRC16(uint16 crc, void * data, uint32 size) (swi 0x0E)
 //   crc - starting CRC-16
 //   data - pointer to data (processed nibble by nibble)
 //   size - size in bytes
@@ -190,8 +252,10 @@ extern uint16 swiCRC16(uint16 crc, void * data, uint32 size);
 
 //////////////////////////////////////////////////////////////////////
 //
-// int IsDebugger;
+// int swiIsDebugger(void)
 //   Returns 0 if running on a debugger (8 MB of ram instead of 4 MB)
+//
+// Note: swi 0x0F on both CPUs
 //
 //////////////////////////////////////////////////////////////////////
 
@@ -199,10 +263,10 @@ extern int swiIsDebugger(void);
 
 //////////////////////////////////////////////////////////////////////
 //
-// UnpackBits (swi 0x10)
-//  r0 - Source address
-//  r1 - destination address (word aligned)
-//  r2 - Unpack structure
+// swiUnpackBits
+//  source      - Source address
+//  destination - destination address (word aligned)
+//  params      - Unpack structure
 //       uint16 sourceSize (in bytes)
 //       uint8 sourceWidth (1,2,4,8)
 //       uint8 destWidth (1,2,4,8,16,32)
@@ -213,6 +277,8 @@ extern int swiIsDebugger(void);
 // Unpack data stored multiple elements to a byte into a larger space
 // i.e. 8 elements per byte (i.e. b/w font), into 1 element per byte
 //
+// Note: swi 0x10 on both CPUs
+//
 //////////////////////////////////////////////////////////////////////
 
 extern void swiUnpackBits(uint8 * source, uint32 * destination, PUnpackStruct params);
@@ -220,10 +286,10 @@ extern void swiUnpackBits(uint8 * source, uint32 * destination, PUnpackStruct pa
 //////////////////////////////////////////////////////////////////////
 //
 // DecompressLZSSWram (swi 0x11)
-//   r0 - pointer to a header word, followed by compressed data
-//        word(31..8) = size of uncompressed data (in bytes)
-//        word(7..0) = ignored
-//   r1 - destination address
+//   source      - pointer to a header word, followed by compressed data
+//                 word(31..8) = size of uncompressed data (in bytes)
+//                 word(7..0) = ignored
+//   destination - destination address
 // Writes data a byte at a time
 //
 // DecompressLZSSVram (swi 0x12)
@@ -285,71 +351,84 @@ extern int swiDecompressRLEVram(void * source, void * destination, uint32 toGetS
 
 //////////////////////////////////////////////////////////////////////
 //
-// DecodeDelta8 (swi 0x16)
-//   r0 - pointer to a header word, followed by encoded data
-//        word(31..8) = size of data (in bytes)
-//        word(7..0) = ignored
-//   r1 - destination address
+// swiDecodeDelta8
+//   source      - pointer to a header word, followed by encoded data
+//                 word(31..8) = size of data (in bytes)
+//                 word(7..0) = ignored
+//   destination - destination address
 // Writes data a byte at a time
 //
-// DecodeDelta16 (swi 0x18)
-//   r0 - pointer to a header word, followed by encoded data
-//        word(31..8) = size of data (in bytes)
-//        word(7..0) = ignored
-//   r1 - destination address
+// Note: ARM9 exclusive swi 0x16
+//
+//////////////////////////////////////////////////////////////////////
+
+#ifdef ARM9
+extern void swiDecodeDelta8(void * source, void * destination);
+#endif
+
+//////////////////////////////////////////////////////////////////////
+//
+// swiDecodeDelta16
+//   source      - pointer to a header word, followed by encoded data
+//                 word(31..8) = size of data (in bytes)
+//                 word(7..0) = ignored
+//   destination - destination address
 // Writes data a halfword at a time
 //
+// Note: ARM9 exclusive swi 0x18
+//
 //////////////////////////////////////////////////////////////////////
 
-extern void swiDecodeDelta8(void * source, void * destination);
+#ifdef ARM9
 extern void swiDecodeDelta16(void * source, void * destination);
+#endif
 
 //////////////////////////////////////////////////////////////////////
 //
-// swiGetSineTable(int index) (swi 0x1A)
+// swiGetSineTable(int index)
 //  Returns an entry in the sine table (index = 0..63)
 //
+// Note: ARM7 exclusive swi 0x1A
+//
 //////////////////////////////////////////////////////////////////////
 
+#ifdef ARM7
 uint16 swiGetSineTable(int index);
+#endif
 
 //////////////////////////////////////////////////////////////////////
 //
-// GetPitchTable(int index) (swi 0x1B)
-//  Returns an entry in the pitch table (index = 0..767)
+// swiGetPitchTable(int index)
+//   Returns an entry in the pitch table (index = 0..767)
+//
+// Note: ARM7 exclusive swi 0x1B
 //
 //////////////////////////////////////////////////////////////////////
 
+#ifdef ARM7
 extern uint16 swiGetPitchTable(int index);
+#endif
 
 //////////////////////////////////////////////////////////////////////
 //
-// GetVolumeTable(int index)
-//  Returns an entry in the volume table (index = 0..723)
+// swiGetVolumeTable(int index)
+//   Returns an entry in the volume table (index = 0..723)
+//
+// Note: ARM7 exclusive swi 0x1C
 //
 //////////////////////////////////////////////////////////////////////
 
+#ifdef ARM7
 extern uint8 swiGetVolumeTable(int index);
-
+#endif
 
 //////////////////////////////////////////////////////////////////////
-//
-// Unknown (swi 0x1D)
-//
-//////////////////////////////////////////////////////////////////////
-
-extern void swiUnknown(void);
-
-/*---------------------------------------------------------------------------------
-	SetHaltCR(uint32 data) (swi 0x1F)
-	Writes data to 0x04000300:32
----------------------------------------------------------------------------------*/
-extern void swiSetHaltCR(uint32 data);
-
 
 #ifdef __cplusplus
 }
 #endif
+
+//////////////////////////////////////////////////////////////////////
 
 #endif
 
