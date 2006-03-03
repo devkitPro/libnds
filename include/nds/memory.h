@@ -25,6 +25,9 @@
 		distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.5  2006/02/21 00:09:40  wntrmute
+  corrected packing on tGBAHeader struct
+
   Revision 1.4  2005/11/27 07:54:23  joatski
   Added log line, again!
 
@@ -33,9 +36,11 @@
 #ifndef NDS_MEMORY_INCLUDE
 #define NDS_MEMORY_INCLUDE
 
+//////////////////////////////////////////////////////////////////////
 
 #include "jtypes.h"
 
+//////////////////////////////////////////////////////////////////////
 
 // WAIT_CR: Wait State Control Register
 #define WAIT_CR       (*(vuint16*)0x04000204)
@@ -47,12 +52,14 @@
 #define ARM7_OWNS_CARD 0
 #define ARM7_OWNS_ROM  0
 
+//////////////////////////////////////////////////////////////////////
 
 // Protection register (write-once sadly)
 #ifdef ARM7
 #define PROTECTION    (*(vuint32*)0x04000308)
 #endif
 
+//////////////////////////////////////////////////////////////////////
 
 #define ALLRAM        ((uint8*)0x00000000)
 
@@ -67,6 +74,8 @@
 #define GBAROM        ((uint16*)0x08000000)
 
 #define SRAM          ((uint8*)0x0A000000)
+
+//////////////////////////////////////////////////////////////////////
 
 #ifdef ARM9
 #define PALETTE       ((uint16*)0x05000000)
@@ -97,9 +106,13 @@
 
 #define OAM           ((uint16*)0x07000000)
 #define OAM_SUB       ((uint16*)0x07000400)
-
 #endif
 
+#ifdef ARM7
+#define VRAM          ((uint16*)0x06000000)
+#endif
+
+//////////////////////////////////////////////////////////////////////
 
 typedef struct sGBAHeader {
 	uint32 entryPoint;
@@ -118,13 +131,88 @@ typedef struct sGBAHeader {
 
 #define GBA_HEADER (*(tGBAHeader *)0x08000000)
 
+//////////////////////////////////////////////////////////////////////
+
+typedef struct sNDSHeader {
+  char gameTitle[12];
+  char gameCode[4];
+  char makercode[2];
+  uint8 unitCode;
+  uint8 deviceType;           // type of device in the game card
+  uint8 deviceSize;           // device capacity (1<<n Mbit)
+  uint8 reserved1[9];
+  uint8 romversion;
+  uint8 flags;                // auto-boot flag
+
+  uint32 arm9romSource;
+  uint32 arm9executeAddress;
+  uint32 arm9destination;
+  uint32 arm9binarySize;
+
+  uint32 arm7romSource;
+  uint32 arm7executeAddress;
+  uint32 arm7destination;
+  uint32 arm7binarySize;
+
+  uint32 filenameSource;
+  uint32 filenameSize;
+  uint32 fatSource;
+  uint32 fatSize;
+
+  uint32 arm9overlaySource;
+  uint32 arm9overlaySize;
+  uint32 arm7overlaySource;
+  uint32 arm7overlaySize;
+
+  uint32 cardControl13;  // used in modes 1 and 3
+  uint32 cardControlBF;  // used in mode 2
+  uint32 bannerOffset;
+
+  uint16 secureCRC16;
+
+  uint16 readTimeout;
+
+  uint32 unknownRAM1;
+  uint32 unknownRAM2;
+
+  uint32 bfPrime1;
+  uint32 bfPrime2;
+  uint32 romSize;
+
+  uint32 headerSize;
+  uint32 zeros88[14];
+  uint8 gbaLogo[156];
+  uint16 logoCRC16;
+  uint16 headerCRC16;
+
+  uint32 debugRomSource;
+  uint32 debugRomSize;
+  uint32 debugRomDestination;
+  uint32 offset_0x16C;
+
+  uint8 zero[0x90];
+} __attribute__ ((__packed__)) tNDSHeader;
+
+#define NDSHeader (*(tNDSHeader *)0x027FFE00)
+
+//////////////////////////////////////////////////////////////////////
+
+typedef struct sNDSBanner {
+  uint16 version;
+  uint16 crc;
+  uint8 reserved[28];
+  uint8 icon[512];
+  uint16 palette[16];
+  uint16 titles[6][128];
+} __attribute__ ((__packed__)) tNDSBanner;
+
+//////////////////////////////////////////////////////////////////////
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-
 #ifdef ARM9
-
 #define BUS_OWNER_ARM9 true
 #define BUS_OWNER_ARM7 false
 
@@ -136,11 +224,13 @@ void sysSetCartOwner(bool arm9);
 
 #endif
 
+//////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 }
 #endif
 
+//////////////////////////////////////////////////////////////////////
 
 #endif
 
