@@ -12,16 +12,16 @@ Include Sub Directories=1
 [Group]
 0=
 [Open Files]
-Open File0=
-Active File Display Mode=-1
-Open File Pos0=2094
-Open File Line0=1424
-Active File Index=0
-Open File Window Pos0=2,3,-1,-1,-4,-23,22,22,801,434
-Open File1=
-Open File Pos1=4701
-Open File Line1=4150
-Open File Window Pos1=2,3,-1,-1,-4,-23,0,0,761,479
+Open File0=E:\projects\devkitPro\libnds\source\common\biosCalls.s
+Active File Display Mode=3
+Open File Pos0=10270
+Open File Line0=11478
+Active File Index=1
+Open File Window Pos0=0,1,-1,-1,-4,-23,0,0,779,412
+Open File1=C:\Program Files\NSIS\Contrib\Inetc\inetc.cpp
+Open File Pos1=0
+Open File Line1=1145
+Open File Window Pos1=2,3,-1,-1,-4,-23,22,22,805,438
 Open File2=
 Open File Pos2=9571
 Open File Line2=8538
@@ -108,7 +108,7 @@ Open File Line22=4362
 Open File Window Pos22=0,1,-1,-1,-4,-23,154,154,1031,598
 Open File23=
 [File View]
-Current Select=Project Files\source\common\gbfs.c
+Current Select=Project Files
 Scroll Position=0
 [Files]
 0=include\
