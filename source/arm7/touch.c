@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.17 2006-02-21 23:50:10 wntrmute Exp $
+	$Id: touch.c,v 1.18 2006-04-04 23:05:19 wntrmute Exp $
 
 	Touch screen control for the ARM7
 
@@ -26,6 +26,9 @@
 			distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.17  2006/02/21 23:50:10  wntrmute
+	corrected build errors
+	
 	Revision 1.16  2006/02/21 20:25:49  dovoto
 	Fixed some compilation errors (missing paranthesis and missing include)
 	
@@ -177,6 +180,9 @@ touchPosition touchReadXY() {
 
 	s16 px = ( touchPos.x * xscale - xoffset + xscale/2 ) >>19;
 	s16 py = ( touchPos.y * yscale - yoffset + yscale/2 ) >>19;
+	
+	touchPos.z1 = readTouchValue( TSC_MEASURE_Z1, _MaxRetry, _MaxRange);
+	touchPos.z2 = readTouchValue( TSC_MEASURE_Z2, _MaxRetry, _MaxRange);
 
 	if ( px < 0) px = 0;
 	if ( py < 0) py = 0;

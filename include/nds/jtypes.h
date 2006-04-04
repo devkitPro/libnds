@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: jtypes.h,v 1.13 2005-10-21 22:43:05 wntrmute Exp $
+	$Id: jtypes.h,v 1.14 2006-04-04 23:05:19 wntrmute Exp $
 
 	jtypes.h -- Common types (and a few useful macros)
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.13  2005/10/21 22:43:05  wntrmute
+	Removed bogus ASSERT
+	
 	Revision 1.12  2005/09/03 17:07:25  wntrmute
 	added function pointer for interrupts
 	
@@ -154,6 +157,8 @@ typedef struct touchPosition {
 	int16	y;
 	int16	px;
 	int16	py;
+	int16	z1;
+	int16	z2;
 } touchPosition;
 
 
