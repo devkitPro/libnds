@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.11 2005-11-07 01:11:08 wntrmute Exp $
+	$Id: interrupts.h,v 1.12 2006-04-23 18:19:15 wntrmute Exp $
 
 	Interrupt registers and vector pointers
 
@@ -27,6 +27,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.11  2005/11/07 01:11:08  wntrmute
+	more doxygen
+	moved IntrMain declaration to C file
+	
 	Revision 1.10  2005/10/03 21:21:21  wntrmute
 	doxygenation
 	
@@ -145,16 +149,18 @@ enum IME_VALUE {
 #define IRQ_HANDLER             (*(VoidFunctionPointer *)(0x04000000-4))
 #endif
 
-#ifdef ARM9
-
-#define VBLANK_INTR_WAIT_FLAGS  (*(vuint32*)0x00803FF8)
-#define IRQ_HANDLER             (*(VoidFunctionPointer *)0x00803FFC)
-#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#ifdef ARM9
+
+extern vuint32*	__irq_vector;
+extern	vuint32*	__irq_flags;
+#define VBLANK_INTR_WAIT_FLAGS  (*__irq_flags)
+#define IRQ_HANDLER             (*(VoidFunctionPointer *)__irq_vector)
+#endif
 
 struct IntTable{IntFn handler; u32 mask;};
 

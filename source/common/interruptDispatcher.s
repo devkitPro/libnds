@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interruptDispatcher.s,v 1.5 2005-12-12 13:01:55 wntrmute Exp $
+	$Id: interruptDispatcher.s,v 1.6 2006-04-23 18:19:15 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2005/12/12 13:01:55  wntrmute
+	disable interrupts on return from user handler
+	
 	Revision 1.4  2005/10/21 22:43:42  wntrmute
 	restore REG_IME on exit from null handler
 	
@@ -70,17 +73,18 @@ IntrMain:
 #endif
 
 #ifdef ARM9
-	ldr	r0,=0x00803FF8		@ Bios irq flags on ARM9
-	ldr	r2,[r0]
+@	ldr	r0,=0x00803FF8		@ Bios irq flags on ARM9
+	ldr	r0,=__dtcm_top
+	ldr	r2,[r0, #-8]
 	orr	r2,r2,r1
-	str	r2,[r0]
+	str	r2,[r0, #-8]
 #endif
 
 	ldr	r2,=irqTable
 @---------------------------------------------------------------------------------
 findIRQ:
 @---------------------------------------------------------------------------------
-	ldr	r0, [r2, #4]
+	ldr r0, [r2, #4]
 	cmp	r0,#0
 	beq	no_handler
 	ands	r0, r0, r1
