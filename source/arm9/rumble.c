@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: rumble.c,v 1.3 2005-11-27 07:47:07 joatski Exp $
+	$Id: rumble.c,v 1.4 2006-04-26 05:54:00 wntrmute Exp $
 	Copyright (C) 2005
 		Michael Noland (joat)
 		Jason Rogers (dovoto)
@@ -20,18 +20,22 @@
      must not be misrepresented as being the original software.
   3. This notice may not be removed or altered from any source
      distribution.
+
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/11/27 07:47:07  joatski
+	Fixed multiple linebreaks.
+	Moved cart bus control functions and GBA header to memory.h
+	
 	Revision 1.2  2005/11/02 07:06:20  bigredpimp
 	Added revision comment block
 	
 ---------------------------------------------------------------------------------*/
-#include <nds.h>
 #include <nds/jtypes.h>
 #include <nds/memory.h>
 #include <nds/arm9/rumble.h>
-//////////////////////////////////////////////////////////////////////
-bool isRumbleInserted(void)
-{
+//---------------------------------------------------------------------------------
+bool isRumbleInserted(void) {
+//---------------------------------------------------------------------------------
 	uint16 four[4];
 	sysSetCartOwner(BUS_OWNER_ARM9);
 	// First, check for 0x96 to see if it's a GBA game
@@ -46,9 +50,8 @@ bool isRumbleInserted(void)
 		return (four[0] == 0x00) && (four[2] == 0x00) && (four[1] == 0x01) && (four[3] == 0x01);
 	}
 }
-//////////////////////////////////////////////////////////////////////
-void setRumble(bool position)
-{
+//---------------------------------------------------------------------------------
+void setRumble(bool position) {
+//---------------------------------------------------------------------------------
 	RUMBLE_PAK = (position ? 2 : 0);
 }
-//////////////////////////////////////////////////////////////////////

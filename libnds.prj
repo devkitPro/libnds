@@ -12,8 +12,8 @@ Include Sub Directories=1
 [Group]
 0=
 [Open Files]
-Open File0=E:\projects\devkitPro\libnds\include\nds\interrupts.h
-Active File Display Mode=3
+Open File0=
+Active File Display Mode=-1
 Open File Pos0=4781
 Open File Line0=4161
 Open File Window Pos0=0,1,-1,-1,-4,-23,22,22,823,426
@@ -32,7 +32,7 @@ Active File Index=3
 Open File Window Pos3=2,3,-1,-1,-4,-23,110,110,915,518
 Open File4=
 [File View]
-Current Select=Project Files\source\common\interrupts.c
+Current Select=Project Files\source\arm9\rumble.c
 Scroll Position=0
 [Files]
 0=include\
