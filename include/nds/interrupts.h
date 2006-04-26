@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.12 2006-04-23 18:19:15 wntrmute Exp $
+	$Id: interrupts.h,v 1.13 2006-04-26 05:11:31 wntrmute Exp $
 
 	Interrupt registers and vector pointers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.12  2006/04/23 18:19:15  wntrmute
+	reworked interrupt code to allow dtcm moving
+	
 	Revision 1.11  2005/11/07 01:11:08  wntrmute
 	more doxygen
 	moved IntrMain declaration to C file
@@ -145,8 +148,8 @@ enum IME_VALUE {
 
 
 #ifdef ARM7
-#define VBLANK_INTR_WAIT_FLAGS  (*(vuint32*)(0x04000000-8))
-#define IRQ_HANDLER             (*(VoidFunctionPointer *)(0x04000000-4))
+#define VBLANK_INTR_WAIT_FLAGS  (*(vuint32*)(0x0380fff8))
+#define IRQ_HANDLER             (*(VoidFunctionPointer *)(0x0380fffC))
 #endif
 
 
@@ -156,8 +159,8 @@ extern "C" {
 
 #ifdef ARM9
 
-extern vuint32*	__irq_vector;
-extern	vuint32*	__irq_flags;
+extern vuint32	__irq_vector[];
+extern	vuint32	__irq_flags[];
 #define VBLANK_INTR_WAIT_FLAGS  (*__irq_flags)
 #define IRQ_HANDLER             (*(VoidFunctionPointer *)__irq_vector)
 #endif

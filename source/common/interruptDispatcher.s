@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interruptDispatcher.s,v 1.6 2006-04-23 18:19:15 wntrmute Exp $
+	$Id: interruptDispatcher.s,v 1.7 2006-04-26 05:11:31 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.6  2006/04/23 18:19:15  wntrmute
+	reworked interrupt code to allow dtcm moving
+	
 	Revision 1.5  2005/12/12 13:01:55  wntrmute
 	disable interrupts on return from user handler
 	
@@ -66,19 +69,11 @@ IntrMain:
 	ldr	r2, [r3,#0x214]		@ REG_IF
 	and	r1,r1,r2
 
-#ifdef ARM7
-	ldr	r2, [r3, #-8]		@\mix up with BIOS irq flags at 3007FF8h,
-	orr	r2, r2, r1		@ aka mirrored at 3FFFFF8h, this is required
-	str	r2, [r3, #-8]		@/when using the (VBlank)IntrWait functions
-#endif
+	ldr	r0,=__irq_flags		@ defined by linker script
 
-#ifdef ARM9
-@	ldr	r0,=0x00803FF8		@ Bios irq flags on ARM9
-	ldr	r0,=__dtcm_top
-	ldr	r2,[r0, #-8]
+	ldr	r2,[r0]
 	orr	r2,r2,r1
-	str	r2,[r0, #-8]
-#endif
+	str	r2,[r0]
 
 	ldr	r2,=irqTable
 @---------------------------------------------------------------------------------

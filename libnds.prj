@@ -12,10 +12,27 @@ Include Sub Directories=1
 [Group]
 0=
 [Open Files]
-Open File0=
-Active File Display Mode=-1
+Open File0=E:\projects\devkitPro\libnds\include\nds\interrupts.h
+Active File Display Mode=3
+Open File Pos0=4781
+Open File Line0=4161
+Open File Window Pos0=0,1,-1,-1,-4,-23,22,22,823,426
+Open File1=E:\devkitPro_test\devkitARM\arm-elf\lib\ds_arm7.ld
+Open File Pos1=647
+Open File Line1=0
+Open File Window Pos1=0,1,-1,-1,-4,-23,66,66,871,474
+Open File2=E:\devkitPro_test\devkitARM\arm-elf\lib\ds_cart.ld
+Open File Pos2=436
+Open File Line2=0
+Open File Window Pos2=0,1,-1,-1,-4,-23,88,88,893,496
+Open File3=E:\projects\devkitPro\libnds\source\common\interrupts.c
+Open File Pos3=3590
+Open File Line3=2953
+Active File Index=3
+Open File Window Pos3=2,3,-1,-1,-4,-23,110,110,915,518
+Open File4=
 [File View]
-Current Select=Project Files
+Current Select=Project Files\source\common\interrupts.c
 Scroll Position=0
 [Files]
 0=include\
