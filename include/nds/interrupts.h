@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.13 2006-04-26 05:11:31 wntrmute Exp $
+	$Id: interrupts.h,v 1.14 2006-05-05 05:31:37 wntrmute Exp $
 
 	Interrupt registers and vector pointers
 
@@ -27,6 +27,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.13  2006/04/26 05:11:31  wntrmute
+	rebase dtcm, take __irq_flags and __irq_vector from linker script
+	move arm7 irq vector & irq flags to actual locations
+	
 	Revision 1.12  2006/04/23 18:19:15  wntrmute
 	reworked interrupt code to allow dtcm moving
 	
@@ -147,23 +151,15 @@ enum IME_VALUE {
 };
 
 
-#ifdef ARM7
-#define VBLANK_INTR_WAIT_FLAGS  (*(vuint32*)(0x0380fff8))
-#define IRQ_HANDLER             (*(VoidFunctionPointer *)(0x0380fffC))
-#endif
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#ifdef ARM9
 
-extern vuint32	__irq_vector[];
+extern VoidFunctionPointer	__irq_vector[];
 extern	vuint32	__irq_flags[];
-#define VBLANK_INTR_WAIT_FLAGS  (*__irq_flags)
-#define IRQ_HANDLER             (*(VoidFunctionPointer *)__irq_vector)
-#endif
+#define VBLANK_INTR_WAIT_FLAGS  *(__irq_flags)
+#define IRQ_HANDLER             *(__irq_vector)
 
 struct IntTable{IntFn handler; u32 mask;};
 
