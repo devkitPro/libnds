@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: gbfs.c,v 1.4 2006-02-25 02:31:12 wntrmute Exp $
+	$Id: gbfs.c,v 1.5 2006-05-05 05:32:06 wntrmute Exp $
 
 	access object in a GBFS file
 
@@ -28,6 +28,9 @@
 	IN THE SOFTWARE.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2006/02/25 02:31:12  wntrmute
+	tabs, not spaces
+	
 	Revision 1.3  2005/09/20 04:59:44  wntrmute
 	*** empty log message ***
 	
@@ -71,9 +74,11 @@ static int GBFS_STRIDE = 256;
 /*---------------------------------------------------------------------------------
 	Set the search limits and stride for searching
 ---------------------------------------------------------------------------------*/
-void gbfs_search_range(	u32 gbfs_1st_limit,
-												u32 gbfs_2nd_start, u32 gbfs_2nd_limit,
-												u32 gbfs_stride ) {
+void gbfs_search_range(
+	u32 gbfs_1st_limit,
+	u32 gbfs_2nd_start, u32 gbfs_2nd_limit,
+	u32 gbfs_stride
+) {
 //---------------------------------------------------------------------------------
 	if ( NULL != gbfs_1st_limit ) GBFS_1ST_SEARCH_LIMIT = (u32 *)gbfs_1st_limit;
 	if ( NULL != gbfs_2nd_limit ) GBFS_2ND_SEARCH_LIMIT = (u32 *)gbfs_2nd_limit;
@@ -93,17 +98,16 @@ const GBFS_FILE * find_first_gbfs_file(const void *start) {
 	/* Linear-search first in multiboot space. */
 	while(here < GBFS_1ST_SEARCH_LIMIT)
 	{
-		/* We have to keep the magic code in two pieces; otherwise,
-			 this function may find itself and think it's a GBFS file.
-			 This obviously won't work if your compiler stores this
-			 numeric literal just before the literal string, but Devkit
-			 Advance R4 and R5 seem to keep numeric constant pools
-			 separate enough from string pools for this to work.
+		/*	We have to keep the magic code in two pieces; otherwise,
+			this function may find itself and think it's a GBFS file.
+			This obviously won't work if your compiler stores this
+			numeric literal just before the literal string, but Devkit
+			Advance R4 and R5 seem to keep numeric constant pools
+			separate enough from string pools for this to work.
 		*/
-		if(*here == 0x456e6950)  /* ASCII code for little endian "PinE" */
-		{
-			/* We've matched the first four bytes.
-				 If the rest of the magic matches, then we've found a file. */
+		if(*here == 0x456e6950) { /* ASCII code for little endian "PinE" */
+			/*	We've matched the first four bytes.
+				If the rest of the magic matches, then we've found a file. */
 			if(!memcmp(here + 1, rest_of_magic, 12))
 				return (const GBFS_FILE *)here;
 		}
@@ -113,11 +117,9 @@ const GBFS_FILE * find_first_gbfs_file(const void *start) {
 	/* Now search in ROM space. */
 	if(here < GBFS_2ND_SEARCH_START)
 		here = GBFS_2ND_SEARCH_START;
-	while(here < GBFS_2ND_SEARCH_LIMIT)
-	{
+	while(here < GBFS_2ND_SEARCH_LIMIT) {
 		/* Search loop same as above. */
-		if(*here == 0x456e6950)  /* ASCII code for little endian "PinE" */
-		{
+		if(*here == 0x456e6950) {  /* ASCII code for little endian "PinE" */
 			if(!memcmp(here + 1, rest_of_magic, 12))
 				return (const GBFS_FILE *)here;
 		}
@@ -180,8 +182,7 @@ const void *gbfs_get_nth_obj(	const GBFS_FILE *file,
 	if(n >= n_entries)
 		return NULL;
 
-	if(name)
-	{
+	if(name) {
 		strncpy(name, here->name, 24);
 		name[24] = 0;
 	}
