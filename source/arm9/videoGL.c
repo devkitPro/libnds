@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.21 2006-05-08 03:22:20 dovoto Exp $
+	$Id: videoGL.c,v 1.22 2006-05-08 03:23:32 dovoto Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -751,7 +751,7 @@ void glTexParameter(	uint8 sizeX, uint8 sizeY,
 //---------------------------------------------------------------------------------
 void* glGetTexturePointer(	int name) {
 //---------------------------------------------------------------------------------
-	return (void*) ((textures[activeTexture] & 0xFFFF) << 3);
+	return (void*) ((textures[name] & 0xFFFF) << 3);
 }
 
 //---------------------------------------------------------------------------------
