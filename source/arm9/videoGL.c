@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.20 2006-05-08 03:19:51 dovoto Exp $
+	$Id: videoGL.c,v 1.21 2006-05-08 03:22:20 dovoto Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,11 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.20  2006/05/08 03:19:51  dovoto
+	Added glGetTexturePointer which allows the user to retreive a pointer to texture memory for the named texture.
+	
+	Small fix to the texture reset code.  The texture name is now reset as well.
+	
 	Revision 1.19  2006/01/05 08:13:26  dovoto
 	Fixed gluLookAt (again)
 	Major update to palette handling (likely a breaking change if you were using the gl texture palettes from before)
@@ -672,7 +677,7 @@ void glResetTextures(void) {
 //	a pointer to the names array that it needs to fill.
 //  Returns 1 if succesful and 0 if out of texture names
 //---------------------------------------------------------------------------------
-int nameCount = 1;
+
 int glGenTextures(int n, int *names) {
 //---------------------------------------------------------------------------------
 	
