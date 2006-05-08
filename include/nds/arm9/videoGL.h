@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.21 2006-01-05 08:13:26 dovoto Exp $
+	$Id: videoGL.h,v 1.22 2006-05-08 03:19:51 dovoto Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.21  2006/01/05 08:13:26  dovoto
+	Fixed gluLookAt (again)
+	Major update to palette handling (likely a breaking change if you were using the gl texture palettes from before)
+	
 	Revision 1.20  2005/11/27 04:23:19  joatski
 	Renamed glAlpha to glAlphaFunc (old name is present but deprecated)
 	Added new texture formats
@@ -539,8 +543,15 @@ the addr on
 internal call to
   glTexParameter)
   */
-
   u32 glGetTexParameter();
+/*! \fn void* glGetTexturePointer(	int name)
+\brief returns the address alocated to the texure named by name
+*/
+void* glGetTexturePointer(	int name);
+
+/*! \fn void glColorTable(uint8 format, uint32 addr)
+\brief 
+*/
   void glColorTable(uint8 format, uint32 addr);
 /*! \fn void glBindTexture(int target, int name)
 \brief Binds the state machine to the specified texture ID

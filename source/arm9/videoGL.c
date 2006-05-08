@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.19 2006-01-05 08:13:26 dovoto Exp $
+	$Id: videoGL.c,v 1.20 2006-05-08 03:19:51 dovoto Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,10 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.19  2006/01/05 08:13:26  dovoto
+	Fixed gluLookAt (again)
+	Major update to palette handling (likely a breaking change if you were using the gl texture palettes from before)
+	
 	Revision 1.18  2005/11/27 04:23:19  joatski
 	Renamed glAlpha to glAlphaFunc (old name is present but deprecated)
 	Added new texture formats
@@ -652,13 +656,14 @@ uint32 activeTexture = 0;
 
 uint32* nextBlock = (uint32*)0x06800000;
 uint32  nextPBlock = 0;
-
+int nameCount = 1;
 //---------------------------------------------------------------------------------
 void glResetTextures(void) {
 //---------------------------------------------------------------------------------
 	activeTexture = 0;
 	nextBlock = (uint32*)0x06800000;
 	nextPBlock = 0;
+	nameCount = 1;
 }
 
 //---------------------------------------------------------------------------------
@@ -667,18 +672,19 @@ void glResetTextures(void) {
 //	a pointer to the names array that it needs to fill.
 //  Returns 1 if succesful and 0 if out of texture names
 //---------------------------------------------------------------------------------
+int nameCount = 1;
 int glGenTextures(int n, int *names) {
 //---------------------------------------------------------------------------------
-	static int name = 1;
+	
 
 	int index = 0;
 
 	for(index = 0; index < n; index++) {
 
-		if(name >= MAX_TEXTURES)
+		if(nameCount >= MAX_TEXTURES)
 			return 0;
 		else
-			names[index] = name++;
+			names[index] = nameCount++;
 	}
 
 	return 1;
@@ -733,6 +739,14 @@ void glTexParameter(	uint8 sizeX, uint8 sizeY,
 											uint32 param) {
 //---------------------------------------------------------------------------------
 	textures[activeTexture] = param | (sizeX << 20) | (sizeY << 23) | (((uint32)addr >> 3) & 0xFFFF) | (mode << 26);
+}
+//---------------------------------------------------------------------------------
+//glGetTexturePointer gets a pointer to vram which contains the texture
+//
+//---------------------------------------------------------------------------------
+void* glGetTexturePointer(	int name) {
+//---------------------------------------------------------------------------------
+	return (void*) ((textures[activeTexture] & 0xFFFF) << 3);
 }
 
 //---------------------------------------------------------------------------------
