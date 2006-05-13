@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.16 2006-01-17 09:40:11 wntrmute Exp $
+	$Id: console.c,v 1.17 2006-05-13 13:37:15 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.16  2006/01/17 09:40:11  wntrmute
+	corrected off by one error in console clear code
+	
 	Revision 1.15  2006/01/10 05:45:02  dovoto
 	Added a consoleClear because i can....
 	
@@ -123,7 +126,7 @@ int con_close(struct _reent *r,int fd) {
 }
 
 //---------------------------------------------------------------------------------
-int con_open(struct _reent *r,const char *path,int flags,int mode) {
+int con_open(struct _reent *r, void *fileStruct, const char *path,int flags,int mode) {
 //---------------------------------------------------------------------------------
 	if (consoleInitialised) return 0;
 	return -1;
@@ -325,8 +328,27 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 	return count;
 }
 
-const devoptab_t dotab_stdout = {"con",con_open,con_close,con_write,con_read,NULL,NULL};
-const devoptab_t dotab_stderr = {"con",con_open,con_close,con_write,con_read,NULL,NULL};
+const devoptab_t dotab_stdout = {
+	"con",
+	0,
+	con_open,
+	con_close,
+	con_write,
+	con_read,
+	NULL,
+	NULL
+};
+
+const devoptab_t dotab_stderr = {
+	"con",
+	0,
+	con_open,
+	con_close,
+	con_write,
+	con_read,
+	NULL,
+	NULL
+};
 
 
 /*---------------------------------------------------------------------------------
