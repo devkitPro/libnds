@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: registers_alt.h,v 1.4 2005-11-27 13:48:20 wntrmute Exp $
+	$Id: registers_alt.h,v 1.5 2006-05-13 13:38:51 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/11/27 13:48:20  wntrmute
+	added deprecation notice
+	
 	Revision 1.3  2005/09/07 17:59:37  wntrmute
 	added header logging
 	
@@ -225,24 +228,24 @@
 #define	REG_HS_CTRL		(*(vu16*)0x4000140)
 
 /* Interupt	enable registers */
-#define	REG_IE			(*(vu32*)0x4000210)
-#define	REG_IF			(*(vu32*)0x4000214)
-#define	REG_IME			(*(vu16*)0x4000208)
+//#define	REG_IE			(*(vu32*)0x4000210)
+//#define	REG_IF			(*(vu32*)0x4000214)
+//#define	REG_IME			(*(vu16*)0x4000208)
 
 /*controls power  0x30f	is all on */
 #define	REG_POWER		*(vu16*)0x4000304
 
 /* ram	controllers	0x8	is enabled,	other bits have	to do with mapping */
-#define	REG_VRAM_A_CR		(*(vu8*) 0x4000240)
-#define	REG_VRAM_B_CR		(*(vu8*) 0x4000241)
-#define	REG_VRAM_C_CR		(*(vu8*) 0x4000242)
-#define	REG_VRAM_D_CR		(*(vu8*) 0x4000243)
-#define	REG_VRAM_E_CR		(*(vu8*) 0x4000244)
-#define	REG_VRAM_F_CR		(*(vu8*) 0x4000245)
-#define	REG_VRAM_G_CR		(*(vu8*) 0x4000246)
-#define	REG_VRAM_H_CR		(*(vu8*) 0x4000248)
-#define	REG_VRAM_I_CR		(*(vu8*) 0x4000249)
-#define	REG_REG_WRAM_CNT	(*(vu8*) 0x4000247)
+#define	REG_VRAM_A_CR	(*(vu8*) 0x4000240)
+#define	REG_VRAM_B_CR	(*(vu8*) 0x4000241)
+#define	REG_VRAM_C_CR	(*(vu8*) 0x4000242)
+#define	REG_VRAM_D_CR	(*(vu8*) 0x4000243)
+#define	REG_VRAM_E_CR	(*(vu8*) 0x4000244)
+#define	REG_VRAM_F_CR	(*(vu8*) 0x4000245)
+#define	REG_VRAM_G_CR	(*(vu8*) 0x4000246)
+#define	REG_VRAM_H_CR	(*(vu8*) 0x4000248)
+#define	REG_VRAM_I_CR	(*(vu8*) 0x4000249)
+#define	REG_WRAM_CNT	(*(vu8*) 0x4000247)
 
 
 

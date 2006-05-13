@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.20 2006-02-10 00:17:55 desktopman Exp $
+	$Id: video.h,v 1.21 2006-05-13 13:38:51 wntrmute Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.20  2006/02/10 00:17:55  desktopman
+	Added MODE_FIFO for main memory to FIFO display mode
+	
 	Revision 1.19  2006/02/02 00:11:57  wntrmute
 	corrected BG_64x32 & BG_32x64 defines
 	
@@ -71,18 +74,16 @@
 #error Video is only available on the ARM9
 #endif
 
-
 #include <nds/jtypes.h>
-
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-	
-
 // macro creates a 15 bit color from 3x5 bit components
 #define RGB15(r,g,b)  ((r)|((g)<<5)|((b)<<10))
+#define RGB5(r,g,b)  ((r)|((g)<<5)|((b)<<10))
+#define RGB8(r,g,b)  (((r)>>3)|(((g)>>3)<<5)|(((b)>>3)<<10))
 
 
 #define SCREEN_HEIGHT 192
@@ -282,17 +283,19 @@ void vramSetBankI(VRAM_I_TYPE i);
 #define DISPLAY_SPR_1D_SIZE_64		(1 << 20)
 #define DISPLAY_SPR_1D_SIZE_128		(2 << 20)
 #define DISPLAY_SPR_1D_SIZE_256		(3 << 20)
-#define DISPLAY_SPR_1D_BMP_SIZE_128		(0 << 22)
-#define DISPLAY_SPR_1D_BMP_SIZE_256		(1 << 22)
+#define DISPLAY_SPR_1D_BMP_SIZE_128	(0 << 22)
+#define DISPLAY_SPR_1D_BMP_SIZE_256	(1 << 22)
 
 
 #define DISPLAY_SPR_EXT_PALETTE		(1 << 31)
-#define DISPLAY_BG_EXT_PALETTE	(1 << 30)
+#define DISPLAY_BG_EXT_PALETTE		(1 << 30)
 
 #define DISPLAY_SCREEN_OFF     (1 << 7)
 
-#define videoSetMode(mode)  (DISPLAY_CR = (mode))
-#define videoSetModeSub(mode)  (SUB_DISPLAY_CR = (mode))
+static inline
+void videoSetMode( uint32 mode)  { DISPLAY_CR = mode; }
+static inline
+void videoSetModeSub( uint32 mode)  { SUB_DISPLAY_CR = mode; }
 
 #define BRIGHTNESS     (*(vuint16*)0x0400006C)
 #define SUB_BRIGHTNESS (*(vuint16*)0x0400106C)
@@ -513,24 +516,24 @@ void vramSetBankI(VRAM_I_TYPE i);
 // Sprite control defines
 
 // Attribute 0 consists of 8 bits of Y plus the following flags:
-#define ATTR0_NORMAL					(0<<8)
-#define ATTR0_ROTSCALE				(1<<8)
-#define ATTR0_DISABLED				(2<<8)
+#define ATTR0_NORMAL			(0<<8)
+#define ATTR0_ROTSCALE			(1<<8)
+#define ATTR0_DISABLED			(2<<8)
 #define ATTR0_ROTSCALE_DOUBLE	(3<<8)
 
-#define ATTR0_TYPE_NORMAL			(0<<10)
+#define ATTR0_TYPE_NORMAL		(0<<10)
 #define ATTR0_TYPE_BLENDED		(1<<10)
 #define ATTR0_TYPE_WINDOWED		(2<<10)
-#define ATTR0_BMP							(3<<10)
+#define ATTR0_BMP				(3<<10)
 
-#define ATTR0_MOSAIC					(1<<12)
+#define ATTR0_MOSAIC			(1<<12)
 
-#define ATTR0_COLOR_16				(0<<13) //16 color in tile mode...16 bit in bitmap mode
-#define ATTR0_COLOR_256				(1<<13)
+#define ATTR0_COLOR_16		(0<<13) //16 color in tile mode...16 bit in bitmap mode
+#define ATTR0_COLOR_256		(1<<13)
 
-#define ATTR0_SQUARE          (0<<14)
-#define ATTR0_WIDE            (1<<14)
-#define ATTR0_TALL            (2<<14)
+#define ATTR0_SQUARE		(0<<14)
+#define ATTR0_WIDE			(1<<14)
+#define ATTR0_TALL			(2<<14)
   
 // Atribute 1 consists of 9 bits of X plus the following flags:
 #define ATTR1_ROTDATA(n)      ((n)<<9)  // note: overlaps with flip flags
@@ -602,30 +605,30 @@ typedef struct sSpriteRotation {
 #define GFX_POLY_FORMAT       (*(vuint32*) 0x040004A4)
 #define GFX_ALPHA_TEST        (*(vuint16*) 0x04000340)
 
-#define GFX_BEGIN							(*(vuint32*) 0x04000500)
-#define GFX_END               (*(vuint32*) 0x04000504)
-#define GFX_FLUSH             (*(vuint32*) 0x04000540)
-#define GFX_VIEWPORT          (*(vuint32*) 0x04000580)
-#define GFX_TOON_TABLE		    ((vuint16*)  0x04000380)
-#define GFX_EDGE_TABLE		    ((vuint16*)  0x04000330)
-#define GFX_BOX_TEST		      (*(vfixed*)  0x040005C0)
+#define GFX_BEGIN			(*(vuint32*) 0x04000500)
+#define GFX_END				(*(vuint32*) 0x04000504)
+#define GFX_FLUSH			(*(vuint32*) 0x04000540)
+#define GFX_VIEWPORT		(*(vuint32*) 0x04000580)
+#define GFX_TOON_TABLE		((vuint16*)  0x04000380)
+#define GFX_EDGE_TABLE		((vuint16*)  0x04000330)
+#define GFX_BOX_TEST		(*(vfixed*)  0x040005C0)
 
 #define GFX_BUSY (GFX_STATUS & BIT(27))
 
-#define GFX_VERTEX_RAM_USAGE		(*(uint16*)  0x04000606)
-#define GFX_POLYGON_RAM_USAGE		(*(uint16*)  0x04000604)
+#define GFX_VERTEX_RAM_USAGE	(*(uint16*)  0x04000606)
+#define GFX_POLYGON_RAM_USAGE	(*(uint16*)  0x04000604)
 
-#define GFX_CUTOFF_DEPTH				(*(uint16*)0x04000610)
+#define GFX_CUTOFF_DEPTH		(*(uint16*)0x04000610)
 
 // Matrix processor control
 
 #define MATRIX_CONTROL		(*(vuint32*)0x04000440)
-#define MATRIX_PUSH				(*(vuint32*)0x04000444)
-#define MATRIX_POP				(*(vuint32*)0x04000448)
-#define MATRIX_SCALE			(*(vfixed*) 0x0400046C)
+#define MATRIX_PUSH			(*(vuint32*)0x04000444)
+#define MATRIX_POP			(*(vuint32*)0x04000448)
+#define MATRIX_SCALE		(*(vfixed*) 0x0400046C)
 #define MATRIX_TRANSLATE	(*(vfixed*) 0x04000470)
 #define MATRIX_RESTORE		(*(vuint32*)0x04000450)
-#define MATRIX_STORE			(*(vuint32*)0x0400044C)
+#define MATRIX_STORE		(*(vuint32*)0x0400044C)
 #define MATRIX_IDENTITY		(*(vuint32*)0x04000454)
 #define MATRIX_LOAD4x4		(*(vfixed*) 0x04000458)
 #define MATRIX_LOAD4x3		(*(vfixed*) 0x0400045C)
@@ -635,9 +638,9 @@ typedef struct sSpriteRotation {
 
 //matrix operation results
 #define MATRIX_READ_PROJECTION	((vfixed*) (0x04000640))
-#define MATRIX_READ_ROTATION		((vfixed*) (0x04000680))
-#define POINT_RESULT						((vfixed*) (0x04000620))
-#define VECTOR_RESULT						((vuint16*)(0x04000630))
+#define MATRIX_READ_ROTATION	((vfixed*) (0x04000680))
+#define POINT_RESULT			((vfixed*) (0x04000620))
+#define VECTOR_RESULT			((vuint16*)(0x04000630))
 
 #ifdef __cplusplus
 }
