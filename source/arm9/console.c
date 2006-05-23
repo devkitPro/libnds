@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.17 2006-05-13 13:37:15 wntrmute Exp $
+	$Id: console.c,v 1.18 2006-05-23 03:51:16 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.17  2006/05/13 13:37:15  wntrmute
+	updated for newlib driver API
+	
 	Revision 1.16  2006/01/17 09:40:11  wntrmute
 	corrected off by one error in console clear code
 	
@@ -113,24 +116,6 @@ static int consoleInitialised = 0;
 
 void consolePrintChar(char c);
 
-//---------------------------------------------------------------------------------
-int con_read(struct _reent *r,int fd,char *ptr,int len) {
-//---------------------------------------------------------------------------------
-	return -1;
-}
-
-//---------------------------------------------------------------------------------
-int con_close(struct _reent *r,int fd) {
-//---------------------------------------------------------------------------------
-	return -1;
-}
-
-//---------------------------------------------------------------------------------
-int con_open(struct _reent *r, void *fileStruct, const char *path,int flags,int mode) {
-//---------------------------------------------------------------------------------
-	if (consoleInitialised) return 0;
-	return -1;
-}
 
 //---------------------------------------------------------------------------------
 static void consoleCls(char mode) {
@@ -331,21 +316,10 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 const devoptab_t dotab_stdout = {
 	"con",
 	0,
-	con_open,
-	con_close,
-	con_write,
-	con_read,
 	NULL,
-	NULL
-};
-
-const devoptab_t dotab_stderr = {
-	"con",
-	0,
-	con_open,
-	con_close,
+	NULL,
 	con_write,
-	con_read,
+	NULL,
 	NULL,
 	NULL
 };
@@ -429,7 +403,7 @@ void consoleInit(	u16* font, u16* charBase,
 	}
 
 	devoptab_list[STD_OUT] = &dotab_stdout;
-	devoptab_list[STD_ERR] = &dotab_stderr;
+	devoptab_list[STD_ERR] = &dotab_stdout;
 	setvbuf(stderr, NULL , _IONBF, 0);
 	setvbuf(stdout, NULL , _IONBF, 0);
 	consoleCls('2');
