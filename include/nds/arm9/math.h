@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: math.h,v 1.9 2005-12-12 14:36:03 wntrmute Exp $
+	$Id: math.h,v 1.10 2006-06-01 01:44:26 crossraleigh Exp $
 
 	math functions
 
@@ -26,9 +26,12 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2005/12/12 14:36:03  wntrmute
+	*** empty log message ***
+
 	Revision 1.8  2005/09/07 18:07:29  wntrmute
 	corrected fdiv64 and mod64
-	
+
 	Revision 1.7  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 
@@ -55,8 +58,8 @@
 #define DIV_DENOMINATOR32	(*(vint32*) (0x04000298))
 #define DIV_RESULT64			(*(vint64*) (0x040002A0))
 #define DIV_RESULT32			(*(vint32*) (0x040002A0))
-#define DIV_REMANDER64		(*(vint64*) (0x040002A8))
-#define DIV_REMANDER32		(*(vint32*) (0x040002A8))
+#define DIV_REMAINDER64		(*(vint64*) (0x040002A8))
+#define DIV_REMAINDER32		(*(vint32*) (0x040002A8))
 
 #define SQRT_CR						(*(vuint16*)(0x040002B0))
 #define SQRT_PARAM64			(*(vint64*) (0x040002B8))
@@ -151,7 +154,7 @@ static inline int32 mod32(int32 num, int32 den)
 
 	while(DIV_CR & DIV_BUSY);
 
-	return (DIV_REMANDER32);
+	return (DIV_REMAINDER32);
 }
 
 //  Integer divide
@@ -185,7 +188,7 @@ static inline int32 mod64(int64 num, int32 den)
 
 	while(DIV_CR & DIV_BUSY);
 
-	return (DIV_REMANDER32);
+	return (DIV_REMAINDER32);
 }
 
 //  Integer square root
