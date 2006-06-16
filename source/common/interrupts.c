@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.c,v 1.8 2006-02-21 00:12:35 wntrmute Exp $
+	$Id: interrupts.c,v 1.9 2006-06-16 07:35:14 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2006/02/21 00:12:35  wntrmute
+	clear interrupts and enable REG_IME in irqInit
+	
 	Revision 1.7  2005/12/12 13:03:29  wntrmute
 	set/clear LCD interrupts in irqEnable/Disable
 	
@@ -50,13 +53,12 @@ void IntrMain();	// Prototype for assembly interrupt dispatcher
 void irqDummy(void) {}
 //---------------------------------------------------------------------------------
 
-// Placing the irqTable in dtcm fails, currently no idea why.
 
-//#ifdef ARM9
-//#define INT_TABLE_SECTION __attribute__((section(".sbss")))
-//#else
+#ifdef ARM9
+#define INT_TABLE_SECTION __attribute__((section(".itcm")))
+#else
 #define INT_TABLE_SECTION
-//#endif
+#endif
 
 struct IntTable irqTable[MAX_INTERRUPTS] INT_TABLE_SECTION;
 
@@ -76,9 +78,9 @@ void irqSet(int mask, IntFn handler) {
 	irqTable[i].mask	= mask;
 
 	if(mask & IRQ_VBLANK)
-		DISP_SR |= DISP_VBLANK_IRQ ;
+		REG_DISPSTAT |= DISP_VBLANK_IRQ ;
 	if(mask & IRQ_HBLANK)
-		DISP_SR |= DISP_HBLANK_IRQ ;
+		REG_DISPSTAT |= DISP_HBLANK_IRQ ;
 
 	REG_IE |= mask;
 }
@@ -97,9 +99,9 @@ void irqInit() {
 
 	IRQ_HANDLER = IntrMain;
 
-	REG_IE	=	0;				// disable all interrupts
-	REG_IF	=	IRQ_ALL;	// clear all pending interrupts
-	REG_IME = 1;				// enable global interrupt
+	REG_IE	= 0;			// disable all interrupts
+	REG_IF	= IRQ_ALL;		// clear all pending interrupts
+	REG_IME = 1;			// enable global interrupt
 
 }
 
@@ -116,10 +118,12 @@ void irqClear(int mask) {
 
 	irqTable[i].handler	= irqDummy;
 
-	if(mask & IRQ_VBLANK)
-		DISP_SR &= ~DISP_VBLANK_IRQ ;
-	if(mask & IRQ_HBLANK)
-		DISP_SR &= ~DISP_HBLANK_IRQ ;
+	if (mask & IRQ_VBLANK)
+		REG_DISPSTAT &= ~DISP_VBLANK_IRQ ;
+	if (mask & IRQ_HBLANK)
+		REG_DISPSTAT &= ~DISP_HBLANK_IRQ ;
+	if (mask & IRQ_VCOUNT)
+		REG_DISPSTAT &= ~DISP_YTRIGGER_IRQ;
 
 	REG_IE &= ~mask;
 }
@@ -140,10 +144,13 @@ void irqInitHandler(IntFn handler) {
 //---------------------------------------------------------------------------------
 void irqEnable(int irq) {
 //---------------------------------------------------------------------------------
-	if(irq & IRQ_VBLANK)
-		DISP_SR |= DISP_VBLANK_IRQ ;
-	if(irq & IRQ_HBLANK)
-		DISP_SR |= DISP_HBLANK_IRQ ;
+	if (irq & IRQ_VBLANK)
+		REG_DISPSTAT |= DISP_VBLANK_IRQ ;
+	if (irq & IRQ_HBLANK)
+		REG_DISPSTAT |= DISP_HBLANK_IRQ ;
+	if (irq & IRQ_VCOUNT)
+		REG_DISPSTAT |= DISP_YTRIGGER_IRQ;
+
 	REG_IE |= irq;
 	REG_IME = 1;
 }
@@ -151,10 +158,13 @@ void irqEnable(int irq) {
 //---------------------------------------------------------------------------------
 void irqDisable(int irq) {
 //---------------------------------------------------------------------------------
-	if(irq & IRQ_VBLANK)
-		DISP_SR &= ~DISP_VBLANK_IRQ ;
-	if(irq & IRQ_HBLANK)
-		DISP_SR &= ~DISP_HBLANK_IRQ ;
+	if (irq & IRQ_VBLANK)
+		REG_DISPSTAT &= ~DISP_VBLANK_IRQ ;
+	if (irq & IRQ_HBLANK)
+		REG_DISPSTAT &= ~DISP_HBLANK_IRQ ;
+	if (irq & IRQ_VCOUNT)
+		REG_DISPSTAT &= ~DISP_YTRIGGER_IRQ;
+
 	REG_IE &= ~irq;
 }
 

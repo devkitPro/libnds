@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: registers_alt.h,v 1.5 2006-05-13 13:38:51 wntrmute Exp $
+	$Id: registers_alt.h,v 1.6 2006-06-16 07:35:14 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2006/05/13 13:38:51  wntrmute
+	updated for registers moved to main headers
+	
 	Revision 1.4  2005/11/27 13:48:20  wntrmute
 	added deprecation notice
 	
@@ -52,8 +55,8 @@
 #define	REG_DISPCNT		(*(vu32*)0x4000000)
 
 
-#define	REG_DISPSTAT	(*(vu16*)0x4000004)
-#define	REG_VCOUNT		(*(vu16*)0x4000006)
+#define DISP_SR			(*(vuint16*)0x04000004)
+#define DISP_Y			(*(vuint16*)0x04000006)
 
 #define	REG_BGCTRL		( (vu16*)0x4000008)
 #define	REG_BG0CNT		(*(vu16*)0x4000008)
@@ -228,9 +231,9 @@
 #define	REG_HS_CTRL		(*(vu16*)0x4000140)
 
 /* Interupt	enable registers */
-//#define	REG_IE			(*(vu32*)0x4000210)
-//#define	REG_IF			(*(vu32*)0x4000214)
-//#define	REG_IME			(*(vu16*)0x4000208)
+#define	IE			(*(vu32*)0x4000210)
+#define	IF			(*(vu32*)0x4000214)
+#define	IME			(*(vu16*)0x4000208)
 
 /*controls power  0x30f	is all on */
 #define	REG_POWER		*(vu16*)0x4000304

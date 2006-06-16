@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.11 2006-02-25 02:18:53 wntrmute Exp $
+	$Id: system.h,v 1.12 2006-06-16 07:35:14 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.11  2006/02/25 02:18:53  wntrmute
+	doxygenation updates
+	
 	Revision 1.10  2006/02/21 00:06:41  wntrmute
 	changed powerON to OR values
 	added powerSET function to set value directly
@@ -71,7 +74,7 @@
 #define NDS_SYSTEM_INCLUDE
 
 //!	LCD status register.
-#define DISP_SR        (*(vuint16*)0x04000004)
+#define	REG_DISPSTAT	(*(vu16*)0x4000004)
 
 //!	The display currently in a vertical blank.
 #define DISP_IN_VBLANK     BIT(0)
@@ -91,8 +94,13 @@
 //!	Interrupt when current scanline and %DISP_Y match.
 #define DISP_YTRIGGER_IRQ  BIT(5)
 
+static inline
+void SetYtrigger(int Yvalue) {
+	REG_DISPSTAT = (REG_DISPSTAT & 0x007F ) | (Yvalue << 7);
+}
+
 //!	Current display scanline.
-#define DISP_Y      (*(vuint16*)0x04000006)
+#define	REG_VCOUNT		(*(vu16*)0x4000006)
 
 
 //!	Halt control register.
