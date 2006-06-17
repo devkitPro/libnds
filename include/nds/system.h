@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.12 2006-06-16 07:35:14 wntrmute Exp $
+	$Id: system.h,v 1.13 2006-06-17 00:26:40 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,6 +27,11 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.12  2006/06/16 07:35:14  wntrmute
+	more moves to REG_ values
+	implement SetYtrigger helper function
+	set bits in REG_DISPSTAT for IRQ_VCOUNT
+	
 	Revision 1.11  2006/02/25 02:18:53  wntrmute
 	doxygenation updates
 	
@@ -96,7 +101,7 @@
 
 static inline
 void SetYtrigger(int Yvalue) {
-	REG_DISPSTAT = (REG_DISPSTAT & 0x007F ) | (Yvalue << 7);
+	REG_DISPSTAT = (REG_DISPSTAT & 0x007F ) | (Yvalue << 8) | (( Yvalue & 0x100 ) >> 2) ;
 }
 
 //!	Current display scanline.
