@@ -40,7 +40,7 @@ export ARM7INC	:=	-I$(BUILDDIR)/arm7
 
 export ARCH	:=	-mthumb -mthumb-interwork
 
-export ARM9FLAGS	:=	$(ARCH) -mcpu=arm9 -mtune=arm9 -DARM9
+export ARM9FLAGS	:=	$(ARCH) -march=armv5te -mtune=arm946e-s -DARM9
 export ARM7FLAGS	:=	$(ARCH) -mcpu=arm7tdmi -mtune=arm7tdmi -DARM7
 
 export BASEFLAGS	:=	-g -Wall -O2\
