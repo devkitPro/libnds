@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: nds.h,v 1.9 2006-04-26 05:52:37 wntrmute Exp $
+	$Id: nds.h,v 1.10 2006-06-18 21:16:26 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -27,9 +27,12 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2006/04/26 05:52:37  wntrmute
+	added all headers to main nds header
+
 	Revision 1.8  2005/08/31 01:09:46  wntrmute
 	removed spurious comment
-	
+
 	Revision 1.7  2005/08/23 17:06:09  wntrmute
 	converted all endings to unix
 
@@ -49,33 +52,34 @@
 extern "C" {
 #endif
 
-#include "nds/jtypes.h"
-#include "nds/bios.h"
-#include "nds/card.h"
-#include "nds/dma.h"
-#include "nds/interrupts.h"
-#include "nds/ipc.h"
-#include "nds/memory.h"
-#include "nds/system.h"
-#include "nds/timers.h"
+#include <nds/jtypes.h>
+#include <nds/bios.h>
+#include <nds/card.h>
+#include <nds/dma.h>
+#include <nds/interrupts.h>
+#include <nds/ipc.h>
+#include <nds/memory.h>
+#include <nds/system.h>
+#include <nds/timers.h>
 
 //---------------------------------------------------------------------------------
 #ifdef ARM9
 //---------------------------------------------------------------------------------
 
-#include "nds/arm9/boxtest.h"
-#include "nds/arm9/cache.h"
-#include "nds/arm9/console.h"
-#include "nds/arm9/CP15.h"
-#include "nds/arm9/image.h"
-#include "nds/arm9/input.h"
-#include "nds/arm9/math.h"
-#include "nds/arm9/pcx.h"
-#include "nds/arm9/rumble.h"
-#include "nds/arm9/sound.h"
-#include "nds/arm9/trig_lut.h"
-#include "nds/arm9/video.h"
-#include "nds/arm9/videoGL.h"
+#include <nds/arm9/boxtest.h>
+#include <nds/arm9/cache.h>
+#include <nds/arm9/console.h>
+#include <nds/arm9/CP15.h>
+#include <nds/arm9/exceptions.h>
+#include <nds/arm9/image.h>
+#include <nds/arm9/input.h>
+#include <nds/arm9/math.h>
+#include <nds/arm9/pcx.h>
+#include <nds/arm9/rumble.h>
+#include <nds/arm9/sound.h>
+#include <nds/arm9/trig_lut.h>
+#include <nds/arm9/video.h>
+#include <nds/arm9/videoGL.h>
 
 #endif // #ifdef ARM9
 
@@ -83,11 +87,11 @@ extern "C" {
 #ifdef ARM7
 //---------------------------------------------------------------------------------
 
-#include "nds/arm7/audio.h"
-#include "nds/arm7/clock.h"
-#include "nds/arm7/serial.h"
-#include "nds/arm7/touch.h"
-#include "nds/arm7/wifi.h"
+#include <nds/arm7/audio.h>
+#include <nds/arm7/clock.h>
+#include <nds/arm7/serial.h>
+#include <nds/arm7/touch.h>
+#include <nds/arm7/wifi.h>
 
 #endif // #ifdef ARM7
 
