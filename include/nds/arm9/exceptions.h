@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: exceptions.h,v 1.1 2006-06-18 21:16:26 wntrmute Exp $
+  $Id: exceptions.h,v 1.2 2006-06-19 14:09:37 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
      distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.1  2006/06/18 21:16:26  wntrmute
+  added arm9 exception handler API
+
 
 ---------------------------------------------------------------------------------*/
 #ifndef _exceptionTest_h_
@@ -31,12 +34,12 @@
 #define EXCEPTION_VECTOR	(*(VoidFunctionPointer *)(0x27FFD9C))
 
 
-extern unsigned long exceptionC ;
+extern VoidFunctionPointer * exceptionC ;
 extern unsigned long exceptionStack ;
 extern unsigned long exceptionRegisters[];
 
 void enterException(void);
-void setExceptionHandler(VoidFunctionPointer handler);
+void setExceptionHandler(VoidFunctionPointer *handler);
 void defaultExceptionHandler();
 
 u32 getCPSR();
