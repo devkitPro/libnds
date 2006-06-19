@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: gurumeditation.c,v 1.2 2006-06-19 18:22:25 wntrmute Exp $
+  $Id: gurumeditation.c,v 1.3 2006-06-19 19:12:01 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
      distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.2  2006/06/19 18:22:25  wntrmute
+  completed thumb address calculations
+
   Revision 1.1  2006/06/19 14:09:37  wntrmute
   split default exception handler into separate file
   correct prototypes
@@ -210,7 +213,7 @@ static const char *registerNames[] =
 		"r8 ","r9 ","r10","r11","r12","sp ","lr ","pc " };
 
 //---------------------------------------------------------------------------------
-void defaultExceptionHandler() {
+static void defaultHandler() {
 //---------------------------------------------------------------------------------
 	videoSetMode(0);
 	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE);
@@ -259,4 +262,10 @@ void defaultExceptionHandler() {
 
 	while(1);
 
+}
+
+//---------------------------------------------------------------------------------
+void defaultExceptionHandler() {
+//---------------------------------------------------------------------------------
+	setExceptionHandler(defaultHandler) ;
 }

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: exceptions.c,v 1.3 2006-06-19 18:21:39 wntrmute Exp $
+  $Id: exceptions.c,v 1.4 2006-06-19 19:12:01 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
      distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.3  2006/06/19 18:21:39  wntrmute
+  corrected prototypes
+
   Revision 1.2  2006/06/19 14:09:37  wntrmute
   split default exception handler into separate file
   correct prototypes
@@ -40,6 +43,6 @@ void setExceptionHandler(VoidFunctionPointer handler) {
 //---------------------------------------------------------------------------------
 	exceptionStack = (u32)0x23EFFFC ;
 	EXCEPTION_VECTOR = enterException ;
-	exceptionC = handler ;
+	*exceptionC = handler ;
 }
 

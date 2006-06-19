@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: exceptions.h,v 1.3 2006-06-19 18:21:39 wntrmute Exp $
+  $Id: exceptions.h,v 1.4 2006-06-19 19:12:01 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
      distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.3  2006/06/19 18:21:39  wntrmute
+  corrected prototypes
+
   Revision 1.2  2006/06/19 14:09:37  wntrmute
   split default exception handler into separate file
   correct prototypes
@@ -38,7 +41,7 @@
 #define EXCEPTION_VECTOR	(*(VoidFunctionPointer *)(0x27FFD9C))
 
 
-extern VoidFunctionPointer * exceptionC ;
+extern VoidFunctionPointer exceptionC[] ;
 extern unsigned long exceptionStack ;
 extern unsigned long exceptionRegisters[];
 
