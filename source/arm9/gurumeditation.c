@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: gurumeditation.c,v 1.1 2006-06-19 14:09:37 wntrmute Exp $
+  $Id: gurumeditation.c,v 1.2 2006-06-19 18:22:25 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
@@ -22,23 +22,20 @@
      distribution.
 
   $Log: not supported by cvs2svn $
-  Revision 1.1  2006/06/18 21:16:26  wntrmute
-  added arm9 exception handler API
-
+  Revision 1.1  2006/06/19 14:09:37  wntrmute
+  split default exception handler into separate file
+  correct prototypes
 
 ---------------------------------------------------------------------------------*/
 
 #include <nds/jtypes.h>
+#include <nds/memory.h>
+
 #include <nds/arm9/video.h>
 #include <nds/arm9/console.h>
-#include <nds/memory.h>
 #include <nds/arm9/exceptions.h>
+
 #include <stdio.h>
-
-
-static const char *registerNames[] =
-	{	"r0","r1","r2","r3","r4","r5","r6","r7",
-		"r8 ","r9 ","r10","r11","r12","sp ","lr ","pc " };
 
 //---------------------------------------------------------------------------------
 unsigned long ARMShift(unsigned long value,unsigned char shift) {
@@ -104,7 +101,8 @@ u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState) {
 
 		if ((opcode & 0xF800) == 0x4800) {
 			// ldr r,[pc,###]
-
+			s8 offset = opcode & 0xff;
+			return exceptionRegisters[15] + offset;
 		} else if ((opcode & 0xF200) == 0x5000) {
 			// ldr r,[r,r]
 			Rb = (opcode >> 3) & 0x07 ;
@@ -113,6 +111,10 @@ u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState) {
 
 		} else if ((opcode & 0xF200) == 0x5200) {
 			// ldrsh
+			Rb = (opcode >> 3) & 0x07;
+			s8 offset = (opcode >> 1) & 0xE0;
+			offset >>= 5;
+			return exceptionRegisters[Rb] + offset;
 
 		} else if ((opcode & 0xE000) == 0x6000) {
 			// ldr r,[r,imm]
@@ -126,10 +128,15 @@ u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState) {
 			return exceptionRegisters[Rb] + (Rf << 2);
 		} else if ((opcode & 0xF000) == 0x9000) {
 			// ldr r,[sp,#imm]
+			s8 offset = opcode & 0xff;
+			return exceptionRegisters[13] + offset;
 		} else if ((opcode & 0xF700) == 0xB500) {
 			// push/pop
+			return exceptionRegisters[13];
 		} else if ((opcode & 0xF000) == 0xC000) {
 			// ldm/stm
+			Rd = (opcode >> 8) & 0x07;
+			return exceptionRegisters[Rd];
 		}
 	} else {
 		// arm32
@@ -176,7 +183,7 @@ u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState) {
 		} else if ((opcode & 0x0E400F90) == 0x00000090) {
 			// LDRH/STRH with register Rm
 			Rn = (opcode >> 16) & 0x0F;
-			Rd = (opcode >> 12) & 0x0F;
+		Rd = (opcode >> 12) & 0x0F;
 			Rm = opcode & 0x0F;
 			unsigned short shift = (unsigned short)((opcode >> 4) & 0xFF);
 			long Offset = ARMShift(exceptionRegisters[Rm],shift);
@@ -192,23 +199,28 @@ u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState) {
 		} else if ((opcode & 0x0E000000) == 0x08000000) {
 			// LDM/STM
 			Rn = (opcode >> 16) & 0x0F;
+			return exceptionRegisters[Rn];
 		}
 	}
 	return 0;
 }
+
+static const char *registerNames[] =
+	{	"r0","r1","r2","r3","r4","r5","r6","r7",
+		"r8 ","r9 ","r10","r11","r12","sp ","lr ","pc " };
+
 //---------------------------------------------------------------------------------
 void defaultExceptionHandler() {
 //---------------------------------------------------------------------------------
-	videoSetMode(0);	//not using the main screen
-	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE);	//sub bg 0 will be used to print text
+	videoSetMode(0);
+	videoSetModeSub(MODE_0_2D | DISPLAY_BG0_ACTIVE);
 	vramSetBankC(VRAM_C_SUB_BG);
 
 	SUB_BG0_CR = BG_MAP_BASE(31);
 
 	BG_PALETTE_SUB[0] = RGB15(31,0,0);
-	BG_PALETTE_SUB[255] = RGB15(31,31,31);	//by default font will be rendered with color 255
+	BG_PALETTE_SUB[255] = RGB15(31,31,31);
 
-	//consoleInit() is a lot more flexible but this gets you up and running quick
 	consoleInitDefault((u16*)SCREEN_BASE_BLOCK_SUB(31), (u16*)CHAR_BASE_BLOCK_SUB(0), 16);
 
 	iprintf("\n\x1b[5CGuru Meditation Error!\n\n");
