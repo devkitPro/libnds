@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: gurumeditation.c,v 1.3 2006-06-19 19:12:01 wntrmute Exp $
+  $Id: gurumeditation.c,v 1.4 2006-06-21 20:12:39 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
@@ -22,6 +22,10 @@
      distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.3  2006/06/19 19:12:01  wntrmute
+  correct prototypes again
+  add defaultHandler function to install default handler
+
   Revision 1.2  2006/06/19 18:22:25  wntrmute
   completed thumb address calculations
 
@@ -115,9 +119,8 @@ u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState) {
 		} else if ((opcode & 0xF200) == 0x5200) {
 			// ldrsh
 			Rb = (opcode >> 3) & 0x07;
-			s8 offset = (opcode >> 1) & 0xE0;
-			offset >>= 5;
-			return exceptionRegisters[Rb] + offset;
+			Rf = (opcode >> 6) & 0x03;
+			return exceptionRegisters[Rb] + exceptionRegisters[Rf];
 
 		} else if ((opcode & 0xE000) == 0x6000) {
 			// ldr r,[r,imm]
