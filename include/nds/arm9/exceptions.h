@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: exceptions.h,v 1.4 2006-06-19 19:12:01 wntrmute Exp $
+  $Id: exceptions.h,v 1.5 2006-06-21 20:12:08 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
@@ -22,6 +22,10 @@
      distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.4  2006/06/19 19:12:01  wntrmute
+  correct prototypes again
+  add defaultHandler function to install default handler
+
   Revision 1.3  2006/06/19 18:21:39  wntrmute
   corrected prototypes
 
@@ -43,7 +47,7 @@
 
 extern VoidFunctionPointer exceptionC[] ;
 extern unsigned long exceptionStack ;
-extern unsigned long exceptionRegisters[];
+extern signed long exceptionRegisters[];
 
 void enterException(void);
 void setExceptionHandler(VoidFunctionPointer handler);
