@@ -25,6 +25,11 @@
 		distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.6  2006/03/03 07:23:46  joatski
+  Added tNDSHeader and tNDSBanner types.
+  Defined NDSHeader as a structure at the 'standard' location for the NDS header to reside (0x027FFE00)
+  Added VRAM define for ARM7 mode at 0x06000000
+
   Revision 1.5  2006/02/21 00:09:40  wntrmute
   corrected packing on tGBAHeader struct
 
@@ -36,30 +41,26 @@
 #ifndef NDS_MEMORY_INCLUDE
 #define NDS_MEMORY_INCLUDE
 
-//////////////////////////////////////////////////////////////////////
 
 #include "jtypes.h"
 
-//////////////////////////////////////////////////////////////////////
 
 // WAIT_CR: Wait State Control Register
 #define WAIT_CR       (*(vuint16*)0x04000204)
 
-#define ARM9_OWNS_SRAM BIT(15)
+#define ARM9_MAIN_RAM_PRIORITY BIT(15)
 #define ARM9_OWNS_CARD BIT(11)
 #define ARM9_OWNS_ROM  BIT(7)
 #define ARM7_OWNS_SRAM 0
 #define ARM7_OWNS_CARD 0
 #define ARM7_OWNS_ROM  0
 
-//////////////////////////////////////////////////////////////////////
 
 // Protection register (write-once sadly)
 #ifdef ARM7
 #define PROTECTION    (*(vuint32*)0x04000308)
 #endif
 
-//////////////////////////////////////////////////////////////////////
 
 #define ALLRAM        ((uint8*)0x00000000)
 
@@ -75,7 +76,6 @@
 
 #define SRAM          ((uint8*)0x0A000000)
 
-//////////////////////////////////////////////////////////////////////
 
 #ifdef ARM9
 #define PALETTE       ((uint16*)0x05000000)
@@ -112,7 +112,6 @@
 #define VRAM          ((uint16*)0x06000000)
 #endif
 
-//////////////////////////////////////////////////////////////////////
 
 typedef struct sGBAHeader {
 	uint32 entryPoint;
@@ -131,7 +130,6 @@ typedef struct sGBAHeader {
 
 #define GBA_HEADER (*(tGBAHeader *)0x08000000)
 
-//////////////////////////////////////////////////////////////////////
 
 typedef struct sNDSHeader {
   char gameTitle[12];
@@ -195,7 +193,6 @@ typedef struct sNDSHeader {
 
 #define NDSHeader (*(tNDSHeader *)0x027FFE00)
 
-//////////////////////////////////////////////////////////////////////
 
 typedef struct sNDSBanner {
   uint16 version;
@@ -206,7 +203,6 @@ typedef struct sNDSBanner {
   uint16 titles[6][128];
 } __attribute__ ((__packed__)) tNDSBanner;
 
-//////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 extern "C" {
@@ -216,21 +212,19 @@ extern "C" {
 #define BUS_OWNER_ARM9 true
 #define BUS_OWNER_ARM7 false
 
-// Changes the owernship for all three busses
-void sysSetBusOwners(bool arm9rom, bool arm9sram, bool arm9card);
+// Changes the owernship for both busses
+void sysSetBusOwners(bool arm9rom, bool arm9card);
 
 // Changes only the gba rom cartridge ownership
 void sysSetCartOwner(bool arm9);
 
 #endif
 
-//////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 }
 #endif
 
-//////////////////////////////////////////////////////////////////////
 
 #endif
 
