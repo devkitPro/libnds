@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: CP15.h,v 1.4 2005-11-14 11:56:25 wntrmute Exp $
+	$Id: CP15.h,v 1.5 2006-06-26 11:26:32 wntrmute Exp $
 
 	ARM9 CP15 control
 
@@ -26,12 +26,15 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/11/14 11:56:25  wntrmute
+	reformat for consistency, remove spurious externs
+
 	Revision 1.3  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
-	
+
 	Revision 1.2  2005/08/01 23:18:22  wntrmute
 	adjusted headers for logging
-	
+
 
 ---------------------------------------------------------------------------------*/
 
@@ -48,7 +51,7 @@ extern "C" {
 #endif
 
 
-#include "nds.h"
+#include <nds/jtypes.h>
 
 
 #define CPUID_IMPLEMENTOR(id) ((id)>>24)

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.13 2006-06-17 00:26:40 wntrmute Exp $
+	$Id: system.h,v 1.14 2006-06-26 11:26:32 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,34 +27,37 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.13  2006/06/17 00:26:40  wntrmute
+	correct SetYtrigger function
+
 	Revision 1.12  2006/06/16 07:35:14  wntrmute
 	more moves to REG_ values
 	implement SetYtrigger helper function
 	set bits in REG_DISPSTAT for IRQ_VCOUNT
-	
+
 	Revision 1.11  2006/02/25 02:18:53  wntrmute
 	doxygenation updates
-	
+
 	Revision 1.10  2006/02/21 00:06:41  wntrmute
 	changed powerON to OR values
 	added powerSET function to set value directly
-	
+
 	Revision 1.9  2005/11/27 12:30:24  wntrmute
 	reverted to correct hardware REGisters
-	
+
 	Revision 1.8  2005/11/27 07:55:14  joatski
 	Fixed my mistake in the changelogs
-	
+
 	Revision 1.7  2005/11/27 07:49:19  joatski
 	Renamed REG_KEYINPUT and REG_KEYCNT back to KEYS and KEYS_CR, as the alternatives are defined in registers_alt.h.
-	
+
 	Revision 1.6  2005/10/11 03:08:58  dovoto
 	added lcdMainOnTop() and llcdMainOnBottom()
-	
+
 	Revision 1.5  2005/09/07 18:03:36  wntrmute
 	renamed key input registers
 	moved key bit definitions to input.h
-	
+
 	Revision 1.4  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
 
@@ -125,7 +128,8 @@ void SetYtrigger(int Yvalue) {
 
 	\param on What to power on.
 */
-static inline void powerON(int on) { POWER_CR |= on;}
+static inline
+void powerON(int on) { POWER_CR |= on;}
 
 //!	Turns on only the specified hardware.
 /*!	Use this function to power on basic hardware types you

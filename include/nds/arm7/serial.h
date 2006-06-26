@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: serial.h,v 1.7 2006-02-06 22:29:32 joatski Exp $
+  $Id: serial.h,v 1.8 2006-06-26 11:26:32 wntrmute Exp $
 
   ARM7 serial control
 
@@ -26,9 +26,14 @@
     distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.7  2006/02/06 22:29:32  joatski
+  Added writePowerManagement, readPowerManagement, and readFirmware to serial.h, as well as some associated defines.
+
+  Created spi.c to contain the code for these two.
+
   Revision 1.6  2005/09/07 18:02:07  wntrmute
   renamed SPI registers
-  
+
   Revision 1.5  2005/08/23 17:06:10  wntrmute
   converted all endings to unix
 
@@ -48,11 +53,9 @@
 #error Serial header is for ARM7 only
 #endif
 
-//////////////////////////////////////////////////////////////////////
 
 #include <nds/bios.h>
 
-//////////////////////////////////////////////////////////////////////
 
 // 'Networking'
 #define R_CR            (*(vuint16*)0x04000134)
@@ -65,7 +68,6 @@
 #define SIO_DATA8       (*(vuint8*)0x0400012A)
 #define SIO_DATA32      (*(vuint32*)0x04000120)
 
-//////////////////////////////////////////////////////////////////////
 
 // Fixme: Does the hardware still support 16 bit comms mode?
 // BIOS makes use of 32 bit mode, so some regs still exist
@@ -75,7 +77,6 @@
 #define SIO_MULTI_3     (*(vuint16*)0x04000126)
 #define SIO_MULTI_SEND  (*(vuint16*)0x0400012A)
 
-//////////////////////////////////////////////////////////////////////
 
 // SPI chain registers
 #define SERIAL_CR       (*(vuint16*)0x040001C0)
@@ -114,7 +115,6 @@
 // i.e. when we're part of a continuous transfer
 #define SPI_CONTINUOUS       BIT(11)
 
-//////////////////////////////////////////////////////////////////////
 // Fixme: does this stuff really belong in serial.h?
 
 // Power management registers
@@ -142,7 +142,6 @@
 #define PM_AMP_ON      1
 #define PM_AMP_OFF     0
 
-//////////////////////////////////////////////////////////////////////
 // Fixme: does this stuff really belong in serial.h?
 
 // Firmware commands
@@ -158,11 +157,9 @@
 #define FIRMWARE_DP   0xB9
 #define FIRMWARE_RDP  0xAB
 
-//////////////////////////////////////////////////////////////////////
 
 static inline void SerialWaitBusy() { while (REG_SPICNT & SPI_BUSY) swiDelay(1); }
 
-//////////////////////////////////////////////////////////////////////
 
 // Warning: These functions use the SPI chain, and are thus 'critical'
 // sections, make sure to disable interrupts during the call if you've
@@ -175,7 +172,6 @@ static inline int readPowerManagement(int reg) { return writePowerManagement((re
 // Read the firmware
 void readFirmware(uint32 address, void * destination, uint32 size);
 
-//////////////////////////////////////////////////////////////////////
 
 #endif
 
