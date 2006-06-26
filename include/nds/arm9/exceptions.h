@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: exceptions.h,v 1.5 2006-06-21 20:12:08 wntrmute Exp $
+  $Id: exceptions.h,v 1.6 2006-06-26 02:04:27 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
      distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.5  2006/06/21 20:12:08  wntrmute
+  registers are signed
+
   Revision 1.4  2006/06/19 19:12:01  wntrmute
   correct prototypes again
   add defaultHandler function to install default handler
@@ -38,8 +41,8 @@
 
 
 ---------------------------------------------------------------------------------*/
-#ifndef _exceptionTest_h_
-#define _exceptionTest_h_
+#ifndef _exceptions_h_
+#define _exceptions_h_
 //---------------------------------------------------------------------------------
 
 #define EXCEPTION_VECTOR	(*(VoidFunctionPointer *)(0x27FFD9C))
@@ -56,5 +59,5 @@ void defaultExceptionHandler();
 u32 getCPSR();
 
 //---------------------------------------------------------------------------------
-#endif // _ExceptionTest_h_
+#endif // _exceptions_h_
 //---------------------------------------------------------------------------------
