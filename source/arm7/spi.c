@@ -21,59 +21,63 @@
       distribution.
 
   $Log: not supported by cvs2svn $
-  
+  Revision 1.1  2006/02/06 22:29:32  joatski
+  Added writePowerManagement, readPowerManagement, and readFirmware to serial.h, as well as some associated defines.
+
+  Created spi.c to contain the code for these two.
+
+
 
 ---------------------------------------------------------------------------------*/
 
-//////////////////////////////////////////////////////////////////////
-
 #include <nds/arm7/serial.h>
 
-//////////////////////////////////////////////////////////////////////
 
+//---------------------------------------------------------------------------------
 int writePowerManagement(int reg, int command) {
+//---------------------------------------------------------------------------------
   // Write the register / access mode (bit 7 sets access mode)
-  while (SERIAL_CR & SPI_BUSY);
-  SERIAL_CR = SPI_ENABLE | SPI_BAUD_1MHZ | SPI_BYTE_MODE | SPI_CONTINUOUS | SPI_DEVICE_POWER;
-  SERIAL_DATA = reg;
+  while (REG_SPICNT & SPI_BUSY);
+  REG_SPICNT = SPI_ENABLE | SPI_BAUD_1MHZ | SPI_BYTE_MODE | SPI_CONTINUOUS | SPI_DEVICE_POWER;
+  REG_SPIDATA = reg;
 
   // Write the command / start a read
-  while (SERIAL_CR & SPI_BUSY);
-  SERIAL_CR = SPI_ENABLE | SPI_BAUD_1MHZ | SPI_BYTE_MODE | SPI_DEVICE_POWER;
-  SERIAL_DATA = command;
+  while (REG_SPICNT & SPI_BUSY);
+  REG_SPICNT = SPI_ENABLE | SPI_BAUD_1MHZ | SPI_BYTE_MODE | SPI_DEVICE_POWER;
+  REG_SPIDATA = command;
 
   // Read the result
-  while (SERIAL_CR & SPI_BUSY);
-  return SERIAL_DATA & 0xFF;
+  while (REG_SPICNT & SPI_BUSY);
+  return REG_SPIDATA & 0xFF;
 }
 
-//////////////////////////////////////////////////////////////////////
 
+//---------------------------------------------------------------------------------
 void readFirmware(uint32 address, void * destination, uint32 size) {
-  uint8 * buffer = (uint8 *)destination;
+//---------------------------------------------------------------------------------
+	uint8 * buffer = (uint8 *)destination;
 
-  // Read command
-  while (SERIAL_CR & SPI_BUSY);
-  SERIAL_CR = SPI_ENABLE | SPI_BYTE_MODE | SPI_CONTINUOUS | SPI_DEVICE_FIRMWARE;
-  SERIAL_DATA = FIRMWARE_READ;
-  while (SERIAL_CR & SPI_BUSY);
+	// Read command
+	while (REG_SPICNT & SPI_BUSY);
+	REG_SPICNT = SPI_ENABLE | SPI_BYTE_MODE | SPI_CONTINUOUS | SPI_DEVICE_FIRMWARE;
+	REG_SPIDATA = FIRMWARE_READ;
+	while (REG_SPICNT & SPI_BUSY);
 
-  // Set the address
-  SERIAL_DATA = (address>>16) & 0xFF;
-  while (SERIAL_CR & SPI_BUSY);
-  SERIAL_DATA = (address>>8) & 0xFF;
-  while (SERIAL_CR & SPI_BUSY);
-  SERIAL_DATA = (address>>0) & 0xFF;
-  while (SERIAL_CR & SPI_BUSY);
+	// Set the address
+	REG_SPIDATA = (address>>16) & 0xFF;
+	while (REG_SPICNT & SPI_BUSY);
+	REG_SPIDATA = (address>>8) & 0xFF;
+	while (REG_SPICNT & SPI_BUSY);
+	REG_SPIDATA = (address>>0) & 0xFF;
+	while (REG_SPICNT & SPI_BUSY);
 
-  // Read the data
-  while (size--) {
-    SERIAL_DATA = 0;
-    while (SERIAL_CR & SPI_BUSY);
-    *buffer++ = (SERIAL_DATA & 0xFF);
-  }
+	// Read the data
+	while (size--) {
+		REG_SPIDATA = 0;
+		while (REG_SPIDATA & SPI_BUSY);
+		*buffer++ = (REG_SPIDATA & 0xFF);
+	}
 
-  SERIAL_CR = 0;
+	REG_SPICNT = 0;
 }
 
-//////////////////////////////////////////////////////////////////////
