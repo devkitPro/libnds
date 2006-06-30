@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: bios.h,v 1.7 2006-06-26 02:07:34 wntrmute Exp $
+  $Id: bios.h,v 1.8 2006-06-30 05:04:07 crossraleigh Exp $
 
   BIOS functions
 
@@ -26,6 +26,9 @@
       distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.7  2006/06/26 02:07:34  wntrmute
+  doxygenation
+
   Revision 1.6  2006/03/03 07:21:17  joatski
   Fixed a couple of little bugs (e.g. swiSetHaltCR using r0 instead of r2 on ARM7)
   Commented out ARM7 swis in ARM9 mode, and vis versa
@@ -181,8 +184,8 @@ void swiDivMod(int numerator, int divisor, int * result, int * remainder);
 #define COPY_MODE_COPY  (0)
 #define COPY_MODE_FILL  (1<<24)
 
-void swiCopy(void * source, void * dest, int flags);
-void swiFastCopy(void * source, void * dest, int flags);
+void swiCopy(const void * source, void * dest, int flags);
+void swiFastCopy(const void * source, void * dest, int flags);
 
 // swiSqrt (swi 0x0D)
 
