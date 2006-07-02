@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.21 2006-05-13 13:38:51 wntrmute Exp $
+	$Id: video.h,v 1.22 2006-07-02 17:08:17 wntrmute Exp $
 
 	Video registers and defines
 
@@ -26,43 +26,46 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.21  2006/05/13 13:38:51  wntrmute
+	updated for registers moved to main headers
+
 	Revision 1.20  2006/02/10 00:17:55  desktopman
 	Added MODE_FIFO for main memory to FIFO display mode
-	
+
 	Revision 1.19  2006/02/02 00:11:57  wntrmute
 	corrected BG_64x32 & BG_32x64 defines
-	
+
 	Revision 1.18  2006/01/12 09:13:14  wntrmute
 	remove duplicate ATTR0_BMP
-	
+
 	Revision 1.17  2006/01/05 08:13:26  dovoto
 	Fixed gluLookAt (again)
 	Major update to palette handling (likely a breaking change if you were using the gl texture palettes from before)
-	
+
 	Revision 1.16  2005/12/12 14:36:03  wntrmute
 	*** empty log message ***
-	
+
 	Revision 1.15  2005/11/27 04:37:00  joatski
 	Added DISP_CAPTURE and associated macros
 	Added GFX_CUTOFF_DEPTH
 	Renamed GFX_ALPHA to GFX_ALPHA_TEST
-	
+
 	Revision 1.14  2005/11/26 20:31:15  joatski
 	vramRestorMainBanks changed to vramRestoreMainBanks
 	Added some comment lines between defines
-	
+
 	Revision 1.13  2005/11/07 04:13:41  dovoto
 	Added register definitions for box test and matrix reading
-	
+
 	Revision 1.12  2005/10/05 21:56:58  wntrmute
 	corrected BG_BMP8_1024x512 & BG_BMP8_512x1024 defines
-	
+
 	Revision 1.11  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
-	
+
 	Revision 1.10  2005/08/01 23:18:22  wntrmute
 	adjusted headers for logging
-	
+
 
 ---------------------------------------------------------------------------------*/
 
@@ -134,7 +137,7 @@ typedef enum {
 	VRAM_B_TEXTURE_SLOT1	= 3 | VRAM_OFFSET(1),
 	VRAM_B_TEXTURE_SLOT2	= 3 | VRAM_OFFSET(2),
 	VRAM_B_TEXTURE_SLOT3	= 3 | VRAM_OFFSET(3)
-} VRAM_B_TYPE;	
+} VRAM_B_TYPE;
 
 typedef enum {
 	VRAM_C_LCD = 0,
@@ -156,7 +159,7 @@ typedef enum {
 	VRAM_C_TEXTURE_SLOT3	= 3 | VRAM_OFFSET(3)
 } VRAM_C_TYPE;
 
-typedef enum {	
+typedef enum {
 	VRAM_D_LCD = 0,
 	VRAM_D_MAIN_BG  = 1 | VRAM_OFFSET(3),
 	VRAM_D_MAIN_BG_0x6000000  = 1 | VRAM_OFFSET(0),
@@ -255,7 +258,7 @@ void vramSetBankI(VRAM_I_TYPE i);
 
 
 // Main display only
-#define MODE_0_3D    (MODE_0_2D | DISPLAY_BG0_ACTIVE | ENABLE_3D) 
+#define MODE_0_3D    (MODE_0_2D | DISPLAY_BG0_ACTIVE | ENABLE_3D)
 #define MODE_1_3D    (MODE_1_2D | DISPLAY_BG0_ACTIVE | ENABLE_3D)
 #define MODE_2_3D    (MODE_2_2D | DISPLAY_BG0_ACTIVE | ENABLE_3D)
 #define MODE_3_3D    (MODE_3_2D | DISPLAY_BG0_ACTIVE | ENABLE_3D)
@@ -534,7 +537,7 @@ void videoSetModeSub( uint32 mode)  { SUB_DISPLAY_CR = mode; }
 #define ATTR0_SQUARE		(0<<14)
 #define ATTR0_WIDE			(1<<14)
 #define ATTR0_TALL			(2<<14)
-  
+
 // Atribute 1 consists of 9 bits of X plus the following flags:
 #define ATTR1_ROTDATA(n)      ((n)<<9)  // note: overlaps with flip flags
 #define ATTR1_FLIP_X          (1<<12)
@@ -560,23 +563,23 @@ typedef struct sSpriteEntry {
 
 typedef struct sSpriteRotation {
   uint16 filler1[3];
-  uint16 hdx;
+  int16 hdx;
 
   uint16 filler2[3];
-  uint16 hdy;  
-    
+  int16 hdy;
+
   uint16 filler3[3];
-  uint16 vdx;  
+  int16 vdx;
 
   uint16 filler4[3];
-  uint16 vdy;
+  int16 vdy;
 } SpriteRotation, * pSpriteRotation;
 
 // 3D core control
 
 #define GFX_CONTROL           (*(vuint16*) 0x04000060)
 
-#define GFX_FIFO              (*(vuint32*) 0x04000400)  
+#define GFX_FIFO              (*(vuint32*) 0x04000400)
 #define GFX_STATUS            (*(vuint32*) 0x04000600)
 #define GFX_COLOR             (*(vuint32*) 0x04000480)
 
