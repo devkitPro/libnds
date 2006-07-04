@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.22 2006-07-02 17:08:17 wntrmute Exp $
+	$Id: video.h,v 1.23 2006-07-04 12:10:57 wntrmute Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.22  2006/07/02 17:08:17  wntrmute
+	object scaling registers are signed
+
 	Revision 1.21  2006/05/13 13:38:51  wntrmute
 	updated for registers moved to main headers
 
@@ -214,6 +217,16 @@ typedef enum {
 	VRAM_I_SUB_SPRITE             = 2,
 	VRAM_I_SUB_SPRITE_EXT_PALETTE = 3,
 }VRAM_I_TYPE;
+
+
+typedef u16 _palette[256];
+typedef _palette _ext_palette[16];
+
+#define VRAM_E_EXT_PALETTE ((_ext_palette *)VRAM_E)
+#define VRAM_F_EXT_PALETTE ((_ext_palette *)VRAM_F)
+#define VRAM_G_EXT_PALETTE ((_ext_palette *)VRAM_G)
+#define VRAM_H_EXT_PALETTE ((_ext_palette *)VRAM_H)
+
 
 uint32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d);
 void vramRestoreMainBanks(uint32 vramTemp);
