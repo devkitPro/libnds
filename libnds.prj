@@ -55,7 +55,7 @@ Open File Line7=4984
 Open File Window Pos7=0,1,-1,-1,-4,-23,176,176,959,583
 Open File8=
 [File View]
-Current Select=Project Files\include\include\nds.h
+Current Select=Project Files\include\include\nds\bios.h
 Scroll Position=0
 [Files - include - arm7]
 0=include\nds\arm7\audio.h

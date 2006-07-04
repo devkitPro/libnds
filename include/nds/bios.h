@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: bios.h,v 1.8 2006-06-30 05:04:07 crossraleigh Exp $
+  $Id: bios.h,v 1.9 2006-07-04 01:55:05 wntrmute Exp $
 
   BIOS functions
 
@@ -26,6 +26,9 @@
       distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.8  2006/06/30 05:04:07  crossraleigh
+  Changed swiCopy's prototype so const_cast isn't needed in C++
+
   Revision 1.7  2006/06/26 02:07:34  wntrmute
   doxygenation
 
@@ -155,7 +158,7 @@ int swiDivide(int numerator, int divisor);
 int swiRemainder(int numerator, int divisor);
 void swiDivMod(int numerator, int divisor, int * result, int * remainder);
 
-/*!	\fn swiCopy(void * source, void * dest, int flags)
+/*!	\fn swiCopy(const void * source, void * dest, int flags)
 	\param source
 		pointer to transfer source
 	\param dest
@@ -166,7 +169,7 @@ void swiDivMod(int numerator, int divisor, int * result, int * remainder);
 //  flags(24) = transfer mode (0: copy, 1: fill)
 //  flags(20..0) = transfer count (always in words)
 
-	\fn swiFastCopy (void * source, void * dest, int flags)
+	\fn swiFastCopy (const void * source, void * dest, int flags)
 	\param source
 		pointer to transfer source
 	\param dest
