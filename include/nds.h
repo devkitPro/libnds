@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: nds.h,v 1.10 2006-06-18 21:16:26 wntrmute Exp $
+	$Id: nds.h,v 1.11 2006-07-04 01:44:31 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.10  2006/06/18 21:16:26  wntrmute
+	added arm9 exception handler API
+
 	Revision 1.9  2006/04/26 05:52:37  wntrmute
 	added all headers to main nds header
 
@@ -69,7 +72,6 @@ extern "C" {
 #include <nds/arm9/boxtest.h>
 #include <nds/arm9/cache.h>
 #include <nds/arm9/console.h>
-#include <nds/arm9/CP15.h>
 #include <nds/arm9/exceptions.h>
 #include <nds/arm9/image.h>
 #include <nds/arm9/input.h>
