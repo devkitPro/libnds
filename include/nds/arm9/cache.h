@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: cache.h,v 1.4 2005-11-14 11:51:21 wntrmute Exp $
+	$Id: cache.h,v 1.5 2006-07-04 01:45:04 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -26,16 +26,19 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/11/14 11:51:21  wntrmute
+	begin doxygenation
+
 	Revision 1.3  2005/08/23 17:06:10  wntrmute
 	converted all endings to unix
-	
+
 	Revision 1.2  2005/07/25 16:10:43  wntrmute
 	updated file header
-	
+
 
 ---------------------------------------------------------------------------------*/
-/*! \file cache.h 
-\brief ARM9 cache control functions. 
+/*! \file cache.h
+\brief ARM9 cache control functions.
 
 */
 #ifndef	_cache_h_
@@ -46,6 +49,22 @@ extern "C" {
 #endif
 
 #include "nds/jtypes.h"
+
+
+/*! \fn IC_InvalidateAll()
+
+	\brief invalidate entire instruction cache.
+
+*/
+void	IC_InvalidateAll();
+
+/*! \fn IC_InvalidateRange(void * base, u32 size)
+
+	\brief invalidate the instruction cache for a range of addresses.
+	\param base base address of the region to invalidate
+	\param size size of the region to invalidate.
+*/
+void	IC_InvalidateRange(void *base, u32 size);
 
 /*! \fn DC_FlushAll()
 
@@ -77,6 +96,7 @@ void	DC_InvalidateAll();
 	\param size size of the region to invalidate.
 */
 void	DC_InvalidateRange(void *base, u32 size);
+
 #ifdef __cplusplus
 }
 #endif
