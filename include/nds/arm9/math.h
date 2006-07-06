@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: math.h,v 1.10 2006-06-01 01:44:26 crossraleigh Exp $
+	$Id: math.h,v 1.11 2006-07-06 02:16:01 wntrmute Exp $
 
 	math functions
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.10  2006/06/01 01:44:26  crossraleigh
+	Fixed spelling of DIV_REMAINDER
+
 	Revision 1.9  2005/12/12 14:36:03  wntrmute
 	*** empty log message ***
 
@@ -51,20 +54,20 @@
 
 //  Math coprocessor register definitions
 
-#define DIV_CR						(*(vuint16*)(0x04000280))
+#define DIV_CR				(*(vuint16*)(0x04000280))
 #define DIV_NUMERATOR64		(*(vint64*) (0x04000290))
 #define DIV_NUMERATOR32		(*(vint32*) (0x04000290))
 #define DIV_DENOMINATOR64	(*(vint64*) (0x04000298))
 #define DIV_DENOMINATOR32	(*(vint32*) (0x04000298))
-#define DIV_RESULT64			(*(vint64*) (0x040002A0))
-#define DIV_RESULT32			(*(vint32*) (0x040002A0))
+#define DIV_RESULT64		(*(vint64*) (0x040002A0))
+#define DIV_RESULT32		(*(vint32*) (0x040002A0))
 #define DIV_REMAINDER64		(*(vint64*) (0x040002A8))
 #define DIV_REMAINDER32		(*(vint32*) (0x040002A8))
 
-#define SQRT_CR						(*(vuint16*)(0x040002B0))
-#define SQRT_PARAM64			(*(vint64*) (0x040002B8))
-#define SQRT_RESULT32			(*(vint32*) (0x040002B4))
-#define SQRT_PARAM32			(*(vint32*) (0x040002B8))
+#define SQRT_CR				(*(vuint16*)(0x040002B0))
+#define SQRT_PARAM64		(*(vint64*) (0x040002B8))
+#define SQRT_RESULT32		(*(vint32*) (0x040002B4))
+#define SQRT_PARAM32		(*(vint32*) (0x040002B8))
 
 //  Math coprocessor modes
 
