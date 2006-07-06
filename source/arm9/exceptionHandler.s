@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: exceptionHandler.s,v 1.1 2006-06-18 21:16:26 wntrmute Exp $
+  $Id: exceptionHandler.s,v 1.2 2006-07-06 02:14:33 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
      distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.1  2006/06/18 21:16:26  wntrmute
+  added arm9 exception handler API
+
 
 ---------------------------------------------------------------------------------*/
 	.text
@@ -44,7 +47,7 @@ enterException:
 	// store context
 	ldr	r12,=exceptionRegisters
 	stmia	r12,{r0-r11}
-
+	str	r13,[r12,#oldStack - exceptionRegisters]
 	// assign a stack
 	ldr	r12,=exceptionStack
 	ldr	r13,[r12]
@@ -57,6 +60,10 @@ enterException:
 	// grab stored r12 and SPSR from bios exception stack
 	ldr 	r0, =0x027FFD90
 	ldmia	r0,{r2,r12}
+
+	// grab r15 from bios exception stack
+	ldr	r0,[r0,#8]
+	str	r0,[r12,#reg15 - exceptionRegisters]
 
 	// grab banked registers from correct processor mode
 	mrs	r3,cpsr
@@ -73,8 +80,13 @@ enterException:
 	ldr	r12,[r12,#0]
 	blxne	r12
 
-forever:
-	b	forever
+	// restore registers
+	ldr	r12,=exceptionRegisters
+	ldmia	r12,{r0-r11}
+	ldr	r13,[r12,#oldStack - exceptionRegisters]
+
+	// return through bios
+	mov	pc,lr
 
 @---------------------------------------------------------------------------------
 	.global exceptionC
@@ -94,8 +106,8 @@ exceptionStack:
 exceptionRegisters:
 @---------------------------------------------------------------------------------
 	.space	12 * 4
-reg12:	.word	0x00000000
-reg13:	.word	0x00000000
-reg14:	.word	0x00000000
-reg15:	.word	0x00000000
-
+reg12:		.word	0
+reg13:		.word	0
+reg14:		.word	0
+reg15:		.word	0
+oldStack:	.word	0

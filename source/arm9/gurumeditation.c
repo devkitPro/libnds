@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: gurumeditation.c,v 1.4 2006-06-21 20:12:39 wntrmute Exp $
+  $Id: gurumeditation.c,v 1.5 2006-07-06 02:14:33 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
      distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.4  2006/06/21 20:12:39  wntrmute
+  thumb ldrsh has register offset
+
   Revision 1.3  2006/06/19 19:12:01  wntrmute
   correct prototypes again
   add defaultHandler function to install default handler
@@ -189,7 +192,7 @@ u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState) {
 		} else if ((opcode & 0x0E400F90) == 0x00000090) {
 			// LDRH/STRH with register Rm
 			Rn = (opcode >> 16) & 0x0F;
-		Rd = (opcode >> 12) & 0x0F;
+			Rd = (opcode >> 12) & 0x0F;
 			Rm = opcode & 0x0F;
 			unsigned short shift = (unsigned short)((opcode >> 4) & 0xFF);
 			long Offset = ARMShift(exceptionRegisters[Rm],shift);
@@ -233,15 +236,13 @@ static void defaultHandler() {
 	u32	currentMode = getCPSR() & 0x1f;
 	u32 thumbState = ((*(u32*)0x027FFD90) & 0x20);
 
-	exceptionRegisters[15] = *(u32*)0x027FFD98;
-
 	u32 codeAddress, exceptionAddress = 0;
 
 	int offset = 8;
 
 	if ( currentMode == 0x17 ) {
 		iprintf ("\x1b[10Cdata abort!\n\n");
-		codeAddress = (*(u32*)0x027FFD98) - offset;
+		codeAddress = exceptionRegisters[15] - offset;
 		exceptionAddress = getExceptionAddress( codeAddress, thumbState);
 	} else {
 		if (thumbState)
@@ -249,7 +250,7 @@ static void defaultHandler() {
 		else
 			offset = 4;
 		iprintf("\x1b[5Cundefined instruction!\n\n");
-		codeAddress = (*(u32*)0x027FFD98) - offset;
+		codeAddress = exceptionRegisters[15] - offset;
 		exceptionAddress = codeAddress;
 	}
 
