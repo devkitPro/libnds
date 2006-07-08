@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: serial.h,v 1.8 2006-06-26 11:26:32 wntrmute Exp $
+  $Id: serial.h,v 1.9 2006-07-08 06:25:31 wntrmute Exp $
 
   ARM7 serial control
 
@@ -26,6 +26,9 @@
     distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.8  2006/06/26 11:26:32  wntrmute
+  remove //////
+
   Revision 1.7  2006/02/06 22:29:32  joatski
   Added writePowerManagement, readPowerManagement, and readFirmware to serial.h, as well as some associated defines.
 
@@ -79,8 +82,6 @@
 
 
 // SPI chain registers
-#define SERIAL_CR       (*(vuint16*)0x040001C0)
-#define SERIAL_DATA     (*(vuint16*)0x040001C2)
 #define REG_SPICNT      (*(vuint16*)0x040001C0)
 #define REG_SPIDATA     (*(vuint16*)0x040001C2)
 
