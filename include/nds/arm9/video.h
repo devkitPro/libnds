@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.23 2006-07-04 12:10:57 wntrmute Exp $
+	$Id: video.h,v 1.24 2006-07-18 15:45:09 wntrmute Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.23  2006/07/04 12:10:57  wntrmute
+	add macros for extended palette slots
+
 	Revision 1.22  2006/07/02 17:08:17  wntrmute
 	object scaling registers are signed
 
@@ -383,6 +386,13 @@ void videoSetModeSub( uint32 mode)  { SUB_DISPLAY_CR = mode; }
 #define BG_PALETTE_SLOT2 BIT(13)
 #define BG_PALETTE_SLOT3 BIT(13)
 
+typedef struct {
+	vu16 x;
+	vu16 y;
+} bg_scroll;
+
+#define BG_OFFSET ((bg_scroll *)(0x04000010))
+
 #define BG0_X0         (*(vuint16*)0x04000010)
 #define BG0_Y0         (*(vuint16*)0x04000012)
 #define BG1_X0         (*(vuint16*)0x04000014)
@@ -551,6 +561,8 @@ void videoSetModeSub( uint32 mode)  { SUB_DISPLAY_CR = mode; }
 #define ATTR0_WIDE			(1<<14)
 #define ATTR0_TALL			(2<<14)
 
+#define OBJ_Y(m)			((m)&0x00ff)
+
 // Atribute 1 consists of 9 bits of X plus the following flags:
 #define ATTR1_ROTDATA(n)      ((n)<<9)  // note: overlaps with flip flags
 #define ATTR1_FLIP_X          (1<<12)
@@ -559,6 +571,8 @@ void videoSetModeSub( uint32 mode)  { SUB_DISPLAY_CR = mode; }
 #define ATTR1_SIZE_16         (1<<14)
 #define ATTR1_SIZE_32         (2<<14)
 #define ATTR1_SIZE_64         (3<<14)
+
+#define OBJ_X(m)			((m)&0x01ff)
 
 // Atribute 2 consists of the following:
 #define ATTR2_PRIORITY(n)     ((n)<<10)
