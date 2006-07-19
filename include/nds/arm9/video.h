@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.24 2006-07-18 15:45:09 wntrmute Exp $
+	$Id: video.h,v 1.25 2006-07-19 21:10:34 wntrmute Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.24  2006/07/18 15:45:09  wntrmute
+	added handy macros from libgba
+
 	Revision 1.23  2006/07/04 12:10:57  wntrmute
 	add macros for extended palette slots
 
@@ -319,13 +322,13 @@ void videoSetModeSub( uint32 mode)  { SUB_DISPLAY_CR = mode; }
 #define BRIGHTNESS     (*(vuint16*)0x0400006C)
 #define SUB_BRIGHTNESS (*(vuint16*)0x0400106C)
 
-#define BG_CR			((vuint16*)0x04000008)
+#define BGCTRL			((vuint16*)0x04000008)
 #define BG0_CR		(*(vuint16*)0x04000008)
 #define BG1_CR		(*(vuint16*)0x0400000A)
 #define BG2_CR		(*(vuint16*)0x0400000C)
 #define BG3_CR		(*(vuint16*)0x0400000E)
 
-#define SUB_BG_CR		((vuint16*)0x04001008)
+#define BGCTRL_SUB		((vuint16*)0x04001008)
 #define SUB_BG0_CR     (*(vuint16*)0x04001008)
 #define SUB_BG1_CR     (*(vuint16*)0x0400100A)
 #define SUB_BG2_CR     (*(vuint16*)0x0400100C)
