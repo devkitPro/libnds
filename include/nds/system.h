@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.14 2006-06-26 11:26:32 wntrmute Exp $
+	$Id: system.h,v 1.15 2006-08-03 09:36:09 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.14  2006/06/26 11:26:32  wntrmute
+	remove //////
+	
 	Revision 1.13  2006/06/17 00:26:40  wntrmute
 	correct SetYtrigger function
 
@@ -82,7 +85,7 @@
 #define NDS_SYSTEM_INCLUDE
 
 //!	LCD status register.
-#define	REG_DISPSTAT	(*(vu16*)0x4000004)
+#define	REG_DISPSTAT	(*(vu16*)0x04000004)
 
 //!	The display currently in a vertical blank.
 #define DISP_IN_VBLANK     BIT(0)
