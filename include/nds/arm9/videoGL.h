@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.22 2006-05-08 03:19:51 dovoto Exp $
+	$Id: videoGL.h,v 1.23 2006-08-03 04:56:31 dovoto Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,11 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.22  2006/05/08 03:19:51  dovoto
+	Added glGetTexturePointer which allows the user to retreive a pointer to texture memory for the named texture.
+	
+	Small fix to the texture reset code.  The texture name is now reset as well.
+	
 	Revision 1.21  2006/01/05 08:13:26  dovoto
 	Fixed gluLookAt (again)
 	Major update to palette handling (likely a breaking change if you were using the gl texture palettes from before)
@@ -516,6 +521,27 @@ void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar);
 */
 
 void gluPerspective(float fovy, float aspect, float zNear, float zFar);
+
+/*! \fn void gluPickMatrix(float x, float y, float width, float height, int viewport[4])
+\brief Utility function which generates a picking matrix for selection
+\param x 2D x of center  (touch x normally)
+\param y 2D y of center  (touch y normally)
+\param width width in pixels of the window (3 or 4 is a good number)
+\param height height in pixels of the window (3 or 4 is a good number)
+\param viewport the current viewport (normaly [0, 0, 255, 255])
+*/
+void gluPickMatrix(float x, float y, float width, float height, int viewport[4]);
+
+/*! \fn void gluPickMatrixf32(f32 x, f32 y, f32 width, f32 height, int viewport[4])
+\brief Utility function which generates a picking matrix for selection (fixed point version)
+\param x 2D x of center  (touch x normally)
+\param y 2D y of center  (touch y normally)
+\param width width in pixels of the window (3 or 4 is a good number)
+\param height height in pixels of the window (3 or 4 is a good number)
+\param viewport the current viewport (normaly [0, 0, 255, 255])
+*/
+void gluPickMatrixf32(f32 x, f32 y, f32 width, f32 height, int viewport[4]);
+
 /*! \fn int glTexImage2D(int target, int empty1, int type, int sizeX, int sizeY, int empty2, int param, uint8* texture)
 \brief Loads a 2D texture into texture memory and sets the currently bound texture ID to the attributes specified
 */
