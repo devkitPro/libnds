@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: gurumeditation.c,v 1.5 2006-07-06 02:14:33 wntrmute Exp $
+  $Id: gurumeditation.c,v 1.6 2006-08-03 09:35:36 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
@@ -22,6 +22,10 @@
      distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.5  2006/07/06 02:14:33  wntrmute
+  read r15 in enterException
+  add return to bios
+
   Revision 1.4  2006/06/21 20:12:39  wntrmute
   thumb ldrsh has register offset
 
@@ -218,6 +222,7 @@ static const char *registerNames[] =
 	{	"r0","r1","r2","r3","r4","r5","r6","r7",
 		"r8 ","r9 ","r10","r11","r12","sp ","lr ","pc " };
 
+extern const char __itcm_start[];
 //---------------------------------------------------------------------------------
 static void defaultHandler() {
 //---------------------------------------------------------------------------------
@@ -232,7 +237,7 @@ static void defaultHandler() {
 
 	consoleInitDefault((u16*)SCREEN_BASE_BLOCK_SUB(31), (u16*)CHAR_BASE_BLOCK_SUB(0), 16);
 
-	iprintf("\n\x1b[5CGuru Meditation Error!\n\n");
+	iprintf("\x1b[5CGuru Meditation Error!\n");
 	u32	currentMode = getCPSR() & 0x1f;
 	u32 thumbState = ((*(u32*)0x027FFD90) & 0x20);
 
@@ -243,7 +248,12 @@ static void defaultHandler() {
 	if ( currentMode == 0x17 ) {
 		iprintf ("\x1b[10Cdata abort!\n\n");
 		codeAddress = exceptionRegisters[15] - offset;
-		exceptionAddress = getExceptionAddress( codeAddress, thumbState);
+		if (	(codeAddress > 0x02000000 && codeAddress < 0x02400000) ||
+				(codeAddress > (u32)__itcm_start && codeAddress < (u32)(__itcm_start + 32768)) )
+			exceptionAddress = getExceptionAddress( codeAddress, thumbState);
+		else
+			exceptionAddress = codeAddress;
+			
 	} else {
 		if (thumbState)
 			offset = 2;
@@ -254,7 +264,6 @@ static void defaultHandler() {
 		exceptionAddress = codeAddress;
 	}
 
-
 	iprintf("  pc: %08X addr: %08X\n\n",codeAddress,exceptionAddress);
 
 	int i;
@@ -263,7 +272,11 @@ static void defaultHandler() {
 					registerNames[i], exceptionRegisters[i],
 					registerNames[i+8],exceptionRegisters[i+8]);
 	}
-
+	iprintf("\n");
+	u32 *stack = (u32 *)exceptionRegisters[13];
+	for ( i=0; i<10; i++ ) {
+		iprintf( "\x1b[%d;2H%08X: %08X %08X", i + 14, (u32)&stack[i*2],stack[i*2], stack[(i*2)+1] );
+	}
 	while(1);
 
 }

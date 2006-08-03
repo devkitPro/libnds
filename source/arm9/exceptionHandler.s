@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: exceptionHandler.s,v 1.2 2006-07-06 02:14:33 wntrmute Exp $
+  $Id: exceptionHandler.s,v 1.3 2006-08-03 09:35:36 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
@@ -22,6 +22,10 @@
      distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.2  2006/07/06 02:14:33  wntrmute
+  read r15 in enterException
+  add return to bios
+
   Revision 1.1  2006/06/18 21:16:26  wntrmute
   added arm9 exception handler API
 
@@ -49,21 +53,24 @@ enterException:
 	stmia	r12,{r0-r11}
 	str	r13,[r12,#oldStack - exceptionRegisters]
 	// assign a stack
-	ldr	r12,=exceptionStack
-	ldr	r13,[r12]
+	ldr	r13,=exceptionStack
+	ldr	r13,[r13]
 
 	// renable MPU
 	mrc	p15,0,r0,c1,c0,0
 	orr	r0,r0,#1
 	mcr	p15,0,r0,c1,c0,0
 
-	// grab stored r12 and SPSR from bios exception stack
+	// bios exception stack
 	ldr 	r0, =0x027FFD90
-	ldmia	r0,{r2,r12}
 
 	// grab r15 from bios exception stack
-	ldr	r0,[r0,#8]
-	str	r0,[r12,#reg15 - exceptionRegisters]
+	ldr	r2,[r0,#8]
+	str	r2,[r12,#reg15 - exceptionRegisters]
+
+	// grab stored r12 and SPSR from bios exception stack
+	ldmia	r0,{r2,r12}
+
 
 	// grab banked registers from correct processor mode
 	mrs	r3,cpsr
