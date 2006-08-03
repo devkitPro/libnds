@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.22 2006-05-08 03:23:32 dovoto Exp $
+	$Id: videoGL.c,v 1.23 2006-08-03 04:59:08 dovoto Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.22  2006/05/08 03:23:32  dovoto
+	*** empty log message ***
+	
 	Revision 1.20  2006/05/08 03:19:51  dovoto
 	Added glGetTexturePointer which allows the user to retreive a pointer to texture memory for the named texture.
 	
@@ -549,6 +552,53 @@ void gluPerspective(float fovy, float aspect, float zNear, float zFar) {
 	gluPerspectivef32((int)(fovy * LUT_SIZE / 360.0), floattof32(aspect), floattof32(zNear), floattof32(zFar));    
 }
 
+//---------------------------------------------------------------------------------
+// Sets the pick matrix for 3D selection
+//---------------------------------------------------------------------------------
+void gluPickMatrix(float x, float y, float width, float height, int viewport[4]) {
+//---------------------------------------------------------------------------------
+
+	gluPickMatrix(floattof32(x), floattof32(y), floattof32(width), floattof32(height), viewport);
+}
+
+//---------------------------------------------------------------------------------
+// Sets the pick matrix for 3D selection (fixed point version)
+//---------------------------------------------------------------------------------
+void gluPickMatrixf32(f32 x, f32 y, f32 width, f32 height, int viewport[4]) {
+//---------------------------------------------------------------------------------
+
+   f32 sx, sy;
+   f32 tx, ty;
+   f32 v[4];	
+
+   v[0] = inttof32(viewport[0]);	   
+   v[0] = inttof32(viewport[1]);
+   v[0] = inttof32(viewport[2]);
+   v[0] = inttof32(viewport[3]);
+   
+   sx = divf32(viewport[2], width);
+   sy = divf32(viewport[3], height);
+   tx = viewport[2]+ 2 * divf32(viewport[0] - x, width);
+   ty = viewport[3] + 2 * divf32(viewport[1] - y, height);
+
+   MATRIX_MULT4x4 = sx;
+   MATRIX_MULT4x4 = 0.0;
+   MATRIX_MULT4x4 = 0.0;
+   MATRIX_MULT4x4 = tx;
+   MATRIX_MULT4x4 = 0.0;
+   MATRIX_MULT4x4 = sy;
+   MATRIX_MULT4x4 = 0.0;
+   MATRIX_MULT4x4 = ty;
+   MATRIX_MULT4x4 = 0.0;
+   MATRIX_MULT4x4 = 0.0;
+   MATRIX_MULT4x4 = inttof32(1);
+   MATRIX_MULT4x4 = 0.0;
+   MATRIX_MULT4x4 = 0.0;
+   MATRIX_MULT4x4 = 0.0;
+   MATRIX_MULT4x4 = 0.0;
+   MATRIX_MULT4x4 = inttof32(1);
+
+}
 
 //---------------------------------------------------------------------------------
 void glMaterialf(int mode, rgb color) {
