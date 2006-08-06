@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: card.h,v 1.3 2005-12-27 00:57:51 darkfader Exp $
+	$Id: card.h,v 1.4 2006-08-06 07:51:48 chishm Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/12/27 00:57:51  darkfader
+	CARD_DATA -> REG_IPC_FIFO_RX
+	
 	Revision 1.2  2005/08/30 17:52:24  wntrmute
 	corrected CARD_CR1
 	fixed cardReadEeprom
@@ -81,12 +84,12 @@ extern "C" {
 #endif
 
 
-void cardWriteCommand(uint8 * command);
+void cardWriteCommand(const uint8 * command);
 
 //fix me DARKFADER!!!!
-void cardPolledTransfer(uint32 flags, uint32 * destination, uint32 length, uint8 * command);
-void cardStartTransfer(uint8 * command, uint32 * destination, int channel, uint32 flags);
-uint32 cardWriteAndRead(uint8 * command, uint32 flags);
+void cardPolledTransfer(uint32 flags, uint32 * destination, uint32 length, const uint8 * command);
+void cardStartTransfer(const uint8 * command, uint32 * destination, int channel, uint32 flags);
+uint32 cardWriteAndRead(const uint8 * command, uint32 flags);
 void cardRead00(uint32 address, uint32 * destination, uint32 length, uint32 flags);
 void cardReadHeader(uint8 * header);
 int cardReadID(uint32 flags);
