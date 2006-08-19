@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.27 2006-08-19 06:40:22 dovoto Exp $
+	$Id: video.h,v 1.28 2006-08-19 06:41:44 dovoto Exp $
 
 	Video registers and defines
 
@@ -129,8 +129,8 @@ typedef enum {
 	VRAM_A_MAIN_BG_0x6040000	= 1 | VRAM_OFFSET(2),
 	VRAM_A_MAIN_BG_0x6060000	= 1 | VRAM_OFFSET(3),
 	VRAM_A_MAIN_SPRITE = 2,
-	VRAM_B_MAIN_SPRITE_0x6400000	= 2,
-	VRAM_B_MAIN_SPRITE_0x6420000	= 2 | VRAM_OFFSET(1),
+	VRAM_A_MAIN_SPRITE_0x6400000	= 2,
+	VRAM_A_MAIN_SPRITE_0x6420000	= 2 | VRAM_OFFSET(1),
 	VRAM_A_TEXTURE = 3,
 	VRAM_A_TEXTURE_SLOT0	= 3 | VRAM_OFFSET(0),
 	VRAM_A_TEXTURE_SLOT1	= 3 | VRAM_OFFSET(1),
