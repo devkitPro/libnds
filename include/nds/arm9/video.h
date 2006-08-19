@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.28 2006-08-19 06:41:44 dovoto Exp $
+	$Id: video.h,v 1.29 2006-08-19 07:07:10 dovoto Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.28  2006/08/19 06:41:44  dovoto
+	updated mappoing for vram A B main sprite and C, D arm7 vram
+	
 	Revision 1.25  2006/07/19 21:10:34  wntrmute
 	add libgba compatibility macros
 	
@@ -208,6 +211,10 @@ typedef enum {
 	VRAM_F_LCD             = 0,
 	VRAM_F_MAIN_BG         = 1,
 	VRAM_F_MAIN_SPRITE     = 2,
+	VRAM_F_MAIN_SPRITE_0x6000000     = 2,
+	VRAM_F_MAIN_SPRITE_0x6004000     = 2 | VRAM_OFFSET(1),
+	VRAM_F_MAIN_SPRITE_0x6010000     = 2 | VRAM_OFFSET(2),
+	VRAM_F_MAIN_SPRITE_0x6014000     = 2 | VRAM_OFFSET(3),
 	VRAM_F_TEX_PALETTE     = 3,
 	VRAM_F_BG_EXT_PALETTE  = 4,
 	VRAM_F_OBJ_EXT_PALETTE = 5,
@@ -217,6 +224,10 @@ typedef enum {
 	VRAM_G_LCD             = 0,
 	VRAM_G_MAIN_BG         = 1,
 	VRAM_G_MAIN_SPRITE     = 2,
+	VRAM_G_MAIN_SPRITE_0x6000000     = 2,
+	VRAM_G_MAIN_SPRITE_0x6004000     = 2 | VRAM_OFFSET(1),
+	VRAM_G_MAIN_SPRITE_0x6010000     = 2 | VRAM_OFFSET(2),
+	VRAM_G_MAIN_SPRITE_0x6014000     = 2 | VRAM_OFFSET(3),
 	VRAM_G_TEX_PALETTE     = 3,
 	VRAM_G_BG_EXT_PALETTE  = 4,
 	VRAM_G_OBJ_EXT_PALETTE = 5,
