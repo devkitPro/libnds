@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.25 2006-07-19 21:10:34 wntrmute Exp $
+	$Id: video.h,v 1.26 2006-08-19 05:46:52 dovoto Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.25  2006/07/19 21:10:34  wntrmute
+	add libgba compatibility macros
+	
 	Revision 1.24  2006/07/18 15:45:09  wntrmute
 	added handy macros from libgba
 
@@ -156,6 +159,8 @@ typedef enum {
 	VRAM_C_MAIN_BG_0x6040000	= 1 | VRAM_OFFSET(2),
 	VRAM_C_MAIN_BG_0x6060000	= 1 | VRAM_OFFSET(3),
 	VRAM_C_ARM7	= 2,
+	VRAM_C_ARM7_0x6000000 = 2,
+	VRAM_C_ARM7_0x6020000 = 2 | VRAM_OFFSET(1),
 	VRAM_C_SUB_BG	= 4,
 	VRAM_C_SUB_BG_0x6200000	= 4 | VRAM_OFFSET(0),
 	VRAM_C_SUB_BG_0x6220000	= 4 | VRAM_OFFSET(1),
@@ -175,7 +180,9 @@ typedef enum {
 	VRAM_D_MAIN_BG_0x6020000  = 1 | VRAM_OFFSET(1),
 	VRAM_D_MAIN_BG_0x6040000  = 1 | VRAM_OFFSET(2),
 	VRAM_D_MAIN_BG_0x6060000  = 1 | VRAM_OFFSET(3),
-	VRAM_D_ARM7 = 2,
+	VRAM_D_ARM7 = 2 | VRAM_OFFSET(1),
+	VRAM_D_ARM7_0x6000000 = 2,
+	VRAM_D_ARM7_0x6020000 = 2 | VRAM_OFFSET(1),
 	VRAM_D_SUB_SPRITE  = 4,
 	VRAM_D_TEXTURE = 3 | VRAM_OFFSET(3),
 	VRAM_D_TEXTURE_SLOT0 = 3 | VRAM_OFFSET(0),
