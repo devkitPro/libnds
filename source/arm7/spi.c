@@ -21,6 +21,9 @@
       distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.2  2006/06/26 02:06:30  wntrmute
+  use correct register defines
+
   Revision 1.1  2006/02/06 22:29:32  joatski
   Added writePowerManagement, readPowerManagement, and readFirmware to serial.h, as well as some associated defines.
 
@@ -74,7 +77,7 @@ void readFirmware(uint32 address, void * destination, uint32 size) {
 	// Read the data
 	while (size--) {
 		REG_SPIDATA = 0;
-		while (REG_SPIDATA & SPI_BUSY);
+		while (REG_SPICNT & SPI_BUSY);
 		*buffer++ = (REG_SPIDATA & 0xFF);
 	}
 
