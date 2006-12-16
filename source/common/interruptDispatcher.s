@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interruptDispatcher.s,v 1.7 2006-04-26 05:11:31 wntrmute Exp $
+	$Id: interruptDispatcher.s,v 1.8 2006-12-16 09:10:02 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,6 +22,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2006/04/26 05:11:31  wntrmute
+	rebase dtcm, take __irq_flags and __irq_vector from linker script
+	move arm7 irq vector & irq flags to actual locations
+	
 	Revision 1.6  2006/04/23 18:19:15  wntrmute
 	reworked interrupt code to allow dtcm moving
 	
@@ -63,7 +67,7 @@ IntrMain:
 	ldr	r1, [r3, #0x208]	@ r1 = IME
 	str	r3, [r3, #0x208]	@ disable IME
 	mrs	r0, spsr
-	stmfd	sp!, {r0-r1,r3,lr}	@ {spsr, IME, REG_BASE, lr}
+	stmfd	sp!, {r0-r1,r3}		@ {spsr, IME, REG_BASE}
 
 	ldr	r1, [r3,#0x210]		@ REG_IE
 	ldr	r2, [r3,#0x214]		@ REG_IF
@@ -91,7 +95,7 @@ findIRQ:
 no_handler:
 @---------------------------------------------------------------------------------
 	str	r1, [r3, #0x0214]	@ IF Clear
-	ldmfd   sp!, {r0-r1,r3,lr}	@ {spsr, IME, REG_BASE, lr}
+	ldmfd   sp!, {r0-r1,r3}		@ {spsr, IME, REG_BASE}
 	str	r1, [r3, #0x208]	@ restore REG_IME
 	mov	pc,lr
 
@@ -112,30 +116,32 @@ got_handler:
 	orr	r2, r2, #0x1f		@ /  --> Enable IRQ & FIQ. Set CPU mode to System.
 	msr	cpsr,r2
 
-	ldr	r2, [r3,#0x210]		@ REG_IE
-	stmfd	sp!, {r0,r2, r3,lr}	@ irq mask, IE, REG_IE, lr
-	bic	r2, r2, r0		@ disable interrupt about to be serviced
-	str	r2, [r3,#0x210]
-
+@	ldr	r2, [r3,#0x210]		@ REG_IE
+@	stmfd	sp!, {r0,r2, r3,lr}	@ irq mask, IE, REG_IE, lr
+@	bic	r2, r2, r0		@ disable interrupt about to be serviced
+@	str	r2, [r3,#0x210]
+	str	r0, [r3, #0x0214]	@ IF Clear
+	
+	push	{lr}
 	adr	lr, IntrRet
 	bx	r1
 
 @---------------------------------------------------------------------------------
 IntrRet:
 @---------------------------------------------------------------------------------
+	pop	{lr}
 	mov	r3, #0x4000000		@ REG_BASE
 	str	r3, [r3, #0x208]	@ disable IME
 
-	ldmfd	sp!, {r0,r2, r3,lr}	@ irq mask, IE, REG_IE, lr
-	str	r0, [r3, #0x0214]	@ IF Clear
-	str	r2, [r3,#0x210]		@ restore REG_IE
+@	ldmfd	sp!, {r0,r2, r3,lr}	@ irq mask, IE, REG_IE, lr
+@	str	r2, [r3,#0x210]		@ restore REG_IE
 
 	mrs	r3, cpsr
 	bic	r3, r3, #0xdf		@ \__
 	orr	r3, r3, #0x92		@ /  --> Disable IRQ. Enable FIQ. Set CPU mode to IRQ.
 	msr	cpsr, r3
 
-	ldmfd   sp!, {r0-r1,r3,lr}	@ {spsr, IME, REG_BASE, lr}
+	ldmfd   sp!, {r0-r1,r3}		@ {spsr, IME, REG_BASE}
 	str	r1, [r3, #0x208]	@ restore REG_IME
 	msr	spsr, r0		@ restore spsr
 	mov	pc,lr
