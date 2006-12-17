@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.15 2006-08-03 09:36:09 wntrmute Exp $
+	$Id: system.h,v 1.16 2006-12-17 11:14:59 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.15  2006/08/03 09:36:09  wntrmute
+	use leading zero
+	
 	Revision 1.14  2006/06/26 11:26:32  wntrmute
 	remove //////
 	
@@ -124,7 +127,7 @@ void SetYtrigger(int Yvalue) {
 /*!	This register controls what hardware should
 	be turned on or off.
 */
-#define POWER_CR       (*(vuint16*)0x04000304)
+#define	REG_POWERCNT	*(vu16*)0x4000304
 
 //!	Turns on specified hardware.
 /*!	This function should only be called after %powerSET.
@@ -132,7 +135,7 @@ void SetYtrigger(int Yvalue) {
 	\param on What to power on.
 */
 static inline
-void powerON(int on) { POWER_CR |= on;}
+void powerON(int on) { REG_POWERCNT |= on;}
 
 //!	Turns on only the specified hardware.
 /*!	Use this function to power on basic hardware types you
@@ -140,12 +143,12 @@ void powerON(int on) { POWER_CR |= on;}
 
 	\param on What to power on.
 */
-static inline void powerSET(int on) { POWER_CR = on;}
+static inline void powerSET(int on) { REG_POWERCNT = on;}
 
 //!	Turns off the specified hardware.
 /*!	\param off What to power off.
 */
-static inline void powerOFF(int off) { POWER_CR &= ~off;}
+static inline void powerOFF(int off) { REG_POWERCNT &= ~off;}
 
 #ifdef ARM9
 #ifdef DOXYGEN
@@ -180,13 +183,13 @@ enum ARM9_power
 #define POWER_ALL		 (POWER_ALL_2D | POWER_3D_CORE | POWER_MATRIX)
 
 //!	Switches the screens.
-static inline void lcdSwap(void) { POWER_CR ^= POWER_SWAP_LCDS; }
+static inline void lcdSwap(void) { REG_POWERCNT ^= POWER_SWAP_LCDS; }
 
 //!	Forces the main core to display on the top.
-static inline void lcdMainOnTop(void) { POWER_CR |= POWER_SWAP_LCDS; }
+static inline void lcdMainOnTop(void) { REG_POWERCNT |= POWER_SWAP_LCDS; }
 
 //!	Forces the main core to display on the bottom.
-static inline void lcdMainOnBottom(void) { POWER_CR &= ~POWER_SWAP_LCDS; }
+static inline void lcdMainOnBottom(void) { REG_POWERCNT &= ~POWER_SWAP_LCDS; }
 #endif
 
 #ifdef ARM7
@@ -245,7 +248,7 @@ typedef struct tPERSONAL_DATA {
   u8 calX2px;				//!<	Touchscreen calibration: second X touch pixel
   u8 calY2px;				//!<	Touchscreen calibration: second Y touch pixel
 
-  packed_struct {
+packed_struct {
     unsigned language    : 3;	//!<	User's language.
     unsigned gbaScreen   : 1;	//!<	GBA screen selection (lower screen if set, otherwise upper screen).
     unsigned RESERVED3   : 2;	//!<	???

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: registers_alt.h,v 1.7 2006-08-03 09:35:14 wntrmute Exp $
+	$Id: registers_alt.h,v 1.8 2006-12-17 11:14:59 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2006/08/03 09:35:14  wntrmute
+	use defines for easier replacement of deprecated values
+	
 	Revision 1.6  2006/06/16 07:35:14  wntrmute
 	more moves to REG_ values
 	implement SetYtrigger helper function
@@ -241,7 +244,7 @@
 #define	IME			REG_IME
 
 /*controls power  0x30f	is all on */
-#define	REG_POWER		*(vu16*)0x4000304
+#define POWER_CR	REG_POWERCNT
 
 /* ram	controllers	0x8	is enabled,	other bits have	to do with mapping */
 #define	REG_VRAM_A_CR	(*(vu8*) 0x4000240)
