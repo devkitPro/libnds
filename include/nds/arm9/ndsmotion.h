@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------------
-	$Id: ndsmotion.h,v 1.1 2007-01-09 06:11:54 dovoto Exp $
+	$Id: ndsmotion.h,v 1.2 2007-01-09 06:23:43 dovoto Exp $
 
-	Microphone control for the ARM7
-
+	DS Motion Card functionality
+	
 	Copyright (C) 2007
 		Michael Noland (joat)
 		Jason Rogers (dovoto)
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.1  2007/01/09 06:11:54  dovoto
+	Added DS motion card functionality to libnds!
+	
 
 ---------------------------------------------------------------------------------*/
 
