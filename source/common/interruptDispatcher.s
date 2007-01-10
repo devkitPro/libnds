@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interruptDispatcher.s,v 1.8 2006-12-16 09:10:02 wntrmute Exp $
+	$Id: interruptDispatcher.s,v 1.9 2007-01-10 15:48:27 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2006/12/16 09:10:02  wntrmute
+	acknowledge interrupt before calling handler
+	
 	Revision 1.7  2006/04/26 05:11:31  wntrmute
 	rebase dtcm, take __irq_flags and __irq_vector from linker script
 	move arm7 irq vector & irq flags to actual locations
@@ -116,10 +119,6 @@ got_handler:
 	orr	r2, r2, #0x1f		@ /  --> Enable IRQ & FIQ. Set CPU mode to System.
 	msr	cpsr,r2
 
-@	ldr	r2, [r3,#0x210]		@ REG_IE
-@	stmfd	sp!, {r0,r2, r3,lr}	@ irq mask, IE, REG_IE, lr
-@	bic	r2, r2, r0		@ disable interrupt about to be serviced
-@	str	r2, [r3,#0x210]
 	str	r0, [r3, #0x0214]	@ IF Clear
 	
 	push	{lr}
@@ -132,9 +131,6 @@ IntrRet:
 	pop	{lr}
 	mov	r3, #0x4000000		@ REG_BASE
 	str	r3, [r3, #0x208]	@ disable IME
-
-@	ldmfd	sp!, {r0,r2, r3,lr}	@ irq mask, IE, REG_IE, lr
-@	str	r2, [r3,#0x210]		@ restore REG_IE
 
 	mrs	r3, cpsr
 	bic	r3, r3, #0xdf		@ \__
