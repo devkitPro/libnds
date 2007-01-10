@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: gbfs.h,v 1.2 2005-08-23 17:06:09 wntrmute Exp $
+	$Id: gbfs.h,v 1.3 2007-01-10 15:51:01 wntrmute Exp $
 
 	access object in a GBFS file
 
@@ -28,6 +28,9 @@
 	IN THE SOFTWARE.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2005/08/23 17:06:09  wntrmute
+	converted all endings to unix
+	
 	Revision 1.1  2005/08/04 17:55:44  wntrmute
 	added gbfs
 
@@ -43,8 +46,8 @@ Before you #include "gbfs.h", you should define the following types:
 Your system header should do this for you.
 */
 
-#ifndef INCLUDE_GBFS_H
-#define INCLUDE_GBFS_H
+#ifndef _INCLUDE_GBFS_H_
+#define _INCLUDE_GBFS_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -79,21 +82,27 @@ void gbfs_search_range(	u32 gbfs_1st_limit,
 						u32 gbfs_stride );
 
 const GBFS_FILE * find_first_gbfs_file(const void *start);
+
 const void *skip_gbfs_file(const GBFS_FILE * file);
+
 const void *gbfs_get_obj(const GBFS_FILE *file,
                          const char *name,
                          u32 *len);
+
 const void *gbfs_get_nth_obj(GBFS_FILE const * file,
                              size_t n,
                              char *name,
                              u32 *len);
+
 void *gbfs_copy_obj(void *dst,
                     const GBFS_FILE *file,
                     const char *name);
+
 size_t gbfs_count_objs(const GBFS_FILE *file);
 
 
 #ifdef __cplusplus
 }
 #endif
-#endif
+
+#endif // _INCLUDE_GBFS_H_
