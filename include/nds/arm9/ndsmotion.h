@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: ndsmotion.h,v 1.3 2007-01-10 16:47:30 dovoto Exp $
+	$Id: ndsmotion.h,v 1.4 2007-01-10 16:58:16 dovoto Exp $
 
 	DS Motion Card functionality
 	
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2007/01/10 16:47:30  dovoto
+	Added calibtation settings to ds motion code
+	
 	Revision 1.2  2007/01/09 06:23:43  dovoto
 	Fixed logging header for ndsmotion.h and ndsmotion.c
 	
@@ -116,7 +119,7 @@ void motion_set_sens_y(int sens);
 \brief this should be passed the raw reading at 1g for accurate
 acceleration calculations.  Default is 819
 */
-void motion_set_sens_gyro(int sens);
+void motion_set_sens_z(int sens);
 
 /*! \fn void motion_set_sens_x(int sens)
 \brief this should be passed the raw reading at 1g for accurate
