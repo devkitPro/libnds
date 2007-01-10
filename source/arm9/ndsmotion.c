@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: ndsmotion.c,v 1.2 2007-01-09 06:23:43 dovoto Exp $
+	$Id: ndsmotion.c,v 1.3 2007-01-10 16:47:30 dovoto Exp $
 
 	DS Motion Card functionality
 	
@@ -26,9 +26,14 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.2  2007/01/09 06:23:43  dovoto
+	Fixed logging header for ndsmotion.h and ndsmotion.c
+	
 
 ---------------------------------------------------------------------------------*/
+
 #include <nds.h>
+#include <nds/arm9/ndsmotion.h>
 
 #define CARD_WaitBusy()   while (CARD_CR1 & /*BUSY*/0x80);
 
@@ -38,12 +43,8 @@
 // disables SPI bus
 #define SPI_Off() CARD_CR1 = 0;
 
-// global variables for the sensor parameters
-#define  MOTION_OFFSET 2048 	// output of axis at 0 acceleration - this can vary slightly from sensor to sensor
-#define  MOTION_SENS   819		// sensitivity of axis (how many counts the output changes with 1 g) - this can vary slightly from sensor to sensor
-#define  GYRO_OFFSET   1680		// zero rate bias (offset) of the gyro - this can vary slightly from sensor to sensor
-#define  GYRO_SENS     825		// sensitivity of gyro (how many counts the output changes with 1000 degrees/second rotation) - this can vary slightly from sensor to sensor
-
+//these are the default calibration values for sensitivity and offset
+MotionCalibration calibration = {2048, 2048, 2048, 1680, 819, 819, 819, 825};
 
 // sends and receives 1 byte on the SPI bus
 unsigned char motion_spi(unsigned char in_byte){
@@ -124,12 +125,88 @@ int motion_is_inserted(){
     return plugged_in;
 }
 
-//converts raw acceleration value to mili G (where g is 9.8 m/s*s)
-int motion_acceleration(int accel){
-	return (accel - MOTION_OFFSET) * 1000 / MOTION_SENS;
+//gets acceleration value in mili G (where g is 9.8 m/s*s)
+int motion_acceleration_x(void){
+	int accel = motion_read_x();
+	return (accel - calibration.xoff) * 1000 / calibration.xsens;
+}
+
+//gets acceleration value in mili G (where g is 9.8 m/s*s)
+int motion_acceleration_y(void){
+	int accel = motion_read_y();
+	return (accel - calibration.yoff) * 1000 / calibration.ysens;
+}
+//gets acceleration value in mili G (where g is 9.8 m/s*s)
+int motion_acceleration_z(void){
+	int accel = motion_read_z();
+	return (accel - calibration.zoff) * 1000 / calibration.zsens;
 }
 
 //converts raw rotation value to degrees per second
-int motion_rotation(int rotation){
-	return (rotation - GYRO_OFFSET) * 1000 / GYRO_SENS;
+int motion_rotation(){
+	int rotation = motion_read_gyro();
+	return (rotation - calibration.goff) * 1000 / calibration.gsens;
+}
+
+//this should be passed the raw reading at 1g for accurate
+//acceleration calculations.  Default is 819
+void motion_set_sens_x(int sens){
+	calibration.xsens = sens - calibration.xoff;
+}
+
+//this should be passed the raw reading at 1g for accurate
+//acceleration calculations.  Default is 819
+void motion_set_sens_y(int sens){
+	calibration.ysens = sens - calibration.yoff;
+}
+
+//this should be passed the raw reading at 1g for accurate
+//acceleration calculations.  Default is 819
+void motion_set_sens_z(int sens){
+	calibration.zsens = sens - calibration.zoff;
+}
+
+//this should be passed the raw reading at 1g for accurate
+//acceleration calculations.  Default is 819
+void motion_set_sens_gyro(int sens){
+	calibration.gsens = sens;
+}
+
+//this should be called when the axis is under no acceleration
+//default is 2048
+void motion_set_offs_x(){
+	calibration.xoff = motion_read_x();
+}
+
+//this should be called when the axis is under no acceleration
+//default is 2048
+void motion_set_offs_y(){
+	calibration.yoff = motion_read_y();
+}
+
+//this should be called when the axis is under no acceleration
+//default is 2048
+void motion_set_offs_z(){
+	calibration.zoff = motion_read_z();
+}
+
+//this should be called when the axis is under no acceleration
+//default is 2048
+void motion_set_offs_gyro(){
+	calibration.goff = motion_read_gyro();
+}
+
+MotionCalibration* motion_get_calibraion(){
+	return &calibration;
+}
+
+void motion_set_calibration(MotionCalibration* cal){
+	calibration.xsens = cal->xsens;
+	calibration.ysens = cal->ysens;
+	calibration.zsens = cal->zsens;
+	calibration.gsens = cal->gsens;
+	calibration.xoff = cal->xoff;
+	calibration.yoff = cal->yoff;
+	calibration.zoff = cal->zoff;
+	calibration.goff = cal->goff;
 }
