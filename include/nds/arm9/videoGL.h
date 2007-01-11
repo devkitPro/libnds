@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.23 2006-08-03 04:56:31 dovoto Exp $
+	$Id: videoGL.h,v 1.24 2007-01-11 05:35:41 dovoto Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.23  2006/08/03 04:56:31  dovoto
+	Added gluPickMatrix() ...untested
+	
 	Revision 1.22  2006/05/08 03:19:51  dovoto
 	Added glGetTexturePointer which allows the user to retreive a pointer to texture memory for the named texture.
 	
@@ -215,6 +218,7 @@ typedef struct {
 //////////////////////////////////////////////////////////////////////
 
 #define GL_PROJECTION      0
+#define GL_POSITION        1
 #define GL_MODELVIEW       2
 #define GL_TEXTURE         3
 
@@ -304,9 +308,11 @@ typedef enum {
 	GL_GET_VERTEX_RAM_COUNT,	// returns a count of vertexes currently stored in hardware vertex ram
 	GL_GET_POLYGON_RAM_COUNT,	// returns a count of polygons currently stored in hardware polygon ram
 	GL_GET_MATRIX_ROTATION,		// returns the current 3x3 rotation matrix
+	GL_GET_MATRIX_POSITION,		// returns the current 4x4 position matrix
 	GL_GET_MATRIX_PROJECTION,	// returns the current 4x4 projection matrix
-  GL_GET_TEXTURE_WIDTH,     // returns the width of the currently bound texture
-  GL_GET_TEXTURE_HEIGHT     // returns the height of the currently bound texture
+	GL_GET_MATRIX_MODELVIEW,	// returns the current 4x4 modelview matrix
+	GL_GET_TEXTURE_WIDTH,		// returns the width of the currently bound texture
+	GL_GET_TEXTURE_HEIGHT		// returns the height of the currently bound texture
 } GL_GET_TYPE;
 
 ////////////////////////////////////////////////////////////
@@ -521,27 +527,16 @@ void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar);
 */
 
 void gluPerspective(float fovy, float aspect, float zNear, float zFar);
-
-/*! \fn void gluPickMatrix(float x, float y, float width, float height, int viewport[4])
+/*! \fn void gluPickMatrix(int x, int y, int width, int height, int viewport[4])
 \brief Utility function which generates a picking matrix for selection
 \param x 2D x of center  (touch x normally)
 \param y 2D y of center  (touch y normally)
 \param width width in pixels of the window (3 or 4 is a good number)
 \param height height in pixels of the window (3 or 4 is a good number)
-\param viewport the current viewport (normaly [0, 0, 255, 255])
+\param viewport the current viewport (normaly [0, 0, 255, 191])
 */
-void gluPickMatrix(float x, float y, float width, float height, int viewport[4]);
 
-/*! \fn void gluPickMatrixf32(f32 x, f32 y, f32 width, f32 height, int viewport[4])
-\brief Utility function which generates a picking matrix for selection (fixed point version)
-\param x 2D x of center  (touch x normally)
-\param y 2D y of center  (touch y normally)
-\param width width in pixels of the window (3 or 4 is a good number)
-\param height height in pixels of the window (3 or 4 is a good number)
-\param viewport the current viewport (normaly [0, 0, 255, 255])
-*/
-void gluPickMatrixf32(f32 x, f32 y, f32 width, f32 height, int viewport[4]);
-
+void gluPickMatrix(int x, int y, int width, int height, int viewport[4]);
 /*! \fn int glTexImage2D(int target, int empty1, int type, int sizeX, int sizeY, int empty2, int param, uint8* texture)
 \brief Loads a 2D texture into texture memory and sets the currently bound texture ID to the attributes specified
 */

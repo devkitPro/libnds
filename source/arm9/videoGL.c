@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.23 2006-08-03 04:59:08 dovoto Exp $
+	$Id: videoGL.c,v 1.24 2007-01-11 05:35:41 dovoto Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.23  2006/08/03 04:59:08  dovoto
+	Added gluPickMatrix... (untested)
+	
 	Revision 1.22  2006/05/08 03:23:32  dovoto
 	*** empty log message ***
 	
@@ -393,27 +396,25 @@ void glNormal3f(float x, float y, float z) {
 //---------------------------------------------------------------------------------
 void glOrthof32(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar) {
 //---------------------------------------------------------------------------------
-	glMatrixMode(GL_PROJECTION);
+	MATRIX_MULT4x4 = divf32(inttof32(2), right - left);     
+	MATRIX_MULT4x4 = 0;  
+	MATRIX_MULT4x4 = 0;      
+	MATRIX_MULT4x4 = 0;//
 
-	MATRIX_LOAD4x4 = divf32(inttof32(2), right - left);     
-	MATRIX_LOAD4x4 = 0;  
-	MATRIX_LOAD4x4 = 0;      
-	MATRIX_LOAD4x4 = 0;//
-
-	MATRIX_LOAD4x4 = 0;  
-	MATRIX_LOAD4x4 = divf32(inttof32(2), top - bottom);     
-	MATRIX_LOAD4x4 = 0;    
-	MATRIX_LOAD4x4 = 0;//
+	MATRIX_MULT4x4 = 0;  
+	MATRIX_MULT4x4 = divf32(inttof32(2), top - bottom);     
+	MATRIX_MULT4x4 = 0;    
+	MATRIX_MULT4x4 = 0;//
    
-	MATRIX_LOAD4x4 = 0;  
-	MATRIX_LOAD4x4 = 0;  
-	MATRIX_LOAD4x4 = divf32(inttof32(-2), zFar - zNear);     
-	MATRIX_LOAD4x4 = 0;
+	MATRIX_MULT4x4 = 0;  
+	MATRIX_MULT4x4 = 0;  
+	MATRIX_MULT4x4 = divf32(inttof32(-2), zFar - zNear);     
+	MATRIX_MULT4x4 = 0;
    
-	MATRIX_LOAD4x4 = -divf32(right + left, right - left);//0;  
-	MATRIX_LOAD4x4 = -divf32(top + bottom, top - bottom); //0;  
-	MATRIX_LOAD4x4 = -divf32(zFar + zNear, zFar - zNear);//0;  
-	MATRIX_LOAD4x4 = floattof32(1.0F);
+	MATRIX_MULT4x4 = -divf32(right + left, right - left);//0;  
+	MATRIX_MULT4x4 = -divf32(top + bottom, top - bottom); //0;  
+	MATRIX_MULT4x4 = -divf32(zFar + zNear, zFar - zNear);//0;  
+	MATRIX_MULT4x4 = floattof32(1.0F);
 	
 	glStoreMatrix(0);
 }
@@ -492,30 +493,27 @@ void gluLookAt(	float eyex, float eyey, float eyez,
 //---------------------------------------------------------------------------------
 //	frustrum has only been tested as part of perspective
 //---------------------------------------------------------------------------------
-void gluFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far) {
+void glFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far) {
 //---------------------------------------------------------------------------------
-  
-	glMatrixMode(GL_PROJECTION);
-
-	MATRIX_LOAD4x4 = divf32(2*near, right - left);     
-	MATRIX_LOAD4x4 = 0;  
-	MATRIX_LOAD4x4 = divf32(right + left, right - left);      
-	MATRIX_LOAD4x4 = 0;
-
-	MATRIX_LOAD4x4 = 0;  
-	MATRIX_LOAD4x4 = divf32(2*near, top - bottom);     
-	MATRIX_LOAD4x4 = divf32(top + bottom, top - bottom);      
-	MATRIX_LOAD4x4 = 0;
-   
-	MATRIX_LOAD4x4 = 0;  
-	MATRIX_LOAD4x4 = 0;  
-	MATRIX_LOAD4x4 = -divf32(far + near, far - near);     
-	MATRIX_LOAD4x4 = floattof32(-1.0F);
-   
-	MATRIX_LOAD4x4 = 0;  
-	MATRIX_LOAD4x4 = 0;  
-	MATRIX_LOAD4x4 = -divf32(2 * mulf32(far, near), far - near);  
-	MATRIX_LOAD4x4 = 0;
+	MATRIX_MULT4x4 = divf32(2*near, right - left);
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = divf32(right + left, right - left);
+	MATRIX_MULT4x4 = 0;
+	
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = divf32(2*near, top - bottom);
+	MATRIX_MULT4x4 = divf32(top + bottom, top - bottom);
+	MATRIX_MULT4x4 = 0;
+	
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = -divf32(far + near, far - near);
+	MATRIX_MULT4x4 = floattof32(-1.0F);
+	MATRIX_MULT4x4 = 0;
+	
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = -divf32(2 * mulf32(far, near), far - near);
+	MATRIX_MULT4x4 = 0;
 	
 	glStoreMatrix(0);
 }
@@ -524,9 +522,9 @@ void gluFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far) 
 //---------------------------------------------------------------------------------
 //  Frustrum wrapper
 //---------------------------------------------------------------------------------
-void gluFrustum(float left, float right, float bottom, float top, float near, float far) {
+void glFrustum(float left, float right, float bottom, float top, float near, float far) {
 //---------------------------------------------------------------------------------
-	gluFrustumf32(floattof32(left), floattof32(right), floattof32(bottom), floattof32(top), floattof32(near), floattof32(far));
+	glFrustumf32(floattof32(left), floattof32(right), floattof32(bottom), floattof32(top), floattof32(near), floattof32(far));
 }
 
 //---------------------------------------------------------------------------------
@@ -541,7 +539,7 @@ void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar) {
 	xmin = mulf32(ymin, aspect);
 	xmax = mulf32(ymax, aspect);
 
-	gluFrustumf32(xmin, xmax, ymin, ymax, zNear, zFar);
+	glFrustumf32(xmin, xmax, ymin, ymax, zNear, zFar);
 }
 
 //---------------------------------------------------------------------------------
@@ -555,49 +553,24 @@ void gluPerspective(float fovy, float aspect, float zNear, float zFar) {
 //---------------------------------------------------------------------------------
 // Sets the pick matrix for 3D selection
 //---------------------------------------------------------------------------------
-void gluPickMatrix(float x, float y, float width, float height, int viewport[4]) {
-//---------------------------------------------------------------------------------
-
-	gluPickMatrix(floattof32(x), floattof32(y), floattof32(width), floattof32(height), viewport);
-}
-
-//---------------------------------------------------------------------------------
-// Sets the pick matrix for 3D selection (fixed point version)
-//---------------------------------------------------------------------------------
-void gluPickMatrixf32(f32 x, f32 y, f32 width, f32 height, int viewport[4]) {
-//---------------------------------------------------------------------------------
-
-   f32 sx, sy;
-   f32 tx, ty;
-   f32 v[4];	
-
-   v[0] = inttof32(viewport[0]);	   
-   v[0] = inttof32(viewport[1]);
-   v[0] = inttof32(viewport[2]);
-   v[0] = inttof32(viewport[3]);
-   
-   sx = divf32(viewport[2], width);
-   sy = divf32(viewport[3], height);
-   tx = viewport[2]+ 2 * divf32(viewport[0] - x, width);
-   ty = viewport[3] + 2 * divf32(viewport[1] - y, height);
-
-   MATRIX_MULT4x4 = sx;
-   MATRIX_MULT4x4 = 0.0;
-   MATRIX_MULT4x4 = 0.0;
-   MATRIX_MULT4x4 = tx;
-   MATRIX_MULT4x4 = 0.0;
-   MATRIX_MULT4x4 = sy;
-   MATRIX_MULT4x4 = 0.0;
-   MATRIX_MULT4x4 = ty;
-   MATRIX_MULT4x4 = 0.0;
-   MATRIX_MULT4x4 = 0.0;
-   MATRIX_MULT4x4 = inttof32(1);
-   MATRIX_MULT4x4 = 0.0;
-   MATRIX_MULT4x4 = 0.0;
-   MATRIX_MULT4x4 = 0.0;
-   MATRIX_MULT4x4 = 0.0;
-   MATRIX_MULT4x4 = inttof32(1);
-
+void gluPickMatrix(int x, int y, int width, int height, int viewport[4]) {
+	//---------------------------------------------------------------------------------
+	MATRIX_MULT4x4 = inttof32(viewport[2]) / width;
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = inttof32(viewport[3]) / height;
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = inttof32(1);
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = inttof32(viewport[2] + ((viewport[0] - x)<<1)) / width;
+	MATRIX_MULT4x4 = inttof32(viewport[3] + ((viewport[1] - y)<<1)) / height;
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = inttof32(1);
 }
 
 //---------------------------------------------------------------------------------
@@ -1016,21 +989,36 @@ void glGetInt(GL_GET_TYPE param, int* i) {
 
 //---------------------------------------------------------------------------------
 void glGetFixed(GL_GET_TYPE param, fixed* f) {
-//---------------------------------------------------------------------------------
-  int i;
-
-  switch (param) {
-    case GL_GET_MATRIX_ROTATION:
-      for(i = 0; i < 9; i++)
-        f[i] = MATRIX_READ_ROTATION[i];
-      break;
-    case GL_GET_MATRIX_PROJECTION:
-      for(i = 0; i < 16; i++)
-        f[i] = MATRIX_READ_PROJECTION[i];
-      break;
-    default: 
-      break;
-  }
+	//---------------------------------------------------------------------------------
+	int i;
+	switch (param) {
+		case GL_GET_MATRIX_ROTATION:
+			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
+			for(i = 0; i < 9; i++) f[i] = MATRIX_READ_ROTATION[i];
+			break;
+		case GL_GET_MATRIX_MODELVIEW:
+			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
+			for(i = 0; i < 16; i++) f[i] = MATRIX_READ_MODELVIEW[i];
+			break;
+		case GL_GET_MATRIX_PROJECTION:
+			glMatrixMode(GL_POSITION);
+			glPushMatrix(); // save the current state of the position matrix
+			glLoadIdentity(); // load an identity matrix into the position matrix so that the modelview matrix = projection matrix
+			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
+			for(i = 0; i < 16; i++) f[i] = MATRIX_READ_MODELVIEW[i]; // read out the projection matrix
+			glPopMatrix(1); // restore the position matrix
+			break;
+		case GL_GET_MATRIX_POSITION:
+			glMatrixMode(GL_PROJECTION);
+			glPushMatrix(); // save the current state of the projection matrix
+			glLoadIdentity(); // load a identity matrix into the projection matrix so that the modelview matrix = position matrix
+			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
+			for(i = 0; i < 16; i++) f[i] = MATRIX_READ_MODELVIEW[i]; // read out the position matrix
+			glPopMatrix(1); // restore the projection matrix
+			break;
+		default: 
+			break;
+	}
 }
 
 //////////////////////////////////////////////////////////////////////

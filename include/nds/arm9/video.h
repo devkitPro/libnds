@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.29 2006-08-19 07:07:10 dovoto Exp $
+	$Id: video.h,v 1.30 2007-01-11 05:35:41 dovoto Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.29  2006/08/19 07:07:10  dovoto
+	Found a few more mapping defines that were missing or ambigous
+	
 	Revision 1.28  2006/08/19 06:41:44  dovoto
 	updated mappoing for vram A B main sprite and C, D arm7 vram
 	
@@ -692,7 +695,7 @@ typedef struct sSpriteRotation {
 #define MATRIX_MULT3x3		(*(vfixed*) 0x04000468)
 
 //matrix operation results
-#define MATRIX_READ_PROJECTION	((vfixed*) (0x04000640))
+#define MATRIX_READ_MODELVIEW	((vfixed*) (0x04000640))
 #define MATRIX_READ_ROTATION	((vfixed*) (0x04000680))
 #define POINT_RESULT			((vfixed*) (0x04000620))
 #define VECTOR_RESULT			((vuint16*)(0x04000630))
