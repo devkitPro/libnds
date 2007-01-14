@@ -25,6 +25,10 @@
 		distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.7  2006/06/26 11:24:55  wntrmute
+  correct sysSetBusOwners
+  correct WAIT_CR defines
+
   Revision 1.6  2006/03/03 07:23:46  joatski
   Added tNDSHeader and tNDSBanner types.
   Defined NDSHeader as a structure at the 'standard' location for the NDS header to reside (0x027FFE00)
@@ -45,8 +49,11 @@
 #include "jtypes.h"
 
 
-// WAIT_CR: Wait State Control Register
-#define WAIT_CR       (*(vuint16*)0x04000204)
+#ifdef ARM9
+#define REG_EXEMEMCNT (*(vuint16*)0x04000204)
+#else
+#define REG_EXEMEMSTAT (*(vuint16*)0x04000204)
+#endif
 
 #define ARM9_MAIN_RAM_PRIORITY BIT(15)
 #define ARM9_OWNS_CARD BIT(11)
@@ -212,11 +219,22 @@ extern "C" {
 #define BUS_OWNER_ARM9 true
 #define BUS_OWNER_ARM7 false
 
-// Changes the owernship for both busses
-void sysSetBusOwners(bool arm9rom, bool arm9card);
+// Changes only the gba rom bus ownership
+static inline void sysSetCartOwner(bool arm9) {
+  REG_EXEMEMCNT = (REG_EXEMEMCNT & ~ARM9_OWNS_ROM) | (arm9 ? 0 : ARM9_OWNS_ROM);
+}
+// Changes only the nds card bus ownership
+static inline void sysSetCardOwner(bool arm9) {
+  REG_EXEMEMCNT = (REG_EXEMEMCNT & ~ARM9_OWNS_CARD) | (arm9 ? 0 : ARM9_OWNS_CARD);
+}
 
-// Changes only the gba rom cartridge ownership
-void sysSetCartOwner(bool arm9);
+// Changes all bus ownerships
+static inline void sysSetBusOwners(bool arm9rom, bool arm9card) {
+  uint16 pattern = REG_EXEMEMCNT & ~(ARM9_OWNS_CARD|ARM9_OWNS_ROM);
+  pattern = pattern | (arm9card ? 0 : ARM9_OWNS_CARD) |
+                      (arm9rom ? 0 : ARM9_OWNS_ROM);
+  REG_EXEMEMCNT = pattern;
+}
 
 #endif
 

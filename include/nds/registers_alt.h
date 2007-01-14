@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: registers_alt.h,v 1.8 2006-12-17 11:14:59 wntrmute Exp $
+	$Id: registers_alt.h,v 1.9 2007-01-14 07:58:55 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -25,6 +25,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2006/12/17 11:14:59  wntrmute
+	use REG_POWERCNT
+	POWER_CR defined in registers_alt.h
+	
 	Revision 1.7  2006/08/03 09:35:14  wntrmute
 	use defines for easier replacement of deprecated values
 	
@@ -62,6 +66,11 @@
 
 #define	REG_DISPCNT		(*(vu32*)0x4000000)
 
+#ifdef ARM9
+#define WAIT_CR	REG_EXEMEMCNT
+#else
+#define WAIT_CR	REG_EXEMEMSTAT
+#endif
 
 #define DISP_SR			REG_DISPSTAT
 #define DISP_Y			REG_VCOUNT

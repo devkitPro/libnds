@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.16 2006-12-17 11:14:59 wntrmute Exp $
+	$Id: system.h,v 1.17 2007-01-14 07:58:55 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,6 +27,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.16  2006/12/17 11:14:59  wntrmute
+	use REG_POWERCNT
+	POWER_CR defined in registers_alt.h
+	
 	Revision 1.15  2006/08/03 09:36:09  wntrmute
 	use leading zero
 	
@@ -248,13 +252,13 @@ typedef struct tPERSONAL_DATA {
   u8 calX2px;				//!<	Touchscreen calibration: second X touch pixel
   u8 calY2px;				//!<	Touchscreen calibration: second Y touch pixel
 
-packed_struct {
+  packed_struct {
     unsigned language    : 3;	//!<	User's language.
     unsigned gbaScreen   : 1;	//!<	GBA screen selection (lower screen if set, otherwise upper screen).
     unsigned RESERVED3   : 2;	//!<	???
     unsigned autoMode    : 1;	//!<	The DS should boot from the DS cart or GBA cart automatically if one is inserted.
     unsigned RESERVED4   : 1;	//!<	???
-  };
+  } _user_data;
 } PACKED PERSONAL_DATA ;
 
 //!	Key input register.

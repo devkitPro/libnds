@@ -33,17 +33,4 @@ $Log:
 #include <nds/memory.h>
 
 
-// Changes all bus ownerships
-void sysSetBusOwners(bool arm9rom, bool arm9card) {
-  uint16 pattern = WAIT_CR & ~(ARM9_OWNS_CARD|ARM9_OWNS_ROM);
-  pattern = pattern | (arm9card ? 0 : ARM9_OWNS_CARD) |
-                      (arm9rom ? 0 : ARM9_OWNS_ROM);
-  WAIT_CR = pattern;
-}
-
-
-// Changes only the gba rom cartridge ownership
-void sysSetCartOwner(bool arm9) {
-  WAIT_CR = (WAIT_CR & ~0x0080) | (arm9 ? 0 : 0x80);
-}
 
