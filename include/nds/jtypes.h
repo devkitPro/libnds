@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: jtypes.h,v 1.14 2006-04-04 23:05:19 wntrmute Exp $
+	$Id: jtypes.h,v 1.15 2007-01-14 11:31:22 wntrmute Exp $
 
 	jtypes.h -- Common types (and a few useful macros)
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.14  2006/04/04 23:05:19  wntrmute
+	Added pressure reading to touchscreen function
+	
 	Revision 1.13  2005/10/21 22:43:05  wntrmute
 	Removed bogus ASSERT
 	
@@ -123,10 +126,6 @@ typedef volatile float64        vfloat64;
 
 typedef uint8                   byte;
 
-typedef int32                   fixed;
-typedef int64                   dfixed;
-
-typedef volatile int32          vfixed;
 
 
 typedef unsigned char           u8;
@@ -148,9 +147,6 @@ typedef volatile s8           vs8;
 typedef volatile s16          vs16;
 typedef volatile s32          vs32;
 typedef volatile s64          vs64;
-
-typedef int f32;             // 1.19.12 fixed point for matricies
-
 
 typedef struct touchPosition {
 	int16	x;

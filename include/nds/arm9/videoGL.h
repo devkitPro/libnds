@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.24 2007-01-11 05:35:41 dovoto Exp $
+	$Id: videoGL.h,v 1.25 2007-01-14 11:31:22 wntrmute Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,29 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.24  2007/01/11 05:35:41  dovoto
+	Applied gabebear patch # 1632896
+	fix gluPickMatrix()
+	- no float / f32 version because all the parameters will always be regular ints
+	- it actually works now
+	
+	fix gluFrustrumf32() and gluFrustum()
+	- rename to glFrustrum because this is a GL function, not GLU (I'm breaking stuff...)
+	- no longer changes matrix mode to projection (it's useful for more than projection)
+	- multiplies instead of loads
+	
+	fix glOrthof32()
+	- no longer changes matrix mode to projection (it's useful for more than projection)
+	- multiplies instead of loads
+	
+	fix glGetFixed()
+	- correctly waits for graphics engine to stop before getting any matrix
+	- added ability to get projection and modelview matrices
+	- fixed projection matrix get (it was grabbing modelview)
+	- getting projection or position matrices now uses the matrix stack to preserve
+	the other matrix. Not many people use the matrix stack and you would normally
+	only do this at the beginning of a program so I doubt it will be a problem.
+	
 	Revision 1.23  2006/08/03 04:56:31  dovoto
 	Added gluPickMatrix() ...untested
 	
@@ -136,7 +159,7 @@ typedef uint16 fixed12d3;
 
 #define inttof32(n)          ((n) << 12)
 #define f32toint(n)          ((n) >> 12)
-#define floattof32(n)        ((f32)((n) * (1 << 12)))
+#define floattof32(n)        ((int32)((n) * (1 << 12)))
 #define f32tofloat(n)        (((float)(n)) / (float)(1<<12))
 
 typedef short int t16;       // text coordinate 12.4 fixed point
@@ -165,8 +188,8 @@ typedef short int v10;       // vertex .10 fixed point
 // deprecated versions of some macros, remove in a few versions -- joat
 //////////////////////////////////////////////////////////////////////
 
-f32 intof32(int n) __attribute__((deprecated));
-f32 floatof32(float n) __attribute__((deprecated));
+int32 intof32(int n) __attribute__((deprecated));
+int32 floatof32(float n) __attribute__((deprecated));
 
 t16 intot16(int n) __attribute__((deprecated));
 t16 floatot16(float n) __attribute__((deprecated));
@@ -182,19 +205,19 @@ v10 floatov10(float n) __attribute__((deprecated));
 typedef unsigned short rgb;
 
 typedef struct {
-  f32 m[9];
+  int32 m[9];
 } m3x3;
 
 typedef struct {
-  f32 m[16];
+  int32 m[16];
 } m4x4;
 
 typedef struct {
-  f32 m[12];
+  int32 m[12];
 } m4x3;
 
 typedef struct {
-  f32 x,y,z;
+  int32 x,y,z;
 } GLvector;
 
 //////////////////////////////////////////////////////////////////////
@@ -448,18 +471,18 @@ void glRotateZ(float angle);
 \param z Z component of the unit vector axis.
 */
 
-void glRotatef32i(int angle, f32 x, f32 y, f32 z);
-/*! \fn void glOrthof32(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar)
+void glRotatef32i(int angle, int32 x, int32 y, int32 z);
+/*! \fn void glOrthof32(int32 left, int32 right, int32 bottom, int32 top, int32 zNear, int32 zFar)
 \brief Places projection matrix into ortho graphic mode
 */
 
-void glOrthof32(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar);
+void glOrthof32(int32 left, int32 right, int32 bottom, int32 top, int32 zNear, int32 zFar);
 /*! \fn void glOrtho(float left, float right, float bottom, float top, float zNear, float zFar)
 \brief Places projection matrix into ortho graphic mode
 */
 
 void glOrtho(float left, float right, float bottom, float top, float zNear, float zFar);
-/*! \fn void gluLookAtf32(f32 eyex, f32 eyey, f32 eyez, f32 lookAtx, f32 lookAty, f32 lookAtz, f32 upx, f32 upy, f32 upz)
+/*! \fn void gluLookAtf32(int32 eyex, int32 eyey, int32 eyez, int32 lookAtx, int32 lookAty, int32 lookAtz, int32 upx, int32 upy, int32 upz)
 \brief Places the camera at the specified location and orientation (fixed point version)
 \param eyex (eyex, eyey, eyez) Location of the camera.
 \param eyey (eyex, eyey, eyez) Location of the camera.
@@ -472,7 +495,7 @@ void glOrtho(float left, float right, float bottom, float top, float zNear, floa
 \param upz <upx, upy, upz> Unit vector describing which direction is up for the camera.
 */
 
-void gluLookAtf32(f32 eyex, f32 eyey, f32 eyez, f32 lookAtx, f32 lookAty, f32 lookAtz, f32 upx, f32 upy, f32 upz);
+void gluLookAtf32(int32 eyex, int32 eyey, int32 eyez, int32 lookAtx, int32 lookAty, int32 lookAtz, int32 upx, int32 upy, int32 upz);
 /*! \fn void gluLookAt(float eyex, float eyey, float eyez, float lookAtx, float lookAty, float lookAtz, float upx, float upy, float upz)
 \brief Places the camera at the specified location and orientation (floating point version)
 \param eyex (eyex, eyey, eyez) Location of the camera.
@@ -487,7 +510,7 @@ void gluLookAtf32(f32 eyex, f32 eyey, f32 eyez, f32 lookAtx, f32 lookAty, f32 lo
 */
 
 void gluLookAt(float eyex, float eyey, float eyez, float lookAtx, float lookAty, float lookAtz, float upx, float upy, float upz);
-/*! \fn void gluFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far)
+/*! \fn void gluFrustumf32(int32 left, int32 right, int32 bottom, int32 top, int32 near, int32 far)
 \brief Specifies the viewing frustum for the projection matrix (fixed point version)
 \param left left right top and bottom describe a rectangle located at the near clipping plane
 \param right left right top and bottom describe a rectangle located at the near clipping plane
@@ -497,7 +520,7 @@ void gluLookAt(float eyex, float eyey, float eyez, float lookAtx, float lookAty,
 \param far Location of a the far clipping plane (parallel to viewing window)
 */
 
-void gluFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far);
+void gluFrustumf32(int32 left, int32 right, int32 bottom, int32 top, int32 near, int32 far);
 /*! \fn void gluFrustum(float left, float right, float bottom, float top, float near, float far)
 \brief Specifies the viewing frustum for the projection matrix (floating point version)
 \param left left right top and bottom describe a rectangle located at the near clipping plane
@@ -509,7 +532,7 @@ void gluFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far);
 */
 
 void gluFrustum(float left, float right, float bottom, float top, float near, float far);
-/*! \fn void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar)
+/*! \fn void gluPerspectivef32(int fovy, int32 aspect, int32 zNear, int32 zFar)
 \brief Utility function which sets up the projection matrix (fixed point version)
 \param fovy Specifies the field of view in degrees (0 -511) 
 \param aspect Specifies the aspect ratio of the screen (normally screen width/screen height)
@@ -517,7 +540,7 @@ void gluFrustum(float left, float right, float bottom, float top, float near, fl
 \param zFar Specifies the far clipping plane
 */
 
-void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar);
+void gluPerspectivef32(int fovy, int32 aspect, int32 zNear, int32 zFar);
 /*! \fn void gluPerspective(float fovy, float aspect, float zNear, float zFar)
 \brief Utility function which sets up the projection matrix (floating point version)
 \param fovy Specifies the field of view in degrees  
@@ -589,11 +612,11 @@ int glGenTextures(int n, int *names);
 */
 
 void glResetTextures(void);
-/*! \fn void glTexCoord2f32(f32 u, f32 v)
+/*! \fn void glTexCoord2f32(int32 u, int32 v)
 \brief Sends texture coordinates to graphics chip
 */
 
-void glTexCoord2f32(f32 u, f32 v);
+void glTexCoord2f32(int32 u, int32 v);
 /*! \fn void glMaterialf(int mode, rgb color)
 \brief specify the material properties to be used in rendering lit polygons
 */
@@ -643,7 +666,7 @@ void glGetInt(GL_GET_TYPE param, int* i);
 
 
 */
-void glGetFixed(GL_GET_TYPE param, fixed* f);
+void glGetFixed(GL_GET_TYPE param, int32* f);
 
 //---------------------------------------------------------------------------------
 //float wrappers for porting
@@ -675,9 +698,9 @@ void glNormal3f(float x, float y, float z);
 	void glStoreMatrix(int32 index);
 	void glScalev(GLvector* v);
 	void glTranslatev(GLvector* v);
-	void glTranslate3f32(f32 x, f32 y, f32 z);
-	void glScalef32(f32 factor);
-	void glTranslatef32(f32 delta);
+	void glTranslate3f32(int32 x, int32 y, int32 z);
+	void glScalef32(int32 factor);
+	void glTranslatef32(int32 delta);
 	void glLight(int id, rgb color, v10 x, v10 y, v10 z);
 	void glNormal(uint32 normal);
 	void glIdentity(void);

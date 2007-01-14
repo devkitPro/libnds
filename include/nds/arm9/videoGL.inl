@@ -69,7 +69,7 @@ GL_STATIC_INL void glTranslatev(GLvector* v) {
 }
 
 //---------------------------------------------------------------------------------
-GL_STATIC_INL void glTranslate3f32(f32 x, f32 y, f32 z) {
+GL_STATIC_INL void glTranslate3f32(int32 x, int32 y, int32 z) {
 //---------------------------------------------------------------------------------
 	MATRIX_TRANSLATE = x;
 	MATRIX_TRANSLATE = y;
@@ -77,7 +77,7 @@ GL_STATIC_INL void glTranslate3f32(f32 x, f32 y, f32 z) {
 }
 
 //---------------------------------------------------------------------------------
-GL_STATIC_INL void glScalef32(f32 factor) {
+GL_STATIC_INL void glScalef32(int32 factor) {
 //---------------------------------------------------------------------------------
 	MATRIX_SCALE = factor;
 	MATRIX_SCALE = factor;
@@ -85,7 +85,7 @@ GL_STATIC_INL void glScalef32(f32 factor) {
 }
 
 //---------------------------------------------------------------------------------
-GL_STATIC_INL void glTranslatef32(f32 delta) {
+GL_STATIC_INL void glTranslatef32(int32 delta) {
 //---------------------------------------------------------------------------------
 	MATRIX_TRANSLATE = delta;
 	MATRIX_TRANSLATE = delta;

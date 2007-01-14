@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: math.h,v 1.11 2006-07-06 02:16:01 wntrmute Exp $
+	$Id: math.h,v 1.12 2007-01-14 11:31:22 wntrmute Exp $
 
 	math functions
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.11  2006/07/06 02:16:01  wntrmute
+	tidy formatting
+	
 	Revision 1.10  2006/06/01 01:44:26  crossraleigh
 	Fixed spelling of DIV_REMAINDER
 
@@ -83,9 +86,9 @@
 //  Fixed Point versions
 
 //  Fixed point divide
-//  Takes 1.19.12 numerator and denominator
-//  and returns 1.19.12 result
-static inline f32 divf32(f32 num, f32 den)
+//  Takes 20.12 numerator and denominator
+//  and returns 20.12 result
+static inline int32 divf32(int32 num, int32 den)
 {
 	DIV_CR = DIV_64_32;
 
@@ -100,18 +103,18 @@ static inline f32 divf32(f32 num, f32 den)
 }
 
 //  Fixed point multiply
-//	Takes 1.19.12 values and returns
-//	1.19.12 result
-static inline f32 mulf32(f32 a, f32 b)
+//	Takes 20.12 values and returns
+//	20.12 result
+static inline int32 mulf32(int32 a, int32 b)
 {
 	long long result = (long long)a*(long long)b;
-	return (f32)(result >> 12);
+	return (int32)(result >> 12);
 }
 
 //  Fixed point square root
-//	Takes 1.19.12 fixed point value and
+//	Takes 20.12 fixed point value and
 //	returns the fixed point result
-static inline f32 sqrtf32(f32 a)
+static inline int32 sqrtf32(int32 a)
 {
 	SQRT_CR = SQRT_64;
 
@@ -216,7 +219,7 @@ static inline int32 sqrt32(int a)
 // x = Ay * Bz - By * Az
 // y = Az * Bx - Bz * Ax
 // z = Ax * By - Bx * Ay
-static inline void crossf32(f32 *a, f32 *b, f32 *result)
+static inline void crossf32(int32 *a, int32 *b, int32 *result)
 {
 	result[0] = mulf32(a[1], b[2]) - mulf32(b[1], a[2]);
 	result[1] = mulf32(a[2], b[0]) - mulf32(b[2], a[0]);
@@ -225,7 +228,7 @@ static inline void crossf32(f32 *a, f32 *b, f32 *result)
 
 // Dot Product
 // result = Ax * Bx + Ay * By + Az * Bz
-static inline f32 dotf32(f32 *a, f32 *b)
+static inline int32 dotf32(int32 *a, int32 *b)
 {
 	return mulf32(a[0], b[0]) + mulf32(a[1], b[1]) + mulf32(a[2], b[2]);
 }
@@ -234,10 +237,10 @@ static inline f32 dotf32(f32 *a, f32 *b)
 // Ax = Ax / mag
 // Ay = Ay / mag
 // Az = Az / mag
-static inline void normalizef32(f32* a)
+static inline void normalizef32(int32* a)
 {
 	// magnitude = sqrt ( Ax^2 + Ay^2 + Az^2 )
-	f32 magnitude = sqrtf32( mulf32(a[0], a[0]) + mulf32(a[1], a[1]) + mulf32(a[2], a[2]) );
+	int32 magnitude = sqrtf32( mulf32(a[0], a[0]) + mulf32(a[1], a[1]) + mulf32(a[2], a[2]) );
 
 	a[0] = divf32(a[0], magnitude);
 	a[1] = divf32(a[1], magnitude);

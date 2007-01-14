@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.24 2007-01-11 05:35:41 dovoto Exp $
+	$Id: videoGL.c,v 1.25 2007-01-14 11:31:22 wntrmute Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,29 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.24  2007/01/11 05:35:41  dovoto
+	Applied gabebear patch # 1632896
+	fix gluPickMatrix()
+	- no float / f32 version because all the parameters will always be regular ints
+	- it actually works now
+	
+	fix gluFrustrumf32() and gluFrustum()
+	- rename to glFrustrum because this is a GL function, not GLU (I'm breaking stuff...)
+	- no longer changes matrix mode to projection (it's useful for more than projection)
+	- multiplies instead of loads
+	
+	fix glOrthof32()
+	- no longer changes matrix mode to projection (it's useful for more than projection)
+	- multiplies instead of loads
+	
+	fix glGetFixed()
+	- correctly waits for graphics engine to stop before getting any matrix
+	- added ability to get projection and modelview matrices
+	- fixed projection matrix get (it was grabbing modelview)
+	- getting projection or position matrices now uses the matrix stack to preserve
+	the other matrix. Not many people use the matrix stack and you would normally
+	only do this at the beginning of a program so I doubt it will be a problem.
+	
 	Revision 1.23  2006/08/03 04:59:08  dovoto
 	Added gluPickMatrix... (untested)
 	
@@ -226,8 +249,8 @@ void glMultMatrix3x3(m3x3* m) {
 //---------------------------------------------------------------------------------
 void glRotateZi(int angle) {
 //---------------------------------------------------------------------------------
-	f32 sine = SIN[angle &  LUT_MASK];
-	f32 cosine = COS[angle & LUT_MASK];
+	int32 sine = SIN[angle &  LUT_MASK];
+	int32 cosine = COS[angle & LUT_MASK];
 
 	MATRIX_MULT3x3 = cosine;
 	MATRIX_MULT3x3 = sine;
@@ -245,8 +268,8 @@ void glRotateZi(int angle) {
 //---------------------------------------------------------------------------------
 void glRotateYi(int angle) {
 //---------------------------------------------------------------------------------
-	f32 sine = SIN[angle &  LUT_MASK];
-	f32 cosine = COS[angle & LUT_MASK];
+	int32 sine = SIN[angle &  LUT_MASK];
+	int32 cosine = COS[angle & LUT_MASK];
 
 	MATRIX_MULT3x3 = cosine;
 	MATRIX_MULT3x3 = 0;
@@ -264,8 +287,8 @@ void glRotateYi(int angle) {
 //---------------------------------------------------------------------------------
 void glRotateXi(int angle) {
 //---------------------------------------------------------------------------------
-	f32 sine = SIN[angle &  LUT_MASK];
-	f32 cosine = COS[angle & LUT_MASK];
+	int32 sine = SIN[angle &  LUT_MASK];
+	int32 cosine = COS[angle & LUT_MASK];
 
 	MATRIX_MULT3x3 = inttof32(1);
 	MATRIX_MULT3x3 = 0;
@@ -281,13 +304,13 @@ void glRotateXi(int angle) {
 }
 
 //---------------------------------------------------------------------------------
-void glRotatef32i(int angle, f32 x, f32 y, f32 z) {
+void glRotatef32i(int angle, int32 x, int32 y, int32 z) {
 //---------------------------------------------------------------------------------
 
-	f32 axis[3];
-	f32 sine = SIN[angle &  LUT_MASK];
-	f32 cosine = COS[angle & LUT_MASK];
-	f32 one_minus_cosine = inttof32(1) - cosine;
+	int32 axis[3];
+	int32 sine = SIN[angle &  LUT_MASK];
+	int32 cosine = COS[angle & LUT_MASK];
+	int32 one_minus_cosine = inttof32(1) - cosine;
 
 	axis[0]=x;
 	axis[1]=y;
@@ -313,7 +336,7 @@ void glRotatef32i(int angle, f32 x, f32 y, f32 z) {
 
 
 //---------------------------------------------------------------------------------
-void glRotatef32(float angle, f32 x, f32 y, f32 z) {
+void glRotatef32(float angle, int32 x, int32 y, int32 z) {
 //---------------------------------------------------------------------------------
     glRotatef32i((int)(angle * LUT_SIZE / 360.0), x, y, z);
 }
@@ -394,7 +417,7 @@ void glNormal3f(float x, float y, float z) {
 
 
 //---------------------------------------------------------------------------------
-void glOrthof32(f32 left, f32 right, f32 bottom, f32 top, f32 zNear, f32 zFar) {
+void glOrthof32(int32 left, int32 right, int32 bottom, int32 top, int32 zNear, int32 zFar) {
 //---------------------------------------------------------------------------------
 	MATRIX_MULT4x4 = divf32(inttof32(2), right - left);     
 	MATRIX_MULT4x4 = 0;  
@@ -429,9 +452,9 @@ void glOrtho(float left, float right, float bottom, float top, float zNear, floa
 // Fixed point look at function, it appears to work as expected although 
 //	testing is recomended
 //---------------------------------------------------------------------------------
-void gluLookAtf32(f32 eyex, f32 eyey, f32 eyez, f32 lookAtx, f32 lookAty, f32 lookAtz, f32 upx, f32 upy, f32 upz)  { 
+void gluLookAtf32(int32 eyex, int32 eyey, int32 eyez, int32 lookAtx, int32 lookAty, int32 lookAtz, int32 upx, int32 upy, int32 upz)  { 
 //---------------------------------------------------------------------------------
-	f32 side[3], forward[3], up[3], eye[3];
+	int32 side[3], forward[3], up[3], eye[3];
 
 	forward[0] = eyex - lookAtx; 
 	forward[1] = eyey - lookAty; 
@@ -493,7 +516,7 @@ void gluLookAt(	float eyex, float eyey, float eyez,
 //---------------------------------------------------------------------------------
 //	frustrum has only been tested as part of perspective
 //---------------------------------------------------------------------------------
-void glFrustumf32(f32 left, f32 right, f32 bottom, f32 top, f32 near, f32 far) {
+void glFrustumf32(int32 left, int32 right, int32 bottom, int32 top, int32 near, int32 far) {
 //---------------------------------------------------------------------------------
 	MATRIX_MULT4x4 = divf32(2*near, right - left);
 	MATRIX_MULT4x4 = 0;
@@ -530,9 +553,9 @@ void glFrustum(float left, float right, float bottom, float top, float near, flo
 //---------------------------------------------------------------------------------
 //	Fixed point perspective setting
 //---------------------------------------------------------------------------------
-void gluPerspectivef32(int fovy, f32 aspect, f32 zNear, f32 zFar) {
+void gluPerspectivef32(int fovy, int32 aspect, int32 zNear, int32 zFar) {
 //---------------------------------------------------------------------------------
-	f32 xmin, xmax, ymin, ymax;
+	int32 xmin, xmax, ymin, ymax;
 
 	ymax = mulf32(zNear, TAN[fovy & LUT_MASK]);
 	ymin = -ymax;
@@ -745,7 +768,7 @@ void glColorTable( uint8 format, uint32 addr ) {
                      
 //---------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------
-void glTexCoord2f32(f32 u, f32 v) { 
+void glTexCoord2f32(int32 u, int32 v) { 
 //---------------------------------------------------------------------------------
   int x, y; 
    
@@ -988,7 +1011,7 @@ void glGetInt(GL_GET_TYPE param, int* i) {
 }
 
 //---------------------------------------------------------------------------------
-void glGetFixed(GL_GET_TYPE param, fixed* f) {
+void glGetFixed(GL_GET_TYPE param, int32* f) {
 	//---------------------------------------------------------------------------------
 	int i;
 	switch (param) {
@@ -1027,8 +1050,8 @@ void glGetFixed(GL_GET_TYPE param, fixed* f) {
 // Needed because the depreciate attribute doesn't work on macros.
 //////////////////////////////////////////////////////////////////////
 
-f32 intof32(int n)      { return ((n) << 12); }
-f32 floatof32(float n)  { return ((f32)((n) * (1 << 12))); }
+int32 intof32(int n)      { return ((n) << 12); }
+int32 floatof32(float n)  { return ((int32)((n) * (1 << 12))); }
 
 t16 intot16(int n)      { return n << 4; }
 t16 floatot16(float n)  { return ((t16)((n) * (1 << 4))); }

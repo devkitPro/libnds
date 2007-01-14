@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.30 2007-01-11 05:35:41 dovoto Exp $
+	$Id: video.h,v 1.31 2007-01-14 11:31:22 wntrmute Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,29 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.30  2007/01/11 05:35:41  dovoto
+	Applied gabebear patch # 1632896
+	fix gluPickMatrix()
+	- no float / f32 version because all the parameters will always be regular ints
+	- it actually works now
+	
+	fix gluFrustrumf32() and gluFrustum()
+	- rename to glFrustrum because this is a GL function, not GLU (I'm breaking stuff...)
+	- no longer changes matrix mode to projection (it's useful for more than projection)
+	- multiplies instead of loads
+	
+	fix glOrthof32()
+	- no longer changes matrix mode to projection (it's useful for more than projection)
+	- multiplies instead of loads
+	
+	fix glGetFixed()
+	- correctly waits for graphics engine to stop before getting any matrix
+	- added ability to get projection and modelview matrices
+	- fixed projection matrix get (it was grabbing modelview)
+	- getting projection or position matrices now uses the matrix stack to preserve
+	the other matrix. Not many people use the matrix stack and you would normally
+	only do this at the beginning of a program so I doubt it will be a problem.
+	
 	Revision 1.29  2006/08/19 07:07:10  dovoto
 	Found a few more mapping defines that were missing or ambigous
 	
@@ -669,7 +692,7 @@ typedef struct sSpriteRotation {
 #define GFX_VIEWPORT		(*(vuint32*) 0x04000580)
 #define GFX_TOON_TABLE		((vuint16*)  0x04000380)
 #define GFX_EDGE_TABLE		((vuint16*)  0x04000330)
-#define GFX_BOX_TEST		(*(vfixed*)  0x040005C0)
+#define GFX_BOX_TEST		(*(vint32*)  0x040005C0)
 
 #define GFX_BUSY (GFX_STATUS & BIT(27))
 
@@ -683,21 +706,21 @@ typedef struct sSpriteRotation {
 #define MATRIX_CONTROL		(*(vuint32*)0x04000440)
 #define MATRIX_PUSH			(*(vuint32*)0x04000444)
 #define MATRIX_POP			(*(vuint32*)0x04000448)
-#define MATRIX_SCALE		(*(vfixed*) 0x0400046C)
-#define MATRIX_TRANSLATE	(*(vfixed*) 0x04000470)
+#define MATRIX_SCALE		(*(vint32*) 0x0400046C)
+#define MATRIX_TRANSLATE	(*(vint32*) 0x04000470)
 #define MATRIX_RESTORE		(*(vuint32*)0x04000450)
 #define MATRIX_STORE		(*(vuint32*)0x0400044C)
 #define MATRIX_IDENTITY		(*(vuint32*)0x04000454)
-#define MATRIX_LOAD4x4		(*(vfixed*) 0x04000458)
-#define MATRIX_LOAD4x3		(*(vfixed*) 0x0400045C)
-#define MATRIX_MULT4x4		(*(vfixed*) 0x04000460)
-#define MATRIX_MULT4x3		(*(vfixed*) 0x04000464)
-#define MATRIX_MULT3x3		(*(vfixed*) 0x04000468)
+#define MATRIX_LOAD4x4		(*(vint32*) 0x04000458)
+#define MATRIX_LOAD4x3		(*(vint32*) 0x0400045C)
+#define MATRIX_MULT4x4		(*(vint32*) 0x04000460)
+#define MATRIX_MULT4x3		(*(vint32*) 0x04000464)
+#define MATRIX_MULT3x3		(*(vint32*) 0x04000468)
 
 //matrix operation results
-#define MATRIX_READ_MODELVIEW	((vfixed*) (0x04000640))
-#define MATRIX_READ_ROTATION	((vfixed*) (0x04000680))
-#define POINT_RESULT			((vfixed*) (0x04000620))
+#define MATRIX_READ_MODELVIEW	((vint32*) (0x04000640))
+#define MATRIX_READ_ROTATION	((vint32*) (0x04000680))
+#define POINT_RESULT			((vint32*) (0x04000620))
 #define VECTOR_RESULT			((vuint16*)(0x04000630))
 
 #ifdef __cplusplus
