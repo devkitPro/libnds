@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: pcx.c,v 1.8 2005-11-07 04:12:34 dovoto Exp $
+	$Id: pcx.c,v 1.9 2007-01-19 14:46:00 wntrmute Exp $
 
  	Copyright (C) 2005
 		Jason Rogers (dovoto)
@@ -23,6 +23,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2005/11/07 04:12:34  dovoto
+	Fixed palette rounding issue
+	
 	Revision 1.7  2005/10/11 05:05:26  dovoto
 	Added imageTileData(sImage* img) to allow loading of pcx as sprite data.
 	Updated pcx.c to set image bit per pixel field
@@ -72,7 +75,7 @@ int loadPCX(unsigned char* pcx, sImage* image) {
 
 	size = image->width *image->height;
 	
-	image->data8 = (unsigned char*)malloc(size);
+	image->image.data8 = (unsigned char*)malloc(size);
 	image->palette = (unsigned short*)malloc(256 * 2);
 
 	if(hdr->bitsPerPixel != 8)
@@ -84,14 +87,14 @@ int loadPCX(unsigned char* pcx, sImage* image) {
 		c = *pcx++;
 		
 		if(c < 192) {
-			image->data8[count++] = c;
+			image->image.data8[count++] = c;
 		} else {
 			run = c - 192;
 		
 			c = *pcx++;
 			
 			for(i = 0; i < run; i++)
-				image->data8[count++] = c;
+				image->image.data8[count++] = c;
 		}
 	}
 	

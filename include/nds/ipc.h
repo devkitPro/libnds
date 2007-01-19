@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: ipc.h,v 1.13 2006-01-17 09:47:00 wntrmute Exp $
+	$Id: ipc.h,v 1.14 2007-01-19 14:46:00 wntrmute Exp $
 
 	Inter Processor Communication
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.13  2006/01/17 09:47:00  wntrmute
+	*** empty log message ***
+	
 	Revision 1.12  2005/09/20 04:59:04  wntrmute
 	replaced defines with enums
 	replaced macros with static inlines
@@ -76,43 +79,41 @@ typedef struct sTransferSound {
 //---------------------------------------------------------------------------------
 typedef struct sTransferRegion {
 //---------------------------------------------------------------------------------
-  uint32 heartbeat;          // counts frames
+	int16 touchX,   touchY;		// TSC X, Y
+	int16 touchXpx, touchYpx;	// TSC X, Y pixel values
+	int16 touchZ1,  touchZ2;	// TSC x-panel measurements
+	uint16 tdiode1,  tdiode2; 	// TSC temperature diodes
+	uint32 temperature;			// TSC computed temperature
 
-	int16 touchX,   touchY;   // TSC X, Y
-	int16 touchXpx, touchYpx; // TSC X, Y pixel values
-	int16 touchZ1,  touchZ2;  // TSC x-panel measurements
-	uint16 tdiode1,  tdiode2;  // TSC temperature diodes
-	uint32 temperature;        // TSC computed temperature
-
-	uint16 buttons;            // X, Y, /PENIRQ buttons
+	uint16 buttons;				// X, Y, /PENIRQ buttons
 
 	union {
-		uint8 curtime[8];        // current time response from RTC
+		uint8 curtime[8];		// current time response from RTC
 
-    struct {
-			u8 rtc_command;
-			u8 rtc_year;           //add 2000 to get 4 digit year
-			u8 rtc_month;          //1 to 12
-			u8 rtc_day;            //1 to (days in month)
+		struct {
+			u8 command;
+			u8 year;		//add 2000 to get 4 digit year
+			u8 month;		//1 to 12
+			u8 day;			//1 to (days in month)
 
-			u8 rtc_incr;
-			u8 rtc_hours;          //0 to 11 for AM, 52 to 63 for PM
-			u8 rtc_minutes;        //0 to 59
-			u8 rtc_seconds;        //0 to 59
-    };
-  };
+			u8 incr;
+			u8 hours;		//0 to 11 for AM, 52 to 63 for PM
+			u8 minutes;		//0 to 59
+			u8 seconds;		//0 to 59
+		} rtc;
+	} time;
 
-	uint16 battery;            // battery life ??  hopefully.  :)
-	uint16 aux;                // i have no idea...
+	uint16 battery;			// battery life ??  hopefully.  :)
+	uint16 aux;				// i have no idea...
 
-  // Don't rely on these below, will change or be removed in the future
+	// Don't rely on these below, will change or be removed in the future
 	pTransferSound soundData;
 
-  vuint32 mailAddr;
-  vuint32 mailData;
-  vuint8 mailRead;
-  vuint8 mailBusy;
-  vuint32 mailSize;
+	vuint32 mailAddr;
+	vuint32 mailData;
+	vuint8 mailRead;
+	vuint8 mailBusy;
+	vuint32 mailSize;
 } TransferRegion, * pTransferRegion;
 
 

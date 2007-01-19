@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: image.h,v 1.4 2005-10-11 05:05:26 dovoto Exp $
+	$Id: image.h,v 1.5 2007-01-19 14:45:59 wntrmute Exp $
 
 
   Copyright (C) 2005
@@ -24,6 +24,10 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/10/11 05:05:26  dovoto
+	Added imageTileData(sImage* img) to allow loading of pcx as sprite data.
+	Updated pcx.c to set image bit per pixel field
+	
 	Revision 1.3  2005/08/30 17:56:21  wntrmute
 	add video.h
 	
@@ -58,7 +62,7 @@
        unsigned char* data8;
        unsigned short* data16;
        unsigned int* data32;
-    };
+    } image;
 
  } sImage, *psImage;
 

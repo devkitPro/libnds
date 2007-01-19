@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: image.c,v 1.6 2005-10-11 05:05:26 dovoto Exp $
+	$Id: image.c,v 1.7 2007-01-19 14:46:00 wntrmute Exp $
 
 
 	Copyright (C) 2005
@@ -25,6 +25,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.6  2005/10/11 05:05:26  dovoto
+	Added imageTileData(sImage* img) to allow loading of pcx as sprite data.
+	Updated pcx.c to set image bit per pixel field
+	
 	Revision 1.5  2005/08/30 17:54:45  wntrmute
 	only include required headers
 	
@@ -61,14 +65,14 @@ void image24to16(sImage* img) {
 	for(y=0;y<img->height;y++)
 	{
 		for(x=0;x<img->width;x++)
-			temp[x+y*img->width]=(1<<15)|RGB15(img->data8[x*3+y*img->width*3]>>3, \
-			img->data8[x*3+y*img->width*3+1]>>3, img->data8[x*3+y*img->width*3+2]>>3);
+			temp[x+y*img->width]=(1<<15)|RGB15(img->image.data8[x*3+y*img->width*3]>>3, \
+			img->image.data8[x*3+y*img->width*3+1]>>3, img->image.data8[x*3+y*img->width*3+2]>>3);
 	}
 
-	free(img->data8);
+	free(img->image.data8);
 
 	img->bpp=16;
-	img->data16 = temp;
+	img->image.data16 = temp;
 }
 
 //---------------------------------------------------------------------------------
@@ -79,13 +83,13 @@ void image8to16(sImage* img) {
 	u16* temp = (u16*)malloc(img->height*img->width*2);
 
 	for(i = 0; i < img->height * img->width; i++)
-		temp[i] = img->palette[img->data8[i]] | (1<<15);
+		temp[i] = img->palette[img->image.data8[i]] | (1<<15);
 
-	free (img->data8);
+	free (img->image.data8);
 	free (img->palette);
 
 	img->bpp = 16;
-	img->data16 = temp;
+	img->image.data16 = temp;
 }
 
 //---------------------------------------------------------------------------------
@@ -98,7 +102,7 @@ void image8to16trans(sImage* img, u8 transparentColor) {
 
 	for(i = 0; i < img->height * img->width; i++) {
 
-		c = img->data8[i];
+		c = img->image.data8[i];
 
 		if(c != transparentColor)
 			temp[i] = img->palette[c] | (1<<15);
@@ -106,11 +110,11 @@ void image8to16trans(sImage* img, u8 transparentColor) {
 			temp[i] = img->palette[c];
 	}
 
-	free (img->data8);
+	free (img->image.data8);
 	free (img->palette);
 
 	img->bpp = 16;
-	img->data16 = temp;
+	img->image.data16 = temp;
 }
 //---------------------------------------------------------------------------------
 void imageTileData(sImage* img) {
@@ -136,16 +140,16 @@ void imageTileData(sImage* img) {
 		for(tx = 0; tx < tw; tx++)
 			for(iy = 0; iy < 8; iy++)
 				for(ix = 0; ix < 2; ix++)
-					temp[i++] = img->data32[ix + tx * 2 + (iy + ty * 8) * tw * 2 ]; 
+					temp[i++] = img->image.data32[ix + tx * 2 + (iy + ty * 8) * tw * 2 ]; 
 
-	free(img->data32);
+	free(img->image.data32);
 	
-	img->data32 = temp;
+	img->image.data32 = temp;
 }
 
 //---------------------------------------------------------------------------------
 void imageDestroy(sImage* img) {
 //---------------------------------------------------------------------------------
-	if(img->data8) free (img->data8);
+	if(img->image.data8) free (img->image.data8);
 	if(img->palette && img->bpp == 8) free (img->palette);
 }
