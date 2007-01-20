@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.25 2007-01-14 11:31:22 wntrmute Exp $
+	$Id: videoGL.c,v 1.26 2007-01-20 00:30:48 dovoto Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.25  2007/01/14 11:31:22  wntrmute
+	bogus fixed types removed from libnds
+	
 	Revision 1.24  2007/01/11 05:35:41  dovoto
 	Applied gabebear patch # 1632896
 	fix gluPickMatrix()
@@ -376,11 +379,7 @@ void glVertex3f(float x, float y, float z) {
 	glVertex3v16(floattov16(x), floattov16(y), floattov16(z));
 }
 
-//---------------------------------------------------------------------------------
-void glTexCoord2f(float s, float t) {
-//---------------------------------------------------------------------------------
-	glTexCoord2t16(floattot16(s*127), floattot16(t*127));
-}
+
 
 //---------------------------------------------------------------------------------
 void glColor3f(float r, float g, float b) {
@@ -778,6 +777,14 @@ void glTexCoord2f32(int32 u, int32 v) {
   glTexCoord2t16(f32tot16 (mulf32(u,inttof32(8<<x))), f32tot16 (mulf32(v,inttof32(8<<y)))); 
 }
 
+//---------------------------------------------------------------------------------
+void glTexCoord2f(float s, float t) {
+//---------------------------------------------------------------------------------
+	int x = ((textures[activeTexture]) >> 20) & 7; 
+    int y = ((textures[activeTexture]) >> 23) & 7; 
+    
+    glTexCoord2t16(floattot16(s*(8 << x)), floattot16(t*(8<<y)));
+}
 
 //---------------------------------------------------------------------------------
 // glTexParameter although named the same 
