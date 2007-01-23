@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: registers_alt.h,v 1.9 2007-01-14 07:58:55 wntrmute Exp $
+	$Id: registers_alt.h,v 1.10 2007-01-23 21:59:22 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -25,6 +25,11 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2007/01/14 07:58:55  wntrmute
+	change WAIT_CR to REG_EXEMEMCNT/REG_EXEMEMSTAT
+	change bus owner funtions to static inline
+	move WAIT_CR to registers_alt.h
+	
 	Revision 1.8  2006/12/17 11:14:59  wntrmute
 	use REG_POWERCNT
 	POWER_CR defined in registers_alt.h
@@ -241,8 +246,8 @@
 #define	REG_SIOCNT		(*(vu16*)0x4000128)
 #define	REG_SIOMLT_SEND	(*(vu16*)0x400012A)
 
-#define	REG_KEYS		(*(vu16*)0x4000130)
-#define	REG_KEYCNT		(*(vu16*)0x4000132)
+#define	KEYS		REG_KEYINPUT
+#define	KEYS_CR		REG_KEYCNT
 //???
 #define	REG_RCNT		(*(vu16*)0x4000134)
 #define	REG_HS_CTRL		(*(vu16*)0x4000140)
