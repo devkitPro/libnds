@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: registers_alt.h,v 1.10 2007-01-23 21:59:22 wntrmute Exp $
+	$Id: registers_alt.h,v 1.11 2007-01-26 22:37:41 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.10  2007/01/23 21:59:22  wntrmute
+	replace key register defines
+	
 	Revision 1.9  2007/01/14 07:58:55  wntrmute
 	change WAIT_CR to REG_EXEMEMCNT/REG_EXEMEMSTAT
 	change bus owner funtions to static inline
@@ -41,16 +44,16 @@
 	more moves to REG_ values
 	implement SetYtrigger helper function
 	set bits in REG_DISPSTAT for IRQ_VCOUNT
-	
+
 	Revision 1.5  2006/05/13 13:38:51  wntrmute
 	updated for registers moved to main headers
-	
+
 	Revision 1.4  2005/11/27 13:48:20  wntrmute
 	added deprecation notice
-	
+
 	Revision 1.3  2005/09/07 17:59:37  wntrmute
 	added header logging
-	
+
 
 ---------------------------------------------------------------------------------*/
 
@@ -58,7 +61,7 @@
 	This file should be deprecated.
 	
 	All hardware register defines should be replaced with REG_ for consistency and namespacing
-	
+
 	http://forum.gbadev.org/viewtopic.php?t=4993
 
 */
@@ -135,6 +138,9 @@
 #define	REG_BLDMOD		(*(vu16*)0x4000050)
 #define	REG_COLV		(*(vu16*)0x4000052)
 #define	REG_COLY		(*(vu16*)0x4000054)
+
+#define SERIAL_CR       REG_SPICNT
+#define SERIAL_DATA     REG_SPIDATA
 
 
 /*	secondary screen */
