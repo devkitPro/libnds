@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.17 2007-01-14 07:58:55 wntrmute Exp $
+	$Id: system.h,v 1.18 2007-01-27 00:08:38 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -27,6 +27,11 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.17  2007/01/14 07:58:55  wntrmute
+	change WAIT_CR to REG_EXEMEMCNT/REG_EXEMEMSTAT
+	change bus owner funtions to static inline
+	move WAIT_CR to registers_alt.h
+	
 	Revision 1.16  2006/12/17 11:14:59  wntrmute
 	use REG_POWERCNT
 	POWER_CR defined in registers_alt.h
@@ -253,12 +258,18 @@ typedef struct tPERSONAL_DATA {
   u8 calY2px;				//!<	Touchscreen calibration: second Y touch pixel
 
   packed_struct {
-    unsigned language    : 3;	//!<	User's language.
-    unsigned gbaScreen   : 1;	//!<	GBA screen selection (lower screen if set, otherwise upper screen).
-    unsigned RESERVED3   : 2;	//!<	???
-    unsigned autoMode    : 1;	//!<	The DS should boot from the DS cart or GBA cart automatically if one is inserted.
-    unsigned RESERVED4   : 1;	//!<	???
+    unsigned language			: 3;	//!<	User's language.
+    unsigned gbaScreen			: 1;	//!<	GBA screen selection (lower screen if set, otherwise upper screen).
+    unsigned defaultBrightness	: 2;	//!<	Brightness level at power on, dslite.
+    unsigned autoMode			: 1;	//!<	The DS should boot from the DS cart or GBA cart automatically if one is inserted.
+    unsigned RESERVED1			: 2;	//!<	???
+	unsigned settingsLost		: 1;	//!<	User Settings Lost (0=Normal, 1=Prompt/Settings Lost)
+	unsigned RESERVED2			: 6;	//!<	???
   } _user_data;
+  
+  u16	RESERVED3;
+  u32	rtcOffset;
+  u32	RESERVED4;
 } PACKED PERSONAL_DATA ;
 
 //!	Key input register.
