@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: timers.h,v 1.8 2006-05-05 05:32:06 wntrmute Exp $
+	$Id: timers.h,v 1.9 2007-01-27 00:07:30 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2006/05/05 05:32:06  wntrmute
+	consistency formatting
+	
 
 ---------------------------------------------------------------------------------*/
 
@@ -152,7 +155,7 @@ extern "C" {
 	<b>Example Usage:</b>
 	%TIMER_DATA(0) = value;  were 0 can be 0 through 3 and value is 16 bits.
 */
-#define TIMER_DATA(n)  (*(vuint16*)(0x04000100+(n<<2)))
+#define TIMER_DATA(n)  (*(vuint16*)(0x04000100+((n)<<2)))
 
 // Timer control registers
 //!	Same as %TIMER_CR(0).
@@ -176,7 +179,7 @@ extern "C" {
 	\see TIMER_DIV_256 
 	\see TIMER_DIV_1024 
 */
-#define TIMER_CR(n) (*(vuint16*)(0x04000102+(n<<2)))
+#define TIMER_CR(n) (*(vuint16*)(0x04000102+((n)<<2)))
 
 //!	Enables the timer.
 #define TIMER_ENABLE    (1<<7)
@@ -185,16 +188,16 @@ extern "C" {
 #define TIMER_IRQ_REQ   (1<<6)
 
 //!	When set will cause the timer to count when the timer below overflows (unavailable for timer 0).
-#define TIMER_CASCADE   (TIMER_ENABLE|(1<<2))
+#define TIMER_CASCADE   (1<<2)
 
 //!	Causes the timer to count at 33.514Mhz.
-#define TIMER_DIV_1     TIMER_ENABLE
+#define TIMER_DIV_1     (0)
 //!	Causes the timer to count at (33.514 / 64) Mhz.
-#define TIMER_DIV_64    (TIMER_ENABLE|1)
+#define TIMER_DIV_64    (1)
 //!	Causes the timer to count at (33.514 / 256) Mhz.
-#define TIMER_DIV_256   (TIMER_ENABLE|2)
+#define TIMER_DIV_256   (2)
 //!	Causes the timer to count at (33.514 / 1024)Mhz.
-#define TIMER_DIV_1024  (TIMER_ENABLE|3)
+#define TIMER_DIV_1024  (3)
 
 //---------------------------------------------------------------------------------
 #ifdef __cplusplus
