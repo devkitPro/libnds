@@ -14,8 +14,6 @@ GL_STATIC_INL void glBegin(int mode) { GFX_BEGIN = mode; }
 
 GL_STATIC_INL void glEnd( void) { GFX_END = 0; }
 
-GL_STATIC_INL void glClearColor(uint8 red, uint8 green, uint8 blue) { BG_PALETTE[0] = RGB15(red, green, blue);}
-
 GL_STATIC_INL void glClearDepth(uint16 depth) { GFX_CLEAR_DEPTH = depth; }
 
 GL_STATIC_INL void glColor3b(uint8 red, uint8 green, uint8 blue) { GFX_COLOR = (vuint32)RGB15(red>>3, green>>3, blue>>3); }

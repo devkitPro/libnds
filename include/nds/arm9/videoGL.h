@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.25 2007-01-14 11:31:22 wntrmute Exp $
+	$Id: videoGL.h,v 1.26 2007-01-30 00:15:48 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.25  2007/01/14 11:31:22  wntrmute
+	bogus fixed types removed from libnds
+	
 	Revision 1.24  2007/01/11 05:35:41  dovoto
 	Applied gabebear patch # 1632896
 	fix gluPickMatrix()
@@ -345,7 +348,6 @@ typedef enum {
 #define MAX_TEXTURES 2048  //this should be enough ! but feel free to change
 #define GL_LIGHTING    1   // no idea what this is for / who defined it
 
-
 //---------------------------------------------------------------------------------
 //Fifo commands
 //---------------------------------------------------------------------------------
@@ -642,12 +644,17 @@ void glSetToonTable(uint16 *table);
 */
 
 void glSetToonTableRange(int start, int end, rgb color);
-/*! \fn void glReset(void)
-\brief Resets the gl state machine (must be called once per frame)
+/*! \fn void glInit(void)
+\brief Initializes the gl state machine (must be called once before using gl calls)
+\brief   enable power to the geometry engine before calling
 */
 
-void glReset(void);
+void glInit(void);
+/*! \fn void glReset(void)
+\brief depreciated because it isn't well defined anymore, it now just calls glInit()
+*/
 
+void glReset(void) __attribute__((deprecated));
 /*! \fn void glGetInt(GL_GET_TYPE param, int* i)
 \brief Grabs various integer state variables from openGL
 
@@ -679,12 +686,14 @@ void glScalef(float x, float y, float z);
 void glTranslatef(float x, float y, float z);
 void glNormal3f(float x, float y, float z);
 
+void glClearColor(uint8 red, uint8 green, uint8 blue);
+void glClearAplpha(uint8 alpha);
+void glClearPolyID(uint8 ID);
 
 #ifdef NO_GL_INLINE
 
 	void glBegin(int mode);
 	void glEnd( void);
-	void glClearColor(uint8 red, uint8 green, uint8 blue);
 	void glClearDepth(fixed12d3 depth);
 	void glColor3b(uint8 red, uint8 green, uint8 blue);
 	void glColor(rgb color);

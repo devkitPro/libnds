@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.26 2007-01-20 00:30:48 dovoto Exp $
+	$Id: videoGL.c,v 1.27 2007-01-30 00:15:48 gabebear Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.26  2007/01/20 00:30:48  dovoto
+	Updated the glTexCoord2f() to pull texture size from state...texture sizes other than 128x128 should now work with the floating point version.
+	
 	Revision 1.25  2007/01/14 11:31:22  wntrmute
 	bogus fixed types removed from libnds
 	
@@ -124,22 +127,25 @@
 #include <nds/arm9/trig_lut.h>
 
 
-static uint16 enable_bits = GL_TEXTURE_2D | (1<<13) | (1<<14);
+// holds the current state of the graphics control register, initialized in glInit()
+static uint16 gfx_control_bits = 0;
 
+// holds the current state of the clear color register, initialized in glInit()
+static uint32 clear_bits = 0;
 
 //---------------------------------------------------------------------------------
 void glEnable(int bits) {
 //---------------------------------------------------------------------------------
-	enable_bits |= bits | (GL_TEXTURE_2D|GL_TOON_HIGHLIGHT|GL_OUTLINE|GL_ANTIALIAS);
-	GFX_CONTROL = enable_bits;
+	gfx_control_bits |= bits;
+	GFX_CONTROL = gfx_control_bits;
 }
 
 
 //---------------------------------------------------------------------------------
 void glDisable(int bits) {
 //---------------------------------------------------------------------------------
-	enable_bits &= ~(bits | (GL_TEXTURE_2D|GL_TOON_HIGHLIGHT|GL_OUTLINE|GL_ANTIALIAS));
-	GFX_CONTROL = enable_bits;
+	gfx_control_bits &= ~bits;
+	GFX_CONTROL = gfx_control_bits;
 }
 
 //---------------------------------------------------------------------------------
@@ -673,7 +679,7 @@ void glSetToonTableRange(int start, int end, rgb color) {
 
 
 //---------------------------------------------------------------------------------
-void glReset(void) {
+void glInit(void) {
 //---------------------------------------------------------------------------------
 	while (GFX_STATUS & (1<<27)); // wait till gfx engine is not busy
   
@@ -681,8 +687,16 @@ void glReset(void) {
 	GFX_STATUS |= (1<<29);
 
 	// Clear overflows for list memory
-	GFX_CONTROL = enable_bits = ((1<<12) | (1<<13)) | GL_TEXTURE_2D;
 	glResetMatrixStack();
+
+	// reset the control bits
+	GFX_CONTROL = gfx_control_bits = 0;
+
+	//reset the rear-plane(a.k.a. clear color) to black, ID=0, and opaque
+	GFX_CLEAR_COLOR = clear_bits = 0x001F0000;
+
+	//reset where textures are stored
+	glResetTextures();
 
 	GFX_TEX_FORMAT = 0;
 	GFX_POLY_FORMAT = 0;
@@ -692,6 +706,15 @@ void glReset(void) {
 
 	glMatrixMode(GL_MODELVIEW);
 	glIdentity();
+
+	glMatrixMode(GL_TEXTURE);
+	glIdentity();
+}
+
+//---------------------------------------------------------------------------------
+void glReset(void) {
+//---------------------------------------------------------------------------------
+	glInit();
 }
 
 //---------------------------------------------------------------------------------
@@ -1089,3 +1112,24 @@ void glCutoffDepth(fixed12d3 depth) {
 }
 
 //////////////////////////////////////////////////////////////////////
+
+//---------------------------------------------------------------------------------
+void glClearColor(uint8 red, uint8 green, uint8 blue) {
+//---------------------------------------------------------------------------------
+	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0xFFFF0000) | RGB15(red, green, blue);
+}
+
+//---------------------------------------------------------------------------------
+void glClearAplpha(uint8 alpha) {
+//---------------------------------------------------------------------------------
+	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0x001F0000) | (( alpha & 0x1F ) << 16 );
+}
+
+//---------------------------------------------------------------------------------
+void glClearPolyID(uint8 ID) {
+//---------------------------------------------------------------------------------
+	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0x3F000000) | (( ID & 0x3F ) << 24 );
+}
+
+
+
