@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.27 2007-01-31 22:57:28 gabebear Exp $
+	$Id: videoGL.h,v 1.28 2007-01-31 23:04:09 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.27  2007/01/31 22:57:28  gabebear
+	- corrected typo where glClearAlpha() was glClearAplpha()
+	- added doxygen for glClear*** functions
+	
 	Revision 1.26  2007/01/30 00:15:48  gabebear
 	 - got rid of extra flags in glEnable and glDisable
 	 - added glInit() which does pretty much the same thing that glReset did. It just initializes the GL-state at the start of the program and then never needs called again. Initializing the state explicitly should make code more stable when using different boot methods that may have fiddled with default states.
@@ -699,15 +703,15 @@ void glNormal3f(float x, float y, float z);
 
 /*! \fn void glClearColor(uint8 red, uint8 green, uint8 blue)
 \brief sets the color of the rear-plane(a.k.a Clear Color/Plane)
-\param red component (1-32)
-\param green component (1-32)
-\param blue component (1-32)
+\param red component (0-31)
+\param green component (0-31)
+\param blue component (0-31)
 */
 void glClearColor(uint8 red, uint8 green, uint8 blue);
 
 /*! \fn void glClearAlpha(uint8 alpha)
 \brief sets the Alpha of the rear-plane(a.k.a. Clear Color/Plane)
-\param alpha sets the transparency from 0(clear) to 32(opaque)
+\param alpha sets the transparency from 0(clear) to 31(opaque)
 */
 void glClearAlpha(uint8 alpha);
 
