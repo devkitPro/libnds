@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.28 2007-01-31 23:04:09 gabebear Exp $
+	$Id: videoGL.h,v 1.29 2007-01-31 23:10:09 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.28  2007/01/31 23:04:09  gabebear
+	corrected problem in doxygen comments just submitted, I don't know why I just started thinking in base 1 instead of 0...
+	
 	Revision 1.27  2007/01/31 22:57:28  gabebear
 	- corrected typo where glClearAlpha() was glClearAplpha()
 	- added doxygen for glClear*** functions
@@ -36,7 +39,7 @@
 	 - got rid of extra flags in glEnable and glDisable
 	 - added glInit() which does pretty much the same thing that glReset did. It just initializes the GL-state at the start of the program and then never needs called again. Initializing the state explicitly should make code more stable when using different boot methods that may have fiddled with default states.
 	 - depreciated glReset, because glInit does the same job better, setting up everythign per frame was a waste
-	 - glInit sets up the read-plane(a.ka. clear-color) as blank instead of a bmp, and sets it's so that it is totally opaque with a poly-ID of zero. This lets antialiasing, and outlining work with simple glEnables!!!
+	 - glInit sets up the rear-plane(a.ka. clear-color) as blank instead of a bmp, and sets it's so that it is totally opaque with a poly-ID of zero. This lets antialiasing, and outlining work with simple glEnables!!!
 	 - Changed glClearColor so that it sets the rear-plane ID instead of palette[0]
 	 - added glClearAlpha() that sets the alpha of the rear-plane
 	 - added glClearPolyID() that sets how things get outlined and antialiased
