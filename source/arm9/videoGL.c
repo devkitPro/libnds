@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.27 2007-01-30 00:15:48 gabebear Exp $
+	$Id: videoGL.c,v 1.28 2007-01-31 22:57:28 gabebear Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,17 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.27  2007/01/30 00:15:48  gabebear
+	 - got rid of extra flags in glEnable and glDisable
+	 - added glInit() which does pretty much the same thing that glReset did. It just initializes the GL-state at the start of the program and then never needs called again. Initializing the state explicitly should make code more stable when using different boot methods that may have fiddled with default states.
+	 - depreciated glReset, because glInit does the same job better, setting up everythign per frame was a waste
+	 - glInit sets up the read-plane(a.ka. clear-color) as blank instead of a bmp, and sets it's so that it is totally opaque with a poly-ID of zero. This lets antialiasing, and outlining work with simple glEnables!!!
+	 - Changed glClearColor so that it sets the rear-plane ID instead of palette[0]
+	 - added glClearAlpha() that sets the alpha of the rear-plane
+	 - added glClearPolyID() that sets how things get outlined and antialiased
+	
+	I haven't tested this against the examples, another patch is on the way to fix the examples
+	
 	Revision 1.26  2007/01/20 00:30:48  dovoto
 	Updated the glTexCoord2f() to pull texture size from state...texture sizes other than 128x128 should now work with the floating point version.
 	
@@ -1120,7 +1131,7 @@ void glClearColor(uint8 red, uint8 green, uint8 blue) {
 }
 
 //---------------------------------------------------------------------------------
-void glClearAplpha(uint8 alpha) {
+void glClearAlpha(uint8 alpha) {
 //---------------------------------------------------------------------------------
 	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0x001F0000) | (( alpha & 0x1F ) << 16 );
 }

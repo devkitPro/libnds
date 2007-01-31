@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.26 2007-01-30 00:15:48 gabebear Exp $
+	$Id: videoGL.h,v 1.27 2007-01-31 22:57:28 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,17 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.26  2007/01/30 00:15:48  gabebear
+	 - got rid of extra flags in glEnable and glDisable
+	 - added glInit() which does pretty much the same thing that glReset did. It just initializes the GL-state at the start of the program and then never needs called again. Initializing the state explicitly should make code more stable when using different boot methods that may have fiddled with default states.
+	 - depreciated glReset, because glInit does the same job better, setting up everythign per frame was a waste
+	 - glInit sets up the read-plane(a.ka. clear-color) as blank instead of a bmp, and sets it's so that it is totally opaque with a poly-ID of zero. This lets antialiasing, and outlining work with simple glEnables!!!
+	 - Changed glClearColor so that it sets the rear-plane ID instead of palette[0]
+	 - added glClearAlpha() that sets the alpha of the rear-plane
+	 - added glClearPolyID() that sets how things get outlined and antialiased
+	
+	I haven't tested this against the examples, another patch is on the way to fix the examples
+	
 	Revision 1.25  2007/01/14 11:31:22  wntrmute
 	bogus fixed types removed from libnds
 	
@@ -686,8 +697,24 @@ void glScalef(float x, float y, float z);
 void glTranslatef(float x, float y, float z);
 void glNormal3f(float x, float y, float z);
 
+/*! \fn void glClearColor(uint8 red, uint8 green, uint8 blue)
+\brief sets the color of the rear-plane(a.k.a Clear Color/Plane)
+\param red component (1-32)
+\param green component (1-32)
+\param blue component (1-32)
+*/
 void glClearColor(uint8 red, uint8 green, uint8 blue);
-void glClearAplpha(uint8 alpha);
+
+/*! \fn void glClearAlpha(uint8 alpha)
+\brief sets the Alpha of the rear-plane(a.k.a. Clear Color/Plane)
+\param alpha sets the transparency from 0(clear) to 32(opaque)
+*/
+void glClearAlpha(uint8 alpha);
+
+/*! \fn void glClearPolyID(uint8 ID)
+\brief sets the polygon ID of the rear-plane(a.k.a. Clear Color/Plane), useful for antialiasing and edge coloring
+\param ID the polygon ID to give the rear-plane
+*/
 void glClearPolyID(uint8 ID);
 
 #ifdef NO_GL_INLINE
