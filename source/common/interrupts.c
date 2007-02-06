@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.c,v 1.9 2006-06-16 07:35:14 wntrmute Exp $
+	$Id: interrupts.c,v 1.10 2007-02-06 12:00:32 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,6 +22,11 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2006/06/16 07:35:14  wntrmute
+	more moves to REG_ values
+	implement SetYtrigger helper function
+	set bits in REG_DISPSTAT for IRQ_VCOUNT
+	
 	Revision 1.8  2006/02/21 00:12:35  wntrmute
 	clear interrupts and enable REG_IME in irqInit
 	
@@ -142,7 +147,7 @@ void irqInitHandler(IntFn handler) {
 }
 
 //---------------------------------------------------------------------------------
-void irqEnable(int irq) {
+void irqEnable(uint32 irq) {
 //---------------------------------------------------------------------------------
 	if (irq & IRQ_VBLANK)
 		REG_DISPSTAT |= DISP_VBLANK_IRQ ;
@@ -156,7 +161,7 @@ void irqEnable(int irq) {
 }
 
 //---------------------------------------------------------------------------------
-void irqDisable(int irq) {
+void irqDisable(uint32 irq) {
 //---------------------------------------------------------------------------------
 	if (irq & IRQ_VBLANK)
 		REG_DISPSTAT &= ~DISP_VBLANK_IRQ ;

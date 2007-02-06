@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.14 2006-05-05 05:31:37 wntrmute Exp $
+	$Id: interrupts.h,v 1.15 2007-02-06 12:00:32 wntrmute Exp $
 
 	Interrupt registers and vector pointers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.14  2006/05/05 05:31:37  wntrmute
+	use __irq_vector and __irq_flags from linkscript
+	
 	Revision 1.13  2006/04/26 05:11:31  wntrmute
 	rebase dtcm, take __irq_flags and __irq_vector from linker script
 	move arm7 irq vector & irq flags to actual locations
@@ -206,13 +209,13 @@ void irqInitHandler(VoidFunctionPointer handler);
 	\param irq The set of interrupt masks to enable.
 	\note Specify multiple interrupts to enable by ORing several IRQ_MASKS.
 */
-void irqEnable(IRQ_MASK irq);
+void irqEnable(uint32 irq);
 /*! \fn irqDisable(IRQ_MASK irq)
 	\brief Prevent the given interrupt from occuring.
 	\param irq The set of interrupt masks to disable.
 	\note Specify multiple interrupts to disable by ORing several IRQ_MASKS.
 */
-void irqDisable(IRQ_MASK irq);
+void irqDisable(uint32 irq);
 
 
 #ifdef __cplusplus
