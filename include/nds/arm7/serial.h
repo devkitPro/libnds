@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: serial.h,v 1.9 2006-07-08 06:25:31 wntrmute Exp $
+  $Id: serial.h,v 1.10 2007-02-06 11:59:12 wntrmute Exp $
 
   ARM7 serial control
 
@@ -26,6 +26,9 @@
     distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.9  2006/07/08 06:25:31  wntrmute
+  move old register definitions to registers_alt.h
+
   Revision 1.8  2006/06/26 11:26:32  wntrmute
   remove //////
 
@@ -159,7 +162,11 @@
 #define FIRMWARE_RDP  0xAB
 
 
-static inline void SerialWaitBusy() { while (REG_SPICNT & SPI_BUSY) swiDelay(1); }
+static inline
+void SerialWaitBusy() {
+	while (REG_SPICNT & SPI_BUSY)
+		swiDelay(1);
+}
 
 
 // Warning: These functions use the SPI chain, and are thus 'critical'
@@ -168,7 +175,11 @@ static inline void SerialWaitBusy() { while (REG_SPICNT & SPI_BUSY) swiDelay(1);
 
 // Read/write a power management register
 int writePowerManagement(int reg, int command);
-static inline int readPowerManagement(int reg) { return writePowerManagement((reg)|PM_READ_REGISTER, 0); }
+
+static inline
+int readPowerManagement(int reg) {
+	return writePowerManagement((reg)|PM_READ_REGISTER, 0);
+}
 
 // Read the firmware
 void readFirmware(uint32 address, void * destination, uint32 size);
