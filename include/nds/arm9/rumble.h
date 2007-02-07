@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: rumble.h,v 1.3 2005-11-27 07:47:07 joatski Exp $
+	$Id: rumble.h,v 1.4 2007-02-07 16:38:11 wntrmute Exp $
  
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -22,6 +22,10 @@
   3. This notice may not be removed or altered from any source
      distribution.
 	$Log: not supported by cvs2svn $
+	Revision 1.3  2005/11/27 07:47:07  joatski
+	Fixed multiple linebreaks.
+	Moved cart bus control functions and GBA header to memory.h
+	
 	Revision 1.2  2005/11/02 07:06:20  bigredpimp
 	Added revision comment block
 
@@ -31,32 +35,34 @@
 */
 #ifndef RUMBLE_HEADER_INCLUDE
 #define RUMBLE_HEADER_INCLUDE
-//////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-//////////////////////////////////////////////////////////////////////
-#define RUMBLE_PAK (*(vuint16 *)0x08000000)
-//////////////////////////////////////////////////////////////////////
+
+#define RUMBLE_PAK			(*(vuint16 *)0x08000000)
+#define WARIOWARE_PAK		(*(vuint16 *)0x080000C4)
+#define WARIOWARE_ENABLE	(*(vuint16 *)0x080000C6)
+ 
+typedef enum {
+   RUMBLE,
+   WARIOWARE
+}RUMBLE_TYPE;
 
 /*! \fn bool isRumbleInserted(void);
 	\brief Check for rumble option pak.
 	Returns true if the cart in the GBA slot is a Rumble option pak.
 */
 bool isRumbleInserted(void);
-//////////////////////////////////////////////////////////////////////
 
 /*! \fn void setRumble(bool position);
 	\param position Alternates position of the actuator in the pak
 	\brief Fires the rumble actuator.
 */
 void setRumble(bool position);
-//////////////////////////////////////////////////////////////////////
 
 #ifdef __cplusplus
 }
 #endif
-//////////////////////////////////////////////////////////////////////
 
 #endif

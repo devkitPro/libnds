@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: rumble.c,v 1.4 2006-04-26 05:54:00 wntrmute Exp $
+	$Id: rumble.c,v 1.5 2007-02-07 16:38:11 wntrmute Exp $
 	Copyright (C) 2005
 		Michael Noland (joat)
 		Jason Rogers (dovoto)
@@ -22,6 +22,10 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2006/04/26 05:54:00  wntrmute
+	removed include of nds.h
+	reformatted for consistency
+	
 	Revision 1.3  2005/11/27 07:47:07  joatski
 	Fixed multiple linebreaks.
 	Moved cart bus control functions and GBA header to memory.h
@@ -33,6 +37,9 @@
 #include <nds/jtypes.h>
 #include <nds/memory.h>
 #include <nds/arm9/rumble.h>
+
+static RUMBLE_TYPE rumbleType;
+
 //---------------------------------------------------------------------------------
 bool isRumbleInserted(void) {
 //---------------------------------------------------------------------------------
@@ -40,8 +47,24 @@ bool isRumbleInserted(void) {
 	sysSetCartOwner(BUS_OWNER_ARM9);
 	// First, check for 0x96 to see if it's a GBA game
 	if (GBA_HEADER.is96h == 0x96) {
+
+		//if it is a game, we check the game code
+		//to see if it is warioware twisted
+		if (	(GBA_HEADER.gamecode[0] == 'R') &&
+				(GBA_HEADER.gamecode[1] == 'Z') &&
+				(GBA_HEADER.gamecode[2] == 'W') &&
+				(GBA_HEADER.gamecode[3] == 'E')
+			)
+		{
+			rumbleType = WARIOWARE;
+			WARIOWARE_ENABLE = 8;
+			return true;
+		}
 		return false;
+				
 	} else {
+
+		rumbleType = RUMBLE;
 		// Now check to see if it's true open bus, or if D1 is pulled low
 		four[0] = GBA_BUS[0] & 0xFF;
 		four[1] = GBA_BUS[1] & 0xFF;
@@ -53,5 +76,11 @@ bool isRumbleInserted(void) {
 //---------------------------------------------------------------------------------
 void setRumble(bool position) {
 //---------------------------------------------------------------------------------
-	RUMBLE_PAK = (position ? 2 : 0);
+
+	if( rumbleType == WARIOWARE) {
+		WARIOWARE_PAK = (position ? 8 : 0); 
+	} else {
+		RUMBLE_PAK = (position ? 2 : 0);
+	}
+
 }
