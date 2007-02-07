@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.32 2007-01-14 11:41:51 wntrmute Exp $
+	$Id: video.h,v 1.33 2007-02-07 17:02:00 wntrmute Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.32  2007/01/14 11:41:51  wntrmute
+	add leading zero to VRAM macros with addresses
+	
 	Revision 1.31  2007/01/14 11:31:22  wntrmute
 	bogus fixed types removed from libnds
 	
@@ -287,7 +290,6 @@ typedef _palette _ext_palette[16];
 
 uint32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d);
 void vramRestoreMainBanks(uint32 vramTemp);
-void vramRestorMainBanks(uint32 vramTemp) __attribute__((deprecated));
 
 void vramSetBankA(VRAM_A_TYPE a);
 void vramSetBankB(VRAM_B_TYPE b);
@@ -364,6 +366,16 @@ void vramSetBankI(VRAM_I_TYPE i);
 #define DISPLAY_BG_EXT_PALETTE		(1 << 30)
 
 #define DISPLAY_SCREEN_OFF     (1 << 7)
+
+// The next two defines only apply to MAIN 2d engine
+// In tile modes, this is multiplied by 64KB and added to BG_TILE_BASE
+// In all bitmap modes, it is not used.
+#define DISPLAY_CHAR_BASE(n) (((n)&7)<<24)
+
+// In tile modes, this is multiplied by 64KB and added to BG_MAP_BASE
+// In bitmap modes, this is multiplied by 64KB and added to BG_BMP_BASE
+// In large bitmap modes, this is not used
+#define DISPLAY_SCREEN_BASE(n) (((n)&7)<<27)
 
 static inline
 void videoSetMode( uint32 mode)  { DISPLAY_CR = mode; }
