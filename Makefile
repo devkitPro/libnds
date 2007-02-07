@@ -54,8 +54,8 @@ export BASEFLAGS	:=	-g -Wall -O2\
 #---------------------------------------------------------------------------------
 all:	$(DEPENDS)/arm7 $(DEPENDS)/arm9 lib $(BUILD)/arm9 $(BUILD)/arm7
 #---------------------------------------------------------------------------------
-	@make -C $(BUILD)/arm9 -f $(BASEDIR)/Makefile.arm9
-	@make -C $(BUILD)/arm7 -f $(BASEDIR)/Makefile.arm7
+	@$(MAKE) -C $(BUILD)/arm9 -f $(BASEDIR)/Makefile.arm9
+	@$(MAKE) -C $(BUILD)/arm7 -f $(BASEDIR)/Makefile.arm7
 
 #---------------------------------------------------------------------------------
 $(BUILD)/arm7:
