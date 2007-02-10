@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.30 2007-02-10 16:01:10 gabebear Exp $
+	$Id: videoGL.c,v 1.31 2007-02-10 16:30:57 gabebear Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,10 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.30  2007/02/10 16:01:10  gabebear
+	- fixed some comments
+	- removed CVS revision comments from videoGL.h and videoGL.c that were dated 2005 and older
+	
 	Revision 1.29  2007/02/10 05:13:46  gabebear
 	- emptied videoGL.inl into videoGL.h so that doxygen works and because having the ability to remove inline functions isn't important anymore(I think).
 	- emptied inlineGL.c; inlineGL.c and videoGL.inl should be deleted
@@ -539,19 +543,19 @@ void glGetInt(GL_GET_ENUM param, int* i) {
 //---------------------------------------------------------------------------------
 void glClearColor(uint8 red, uint8 green, uint8 blue) {
 //---------------------------------------------------------------------------------
-	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0xFFFF0000) | RGB15(red, green, blue);
+	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0xFFFF8000) | (0x7FFF & RGB15(red, green, blue));
 }
 
 //---------------------------------------------------------------------------------
 void glClearAlpha(uint8 alpha) {
 //---------------------------------------------------------------------------------
-	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0x001F0000) | (( alpha & 0x1F ) << 16 );
+	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0xFFE0FFFF) | (( alpha & 0x1F ) << 16 );
 }
 
 //---------------------------------------------------------------------------------
 void glClearPolyID(uint8 ID) {
 //---------------------------------------------------------------------------------
-	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0x3F000000) | (( ID & 0x3F ) << 24 );
+	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0xC0FFFFFF) | (( ID & 0x3F ) << 24 );
 }
 
 
