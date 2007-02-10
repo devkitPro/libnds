@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.32 2007-02-10 06:04:53 gabebear Exp $
+	$Id: videoGL.h,v 1.33 2007-02-10 16:01:09 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.32  2007/02/10 06:04:53  gabebear
+	oops, included videoGL.h in videoGL.h...
+	
 	Revision 1.31  2007/02/10 05:23:19  gabebear
 	doxygen doesn't like "static inline", so changed to using GL_STATIC_INL with define.
 	
@@ -100,57 +103,6 @@
 	Revision 1.21  2006/01/05 08:13:26  dovoto
 	Fixed gluLookAt (again)
 	Major update to palette handling (likely a breaking change if you were using the gl texture palettes from before)
-	
-	Revision 1.20  2005/11/27 04:23:19  joatski
-	Renamed glAlpha to glAlphaFunc (old name is present but deprecated)
-	Added new texture formats
-	Added glCutoffDepth
-	Changed type input of glClearDepth to fixed12d3, added conversion functions
-	
-	Revision 1.19  2005/11/26 20:33:00  joatski
-	Changed spelling of fixed-point macros.  Old ones are present but deprecated.
-	Fixed difference between GL_RGB and GL_RGBA
-	Added GL_GET_WIDTH and GL_GET_HEIGHT
-	
-	Revision 1.17  2005/11/18 14:31:58  wntrmute
-	corrected parameter for doxygen in glLoadMatrix4x3
-	
-	Revision 1.16  2005/11/14 12:01:27  wntrmute
-	Correct spelling and parameters in doxygen comments
-	
-	Revision 1.15  2005/11/07 04:44:25  dovoto
-	Corrected some spelling
-	
-	Revision 1.14  2005/11/07 04:16:24  dovoto
-	Added glGetInt and glGetFixed, Fixed glOrtho, Began Doxygenation
-	
-	Revision 1.13  2005/11/03 23:34:14  wntrmute
-	killed vector type, replaced with GLvector
-	
-	Revision 1.12  2005/10/13 16:32:09  dovoto
-	Altered glTexLoadPal to accept a texture slot to allow multiple texture palettes.
-	
-	Revision 1.11  2005/09/19 20:59:47  dovoto
-	Added glOrtho and glOrthof32.  No change to interrupts.h
-	
-	Revision 1.10  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-	
-	Revision 1.9  2005/08/22 08:05:53  wntrmute
-	moved inlines to separate file
-	
-	Revision 1.8  2005/07/27 15:54:57  wntrmute
-	Synchronise with ndslib.
-	
-	Added f32 version of glTextCoord
-	fixed glBindTexture (0,0) now clears fomatting
-	
-	Revision 1.7  2005/07/27 02:20:05  wntrmute
-	resynchronise with ndslib
-	Updated GL with float wrappers for NeHe
-	
-	Revision 1.6  2005/07/14 08:00:57  wntrmute
-	resynchronise with ndslib
 
 ---------------------------------------------------------------------------------*/
 /*! \file videoGL.h 
@@ -437,34 +389,34 @@ void glTexCoord2f(float s, float t);
 void glRotatef32i(int angle, int32 x, int32 y, int32 z);
 
 /*! \brief Loads a 2D texture into texture memory and sets the currently bound texture ID to the attributes specified
-	\param target not used, just here for OpenGL compatibility
-	\param empty1 not used, just here for OpenGL compatibility
-	\param type The format of the texture
-	\param sizeX the horizontal size of the texture
-	\param sizeY the vertical size of the texture
-	\param empty2 not used, just here for OpenGL compatibility
-	\param param parameters for the texture
-	\param texture pointer to the texture data to load */
+\param target not used, just here for OpenGL compatibility
+\param empty1 not used, just here for OpenGL compatibility
+\param type The format of the texture
+\param sizeX the horizontal size of the texture; valid sizes are enumerated in GL_TEXTURE_TYPE_ENUM
+\param sizeY the vertical size of the texture; valid sizes are enumerated in GL_TEXTURE_TYPE_ENUM
+\param empty2 not used, just here for OpenGL compatibility
+\param param parameters for the texture
+\param texture pointer to the texture data to load */
 int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, int param, uint8* texture);
 
 /*! \brief Loads a palette into the specified texture addr
-	\param pal pointer to the palette to load
-	\param count the size of the palette
-	\param addr the offset in VRAM to load the palette */
+\param pal pointer to the palette to load
+\param count the size of the palette
+\param addr the offset in VRAM to load the palette */
 void glTexLoadPal(u16* pal, u16 count, u32 addr );
 
 /*! \brief Loads a palette into the next available palette slot, returns the addr on success or -1
-	\param pal pointer to the palette to load
-	\param count the size of the palette
-	\param format the format of the texture */
+\param pal pointer to the palette to load
+\param count the size of the palette
+\param format the format of the texture */
 int gluTexLoadPal(u16* pal, u16 count, uint8 format);
 
 /*! \brief Set parameters for the current texture. Although named the same as its gl counterpart, it is not compatible. Effort may be made in the future to make it so.
-	\param sizeX the horizontal size of the texture
-	\param sizeY the vertical size of the texture
-	\param addr offset into VRAM where you put the texture
-	\param mode the type of texture
-	\param param paramaters for the texture */
+\param sizeX the horizontal size of the texture; valid sizes are enumerated in GL_TEXTURE_TYPE_ENUM
+\param sizeY the vertical size of the texture; valid sizes are enumerated in GL_TEXTURE_TYPE_ENUM
+\param addr offset into VRAM where you put the texture
+\param mode the type of texture
+\param param paramaters for the texture */
 void glTexParameter(	uint8 sizeX, uint8 sizeY,
 						uint32* addr,
 						uint8 GL_TEXTURE_TYPE_ENUM,
@@ -474,56 +426,56 @@ void glTexParameter(	uint8 sizeX, uint8 sizeY,
 u32 glGetTexParameter();
 
 /*! \brief returns the address alocated to the texure named by name 
-	\param name the name of the texture to get a pointer to */
+\param name the name of the texture to get a pointer to */
 void* glGetTexturePointer(	int name);
 
 /*! \brief glBindTexure sets the current named texture to the active texture. Target is ignored as all DS textures are 2D
-	\param target ignored, only here for OpenGL compatability
-	\param name the name(int value) to set to the current texture */
+\param target ignored, only here for OpenGL compatability
+\param name the name(int value) to set to the current texture */
 void glBindTexture(int target, int name);
 
 /*! \brief glColorTable establishes the location of the current palette. Roughly follows glColorTableEXT. Association of palettes with named textures is left to the application. */
 void glColorTable(uint8 format, uint32 addr);
 
 /*! \brief Creates room for the specified number of textures
-	\param n the number of textures to generate
-	\param names pointer to the names array to fill */
+\param n the number of textures to generate
+\param names pointer to the names array to fill */
 int glGenTextures(int n, int *names);
 
 /*! \brief Resets the gl texture state freeing all texture memory */
 void glResetTextures(void);
 
 /*! \brief Sets texture coordinates for following vertices<BR>
-	<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A>
-	\param u U(a.k.a. S) texture coordinate (0.0 - 1.0)
-	\param v V(a.k.a. T) texture coordinate (0.0 - 1.0)*/
+<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A>
+\param u U(a.k.a. S) texture coordinate (0.0 - 1.0)
+\param v V(a.k.a. T) texture coordinate (0.0 - 1.0)*/
 void glTexCoord2f32(int32 u, int32 v);
 
 /*! \brief specify the material properties to be used in rendering lit polygons
-	\param mode which material property to change
-	\param color the color to set for that material property */
+\param mode which material property to change
+\param color the color to set for that material property */
 void glMaterialf(GL_MATERIALS_ENUM mode, rgb color);
 
 /*! \brief Initializes the gl state machine (must be called once before using gl calls) */
 void glInit(void);
 
 /*! \brief Grabs integer state variables from openGL
-	\param param The state variable to retrieve
-	\param i pointer with room to hold the requested data */
+\param param The state variable to retrieve
+\param i pointer with room to hold the requested data */
 void glGetInt(const GL_GET_ENUM param, int* i);
 
 /*! \brief sets the color of the rear-plane(a.k.a Clear Color/Plane)
-	\param red component (0-31)
-	\param green component (0-31)
-	\param blue component (0-31) */
+\param red component (0-31)
+\param green component (0-31)
+\param blue component (0-31) */
 void glClearColor(uint8 red, uint8 green, uint8 blue);
 
 /*! \brief sets the Alpha of the rear-plane(a.k.a. Clear/Color Plane)
-	\param alpha sets the transparency from 0(clear) to 31(opaque) */
+\param alpha sets the transparency from 0(clear) to 31(opaque) */
 void glClearAlpha(uint8 alpha);
 
 /*! \brief sets the polygon ID of the rear-plane(a.k.a. Clear/Color Plane), useful for antialiasing and edge coloring
-	\param ID the polygon ID to give the rear-plane */
+\param ID the polygon ID to give the rear-plane */
 void glClearPolyID(uint8 ID);
 	
 #ifdef __cplusplus
@@ -732,7 +684,7 @@ GL_STATIC_INL void glCallList(u32* list) {
 	while(count--)
 		GFX_FIFO = *list++;
 	
-	//this works sometimes??
+	// This should work... I'm not sure why it has been reported not to work sometimes.  --gabebear
 	//	DMA_SRC(0) = (uint32)list;
 	//	DMA_DEST(0) = 0x4000400;
 	//	DMA_CR(0) = DMA_FIFO | count;
@@ -742,15 +694,15 @@ GL_STATIC_INL void glCallList(u32* list) {
 
 /*! \brief Set the parameters for polygons rendered on the current frame<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes</A>
-\param params the paramters to set for the polygons for the current frame */
+\param params the paramters to set for the polygons for the current frame. valid paramters are enumerated in GL_POLY_FORMAT_ENUM and in the functions POLY_ALPHA() and POLY_ID() */
 GL_STATIC_INL void glPolyFmt(uint32 params) { GFX_POLY_FORMAT = params; }
 
 /*! \brief Enables various gl states (blend, alpha test, etc..)
-\param bits bit mask of desired attributes */
+\param bits bit mask of desired attributes, attributes are enumerated in DISP3DCNT_ENUM */
 GL_STATIC_INL void glEnable(int bits) { GFX_CONTROL |= bits; }
 
 /*! \brief Disables various gl states (blend, alpha test, etc..)
-\param bits bit mask of desired attributes */
+\param bits bit mask of desired attributes, attributes are enumerated in DISP3DCNT_ENUM */
 GL_STATIC_INL void glDisable(int bits) { GFX_CONTROL &= ~bits; }
 
 /*! \brief Loads a 4x4 matrix into the current matrix

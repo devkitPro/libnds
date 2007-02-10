@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.29 2007-02-10 05:13:46 gabebear Exp $
+	$Id: videoGL.c,v 1.30 2007-02-10 16:01:10 gabebear Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,17 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.29  2007/02/10 05:13:46  gabebear
+	- emptied videoGL.inl into videoGL.h so that doxygen works and because having the ability to remove inline functions isn't important anymore(I think).
+	- emptied inlineGL.c; inlineGL.c and videoGL.inl should be deleted
+	- inlined most functions. GCC "should" be able to work out if something that is inlined in the code really shouldn't be and create object code for the function. I believe I made pretty sane choices so I doubt this will be an issue.
+	- fixed TEXTURE_PACK so that u and v are correct.
+	- removed glTexCoord1i because it's not terribly useful and the fix to TEXTURE_PACK will make programs that use this and another glTexCoord fail, this was the only function that had S and T mapped correctly. The function does map to the OpenGL call pretty well, but it wasn't used properly in the examples. In the examples it was used to set two texcoords, which was more confusing than just using GFX_TEX_COORD directly. The OpenGL version only sets the S texcoord and sets T to 0.
+	- GL_LIGHTING was defined, I deleted it. GL_LIGHTING is used with glEnable to swap between coloring vertices with normals/materials and coloring with the current color. The DS doesn't handle vertex colors like this. The color of a vertex on the DS is determined by the last command that computes a vertex color. The two commands that set vertex colors are glNormal() and glColor(), whichever was last executed determines the color of the vertex drawn. Implementing the OpenGL way of doing this on the DS would be a rather big waste of time and the current define didn't make any sense anyway.
+	- removed glTranslate3f32(delta) because it doesn't map to an OpenGL call, or even make much sense. I doubt anyone was using it.
+	- removed all depreciated functions
+	- linking issues kept me from typing the sizeX/sizeY params on glTexImage2d() and glTexParameter() to GL_TEXTURE_SIZE_ENUM. I'm not sure how to fix this without inlining glTexImage2d() and glTexParameter().
+	
 	Revision 1.28  2007/01/31 22:57:28  gabebear
 	- corrected typo where glClearAlpha() was glClearAplpha()
 	- added doxygen for glClear*** functions
@@ -84,51 +95,6 @@
 	Revision 1.19  2006/01/05 08:13:26  dovoto
 	Fixed gluLookAt (again)
 	Major update to palette handling (likely a breaking change if you were using the gl texture palettes from before)
-	
-	Revision 1.18  2005/11/27 04:23:19  joatski
-	Renamed glAlpha to glAlphaFunc (old name is present but deprecated)
-	Added new texture formats
-	Added glCutoffDepth
-	Changed type input of glClearDepth to fixed12d3, added conversion functions
-	
-	Revision 1.17  2005/11/26 20:33:00  joatski
-	Changed spelling of fixed-point macros.  Old ones are present but deprecated.
-	Fixed difference between GL_RGB and GL_RGBA
-	Added GL_GET_WIDTH and GL_GET_HEIGHT
-	
-	Revision 1.15  2005/11/07 04:16:24  dovoto
-	Added glGetInt and glGetFixed, Fixed glOrtho, Began Doxygenation
-	
-	Revision 1.14  2005/10/13 16:32:09  dovoto
-	Altered glTexLoadPal to accept a texture slot to allow multiple texture palettes.
-	
-	Revision 1.13  2005/09/19 20:59:47  dovoto
-	Added glOrtho and glOrthof32.  No change to interrupts.h
-	
-	Revision 1.12  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-	
-	Revision 1.11  2005/08/22 08:05:53  wntrmute
-	moved inlines to separate file
-	
-	Revision 1.10  2005/08/01 23:18:22  wntrmute
-	adjusted headers for logging
-	
-	Revision 1.9  2005/07/29 05:19:55  dovoto
-	Had s and t swapped in glTextCoord2f
-	
-	Revision 1.8  2005/07/27 15:54:58  wntrmute
-	Synchronise with ndslib.
-	
-	Added f32 version of glTextCoord
-	fixed glBindTexture (0,0) now clears fomatting
-	
-	Revision 1.7  2005/07/27 02:20:05  wntrmute
-	resynchronise with ndslib
-	Updated GL with float wrappers for NeHe
-	
-	Revision 1.6  2005/07/14 08:00:57  wntrmute
-	resynchronise with ndslib
 	
 
 ---------------------------------------------------------------------------------*/
@@ -222,7 +188,7 @@ void glInit(void) {
 	// Clear the FIFO
 	GFX_STATUS |= (1<<29);
 
-	// Clear overflows for list memory
+	// Clear overflows from list memory
 	glResetMatrixStack();
 
 	// reset the control bits
