@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.30 2007-02-10 05:13:46 gabebear Exp $
+	$Id: videoGL.h,v 1.31 2007-02-10 05:23:19 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,17 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.30  2007/02/10 05:13:46  gabebear
+	- emptied videoGL.inl into videoGL.h so that doxygen works and because having the ability to remove inline functions isn't important anymore(I think).
+	- emptied inlineGL.c; inlineGL.c and videoGL.inl should be deleted
+	- inlined most functions. GCC "should" be able to work out if something that is inlined in the code really shouldn't be and create object code for the function. I believe I made pretty sane choices so I doubt this will be an issue.
+	- fixed TEXTURE_PACK so that u and v are correct.
+	- removed glTexCoord1i because it's not terribly useful and the fix to TEXTURE_PACK will make programs that use this and another glTexCoord fail, this was the only function that had S and T mapped correctly. The function does map to the OpenGL call pretty well, but it wasn't used properly in the examples. In the examples it was used to set two texcoords, which was more confusing than just using GFX_TEX_COORD directly. The OpenGL version only sets the S texcoord and sets T to 0.
+	- GL_LIGHTING was defined, I deleted it. GL_LIGHTING is used with glEnable to swap between coloring vertices with normals/materials and coloring with the current color. The DS doesn't handle vertex colors like this. The color of a vertex on the DS is determined by the last command that computes a vertex color. The two commands that set vertex colors are glNormal() and glColor(), whichever was last executed determines the color of the vertex drawn. Implementing the OpenGL way of doing this on the DS would be a rather big waste of time and the current define didn't make any sense anyway.
+	- removed glTranslate3f32(delta) because it doesn't map to an OpenGL call, or even make much sense. I doubt anyone was using it.
+	- removed all depreciated functions
+	- linking issues kept me from typing the sizeX/sizeY params on glTexImage2d() and glTexParameter() to GL_TEXTURE_SIZE_ENUM. I'm not sure how to fix this without inlining glTexImage2d() and glTexParameter().
+	
 	Revision 1.29  2007/01/31 23:10:09  gabebear
 	OK, I think that's the last typo in the stuff I just submitted... damn, well I'm sure I jinxed that
 	
@@ -141,12 +152,15 @@
 ---------------------------------------------------------------------------------*/
 /*! \file videoGL.h 
 \brief openGL (ish) interface to DS 3D hardware. 
-
 */
+
 #ifndef VIDEOGL_ARM9_INCLUDE
 #define VIDEOGL_ARM9_INCLUDE
 
 //---------------------------------------------------------------------------------
+
+// for some reason doxygen doesn't like "static inline" but is fine with "GL_STATIC_INL"
+#define GL_STATIC_INL static inline
 
 #ifndef ARM9
 #error 3D hardware is only available from the ARM9
@@ -551,40 +565,40 @@ void glClearPolyID(uint8 ID);
 
 /*! \brief used in glPolyFmt() to set the alpha level for the following polygons, set to 0 for wireframe mode
 \param n the level of alpha (0-31) */
-static inline uint32 POLY_ALPHA(int n) { return (uint32)((n) << 16); };
+GL_STATIC_INL uint32 POLY_ALPHA(int n) { return (uint32)((n) << 16); };
 
 /*! \brief used in glPolyFmt() to set the Polygon ID for the following polygons
 \param n the ID to set for following polygons (0-63) */
-static inline uint32 POLY_ID(int n) { return (uint32)((n)<<24); };
+GL_STATIC_INL uint32 POLY_ID(int n) { return (uint32)((n)<<24); };
 
 /*! \brief Starts a polygon group
 \param mode the draw mode for the polygon */
-static inline void glBegin(GL_GLBEGIN_ENUM mode) { GFX_BEGIN = mode; }
+GL_STATIC_INL void glBegin(GL_GLBEGIN_ENUM mode) { GFX_BEGIN = mode; }
 
 /*! \brief Ends a polygon group, this seems to be a dummy function that does absolutely nothing, feel free to never use it. */
-static inline void glEnd(void) { GFX_END = 0; }
+GL_STATIC_INL void glEnd(void) { GFX_END = 0; }
 
 /*! \brief generally set to GL_MAX_DEPTH. OK, I'm not really sure what this does --gabebear<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3drearplane">GBATEK http://nocash.emubase.de/gbatek.htm#ds3drearplane</A>
 \param depth Something to do with the depth buffer, generally set to GL_MAX_DEPTH */
-static inline void glClearDepth(uint16 depth) { GFX_CLEAR_DEPTH = depth; }
+GL_STATIC_INL void glClearDepth(uint16 depth) { GFX_CLEAR_DEPTH = depth; }
 
 /*! \brief Set the color for following vertices
 \param red the red component (0-31)
 \param green the green component (0-31)
 \param blue the blue component (0-31) */
 
-static inline void glColor3b(uint8 red, uint8 green, uint8 blue) { GFX_COLOR = (vuint32)RGB15(red>>3, green>>3, blue>>3); }
+GL_STATIC_INL void glColor3b(uint8 red, uint8 green, uint8 blue) { GFX_COLOR = (vuint32)RGB15(red>>3, green>>3, blue>>3); }
 
 /*! \brief Set the color for following vertices
 \param color the 15bit color value */
-static inline void glColor(rgb color) { GFX_COLOR = (vuint32)color; }
+GL_STATIC_INL void glColor(rgb color) { GFX_COLOR = (vuint32)color; }
 
 /*! \brief specifies a vertex
 \param x the x component for the vertex
 \param y the y component for the vertex
 \param z the z component for the vertex */
-static inline void glVertex3v16(v16 x, v16 y, v16 z) {
+GL_STATIC_INL void glVertex3v16(v16 x, v16 y, v16 z) {
 	GFX_VERTEX16 = (y << 16) | (x & 0xFFFF);
 	GFX_VERTEX16 = ((uint32)(uint16)z);
 }
@@ -593,31 +607,31 @@ static inline void glVertex3v16(v16 x, v16 y, v16 z) {
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A>
 \param u U(a.k.a. S) texture coordinate in texels
 \param v V(a.k.a. T) texture coordinate in texels */
-static inline void glTexCoord2t16(t16 u, t16 v) { GFX_TEX_COORD = TEXTURE_PACK(u,v); }
+GL_STATIC_INL void glTexCoord2t16(t16 u, t16 v) { GFX_TEX_COORD = TEXTURE_PACK(u,v); }
 
 /*! \brief Pushs the current matrix onto the stack<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack</A> */
-static inline void glPushMatrix(void) { MATRIX_PUSH = 0; }
+GL_STATIC_INL void glPushMatrix(void) { MATRIX_PUSH = 0; }
 
 /*! \brief Pops num matrices off the stack<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack</A>
 \param num the number to pop down the stack */
-static inline void glPopMatrix(int32 num) { MATRIX_POP = num; }
+GL_STATIC_INL void glPopMatrix(int32 num) { MATRIX_POP = num; }
 
 /*! \brief Restores the current matrix from a location in the stack<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack</A>
 \param index the place in the stack to restore to */
-static inline void glRestoreMatrix(int32 index) { MATRIX_RESTORE = index; }
+GL_STATIC_INL void glRestoreMatrix(int32 index) { MATRIX_RESTORE = index; }
 
 /*! \brief Place the current matrix into the stack at a location<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack</A>
 \param index the place in the stack to put the current matrix */
-static inline void glStoreMatrix(int32 index) { MATRIX_STORE = index; }
+GL_STATIC_INL void glStoreMatrix(int32 index) { MATRIX_STORE = index; }
 
 /*! \brief multiply the current matrix by a translation matrix<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \param v the vector to translate by */
-static inline void glScalev(GLvector* v) { 
+GL_STATIC_INL void glScalev(GLvector* v) { 
 	MATRIX_SCALE = v->x;
 	MATRIX_SCALE = v->y;
 	MATRIX_SCALE = v->z;
@@ -626,7 +640,7 @@ static inline void glScalev(GLvector* v) {
 /*! \brief multiply the current matrix by a translation matrix<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \param v the vector to translate by */
-static inline void glTranslatev(GLvector* v) {
+GL_STATIC_INL void glTranslatev(GLvector* v) {
 	MATRIX_TRANSLATE = v->x;
 	MATRIX_TRANSLATE = v->y;
 	MATRIX_TRANSLATE = v->z;
@@ -637,7 +651,7 @@ static inline void glTranslatev(GLvector* v) {
 \param x translation on the x axis
 \param y translation on the y axis
 \param z translation on the z axis */
-static inline void glTranslate3f32(int32 x, int32 y, int32 z) {
+GL_STATIC_INL void glTranslate3f32(int32 x, int32 y, int32 z) {
 	MATRIX_TRANSLATE = x;
 	MATRIX_TRANSLATE = y;
 	MATRIX_TRANSLATE = z;
@@ -646,7 +660,7 @@ static inline void glTranslate3f32(int32 x, int32 y, int32 z) {
 /*! \brief multiply the current matrix by a scale matrix<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \param factor the factor to scale by */
-static inline void glScalef32(int32 factor) {
+GL_STATIC_INL void glScalef32(int32 factor) {
 	MATRIX_SCALE = factor;
 	MATRIX_SCALE = factor;
 	MATRIX_SCALE = factor;
@@ -659,7 +673,7 @@ static inline void glScalef32(int32 factor) {
 \param x the x component of the lights directional vector. Direction must be normalized
 \param y the y component of the lights directional vector. Direction must be normalized
 \param z the z component of the lights directional vector. Direction must be normalized */
-static inline void glLight(int id, rgb color, v10 x, v10 y, v10 z) {
+GL_STATIC_INL void glLight(int id, rgb color, v10 x, v10 y, v10 z) {
 	id = (id & 3) << 30;
 	GFX_LIGHT_VECTOR = id | ((z & 0x3FF) << 20) | ((y & 0x3FF) << 10) | (x & 0x3FF);
 	GFX_LIGHT_COLOR = id | color;
@@ -668,18 +682,18 @@ static inline void glLight(int id, rgb color, v10 x, v10 y, v10 z) {
 /*! \brief the normal to use for following vertices<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A>
 \param normal the packed normal(3 * 10bit x, y, z) */
-static inline void glNormal(uint32 normal) { GFX_NORMAL = normal; }
+GL_STATIC_INL void glNormal(uint32 normal) { GFX_NORMAL = normal; }
 
 /*! \brief loads an identity matrix to the current matrix, same as glIdentity(void) */
-static inline void glLoadIdentity(void) { MATRIX_IDENTITY = 0; }
+GL_STATIC_INL void glLoadIdentity(void) { MATRIX_IDENTITY = 0; }
 
 /*! \brief loads an identity matrix to the current matrix, same as glLoadIdentity(void) */
-static inline void glIdentity(void) { MATRIX_IDENTITY = 0; }
+GL_STATIC_INL void glIdentity(void) { MATRIX_IDENTITY = 0; }
 
 /*! \brief change the current matrix mode<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A><BR>
 \param mode the mode for the matrix */
-static inline void glMatrixMode(GL_MATRIX_MODE_ENUM mode) { MATRIX_CONTROL = mode; }
+GL_STATIC_INL void glMatrixMode(GL_MATRIX_MODE_ENUM mode) { MATRIX_CONTROL = mode; }
 
 /*! \brief specify the viewport for following drawing, can be set several times per frame.<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
@@ -687,14 +701,14 @@ static inline void glMatrixMode(GL_MATRIX_MODE_ENUM mode) { MATRIX_CONTROL = mod
 \param y1 the bottom of the viewport
 \param x2 the right of the viewport
 \param y2 the top of the viewport */
-static inline void glViewPort(uint8 x1, uint8 y1, uint8 x2, uint8 y2) { GFX_VIEWPORT = (x1) + (y1 << 8) + (x2 << 16) + (y2 << 24); }
+GL_STATIC_INL void glViewPort(uint8 x1, uint8 y1, uint8 x2, uint8 y2) { GFX_VIEWPORT = (x1) + (y1 << 8) + (x2 << 16) + (y2 << 24); }
 
 /*! \brief This seems to have the same effect as calling swiWaitForVBlank()<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A> */
-static inline void glFlush(void) { GFX_FLUSH = 2; }
+GL_STATIC_INL void glFlush(void) { GFX_FLUSH = 2; }
 
 /*! \brief The DS uses a table for shinyness..this generates a half-ass one */
-static inline void glMaterialShinyness(void) {
+GL_STATIC_INL void glMaterialShinyness(void) {
 	uint32 shiny32[128/4];
 	uint8  *shiny8 = (uint8*)shiny32;
 	
@@ -710,7 +724,7 @@ static inline void glMaterialShinyness(void) {
 /*! \brief throws a packed list of commands into the graphics FIFO
 The first 32bits is the length of the packed command list, followed by a the packed list<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dgeometrycommands">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dgeometrycommands</A> */
-static inline void glCallList(u32* list) {
+GL_STATIC_INL void glCallList(u32* list) {
 	u32 count = *list++;
 	
 	while(count--)
@@ -727,19 +741,19 @@ static inline void glCallList(u32* list) {
 /*! \brief Set the parameters for polygons rendered on the current frame<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes</A>
 \param params the paramters to set for the polygons for the current frame */
-static inline void glPolyFmt(uint32 params) { GFX_POLY_FORMAT = params; }
+GL_STATIC_INL void glPolyFmt(uint32 params) { GFX_POLY_FORMAT = params; }
 
 /*! \brief Enables various gl states (blend, alpha test, etc..)
 \param bits bit mask of desired attributes */
-static inline void glEnable(int bits) { GFX_CONTROL |= bits; }
+GL_STATIC_INL void glEnable(int bits) { GFX_CONTROL |= bits; }
 
 /*! \brief Disables various gl states (blend, alpha test, etc..)
 \param bits bit mask of desired attributes */
-static inline void glDisable(int bits) { GFX_CONTROL &= ~bits; }
+GL_STATIC_INL void glDisable(int bits) { GFX_CONTROL &= ~bits; }
 
 /*! \brief Loads a 4x4 matrix into the current matrix
 \param m pointer to a 4x4 matrix */
-static inline void glLoadMatrix4x4(m4x4 *m) {
+GL_STATIC_INL void glLoadMatrix4x4(m4x4 *m) {
 	MATRIX_LOAD4x4 = m->m[0];
 	MATRIX_LOAD4x4 = m->m[1];
 	MATRIX_LOAD4x4 = m->m[2];
@@ -763,7 +777,7 @@ static inline void glLoadMatrix4x4(m4x4 *m) {
 
 /*! \brief Loads a 4x3 matrix into the current matrix
 \param m pointer to a 4x4 matrix */
-static inline void glLoadMatrix4x3(m4x3 * m) {
+GL_STATIC_INL void glLoadMatrix4x3(m4x3 * m) {
 	MATRIX_LOAD4x3 = m->m[0];
 	MATRIX_LOAD4x3 = m->m[1];
 	MATRIX_LOAD4x3 = m->m[2];
@@ -782,7 +796,7 @@ static inline void glLoadMatrix4x3(m4x3 * m) {
 
 /*! \brief Multiplies the current matrix by m
 \param m pointer to a 4x4 matrix */
-static inline void glMultMatrix4x4(m4x4 * m) {
+GL_STATIC_INL void glMultMatrix4x4(m4x4 * m) {
 	MATRIX_MULT4x4 = m->m[0];
 	MATRIX_MULT4x4 = m->m[1];
 	MATRIX_MULT4x4 = m->m[2];
@@ -806,7 +820,7 @@ static inline void glMultMatrix4x4(m4x4 * m) {
 
 /*! \brief multiplies the current matrix by
 \param m pointer to a 4x3 matrix */
-static inline void glMultMatrix4x3(m4x3 * m) {
+GL_STATIC_INL void glMultMatrix4x3(m4x3 * m) {
 	MATRIX_MULT4x3 = m->m[0];
 	MATRIX_MULT4x3 = m->m[1];
 	MATRIX_MULT4x3 = m->m[2];
@@ -826,7 +840,7 @@ static inline void glMultMatrix4x3(m4x3 * m) {
 
 /*! \brief multiplies the current matrix by m
 \param m pointer to a 3x3 matrix */
-static inline void glMultMatrix3x3(m3x3 * m) {
+GL_STATIC_INL void glMultMatrix3x3(m3x3 * m) {
 	MATRIX_MULT3x3 = m->m[0];
 	MATRIX_MULT3x3 = m->m[1];
 	MATRIX_MULT3x3 = m->m[2];
@@ -842,7 +856,7 @@ static inline void glMultMatrix3x3(m3x3 * m) {
 
 /*! \brief Rotates the current modelview matrix by angle about the x axis 
 \param angle The angle to rotate by (angle is 0-511) */
-static inline void glRotateXi(int angle) {
+GL_STATIC_INL void glRotateXi(int angle) {
 	int32 sine = SIN[angle &  LUT_MASK];
 	int32 cosine = COS[angle & LUT_MASK];
 	
@@ -861,7 +875,7 @@ static inline void glRotateXi(int angle) {
 
 /*! \brief Rotates the current modelview matrix by angle about the y axis 
 \param angle The angle to rotate by (angle is 0-511) */
-static inline void glRotateYi(int angle) {
+GL_STATIC_INL void glRotateYi(int angle) {
 	int32 sine = SIN[angle &  LUT_MASK];
 	int32 cosine = COS[angle & LUT_MASK];
 	
@@ -880,7 +894,7 @@ static inline void glRotateYi(int angle) {
 
 /*! \brief Rotates the current modelview matrix by angle about the z axis 
 \param angle The angle to rotate by (angle is 0-511) */
-static inline void glRotateZi(int angle) {
+GL_STATIC_INL void glRotateZi(int angle) {
 	int32 sine = SIN[angle &  LUT_MASK];
 	int32 cosine = COS[angle & LUT_MASK];
 	
@@ -905,7 +919,7 @@ static inline void glRotateZi(int angle) {
 \param top top vertical clipping plane
 \param zNear near clipping plane
 \param zFar far clipping plane */
-static inline void glOrthof32(int32 left, int32 right, int32 bottom, int32 top, int32 zNear, int32 zFar) {
+GL_STATIC_INL void glOrthof32(int32 left, int32 right, int32 bottom, int32 top, int32 zNear, int32 zFar) {
 	MATRIX_MULT4x4 = divf32(inttof32(2), right - left);     
 	MATRIX_MULT4x4 = 0;  
 	MATRIX_MULT4x4 = 0;      
@@ -939,7 +953,7 @@ static inline void glOrthof32(int32 left, int32 right, int32 bottom, int32 top, 
 \param upx <upx, upy, upz> Unit vector describing which direction is up for the camera.
 \param upy <upx, upy, upz> Unit vector describing which direction is up for the camera.
 \param upz <upx, upy, upz> Unit vector describing which direction is up for the camera. */
-static inline void gluLookAtf32(int32 eyex, int32 eyey, int32 eyez, int32 lookAtx, int32 lookAty, int32 lookAtz, int32 upx, int32 upy, int32 upz) {
+GL_STATIC_INL void gluLookAtf32(int32 eyex, int32 eyey, int32 eyez, int32 lookAtx, int32 lookAty, int32 lookAtz, int32 upx, int32 upy, int32 upz) {
 	int32 side[3], forward[3], up[3], eye[3];
 	
 	forward[0] = eyex - lookAtx; 
@@ -991,7 +1005,7 @@ static inline void gluLookAtf32(int32 eyex, int32 eyey, int32 eyez, int32 lookAt
 \param bottom left right top and bottom describe a rectangle located at the near clipping plane
 \param near Location of a the near clipping plane (parallel to viewing window)
 \param far Location of a the far clipping plane (parallel to viewing window) */
-static inline void glFrustumf32(int32 left, int32 right, int32 bottom, int32 top, int32 near, int32 far) {
+GL_STATIC_INL void glFrustumf32(int32 left, int32 right, int32 bottom, int32 top, int32 near, int32 far) {
 	MATRIX_MULT4x4 = divf32(2*near, right - left);
 	MATRIX_MULT4x4 = 0;
 	MATRIX_MULT4x4 = divf32(right + left, right - left);
@@ -1020,7 +1034,7 @@ static inline void glFrustumf32(int32 left, int32 right, int32 bottom, int32 top
 \param aspect Specifies the aspect ratio of the screen (normally screen width/screen height)
 \param zNear Specifies the near clipping plane
 \param zFar Specifies the far clipping plane */
-static inline void gluPerspectivef32(int fovy, int32 aspect, int32 zNear, int32 zFar) {
+GL_STATIC_INL void gluPerspectivef32(int fovy, int32 aspect, int32 zNear, int32 zFar) {
 	int32 xmin, xmax, ymin, ymax;
 	
 	ymax = mulf32(zNear, TAN[fovy & LUT_MASK]);
@@ -1037,7 +1051,7 @@ static inline void gluPerspectivef32(int fovy, int32 aspect, int32 zNear, int32 
 \param width width in pixels of the window (3 or 4 is a good number)
 \param height height in pixels of the window (3 or 4 is a good number)
 \param viewport the current viewport (normaly [0, 0, 255, 191]) */
-static inline void gluPickMatrix(int x, int y, int width, int height, int viewport[4]) {
+GL_STATIC_INL void gluPickMatrix(int x, int y, int width, int height, int viewport[4]) {
 	MATRIX_MULT4x4 = inttof32(viewport[2]) / width;
 	MATRIX_MULT4x4 = 0;
 	MATRIX_MULT4x4 = 0;
@@ -1057,7 +1071,7 @@ static inline void gluPickMatrix(int x, int y, int width, int height, int viewpo
 }
 
 /*! \brief Resets matrix stack to top level */
-static inline void glResetMatrixStack(void) {
+GL_STATIC_INL void glResetMatrixStack(void) {
 	// stack overflow ack ?
 	GFX_STATUS |= 1 << 15;
 	
@@ -1073,11 +1087,11 @@ static inline void glResetMatrixStack(void) {
 /*! \brief Specifies an edge color for polygons 
 \param id which outline color to set (0-7)
 \param color the 15bit color to set */
-static inline void glSetOutlineColor(int id, rgb color) { GFX_EDGE_TABLE[id] = color; }
+GL_STATIC_INL void glSetOutlineColor(int id, rgb color) { GFX_EDGE_TABLE[id] = color; }
 
 /*! \brief Loads a toon table 
 \param pointer to the 32 color palette to load into the toon table*/
-static inline void glSetToonTable(uint16 *table) {
+GL_STATIC_INL void glSetToonTable(uint16 *table) {
 	int i;
 	for(i = 0; i < 32; i++ )
 		GFX_TOON_TABLE[i] = table[i];
@@ -1087,7 +1101,7 @@ static inline void glSetToonTable(uint16 *table) {
 \param start the start of the range
 \param end the end of the range
 \param color the color to set for that range */
-static inline void glSetToonTableRange(int start, int end, rgb color) {
+GL_STATIC_INL void glSetToonTableRange(int start, int end, rgb color) {
 	int i;
 	for(i = start; i <= end; i++ )
 		GFX_TOON_TABLE[i] = color;
@@ -1096,7 +1110,7 @@ static inline void glSetToonTableRange(int start, int end, rgb color) {
 /*! \brief Grabs fixed format of state variables
 \param param The state variable to retrieve
 \param f pointer with room to hold the requested data */
-static inline void glGetFixed(const GL_GET_ENUM param, int32* f) {
+GL_STATIC_INL void glGetFixed(const GL_GET_ENUM param, int32* f) {
 	int i;
 	switch (param) {
 		case GL_GET_MATRIX_ROTATION:
@@ -1131,12 +1145,12 @@ static inline void glGetFixed(const GL_GET_ENUM param, int32* f) {
 /*! \brief set the minimum alpha value that will be used<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
 \param alphaThreshold minimum alpha value that will be used (0-15) */
-static inline void glAlphaFunc(int alphaThreshold) { GFX_ALPHA_TEST = alphaThreshold; }
+GL_STATIC_INL void glAlphaFunc(int alphaThreshold) { GFX_ALPHA_TEST = alphaThreshold; }
 
 /*! \brief set the minimum alpha value that will be used<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
 \param depth polygons that are beyond this depth will not be drawn; 15bit value. */
-static inline void glCutoffDepth(fixed12d3 depth) { GFX_CUTOFF_DEPTH = depth; }
+GL_STATIC_INL void glCutoffDepth(fixed12d3 depth) { GFX_CUTOFF_DEPTH = depth; }
 
 
 
@@ -1171,7 +1185,7 @@ static inline void glCutoffDepth(fixed12d3 depth) { GFX_CUTOFF_DEPTH = depth; }
 \param x the x component of the vertex
 \param y the y component of the vertex
 \param z the z component of the vertex */
-static inline void glVertex3f(float x, float y, float z) {
+GL_STATIC_INL void glVertex3f(float x, float y, float z) {
 	glVertex3v16(floattov16(x), floattov16(y), floattov16(z));
 }
 
@@ -1181,7 +1195,7 @@ static inline void glVertex3f(float x, float y, float z) {
 \param x the x component of the axis to rotate on
 \param y the y component of the axis to rotate on
 \param z the z component of the axis to rotate on */
-static inline void glRotatef32(float angle, int32 x, int32 y, int32 z) {
+GL_STATIC_INL void glRotatef32(float angle, int32 x, int32 y, int32 z) {
     glRotatef32i((int)(angle * LUT_SIZE / 360.0), x, y, z);
 }
 
@@ -1191,7 +1205,7 @@ static inline void glRotatef32(float angle, int32 x, int32 y, int32 z) {
 \param x the x component of the axis to rotate on
 \param y the y component of the axis to rotate on
 \param z the z component of the axis to rotate on */
-static inline void glRotatef(float angle, float x, float y, float z) {
+GL_STATIC_INL void glRotatef(float angle, float x, float y, float z) {
 	glRotatef32(angle, floattof32(x), floattof32(y), floattof32(z));
 }
 
@@ -1200,7 +1214,7 @@ static inline void glRotatef(float angle, float x, float y, float z) {
 \param r the red component of the color
 \param g the green component of the color
 \param b the blue component of the color */
-static inline void glColor3f(float r, float g, float b) {
+GL_STATIC_INL void glColor3f(float r, float g, float b) {
 	glColor3b((uint8)(r*255), (uint8)(g*255), (uint8)(b*255));
 }
 
@@ -1210,7 +1224,7 @@ static inline void glColor3f(float r, float g, float b) {
 \param x scaling on the x axis
 \param y scaling on the y axis
 \param z scaling on the z axis */
-static inline void glScalef(float x, float y, float z) {
+GL_STATIC_INL void glScalef(float x, float y, float z) {
 	MATRIX_SCALE = floattof32(x);
 	MATRIX_SCALE = floattof32(y);
 	MATRIX_SCALE = floattof32(z);
@@ -1222,7 +1236,7 @@ static inline void glScalef(float x, float y, float z) {
 \param x translation on the x axis
 \param y translation on the y axis
 \param z translation on the z axis */
-static inline void glTranslatef(float x, float y, float z) {
+GL_STATIC_INL void glTranslatef(float x, float y, float z) {
 	MATRIX_TRANSLATE = floattof32(x);
 	MATRIX_TRANSLATE = floattof32(y);
 	MATRIX_TRANSLATE = floattof32(z);
@@ -1234,7 +1248,7 @@ static inline void glTranslatef(float x, float y, float z) {
 \param x x component of the normal, vector must be normalized
 \param y y component of the normal, vector must be normalized
 \param z z component of the normal, vector must be normalized */
-static inline void glNormal3f(float x, float y, float z) {
+GL_STATIC_INL void glNormal3f(float x, float y, float z) {
 	if(x >= 1 || x <= -1) x *= .95;
 	if(y >= 1 || y <= -1) y *= .95;
 	if(z >= 1 || z <= -1) z *= .95;
@@ -1244,21 +1258,21 @@ static inline void glNormal3f(float x, float y, float z) {
 /*! \brief Rotates the current modelview matrix by angle degrees about the x axis
 \warning FLOAT VERSION!!!! please use glRotateXi()
 \param angle The angle to rotate by */
-static inline void glRotateX(float angle) {
+GL_STATIC_INL void glRotateX(float angle) {
 	glRotateXi((int)(angle * LUT_SIZE / 360.0));
 }
 
 /*! \brief Rotates the current modelview matrix by angle degrees about the y axis
 \warning FLOAT VERSION!!!! please use glRotateYi()
 \param angle The angle to rotate by */
-static inline void glRotateY(float angle) {
+GL_STATIC_INL void glRotateY(float angle) {
 	glRotateYi((int)(angle * LUT_SIZE / 360.0));
 }
 
 /*! \brief Rotates the current modelview matrix by angle degrees about the z axis
 \warning FLOAT VERSION!!!! please use glRotateZi()
 \param angle The angle to rotate by */
-static inline void glRotateZ(float angle) {
+GL_STATIC_INL void glRotateZ(float angle) {
 	glRotateZi((int)(angle * LUT_SIZE / 360.0));
 }
 
@@ -1270,7 +1284,7 @@ static inline void glRotateZ(float angle) {
 \param top top vertical clipping plane
 \param zNear near clipping plane
 \param zFar far clipping plane */
-static inline void glOrtho(float left, float right, float bottom, float top, float zNear, float zFar) {
+GL_STATIC_INL void glOrtho(float left, float right, float bottom, float top, float zNear, float zFar) {
 	glOrthof32(floattof32(left), floattof32(right), floattof32(bottom), floattof32(top), floattof32(zNear), floattof32(zFar));
 }
 
@@ -1285,7 +1299,7 @@ static inline void glOrtho(float left, float right, float bottom, float top, flo
 \param upx <upx, upy, upz> Unit vector describing which direction is up for the camera.
 \param upy <upx, upy, upz> Unit vector describing which direction is up for the camera.
 \param upz <upx, upy, upz> Unit vector describing which direction is up for the camera. */
-static inline void gluLookAt(	float eyex, float eyey, float eyez,
+GL_STATIC_INL void gluLookAt(	float eyex, float eyey, float eyez,
 								float lookAtx, float lookAty, float lookAtz,
 								float upx, float upy, float upz) {
 	gluLookAtf32(floattof32(eyex), floattof32(eyey), floattof32(eyez),
@@ -1301,7 +1315,7 @@ static inline void gluLookAt(	float eyex, float eyey, float eyez,
 \param bottom left right top and bottom describe a rectangle located at the near clipping plane
 \param near Location of a the near clipping plane (parallel to viewing window)
 \param far Location of a the far clipping plane (parallel to viewing window) */
-static inline void glFrustum(float left, float right, float bottom, float top, float near, float far) {
+GL_STATIC_INL void glFrustum(float left, float right, float bottom, float top, float near, float far) {
 	glFrustumf32(floattof32(left), floattof32(right), floattof32(bottom), floattof32(top), floattof32(near), floattof32(far));
 }
 
@@ -1311,7 +1325,7 @@ static inline void glFrustum(float left, float right, float bottom, float top, f
 \param aspect Specifies the aspect ratio of the screen (normally screen width/screen height)
 \param zNear Specifies the near clipping plane
 \param zFar Specifies the far clipping plane */
-static inline void gluPerspective(float fovy, float aspect, float zNear, float zFar) {
+GL_STATIC_INL void gluPerspective(float fovy, float aspect, float zNear, float zFar) {
 	gluPerspectivef32((int)(fovy * LUT_SIZE / 360.0), floattof32(aspect), floattof32(zNear), floattof32(zFar));    
 }
 
