@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: inlineGL.c,v 1.1 2005-08-22 08:05:53 wntrmute Exp $
+	$Id: inlineGL.c,v 1.2 2007-02-10 05:13:46 gabebear Exp $
 
 	GL inlines
 
@@ -26,18 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.1  2005/08/22 08:05:53  wntrmute
+	moved inlines to separate file
+	
 
 ---------------------------------------------------------------------------------*/
 
-#include <nds/jtypes.h>
-#include <nds/memory.h>
-#include <nds/arm9/math.h>
-#include <nds/arm9/video.h>
-#include <nds/arm9/trig_lut.h>
-
-#define NO_GL_INLINE
-
-#include <nds/arm9/videoGL.h>
-
-
-#include <nds/arm9/videoGL.inl>

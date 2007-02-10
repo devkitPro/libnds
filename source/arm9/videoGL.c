@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.28 2007-01-31 22:57:28 gabebear Exp $
+	$Id: videoGL.c,v 1.29 2007-02-10 05:13:46 gabebear Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,10 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.28  2007/01/31 22:57:28  gabebear
+	- corrected typo where glClearAlpha() was glClearAplpha()
+	- added doxygen for glClear*** functions
+	
 	Revision 1.27  2007/01/30 00:15:48  gabebear
 	 - got rid of extra flags in glEnable and glDisable
 	 - added glInit() which does pretty much the same thing that glReset did. It just initializes the GL-state at the start of the program and then never needs called again. Initializing the state explicitly should make code more stable when using different boot methods that may have fiddled with default states.
@@ -137,193 +141,12 @@
 #include <nds/arm9/videoGL.h>
 #include <nds/arm9/trig_lut.h>
 
-
-// holds the current state of the graphics control register, initialized in glInit()
-static uint16 gfx_control_bits = 0;
-
 // holds the current state of the clear color register, initialized in glInit()
 static uint32 clear_bits = 0;
 
-//---------------------------------------------------------------------------------
-void glEnable(int bits) {
-//---------------------------------------------------------------------------------
-	gfx_control_bits |= bits;
-	GFX_CONTROL = gfx_control_bits;
-}
-
 
 //---------------------------------------------------------------------------------
-void glDisable(int bits) {
-//---------------------------------------------------------------------------------
-	gfx_control_bits &= ~bits;
-	GFX_CONTROL = gfx_control_bits;
-}
-
-//---------------------------------------------------------------------------------
-void glLoadMatrix4x4(m4x4 * m) {
-//---------------------------------------------------------------------------------
-	MATRIX_LOAD4x4 = m->m[0];
-	MATRIX_LOAD4x4 = m->m[1];
-	MATRIX_LOAD4x4 = m->m[2];
-	MATRIX_LOAD4x4 = m->m[3];
-
-	MATRIX_LOAD4x4 = m->m[4];
-	MATRIX_LOAD4x4 = m->m[5];
-	MATRIX_LOAD4x4 = m->m[6];
-	MATRIX_LOAD4x4 = m->m[7];
-
-	MATRIX_LOAD4x4 = m->m[8];
-	MATRIX_LOAD4x4 = m->m[9];
-	MATRIX_LOAD4x4 = m->m[10];
-	MATRIX_LOAD4x4 = m->m[11];
-
-	MATRIX_LOAD4x4 = m->m[12];
-	MATRIX_LOAD4x4 = m->m[13];
-	MATRIX_LOAD4x4 = m->m[14];
-	MATRIX_LOAD4x4 = m->m[15];
-}
-
-//---------------------------------------------------------------------------------
-void glLoadMatrix4x3(m4x3* m) {
-//---------------------------------------------------------------------------------
-	MATRIX_LOAD4x3 = m->m[0];
-	MATRIX_LOAD4x3 = m->m[1];
-	MATRIX_LOAD4x3 = m->m[2];
-	MATRIX_LOAD4x3 = m->m[3];
-
-	MATRIX_LOAD4x3 = m->m[4];
-	MATRIX_LOAD4x3 = m->m[5];
-	MATRIX_LOAD4x3 = m->m[6];
-	MATRIX_LOAD4x3 = m->m[7];
-
-	MATRIX_LOAD4x3 = m->m[8];
-	MATRIX_LOAD4x3 = m->m[9];
-	MATRIX_LOAD4x3 = m->m[10];
-	MATRIX_LOAD4x3 = m->m[11];
-}
-
-//---------------------------------------------------------------------------------
-void glMultMatrix4x4(m4x4* m) {
-//---------------------------------------------------------------------------------
-	MATRIX_MULT4x4 = m->m[0];
-	MATRIX_MULT4x4 = m->m[1];
-	MATRIX_MULT4x4 = m->m[2];
-	MATRIX_MULT4x4 = m->m[3];
-
-	MATRIX_MULT4x4 = m->m[4];
-	MATRIX_MULT4x4 = m->m[5];
-	MATRIX_MULT4x4 = m->m[6];
-	MATRIX_MULT4x4 = m->m[7];
-
-	MATRIX_MULT4x4 = m->m[8];
-	MATRIX_MULT4x4 = m->m[9];
-	MATRIX_MULT4x4 = m->m[10];
-	MATRIX_MULT4x4 = m->m[11];
-
-	MATRIX_MULT4x4 = m->m[12];
-	MATRIX_MULT4x4 = m->m[13];
-	MATRIX_MULT4x4 = m->m[14];
-	MATRIX_MULT4x4 = m->m[15];
-}
-
-
-//---------------------------------------------------------------------------------
-void glMultMatrix4x3(m4x3* m) {
-//---------------------------------------------------------------------------------
-	MATRIX_MULT4x3 = m->m[0];
-	MATRIX_MULT4x3 = m->m[1];
-	MATRIX_MULT4x3 = m->m[2];
-	MATRIX_MULT4x3 = m->m[3];
-
-	MATRIX_MULT4x3 = m->m[4];
-	MATRIX_MULT4x3 = m->m[5];
-	MATRIX_MULT4x3 = m->m[6];
-	MATRIX_MULT4x3 = m->m[7];
-
-	MATRIX_MULT4x3 = m->m[8];
-	MATRIX_MULT4x3 = m->m[9];
-	MATRIX_MULT4x3 = m->m[10];
-	MATRIX_MULT4x3 = m->m[11];
- 
-}
-
-//---------------------------------------------------------------------------------
-void glMultMatrix3x3(m3x3* m) {
-//---------------------------------------------------------------------------------
-	MATRIX_MULT3x3 = m->m[0];
-	MATRIX_MULT3x3 = m->m[1];
-	MATRIX_MULT3x3 = m->m[2];
-  
-	MATRIX_MULT3x3 = m->m[3];
-	MATRIX_MULT3x3 = m->m[4];
-	MATRIX_MULT3x3 = m->m[5];
-  
-	MATRIX_MULT3x3 = m->m[6];
-	MATRIX_MULT3x3 = m->m[7];
-	MATRIX_MULT3x3 = m->m[8];
-}
-
-//---------------------------------------------------------------------------------
-// Integer rotation (not gl standard)
-//	based on 512 degree circle
-//---------------------------------------------------------------------------------
-void glRotateZi(int angle) {
-//---------------------------------------------------------------------------------
-	int32 sine = SIN[angle &  LUT_MASK];
-	int32 cosine = COS[angle & LUT_MASK];
-
-	MATRIX_MULT3x3 = cosine;
-	MATRIX_MULT3x3 = sine;
-	MATRIX_MULT3x3 = 0;
-
-	MATRIX_MULT3x3 = - sine;
-	MATRIX_MULT3x3 = cosine;
-	MATRIX_MULT3x3 = 0;
-  
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = inttof32(1);
-}
-
-//---------------------------------------------------------------------------------
-void glRotateYi(int angle) {
-//---------------------------------------------------------------------------------
-	int32 sine = SIN[angle &  LUT_MASK];
-	int32 cosine = COS[angle & LUT_MASK];
-
-	MATRIX_MULT3x3 = cosine;
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = -sine;
-  
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = inttof32(1);
-	MATRIX_MULT3x3 = 0;
-  
-	MATRIX_MULT3x3 = sine;
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = cosine;
-}
-
-//---------------------------------------------------------------------------------
-void glRotateXi(int angle) {
-//---------------------------------------------------------------------------------
-	int32 sine = SIN[angle &  LUT_MASK];
-	int32 cosine = COS[angle & LUT_MASK];
-
-	MATRIX_MULT3x3 = inttof32(1);
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = 0;
-
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = cosine;
-	MATRIX_MULT3x3 = sine;
-  
-	MATRIX_MULT3x3 = 0;
-	MATRIX_MULT3x3 = -sine;
-	MATRIX_MULT3x3 = cosine;
-}
-
-//---------------------------------------------------------------------------------
+// kinda big to be inlined, so it isn't
 void glRotatef32i(int angle, int32 x, int32 y, int32 z) {
 //---------------------------------------------------------------------------------
 
@@ -352,268 +175,11 @@ void glRotatef32i(int angle, int32 x, int32 y, int32 z) {
 
 }
 
- 
-
-
-//---------------------------------------------------------------------------------
-void glRotatef32(float angle, int32 x, int32 y, int32 z) {
-//---------------------------------------------------------------------------------
-    glRotatef32i((int)(angle * LUT_SIZE / 360.0), x, y, z);
-}
-
-//---------------------------------------------------------------------------------
-void glRotatef(float angle, float x, float y, float z) {
-//---------------------------------------------------------------------------------
-	glRotatef32(angle, floattof32(x), floattof32(y), floattof32(z));
-}
-
-
-//---------------------------------------------------------------------------------
-//	rotations wrapped in float...mainly for testing
-//---------------------------------------------------------------------------------
-void glRotateX(float angle) {
-//---------------------------------------------------------------------------------
-	glRotateXi((int)(angle * LUT_SIZE / 360.0));
-}
-
-//---------------------------------------------------------------------------------
-void glRotateY(float angle) {
-//---------------------------------------------------------------------------------
-	glRotateYi((int)(angle * LUT_SIZE / 360.0));
-}
-
-//---------------------------------------------------------------------------------
-void glRotateZ(float angle) {
-//---------------------------------------------------------------------------------
-	glRotateZi((int)(angle * LUT_SIZE / 360.0));
-}
-
-//---------------------------------------------------------------------------------
-//float wrappers for porting
-//---------------------------------------------------------------------------------
-void glVertex3f(float x, float y, float z) {
-//---------------------------------------------------------------------------------
-	glVertex3v16(floattov16(x), floattov16(y), floattov16(z));
-}
 
 
 
 //---------------------------------------------------------------------------------
-void glColor3f(float r, float g, float b) {
-//---------------------------------------------------------------------------------
-	glColor3b((uint8)(r*255), (uint8)(g*255), (uint8)(b*255));
-}
-
-//---------------------------------------------------------------------------------
-void glScalef(float x, float y, float z) {
-//---------------------------------------------------------------------------------
-  MATRIX_SCALE = floattof32(x);
-  MATRIX_SCALE = floattof32(y);
-  MATRIX_SCALE = floattof32(z);
-}
-
-//---------------------------------------------------------------------------------
-void glTranslatef(float x, float y, float z) {
-//---------------------------------------------------------------------------------
-  MATRIX_TRANSLATE = floattof32(x);
-  MATRIX_TRANSLATE = floattof32(y);
-  MATRIX_TRANSLATE = floattof32(z);
-}
-
-//---------------------------------------------------------------------------------
-void glNormal3f(float x, float y, float z) {
-//---------------------------------------------------------------------------------
-	if(x >= 1 || x <= -1) x *= .95;
-	if(y >= 1 || y <= -1) y *= .95;
-	if(z >= 1 || z <= -1) z *= .95;
-
-	glNormal(NORMAL_PACK(floattov10(x), floattov10(y), floattov10(z)));
-}
-
-
-
-//---------------------------------------------------------------------------------
-void glOrthof32(int32 left, int32 right, int32 bottom, int32 top, int32 zNear, int32 zFar) {
-//---------------------------------------------------------------------------------
-	MATRIX_MULT4x4 = divf32(inttof32(2), right - left);     
-	MATRIX_MULT4x4 = 0;  
-	MATRIX_MULT4x4 = 0;      
-	MATRIX_MULT4x4 = 0;//
-
-	MATRIX_MULT4x4 = 0;  
-	MATRIX_MULT4x4 = divf32(inttof32(2), top - bottom);     
-	MATRIX_MULT4x4 = 0;    
-	MATRIX_MULT4x4 = 0;//
-   
-	MATRIX_MULT4x4 = 0;  
-	MATRIX_MULT4x4 = 0;  
-	MATRIX_MULT4x4 = divf32(inttof32(-2), zFar - zNear);     
-	MATRIX_MULT4x4 = 0;
-   
-	MATRIX_MULT4x4 = -divf32(right + left, right - left);//0;  
-	MATRIX_MULT4x4 = -divf32(top + bottom, top - bottom); //0;  
-	MATRIX_MULT4x4 = -divf32(zFar + zNear, zFar - zNear);//0;  
-	MATRIX_MULT4x4 = floattof32(1.0F);
-	
-	glStoreMatrix(0);
-}
-
-//---------------------------------------------------------------------------------
-void glOrtho(float left, float right, float bottom, float top, float zNear, float zFar) {
-//---------------------------------------------------------------------------------
-	glOrthof32(floattof32(left), floattof32(right), floattof32(bottom), floattof32(top), floattof32(zNear), floattof32(zFar));
-}
-
-//---------------------------------------------------------------------------------
-// Fixed point look at function, it appears to work as expected although 
-//	testing is recomended
-//---------------------------------------------------------------------------------
-void gluLookAtf32(int32 eyex, int32 eyey, int32 eyez, int32 lookAtx, int32 lookAty, int32 lookAtz, int32 upx, int32 upy, int32 upz)  { 
-//---------------------------------------------------------------------------------
-	int32 side[3], forward[3], up[3], eye[3];
-
-	forward[0] = eyex - lookAtx; 
-	forward[1] = eyey - lookAty; 
-	forward[2] = eyez - lookAtz; 
-
-	normalizef32(forward); 
-
-	up[0] = upx; 
-	up[1] = upy; 
-	up[2] = upz; 
-	eye[0] = eyex; 
-	eye[1] = eyey; 
-	eye[2] = eyez; 
-
-	crossf32(up, forward, side); 
-
-	normalizef32(side); 
-
-	// Recompute local up
-	crossf32(forward, side, up);
-
-	glMatrixMode(GL_MODELVIEW); 
-
- 
-	// should we use MATRIX_MULT4x3? 
-	MATRIX_LOAD4x3 = side[0]; 
-	MATRIX_LOAD4x3 = up[0]; 
-	MATRIX_LOAD4x3 = forward[0]; 
-
-	MATRIX_LOAD4x3 = side[1]; 
-	MATRIX_LOAD4x3 = up[1]; 
-	MATRIX_LOAD4x3 = forward[1]; 
-
-	MATRIX_LOAD4x3 = side[2]; 
-	MATRIX_LOAD4x3 = up[2]; 
-	MATRIX_LOAD4x3 = forward[2]; 
-
-	MATRIX_LOAD4x3 = -dotf32(eye,side); 
-	MATRIX_LOAD4x3 = -dotf32(eye,up); 
-	MATRIX_LOAD4x3 = -dotf32(eye,forward); 
-
-}
-
- 
-
-
-//---------------------------------------------------------------------------------
-//  glu wrapper for standard float call
-//---------------------------------------------------------------------------------
-void gluLookAt(	float eyex, float eyey, float eyez,
-				float lookAtx, float lookAty, float lookAtz,
-				float upx, float upy, float upz) {
-//---------------------------------------------------------------------------------
-	gluLookAtf32(floattof32(eyex), floattof32(eyey), floattof32(eyez),
-               floattof32(lookAtx), floattof32(lookAty), floattof32(lookAtz),
-					     floattof32(upx), floattof32(upy), floattof32(upz));
-}
-
-//---------------------------------------------------------------------------------
-//	frustrum has only been tested as part of perspective
-//---------------------------------------------------------------------------------
-void glFrustumf32(int32 left, int32 right, int32 bottom, int32 top, int32 near, int32 far) {
-//---------------------------------------------------------------------------------
-	MATRIX_MULT4x4 = divf32(2*near, right - left);
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = divf32(right + left, right - left);
-	MATRIX_MULT4x4 = 0;
-	
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = divf32(2*near, top - bottom);
-	MATRIX_MULT4x4 = divf32(top + bottom, top - bottom);
-	MATRIX_MULT4x4 = 0;
-	
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = -divf32(far + near, far - near);
-	MATRIX_MULT4x4 = floattof32(-1.0F);
-	MATRIX_MULT4x4 = 0;
-	
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = -divf32(2 * mulf32(far, near), far - near);
-	MATRIX_MULT4x4 = 0;
-	
-	glStoreMatrix(0);
-}
-
-
-//---------------------------------------------------------------------------------
-//  Frustrum wrapper
-//---------------------------------------------------------------------------------
-void glFrustum(float left, float right, float bottom, float top, float near, float far) {
-//---------------------------------------------------------------------------------
-	glFrustumf32(floattof32(left), floattof32(right), floattof32(bottom), floattof32(top), floattof32(near), floattof32(far));
-}
-
-//---------------------------------------------------------------------------------
-//	Fixed point perspective setting
-//---------------------------------------------------------------------------------
-void gluPerspectivef32(int fovy, int32 aspect, int32 zNear, int32 zFar) {
-//---------------------------------------------------------------------------------
-	int32 xmin, xmax, ymin, ymax;
-
-	ymax = mulf32(zNear, TAN[fovy & LUT_MASK]);
-	ymin = -ymax;
-	xmin = mulf32(ymin, aspect);
-	xmax = mulf32(ymax, aspect);
-
-	glFrustumf32(xmin, xmax, ymin, ymax, zNear, zFar);
-}
-
-//---------------------------------------------------------------------------------
-//  glu wrapper for floating point
-//---------------------------------------------------------------------------------
-void gluPerspective(float fovy, float aspect, float zNear, float zFar) {
-//---------------------------------------------------------------------------------
-	gluPerspectivef32((int)(fovy * LUT_SIZE / 360.0), floattof32(aspect), floattof32(zNear), floattof32(zFar));    
-}
-
-//---------------------------------------------------------------------------------
-// Sets the pick matrix for 3D selection
-//---------------------------------------------------------------------------------
-void gluPickMatrix(int x, int y, int width, int height, int viewport[4]) {
-	//---------------------------------------------------------------------------------
-	MATRIX_MULT4x4 = inttof32(viewport[2]) / width;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = inttof32(viewport[3]) / height;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = inttof32(1);
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = inttof32(viewport[2] + ((viewport[0] - x)<<1)) / width;
-	MATRIX_MULT4x4 = inttof32(viewport[3] + ((viewport[1] - y)<<1)) / height;
-	MATRIX_MULT4x4 = 0;
-	MATRIX_MULT4x4 = inttof32(1);
-}
-
-//---------------------------------------------------------------------------------
-void glMaterialf(int mode, rgb color) {
+void glMaterialf(GL_MATERIALS_ENUM mode, rgb color) {
 //---------------------------------------------------------------------------------
 	static uint32 diffuse_ambient = 0;
 	static uint32 specular_emission = 0;
@@ -649,47 +215,6 @@ void glMaterialf(int mode, rgb color) {
 }
 
 //---------------------------------------------------------------------------------
-void glResetMatrixStack(void) {
-//---------------------------------------------------------------------------------
-	// stack overflow ack ?
-	GFX_STATUS |= 1 << 15;
-
-	// pop the stacks to the top...seems projection stack is only 1 deep??
-	glMatrixMode(GL_PROJECTION);
-	glPopMatrix((GFX_STATUS>>13) & 1);
-  
-	// 31 deep modelview matrix
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix((GFX_STATUS >> 8) & 0x1F);
-}
-
-
-//---------------------------------------------------------------------------------
-void glSetOutlineColor(int id, rgb color) {
-//---------------------------------------------------------------------------------
-	GFX_EDGE_TABLE[id] = color;
-}
-
-
-//---------------------------------------------------------------------------------
-void glSetToonTable(uint16 *table) {
-//---------------------------------------------------------------------------------
-	int i;
-	for( i = 0; i < 32; i++ )
-		GFX_TOON_TABLE[i] = table[i];
-}
-
-
-//---------------------------------------------------------------------------------
-void glSetToonTableRange(int start, int end, rgb color) {
-//---------------------------------------------------------------------------------
-	int i;
-	for( i = start; i <= end; i++ )
-		GFX_TOON_TABLE[i] = color;
-}
-
-
-//---------------------------------------------------------------------------------
 void glInit(void) {
 //---------------------------------------------------------------------------------
 	while (GFX_STATUS & (1<<27)); // wait till gfx engine is not busy
@@ -701,7 +226,7 @@ void glInit(void) {
 	glResetMatrixStack();
 
 	// reset the control bits
-	GFX_CONTROL = gfx_control_bits = 0;
+	GFX_CONTROL = 0;
 
 	//reset the rear-plane(a.k.a. clear color) to black, ID=0, and opaque
 	GFX_CLEAR_COLOR = clear_bits = 0x001F0000;
@@ -720,12 +245,6 @@ void glInit(void) {
 
 	glMatrixMode(GL_TEXTURE);
 	glIdentity();
-}
-
-//---------------------------------------------------------------------------------
-void glReset(void) {
-//---------------------------------------------------------------------------------
-	glInit();
 }
 
 //---------------------------------------------------------------------------------
@@ -826,9 +345,9 @@ void glTexCoord2f(float s, float t) {
 //	Effort may be made in the future to make it so.
 //---------------------------------------------------------------------------------
 void glTexParameter(	uint8 sizeX, uint8 sizeY,
-											uint32* addr,
-											uint8 mode,
-											uint32 param) {
+						uint32* addr,
+						uint8 mode,
+						uint32 param) {
 //---------------------------------------------------------------------------------
 	textures[activeTexture] = param | (sizeX << 20) | (sizeY << 23) | (((uint32)addr >> 3) & 0xFFFF) | (mode << 26);
 }
@@ -853,6 +372,7 @@ inline uint32 alignVal( uint32 val, uint32 to )
 {
   return (val & (to-1))? (val & ~(to-1)) + to : val;
 }
+
 //---------------------------------------------------------------------------------
 int getNextPaletteSlot(u16 count, uint8 format){
 //---------------------------------------------------------------------------------
@@ -952,16 +472,14 @@ uint32* getNextTextureSlot(int size) {
 //  Empty fields and target are unused but provided for code compatibility.
 //  type is simply the texture type (GL_RGB, GL_RGB8 ect...)
 //---------------------------------------------------------------------------------
-int glTexImage2D(int target, int empty1, int type,
-                 int sizeX, int sizeY,
-                 int empty2, int param,
-                 uint8* texture) {
+int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, int param, uint8* texture) {
 //---------------------------------------------------------------------------------
   uint32 size = 0;
   uint32* addr;
   uint32 vramTemp;
 
   size = 1 << (sizeX + sizeY + 6);
+  
 
   switch (type) {
     case GL_RGB:
@@ -1031,7 +549,7 @@ int gluTexLoadPal(u16* pal, u16 count, uint8 format) {
  }
 
 //---------------------------------------------------------------------------------
-void glGetInt(GL_GET_TYPE param, int* i) {
+void glGetInt(GL_GET_ENUM param, int* i) {
 //---------------------------------------------------------------------------------
   switch (param) {
     case GL_GET_POLYGON_RAM_COUNT:
@@ -1051,78 +569,6 @@ void glGetInt(GL_GET_TYPE param, int* i) {
   }
 }
 
-//---------------------------------------------------------------------------------
-void glGetFixed(GL_GET_TYPE param, int32* f) {
-	//---------------------------------------------------------------------------------
-	int i;
-	switch (param) {
-		case GL_GET_MATRIX_ROTATION:
-			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
-			for(i = 0; i < 9; i++) f[i] = MATRIX_READ_ROTATION[i];
-			break;
-		case GL_GET_MATRIX_MODELVIEW:
-			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
-			for(i = 0; i < 16; i++) f[i] = MATRIX_READ_MODELVIEW[i];
-			break;
-		case GL_GET_MATRIX_PROJECTION:
-			glMatrixMode(GL_POSITION);
-			glPushMatrix(); // save the current state of the position matrix
-			glLoadIdentity(); // load an identity matrix into the position matrix so that the modelview matrix = projection matrix
-			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
-			for(i = 0; i < 16; i++) f[i] = MATRIX_READ_MODELVIEW[i]; // read out the projection matrix
-			glPopMatrix(1); // restore the position matrix
-			break;
-		case GL_GET_MATRIX_POSITION:
-			glMatrixMode(GL_PROJECTION);
-			glPushMatrix(); // save the current state of the projection matrix
-			glLoadIdentity(); // load a identity matrix into the projection matrix so that the modelview matrix = position matrix
-			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
-			for(i = 0; i < 16; i++) f[i] = MATRIX_READ_MODELVIEW[i]; // read out the position matrix
-			glPopMatrix(1); // restore the projection matrix
-			break;
-		default: 
-			break;
-	}
-}
-
-//////////////////////////////////////////////////////////////////////
-// Function replacements for the obsolete coversion macros
-// remove in a revision or two -- joat
-// Needed because the depreciate attribute doesn't work on macros.
-//////////////////////////////////////////////////////////////////////
-
-int32 intof32(int n)      { return ((n) << 12); }
-int32 floatof32(float n)  { return ((int32)((n) * (1 << 12))); }
-
-t16 intot16(int n)      { return n << 4; }
-t16 floatot16(float n)  { return ((t16)((n) * (1 << 4))); }
-
-v16 intov16(int n)     { return ((n) << 12); }
-v16 floatov16(float n) { return ((v16)((n) * (1 << 12))); }
-
-v10 intov10(int n)     { return ((n) << 9); }
-v10 floatov10(float n) { return ((v10)((n) * (1 << 9))); }
-
-//////////////////////////////////////////////////////////////////////
-
-// deprecated, remove in a couple versions -- joat
-void glSetAlpha(int alpha) {
-  GFX_ALPHA_TEST = alpha;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-void glAlphaFunc(int alphaThreshold) {
-  GFX_ALPHA_TEST = alphaThreshold;
-}
-
-//////////////////////////////////////////////////////////////////////
-
-void glCutoffDepth(fixed12d3 depth) {
-  GFX_CUTOFF_DEPTH = depth;
-}
-
-//////////////////////////////////////////////////////////////////////
 
 //---------------------------------------------------------------------------------
 void glClearColor(uint8 red, uint8 green, uint8 blue) {
@@ -1141,6 +587,5 @@ void glClearPolyID(uint8 ID) {
 //---------------------------------------------------------------------------------
 	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0x3F000000) | (( ID & 0x3F ) << 24 );
 }
-
 
 
