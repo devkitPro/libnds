@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.33 2007-02-07 17:02:00 wntrmute Exp $
+	$Id: video.h,v 1.34 2007-02-10 05:30:11 dovoto Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.33  2007/02/07 17:02:00  wntrmute
+	add global CHAR and SCREEN offset macros
+	
 	Revision 1.32  2007/01/14 11:41:51  wntrmute
 	add leading zero to VRAM macros with addresses
 	
@@ -453,9 +456,28 @@ void videoSetModeSub( uint32 mode)  { SUB_DISPLAY_CR = mode; }
 #define BG_PALETTE_SLOT3 BIT(13)
 
 typedef struct {
-	vu16 x;
-	vu16 y;
+	u16 x;
+	u16 y;
 } bg_scroll;
+
+typedef struct {
+    u16 xdx;
+    u16 xdy;
+    u16 ydx;
+    u16 ydy;
+    u32 centerX;
+    u32 centerY;    
+} bg_rotation;
+
+typedef struct {
+    u16 control[4];
+    bg_scroll scroll[4];
+    bg_rotation bg2_rotation;
+    bg_rotation bg3_rotation;
+} bg_attribute;
+
+#define BACKGROUND           (*((bg_attribute *)0x04000008))
+#define BACKGROUND_SUB       (*((bg_attribute *)0x04001008))
 
 #define BG_OFFSET ((bg_scroll *)(0x04000010))
 
