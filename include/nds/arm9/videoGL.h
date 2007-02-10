@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.31 2007-02-10 05:23:19 gabebear Exp $
+	$Id: videoGL.h,v 1.32 2007-02-10 06:04:53 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.31  2007/02/10 05:23:19  gabebear
+	doxygen doesn't like "static inline", so changed to using GL_STATIC_INL with define.
+	
 	Revision 1.30  2007/02/10 05:13:46  gabebear
 	- emptied videoGL.inl into videoGL.h so that doxygen works and because having the ability to remove inline functions isn't important anymore(I think).
 	- emptied inlineGL.c; inlineGL.c and videoGL.inl should be deleted
@@ -173,7 +176,6 @@
 #include <nds/memory.h>
 #include <nds/bios.h>
 #include <nds/arm9/math.h>
-#include <nds/arm9/videoGL.h>
 #include <nds/arm9/trig_lut.h>
 
 /*---------------------------------------------------------------------------------
