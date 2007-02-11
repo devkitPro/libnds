@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.15 2007-02-06 12:00:32 wntrmute Exp $
+	$Id: interrupts.h,v 1.16 2007-02-11 13:19:17 wntrmute Exp $
 
 	Interrupt registers and vector pointers
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.15  2007/02/06 12:00:32  wntrmute
+	use uint32 for irqEnable
+	
 	Revision 1.14  2006/05/05 05:31:37  wntrmute
 	use __irq_vector and __irq_flags from linkscript
 	
@@ -204,13 +207,13 @@ void irqClear(IRQ_MASK irq);
 	\note the function *must* be ARM code
 */
 void irqInitHandler(VoidFunctionPointer handler);
-/*! \fn irqEnable(IRQ_MASK irq)
+/*! \fn irqEnable(uint32 irq)
 	\brief Allow the given interrupt to occur.
 	\param irq The set of interrupt masks to enable.
 	\note Specify multiple interrupts to enable by ORing several IRQ_MASKS.
 */
 void irqEnable(uint32 irq);
-/*! \fn irqDisable(IRQ_MASK irq)
+/*! \fn irqDisable(uint32 irq)
 	\brief Prevent the given interrupt from occuring.
 	\param irq The set of interrupt masks to disable.
 	\note Specify multiple interrupts to disable by ORing several IRQ_MASKS.

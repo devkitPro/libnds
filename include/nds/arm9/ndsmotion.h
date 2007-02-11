@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: ndsmotion.h,v 1.4 2007-01-10 16:58:16 dovoto Exp $
+	$Id: ndsmotion.h,v 1.5 2007-02-11 13:15:59 wntrmute Exp $
 
 	DS Motion Card functionality
 	
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2007/01/10 16:58:16  dovoto
+	Fixed a type in motion_set_sens_z()
+	
 	Revision 1.3  2007/01/10 16:47:30  dovoto
 	Added calibtation settings to ds motion code
 	
@@ -38,7 +41,7 @@
 
 ---------------------------------------------------------------------------------*/
 
-/*! \file motion.h 
+/*! \file ndsmotion.h 
 \brief interface code for the ds motion card 
 
 */
@@ -151,7 +154,7 @@ default is 1680
 */
 void motion_set_offs_gyro();
 
-/*! \fn int motion_rotation(int rotation)
+/*! \fn int motion_rotation()
 \brief converts raw rotation value to degrees per second
 */
 int motion_rotation();
