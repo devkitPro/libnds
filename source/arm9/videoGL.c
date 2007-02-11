@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.31 2007-02-10 16:30:57 gabebear Exp $
+	$Id: videoGL.c,v 1.32 2007-02-11 13:18:26 wntrmute Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.31  2007/02/10 16:30:57  gabebear
+	masks were glClearColor(), glClearAlpha(), and glClearPolyID() were wrong
+	
 	Revision 1.30  2007/02/10 16:01:10  gabebear
 	- fixed some comments
 	- removed CVS revision comments from videoGL.h and videoGL.c that were dated 2005 and older
@@ -316,7 +319,7 @@ void glTexCoord2f(float s, float t) {
 //---------------------------------------------------------------------------------
 void glTexParameter(	uint8 sizeX, uint8 sizeY,
 						uint32* addr,
-						uint8 mode,
+						GL_TEXTURE_TYPE_ENUM mode,
 						uint32 param) {
 //---------------------------------------------------------------------------------
 	textures[activeTexture] = param | (sizeX << 20) | (sizeY << 23) | (((uint32)addr >> 3) & 0xFFFF) | (mode << 26);

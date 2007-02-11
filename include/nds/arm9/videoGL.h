@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.33 2007-02-10 16:01:09 gabebear Exp $
+	$Id: videoGL.h,v 1.34 2007-02-11 13:18:26 wntrmute Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.33  2007/02/10 16:01:09  gabebear
+	- fixed some comments
+	- removed CVS revision comments from videoGL.h and videoGL.c that were dated 2005 and older
+	
 	Revision 1.32  2007/02/10 06:04:53  gabebear
 	oops, included videoGL.h in videoGL.h...
 	
@@ -377,8 +381,8 @@ extern "C" {
 /*! \brief Sets texture coordinates for following vertices<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A>
 \warning FLOAT VERSION!!!! please use glTexCoord2t16()
-\param u U(a.k.a. S) texture coordinate (0.0 - 1.0)
-\param v V(a.k.a. T) texture coordinate (0.0 - 1.0)*/
+\param s S(a.k.a. U) texture coordinate (0.0 - 1.0)
+\param t T(a.k.a. V) texture coordinate (0.0 - 1.0)*/
 void glTexCoord2f(float s, float t);
 
 /*! \brief Rotates the model view matrix by angle about the specified unit vector
@@ -419,7 +423,7 @@ int gluTexLoadPal(u16* pal, u16 count, uint8 format);
 \param param paramaters for the texture */
 void glTexParameter(	uint8 sizeX, uint8 sizeY,
 						uint32* addr,
-						uint8 GL_TEXTURE_TYPE_ENUM,
+						GL_TEXTURE_TYPE_ENUM mode,
 						uint32 param) ;
 
 /*! \brief Returns the active texture parameter (constructed from internal call to glTexParameter) */
