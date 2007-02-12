@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.34 2007-02-10 05:30:11 dovoto Exp $
+	$Id: video.h,v 1.35 2007-02-12 03:32:29 wntrmute Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.34  2007/02/10 05:30:11  dovoto
+	Added background control overlay struct for easier access to background control registers
+	
 	Revision 1.33  2007/02/07 17:02:00  wntrmute
 	add global CHAR and SCREEN offset macros
 	
@@ -184,8 +187,8 @@ typedef enum {
 	VRAM_B_MAIN_BG_0x06040000	= 1 | VRAM_OFFSET(2),
 	VRAM_B_MAIN_BG_0x06060000	= 1 | VRAM_OFFSET(3),
 	VRAM_B_MAIN_SPRITE	= 2 | VRAM_OFFSET(1),
-	VRAM_B_MAIN_SPRITE_0x6400000	= 2,
-	VRAM_B_MAIN_SPRITE_0x6420000	= 2 | VRAM_OFFSET(1),
+	VRAM_B_MAIN_SPRITE_0x06400000	= 2,
+	VRAM_B_MAIN_SPRITE_0x06420000	= 2 | VRAM_OFFSET(1),
 	VRAM_B_TEXTURE	= 3 | VRAM_OFFSET(1),
 	VRAM_B_TEXTURE_SLOT0	= 3 | VRAM_OFFSET(0),
 	VRAM_B_TEXTURE_SLOT1	= 3 | VRAM_OFFSET(1),
