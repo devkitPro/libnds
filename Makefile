@@ -49,10 +49,10 @@ export BASEFLAGS	:=	-g -Wall -O2\
 				-I$(INCDIR)
 
 
-.PHONY:	all libs dist docs
+.PHONY:	all libs dist docs default.arm7
 
 #---------------------------------------------------------------------------------
-all:	$(DEPENDS)/arm7 $(DEPENDS)/arm9 lib $(BUILD)/arm9 $(BUILD)/arm7
+all:	$(DEPENDS)/arm7 $(DEPENDS)/arm9 lib $(BUILD)/arm9 $(BUILD)/arm7 default.arm7
 #---------------------------------------------------------------------------------
 	@$(MAKE) -C $(BUILD)/arm9 -f $(BASEDIR)/Makefile.arm9
 	@$(MAKE) -C $(BUILD)/arm7 -f $(BASEDIR)/Makefile.arm7
@@ -88,7 +88,7 @@ clean:
 dist: all
 #---------------------------------------------------------------------------------
 	@tar --exclude=*CVS* -cvjf libnds-src-$(DATESTRING).tar.bz2 source include license.txt Makefile Makefile.arm9 Makefile.arm7
-	@tar --exclude=*CVS* -cvjf libnds-$(DATESTRING).tar.bz2 include lib license.txt
+	@tar --exclude=*CVS* -cvjf libnds-$(DATESTRING).tar.bz2 include lib license.txt default.arm7
 
 #---------------------------------------------------------------------------------
 install: dist
@@ -101,3 +101,8 @@ docs:
 #---------------------------------------------------------------------------------
 	doxygen libnds.dox
 	cat warn.log
+
+#---------------------------------------------------------------------------------
+default.arm7:
+#---------------------------------------------------------------------------------
+	@$(MAKE) -C defaultARM7 TARGET=$(CURDIR)/default LIBNDS=$(CURDIR)
