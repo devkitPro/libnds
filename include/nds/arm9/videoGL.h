@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.34 2007-02-11 13:18:26 wntrmute Exp $
+	$Id: videoGL.h,v 1.35 2007-02-12 03:15:53 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.34  2007/02/11 13:18:26  wntrmute
+	correct doxygen errors
+	use GL_TEXTURE_TYPE_ENUM as type, not parameter
+	
 	Revision 1.33  2007/02/10 16:01:09  gabebear
 	- fixed some comments
 	- removed CVS revision comments from videoGL.h and videoGL.c that were dated 2005 and older
@@ -342,36 +346,36 @@ typedef enum {
 //Fifo commands
 //---------------------------------------------------------------------------------
 
-#define FIFO_COMMAND_PACK(c1,c2,c3,c4) (((c4) << 24) | ((c3) << 16) | ((c2) << 8) | (c1))
+#define FIFO_COMMAND_PACK(c1,c2,c3,c4) (((c4) << 24) | ((c3) << 16) | ((c2) << 8) | (c1)) /*!< \brief packs four packed commands into a 32bit command for sending to the GFX FIFO */
 
-#define REG2ID(r)						(u8)( ( ((u32)(&(r)))-0x04000400 ) >> 2 )
+#define REG2ID(r)				(u8)( ( ((u32)(&(r)))-0x04000400 ) >> 2 ) /*!< \brief converts a GFX command for use in a packed command list */
 
-#define FIFO_NOP				REG2ID(GFX_FIFO)  
-#define FIFO_STATUS				REG2ID(GFX_STATUS)            
-#define FIFO_COLOR				REG2ID(GFX_COLOR)            
+#define FIFO_NOP				REG2ID(GFX_FIFO) /*!< \brief packed command for nothing, just here to pad your command lists */
+#define FIFO_STATUS				REG2ID(GFX_STATUS) /*!< \brief packed command for geometry engine status register<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dstatus">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dstatus</A> */
+#define FIFO_COLOR				REG2ID(GFX_COLOR) /*!< \brief packed command for vertex color directly<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes</A> */
 
-#define FIFO_VERTEX16			REG2ID(GFX_VERTEX16)          
-#define FIFO_TEX_COORD			REG2ID(GFX_TEX_COORD)         
-#define FIFO_TEX_FORMAT			REG2ID(GFX_TEX_FORMAT)        
-#define FIFO_PAL_FORMAT			REG2ID(GFX_PAL_FORMAT)
+#define FIFO_VERTEX16			REG2ID(GFX_VERTEX16) /*!< \brief packed command for a vertex with 3 16bit paramaters(and 16bits of padding)<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A> */
+#define FIFO_TEX_COORD			REG2ID(GFX_TEX_COORD) /*!< \brief packed command for a texture coordinate<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtexturecoordinates">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtexturecoordinates</> */
+#define FIFO_TEX_FORMAT			REG2ID(GFX_TEX_FORMAT) /*!< \brief packed command for texture format<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureformats">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureformats</A> */
+#define FIFO_PAL_FORMAT			REG2ID(GFX_PAL_FORMAT) /*!< \brief packed command for texture palette attributes<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A> */
 
-#define FIFO_CLEAR_COLOR		REG2ID(GFX_CLEAR_COLOR)       
-#define FIFO_CLEAR_DEPTH		REG2ID(GFX_CLEAR_DEPTH)       
+#define FIFO_CLEAR_COLOR		REG2ID(GFX_CLEAR_COLOR) /*!< \brief packed command for clear color of the rear plane<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3drearplane">GBATEK http://nocash.emubase.de/gbatek.htm#ds3drearplane</A> */
+#define FIFO_CLEAR_DEPTH		REG2ID(GFX_CLEAR_DEPTH) /*!< \brief sets depth of the rear plane<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3drearplane">GBATEK http://nocash.emubase.de/gbatek.htm#ds3drearplane</A> */
 
-#define FIFO_LIGHT_VECTOR		REG2ID(GFX_LIGHT_VECTOR)      
-#define FIFO_LIGHT_COLOR		REG2ID(GFX_LIGHT_COLOR)       
-#define FIFO_NORMAL				REG2ID(GFX_NORMAL)            
+#define FIFO_LIGHT_VECTOR		REG2ID(GFX_LIGHT_VECTOR) /*!< \brief packed command for direction of a light source<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A> */
+#define FIFO_LIGHT_COLOR		REG2ID(GFX_LIGHT_COLOR) /*!< \brief packed command for color for a light<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A> */
+#define FIFO_NORMAL				REG2ID(GFX_NORMAL) /*!< \brief packed command for normal for following vertices<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A> */
 
-#define FIFO_DIFFUSE_AMBIENT	REG2ID(GFX_DIFFUSE_AMBIENT)   
-#define FIFO_SPECULAR_EMISSION	REG2ID(GFX_SPECULAR_EMISSION) 
-#define FIFO_SHININESS			REG2ID(GFX_SHININESS)        
+#define FIFO_DIFFUSE_AMBIENT	REG2ID(GFX_DIFFUSE_AMBIENT) /*!< \brief packed command for setting diffuse and ambient material properties for the following vertices<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A> */
+#define FIFO_SPECULAR_EMISSION	REG2ID(GFX_SPECULAR_EMISSION) /*!< \brief packed command for setting specular and emmissive material properties for the following vertices<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A> */
+#define FIFO_SHININESS			REG2ID(GFX_SHININESS) /*!< \brief packed command for setting the shininess table to be used for the following vertices<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A> */
 
-#define FIFO_POLY_FORMAT		REG2ID(GFX_POLY_FORMAT)       
+#define FIFO_POLY_FORMAT		REG2ID(GFX_POLY_FORMAT) /*!< \brief packed command for setting polygon attributes<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes</A> */
 
-#define FIFO_BEGIN				REG2ID(GFX_BEGIN)             
-#define FIFO_END				REG2ID(GFX_END)               
-#define FIFO_FLUSH				REG2ID(GFX_FLUSH)             
-#define FIFO_VIEWPORT			REG2ID(GFX_VIEWPORT)          
+#define FIFO_BEGIN				REG2ID(GFX_BEGIN) /*!< \brief packed command that starts a polygon vertex list<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A>*/
+#define FIFO_END				REG2ID(GFX_END) /*!< \brief packed command that has no discernable effect, it's probably best to never use it since it bloats the size of the list.<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A>*/
+#define FIFO_FLUSH				REG2ID(GFX_FLUSH) /*!< \brief packed command that has the same effect as swiWaitForVBlank()<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A> */
+#define FIFO_VIEWPORT			REG2ID(GFX_VIEWPORT) /*!< \brief packed command for setting viewport<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A> */
 
 
 #ifdef __cplusplus
@@ -679,21 +683,22 @@ GL_STATIC_INL void glMaterialShinyness(void) {
 		GFX_SHININESS = shiny32[i];
 }
 
-/*! \brief throws a packed list of commands into the graphics FIFO
-The first 32bits is the length of the packed command list, followed by a the packed list<BR>
+/*! \brief throws a packed list of commands into the graphics FIFO via asyncronous DMA<BR>
+The first 32bits is the length of the packed command list, followed by a the packed list.<BR>
+There is sometimes a problem when you pack the GFX_END command into a list, so don't. GFX_END is a dummy command and never needs called<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dgeometrycommands">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dgeometrycommands</A> */
 GL_STATIC_INL void glCallList(u32* list) {
 	u32 count = *list++;
 	
-	while(count--)
-		GFX_FIFO = *list++;
+	// don't start DMAing while anything else is being DMAed because FIFO DMA is touchy as hell
+	//    If anyone can explain this better that would be great. -- gabebear
+	while((DMA_CR(0) & DMA_BUSY)||(DMA_CR(1) & DMA_BUSY)||(DMA_CR(2) & DMA_BUSY)||(DMA_CR(3) & DMA_BUSY));
 	
-	// This should work... I'm not sure why it has been reported not to work sometimes.  --gabebear
-	//	DMA_SRC(0) = (uint32)list;
-	//	DMA_DEST(0) = 0x4000400;
-	//	DMA_CR(0) = DMA_FIFO | count;
-	//
-	//	while(DMA_CR(0) & DMA_BUSY);
+	// send the list asynchronously via DMA to the FIFO
+	DMA_SRC(0) = (uint32)list;
+	DMA_DEST(0) = 0x4000400;
+	DMA_CR(0) = DMA_FIFO | count;
+	while(DMA_CR(0) & DMA_BUSY);
 }
 
 /*! \brief Set the parameters for polygons rendered on the current frame<BR>
