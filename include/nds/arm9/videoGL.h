@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.35 2007-02-12 03:15:53 gabebear Exp $
+	$Id: videoGL.h,v 1.36 2007-02-18 20:13:55 wntrmute Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.35  2007/02/12 03:15:53  gabebear
+	- changed glCallList() so that it uses syncronous DMA; I think that this finally works reliably.
+	- added doxygen comments for FIFO_* commands
+	
 	Revision 1.34  2007/02/11 13:18:26  wntrmute
 	correct doxygen errors
 	use GL_TEXTURE_TYPE_ENUM as type, not parameter
@@ -355,7 +359,7 @@ typedef enum {
 #define FIFO_COLOR				REG2ID(GFX_COLOR) /*!< \brief packed command for vertex color directly<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes</A> */
 
 #define FIFO_VERTEX16			REG2ID(GFX_VERTEX16) /*!< \brief packed command for a vertex with 3 16bit paramaters(and 16bits of padding)<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A> */
-#define FIFO_TEX_COORD			REG2ID(GFX_TEX_COORD) /*!< \brief packed command for a texture coordinate<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtexturecoordinates">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtexturecoordinates</> */
+#define FIFO_TEX_COORD			REG2ID(GFX_TEX_COORD) /*!< \brief packed command for a texture coordinate<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtexturecoordinates">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtexturecoordinates</A> */
 #define FIFO_TEX_FORMAT			REG2ID(GFX_TEX_FORMAT) /*!< \brief packed command for texture format<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureformats">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureformats</A> */
 #define FIFO_PAL_FORMAT			REG2ID(GFX_PAL_FORMAT) /*!< \brief packed command for texture palette attributes<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A> */
 
