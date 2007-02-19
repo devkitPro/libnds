@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: registers_alt.h,v 1.11 2007-01-26 22:37:41 wntrmute Exp $
+	$Id: registers_alt.h,v 1.12 2007-02-19 01:27:26 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.11  2007/01/26 22:37:41  wntrmute
+	defines for SERIAL_CR & SERIAL_DATA changed to REG_ updates from addresses
+	
 	Revision 1.10  2007/01/23 21:59:22  wntrmute
 	replace key register defines
 	
@@ -141,6 +144,8 @@
 
 #define SERIAL_CR       REG_SPICNT
 #define SERIAL_DATA     REG_SPIDATA
+#define SIO_CR          REG_SIOCNT
+#define R_CR            REG_RCNT
 
 
 /*	secondary screen */

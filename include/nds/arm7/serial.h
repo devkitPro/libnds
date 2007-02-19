@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: serial.h,v 1.10 2007-02-06 11:59:12 wntrmute Exp $
+  $Id: serial.h,v 1.11 2007-02-19 01:27:26 wntrmute Exp $
 
   ARM7 serial control
 
@@ -26,6 +26,9 @@
     distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.10  2007/02/06 11:59:12  wntrmute
+  *** empty log message ***
+
   Revision 1.9  2006/07/08 06:25:31  wntrmute
   move old register definitions to registers_alt.h
 
@@ -64,12 +67,12 @@
 
 
 // 'Networking'
-#define R_CR            (*(vuint16*)0x04000134)
-#define REG_KEYXY       (*(vuint16*)0x04000136)
-#define RTC_CR          (*(vuint16*)0x04000138)
-#define RTC_CR8         (*(vuint8*)0x04000138)
+#define REG_RCNT	(*(vuint16*)0x04000134)
+#define REG_KEYXY	(*(vuint16*)0x04000136)
+#define RTC_CR		(*(vuint16*)0x04000138)
+#define RTC_CR8		(*( vuint8*)0x04000138)
 
-#define SIO_CR          (*(vuint16*)0x04000128)
+#define REG_SIOCNT	(*(vuint16*)0x04000128)
 
 #define SIO_DATA8       (*(vuint8*)0x0400012A)
 #define SIO_DATA32      (*(vuint32*)0x04000120)
