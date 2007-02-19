@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: ipc.h,v 1.14 2007-01-19 14:46:00 wntrmute Exp $
+	$Id: ipc.h,v 1.15 2007-02-19 01:29:24 wntrmute Exp $
 
 	Inter Processor Communication
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.14  2007/01/19 14:46:00  wntrmute
+	name anonymous structs and unions for -std=c99
+	
 	Revision 1.13  2006/01/17 09:47:00  wntrmute
 	*** empty log message ***
 	
@@ -79,27 +82,27 @@ typedef struct sTransferSound {
 //---------------------------------------------------------------------------------
 typedef struct sTransferRegion {
 //---------------------------------------------------------------------------------
-	int16 touchX,   touchY;		// TSC X, Y
-	int16 touchXpx, touchYpx;	// TSC X, Y pixel values
-	int16 touchZ1,  touchZ2;	// TSC x-panel measurements
-	uint16 tdiode1,  tdiode2; 	// TSC temperature diodes
-	uint32 temperature;			// TSC computed temperature
+	vint16 touchX,   touchY;		// TSC X, Y
+	vint16 touchXpx, touchYpx;	// TSC X, Y pixel values
+	vint16 touchZ1,  touchZ2;	// TSC x-panel measurements
+	vuint16 tdiode1,  tdiode2; 	// TSC temperature diodes
+	vuint32 temperature;			// TSC computed temperature
 
 	uint16 buttons;				// X, Y, /PENIRQ buttons
 
 	union {
-		uint8 curtime[8];		// current time response from RTC
+		vuint8 curtime[8];		// current time response from RTC
 
 		struct {
-			u8 command;
-			u8 year;		//add 2000 to get 4 digit year
-			u8 month;		//1 to 12
-			u8 day;			//1 to (days in month)
+			vu8 command;
+			vu8 year;		//add 2000 to get 4 digit year
+			vu8 month;		//1 to 12
+			vu8 day;			//1 to (days in month)
 
-			u8 incr;
-			u8 hours;		//0 to 11 for AM, 52 to 63 for PM
-			u8 minutes;		//0 to 59
-			u8 seconds;		//0 to 59
+			vu8 weekday;			// day of week
+			vu8 hours;		//0 to 11 for AM, 52 to 63 for PM
+			vu8 minutes;		//0 to 59
+			vu8 seconds;		//0 to 59
 		} rtc;
 	} time;
 
@@ -117,7 +120,15 @@ typedef struct sTransferRegion {
 } TransferRegion, * pTransferRegion;
 
 
-#define IPC ((TransferRegion volatile *)(0x027FF000))
+static inline
+TransferRegion volatile * getIPC(); // __attribute__ ((deprecated));
+
+static inline
+TransferRegion volatile * getIPC() {
+	return (TransferRegion volatile *)(0x027FF000);
+}
+
+#define IPC getIPC()
 
 #define IPC_PEN_DOWN BIT(6)
 #define IPC_X BIT(0)
@@ -156,15 +167,15 @@ static inline int IPC_GetSync() {
 enum IPC_CONTROL_BITS {
 	IPC_FIFO_SEND_EMPTY	=	(1<<0),
 	IPC_FIFO_SEND_FULL	=	(1<<1),
-	IPC_FIFO_SEND_IRQ		=	(1<<2),
+	IPC_FIFO_SEND_IRQ	=	(1<<2),
 	IPC_FIFO_SEND_CLEAR	=	(1<<3),
 	IPC_FIFO_RECV_EMPTY	=	(1<<8),
 	IPC_FIFO_RECV_FULL	=	(1<<9),
-	IPC_FIFO_RECV_IRQ		=	(1<<10),
-	IPC_FIFO_ERROR			=	(1<<14),
-	IPC_FIFO_ENABLE			=	(1<<15)
+	IPC_FIFO_RECV_IRQ	=	(1<<10),
+	IPC_FIFO_ERROR		=	(1<<14),
+	IPC_FIFO_ENABLE		=	(1<<15)
 };
 
-#endif
+#endif // NDS_IPC_INCLUDE
 
 
