@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: clock.c,v 1.4 2005-10-21 22:43:06 wntrmute Exp $
+	$Id: clock.c,v 1.5 2007-02-19 01:28:13 wntrmute Exp $
 
 
 	Copyright (C) 2005
@@ -25,6 +25,9 @@
 			distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/10/21 22:43:06  wntrmute
+	Removed bogus ASSERT
+	
 	Revision 1.3  2005/09/20 05:05:52  wntrmute
 	added header logging
 	tidied formatting
@@ -49,6 +52,26 @@
 #define SIO_out (1<<4)
 #define SIO_in  (1)
 
+//---------------------------------------------------------------------------------
+void BCDToInteger(uint8 * data, uint32 length) {
+//---------------------------------------------------------------------------------
+	u32 i;
+	for (i = 0; i < length; i++) {
+		data[i] = (data[i] & 0xF) + ((data[i] & 0xF0)>>4)*10;
+	}
+}
+
+
+//---------------------------------------------------------------------------------
+void integerToBCD(uint8 * data, uint32 length) {
+//---------------------------------------------------------------------------------
+	u32 i;
+	for (i = 0; i < length; i++) {
+		int high, low;
+		swiDivMod(data[i], 10, &high, &low);
+		data[i] = (high<<4) | low;
+	}
+}
 
 //---------------------------------------------------------------------------------
 void rtcTransaction(uint8 * command, uint32 commandLength, uint8 * result, uint32 resultLength) {
@@ -62,8 +85,7 @@ void rtcTransaction(uint8 * command, uint32 commandLength, uint8 * result, uint3
 	RTC_CR8 = CS_1 | SCK_1 | SIO_1;
 	swiDelay(RTC_DELAY);
 
-	// Write command bytes (high bit first)
-	for ( ; commandLength > 0; commandLength--) {
+	// Write command byte (high bit first)
 		data = *command++;
 
 		for (bit = 0; bit < 8; bit++) {
@@ -74,6 +96,19 @@ void rtcTransaction(uint8 * command, uint32 commandLength, uint8 * result, uint3
 			swiDelay(RTC_DELAY);
 
 			data = data << 1;
+		}
+	// Write parameter bytes (low bit first)
+	for ( ; commandLength > 1; commandLength--) {
+		data = *command++;
+
+		for (bit = 0; bit < 8; bit++) {
+			RTC_CR8 = CS_1 | SCK_0 | SIO_out | (data & 1);
+			swiDelay(RTC_DELAY);
+
+			RTC_CR8 = CS_1 | SCK_1 | SIO_out | (data & 1);
+			swiDelay(RTC_DELAY);
+
+			data = data >> 1;
 		}
 	}
 
@@ -119,46 +154,71 @@ void rtcReset(void) {
 
 
 //---------------------------------------------------------------------------------
+void rtcGetTimeAndDate(uint8 * time) {
+//---------------------------------------------------------------------------------
+	uint8 command, status;
+
+	command = READ_TIME_AND_DATE;
+	rtcTransaction(&command, 1, time, 7);
+
+	command = READ_STATUS_REG1;
+	rtcTransaction(&command, 1, &status, 1);
+
+	if ( status & STATUS_24HRS ) {
+		time[4] &= 0x3f;
+	} else {
+
+	}
+	BCDToInteger(time,7);
+}
+
+//---------------------------------------------------------------------------------
+void rtcSetTimeAndDate(uint8 * time) {
+//---------------------------------------------------------------------------------
+	uint8 command[8];
+	
+	int i;
+	for ( i=0; i< 8; i++ ) {
+		command[i+1] = time[i];
+	}
+	command[0] = WRITE_TIME_AND_DATE;
+	// fixme: range checking on the data we tell it
+	rtcTransaction(command, 8, 0, 0);
+}
+
+//---------------------------------------------------------------------------------
 void rtcGetTime(uint8 * time) {
 //---------------------------------------------------------------------------------
 	uint8 command, status;
 
-	time[0] = READ_DATA_REG1;
-	rtcTransaction(&(time[0]), 1, &(time[1]), 7);
+	command = READ_TIME;
+	rtcTransaction(&command, 1, time, 3);
 
 	command = READ_STATUS_REG1;
 	rtcTransaction(&command, 1, &status, 1);
-	time[0] = status;
-}
+	if ( status & STATUS_24HRS ) {
+		time[0] &= 0x3f;
+	} else {
 
+	}
+	BCDToInteger(time,3);
+
+}
 
 //---------------------------------------------------------------------------------
 void rtcSetTime(uint8 * time) {
 //---------------------------------------------------------------------------------
-	time[0] = WRITE_DATA_REG1;
+	uint8 command[4];
+	
+	int i;
+	for ( i=0; i< 3; i++ ) {
+		command[i+1] = time[i];
+	}
+	command[0] = WRITE_TIME;
 	// fixme: range checking on the data we tell it
-	rtcTransaction(time, 8, 0, 0);
+	rtcTransaction(command, 4, 0, 0);
 }
 
 
-//---------------------------------------------------------------------------------
-void BCDToInteger(uint8 * data, uint32 length) {
-//---------------------------------------------------------------------------------
-	u32 i;
-	for (i = 0; i < length; i++) {
-		data[i] = (data[i] & 0xF) + ((data[i] & 0xF0)>>4)*10;
-	}
-}
 
-
-//---------------------------------------------------------------------------------
-void integerToBCD(uint8 * data, uint32 length) {
-//---------------------------------------------------------------------------------
-	u32 i;
-	for (i = 0; i < length; i++) {
-		int high, low;
-		swiDivMod(data[i], 10, &high, &low);
-		data[i] = (high<<4) | low;
-	}
-}
 
