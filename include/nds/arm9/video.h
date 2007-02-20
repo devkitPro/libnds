@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.35 2007-02-12 03:32:29 wntrmute Exp $
+	$Id: video.h,v 1.36 2007-02-20 05:17:04 gabebear Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.35  2007/02/12 03:32:29  wntrmute
+	add leading zero to VRAM_B_MAIN_SPRITE enums
+	
 	Revision 1.34  2007/02/10 05:30:11  dovoto
 	Added background control overlay struct for easier access to background control registers
 	
@@ -733,6 +736,8 @@ typedef struct sSpriteRotation {
 #define GFX_TOON_TABLE		((vuint16*)  0x04000380)
 #define GFX_EDGE_TABLE		((vuint16*)  0x04000330)
 #define GFX_BOX_TEST		(*(vint32*)  0x040005C0)
+#define GFX_POS_TEST		(*(vuint32*) 0x040005C4)
+#define GFX_POS_RESULT		((vint32*)   0x04000620)
 
 #define GFX_BUSY (GFX_STATUS & BIT(27))
 
