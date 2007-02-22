@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.32 2007-02-11 13:18:26 wntrmute Exp $
+	$Id: videoGL.c,v 1.33 2007-02-22 06:24:25 gabebear Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,10 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.32  2007/02/11 13:18:26  wntrmute
+	correct doxygen errors
+	use GL_TEXTURE_TYPE_ENUM as type, not parameter
+	
 	Revision 1.31  2007/02/10 16:30:57  gabebear
 	masks were glClearColor(), glClearAlpha(), and glClearPolyID() were wrong
 	
@@ -202,9 +206,10 @@ void glInit(void) {
 	GFX_CONTROL = 0;
 
 	//reset the rear-plane(a.k.a. clear color) to black, ID=0, and opaque
-	GFX_CLEAR_COLOR = clear_bits = 0x001F0000;
+	glClearColor(0,0,0,31);
+	glClearPolyID(0);
 
-	//reset where textures are stored
+	//reset stored texture locations
 	glResetTextures();
 
 	GFX_TEX_FORMAT = 0;
@@ -256,7 +261,6 @@ int glGenTextures(int n, int *names) {
 	int index = 0;
 
 	for(index = 0; index < n; index++) {
-
 		if(nameCount >= MAX_TEXTURES)
 			return 0;
 		else
@@ -318,7 +322,7 @@ void glTexCoord2f(float s, float t) {
 //	Effort may be made in the future to make it so.
 //---------------------------------------------------------------------------------
 void glTexParameter(	uint8 sizeX, uint8 sizeY,
-						uint32* addr,
+						const uint32* addr,
 						GL_TEXTURE_TYPE_ENUM mode,
 						uint32 param) {
 //---------------------------------------------------------------------------------
@@ -445,7 +449,7 @@ uint32* getNextTextureSlot(int size) {
 //  Empty fields and target are unused but provided for code compatibility.
 //  type is simply the texture type (GL_RGB, GL_RGB8 ect...)
 //---------------------------------------------------------------------------------
-int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, int param, uint8* texture) {
+int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, int param, const uint8* texture) {
 //---------------------------------------------------------------------------------
   uint32 size = 0;
   uint32* addr;
@@ -501,7 +505,7 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 }
 
  //---------------------------------------------------------------------------------
-void glTexLoadPal(u16* pal, u16 count, u32 addr) {
+void glTexLoadPal(const u16* pal, u16 count, u32 addr) {
  //---------------------------------------------------------------------------------
  	vramSetBankE(VRAM_E_LCD);
  		
@@ -511,7 +515,7 @@ void glTexLoadPal(u16* pal, u16 count, u32 addr) {
 }
  
 //---------------------------------------------------------------------------------
-int gluTexLoadPal(u16* pal, u16 count, uint8 format) {
+int gluTexLoadPal(const u16* pal, u16 count, uint8 format) {
 //---------------------------------------------------------------------------------
   int addr = getNextPaletteSlot(count, format);
   
@@ -544,15 +548,9 @@ void glGetInt(GL_GET_ENUM param, int* i) {
 
 
 //---------------------------------------------------------------------------------
-void glClearColor(uint8 red, uint8 green, uint8 blue) {
+void glClearColor(uint8 red, uint8 green, uint8 blue, uint8 alpha) {
 //---------------------------------------------------------------------------------
-	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0xFFFF8000) | (0x7FFF & RGB15(red, green, blue));
-}
-
-//---------------------------------------------------------------------------------
-void glClearAlpha(uint8 alpha) {
-//---------------------------------------------------------------------------------
-	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0xFFE0FFFF) | (( alpha & 0x1F ) << 16 );
+	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0xFFE08000) | (0x7FFF & RGB15(red, green, blue)) | ((alpha & 0x1F) << 16);
 }
 
 //---------------------------------------------------------------------------------

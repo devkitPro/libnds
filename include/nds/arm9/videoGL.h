@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.36 2007-02-18 20:13:55 wntrmute Exp $
+	$Id: videoGL.h,v 1.37 2007-02-22 06:24:25 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.36  2007/02/18 20:13:55  wntrmute
+	fix doxygen tag
+	
 	Revision 1.35  2007/02/12 03:15:53  gabebear
 	- changed glCallList() so that it uses syncronous DMA; I think that this finally works reliably.
 	- added doxygen comments for FIFO_* commands
@@ -409,19 +412,19 @@ void glRotatef32i(int angle, int32 x, int32 y, int32 z);
 \param empty2 not used, just here for OpenGL compatibility
 \param param parameters for the texture
 \param texture pointer to the texture data to load */
-int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, int param, uint8* texture);
+int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, int param, const uint8* texture);
 
 /*! \brief Loads a palette into the specified texture addr
 \param pal pointer to the palette to load
 \param count the size of the palette
 \param addr the offset in VRAM to load the palette */
-void glTexLoadPal(u16* pal, u16 count, u32 addr );
+void glTexLoadPal(const u16* pal, u16 count, u32 addr );
 
 /*! \brief Loads a palette into the next available palette slot, returns the addr on success or -1
 \param pal pointer to the palette to load
 \param count the size of the palette
 \param format the format of the texture */
-int gluTexLoadPal(u16* pal, u16 count, uint8 format);
+int gluTexLoadPal(const u16* pal, u16 count, uint8 format);
 
 /*! \brief Set parameters for the current texture. Although named the same as its gl counterpart, it is not compatible. Effort may be made in the future to make it so.
 \param sizeX the horizontal size of the texture; valid sizes are enumerated in GL_TEXTURE_TYPE_ENUM
@@ -430,7 +433,7 @@ int gluTexLoadPal(u16* pal, u16 count, uint8 format);
 \param mode the type of texture
 \param param paramaters for the texture */
 void glTexParameter(	uint8 sizeX, uint8 sizeY,
-						uint32* addr,
+						const uint32* addr,
 						GL_TEXTURE_TYPE_ENUM mode,
 						uint32 param) ;
 
@@ -474,22 +477,19 @@ void glInit(void);
 /*! \brief Grabs integer state variables from openGL
 \param param The state variable to retrieve
 \param i pointer with room to hold the requested data */
-void glGetInt(const GL_GET_ENUM param, int* i);
+void glGetInt(GL_GET_ENUM param, int* i);
 
 /*! \brief sets the color of the rear-plane(a.k.a Clear Color/Plane)
 \param red component (0-31)
 \param green component (0-31)
-\param blue component (0-31) */
-void glClearColor(uint8 red, uint8 green, uint8 blue);
-
-/*! \brief sets the Alpha of the rear-plane(a.k.a. Clear/Color Plane)
-\param alpha sets the transparency from 0(clear) to 31(opaque) */
-void glClearAlpha(uint8 alpha);
+\param blue component (0-31)
+\param alpha from 0(clear) to 31(opaque)*/
+void glClearColor(uint8 red, uint8 green, uint8 blue, uint8 alpha);
 
 /*! \brief sets the polygon ID of the rear-plane(a.k.a. Clear/Color Plane), useful for antialiasing and edge coloring
 \param ID the polygon ID to give the rear-plane */
 void glClearPolyID(uint8 ID);
-	
+
 #ifdef __cplusplus
 }
 #endif
@@ -597,7 +597,7 @@ GL_STATIC_INL void glStoreMatrix(int32 index) { MATRIX_STORE = index; }
 /*! \brief multiply the current matrix by a translation matrix<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \param v the vector to translate by */
-GL_STATIC_INL void glScalev(GLvector* v) { 
+GL_STATIC_INL void glScalev(const GLvector* v) { 
 	MATRIX_SCALE = v->x;
 	MATRIX_SCALE = v->y;
 	MATRIX_SCALE = v->z;
@@ -606,7 +606,7 @@ GL_STATIC_INL void glScalev(GLvector* v) {
 /*! \brief multiply the current matrix by a translation matrix<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \param v the vector to translate by */
-GL_STATIC_INL void glTranslatev(GLvector* v) {
+GL_STATIC_INL void glTranslatev(const GLvector* v) {
 	MATRIX_TRANSLATE = v->x;
 	MATRIX_TRANSLATE = v->y;
 	MATRIX_TRANSLATE = v->z;
@@ -691,7 +691,7 @@ GL_STATIC_INL void glMaterialShinyness(void) {
 The first 32bits is the length of the packed command list, followed by a the packed list.<BR>
 There is sometimes a problem when you pack the GFX_END command into a list, so don't. GFX_END is a dummy command and never needs called<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dgeometrycommands">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dgeometrycommands</A> */
-GL_STATIC_INL void glCallList(u32* list) {
+GL_STATIC_INL void glCallList(const u32* list) {
 	u32 count = *list++;
 	
 	// don't start DMAing while anything else is being DMAed because FIFO DMA is touchy as hell
@@ -720,7 +720,7 @@ GL_STATIC_INL void glDisable(int bits) { GFX_CONTROL &= ~bits; }
 
 /*! \brief Loads a 4x4 matrix into the current matrix
 \param m pointer to a 4x4 matrix */
-GL_STATIC_INL void glLoadMatrix4x4(m4x4 *m) {
+GL_STATIC_INL void glLoadMatrix4x4(const m4x4 *m) {
 	MATRIX_LOAD4x4 = m->m[0];
 	MATRIX_LOAD4x4 = m->m[1];
 	MATRIX_LOAD4x4 = m->m[2];
@@ -744,7 +744,7 @@ GL_STATIC_INL void glLoadMatrix4x4(m4x4 *m) {
 
 /*! \brief Loads a 4x3 matrix into the current matrix
 \param m pointer to a 4x4 matrix */
-GL_STATIC_INL void glLoadMatrix4x3(m4x3 * m) {
+GL_STATIC_INL void glLoadMatrix4x3(const m4x3 * m) {
 	MATRIX_LOAD4x3 = m->m[0];
 	MATRIX_LOAD4x3 = m->m[1];
 	MATRIX_LOAD4x3 = m->m[2];
@@ -763,7 +763,7 @@ GL_STATIC_INL void glLoadMatrix4x3(m4x3 * m) {
 
 /*! \brief Multiplies the current matrix by m
 \param m pointer to a 4x4 matrix */
-GL_STATIC_INL void glMultMatrix4x4(m4x4 * m) {
+GL_STATIC_INL void glMultMatrix4x4(const m4x4 * m) {
 	MATRIX_MULT4x4 = m->m[0];
 	MATRIX_MULT4x4 = m->m[1];
 	MATRIX_MULT4x4 = m->m[2];
@@ -787,7 +787,7 @@ GL_STATIC_INL void glMultMatrix4x4(m4x4 * m) {
 
 /*! \brief multiplies the current matrix by
 \param m pointer to a 4x3 matrix */
-GL_STATIC_INL void glMultMatrix4x3(m4x3 * m) {
+GL_STATIC_INL void glMultMatrix4x3(const m4x3 * m) {
 	MATRIX_MULT4x3 = m->m[0];
 	MATRIX_MULT4x3 = m->m[1];
 	MATRIX_MULT4x3 = m->m[2];
@@ -807,7 +807,7 @@ GL_STATIC_INL void glMultMatrix4x3(m4x3 * m) {
 
 /*! \brief multiplies the current matrix by m
 \param m pointer to a 3x3 matrix */
-GL_STATIC_INL void glMultMatrix3x3(m3x3 * m) {
+GL_STATIC_INL void glMultMatrix3x3(const m3x3 * m) {
 	MATRIX_MULT3x3 = m->m[0];
 	MATRIX_MULT3x3 = m->m[1];
 	MATRIX_MULT3x3 = m->m[2];
@@ -879,7 +879,7 @@ GL_STATIC_INL void glRotateZi(int angle) {
 }
 
 
-/*! \brief Places projection matrix into ortho graphic mode
+/*! \brief Multiplies the current matrix into ortho graphic mode
 \param left left vertical clipping plane
 \param right right vertical clipping plane
 \param bottom bottom vertical clipping plane
@@ -1017,8 +1017,8 @@ GL_STATIC_INL void gluPerspectivef32(int fovy, int32 aspect, int32 zNear, int32 
 \param y 2D y of center  (touch y normally)
 \param width width in pixels of the window (3 or 4 is a good number)
 \param height height in pixels of the window (3 or 4 is a good number)
-\param viewport the current viewport (normaly [0, 0, 255, 191]) */
-GL_STATIC_INL void gluPickMatrix(int x, int y, int width, int height, int viewport[4]) {
+\param viewport the current viewport (normaly {0, 0, 255, 191}) */
+GL_STATIC_INL void gluPickMatrix(int x, int y, int width, int height, const int viewport[4]) {
 	MATRIX_MULT4x4 = inttof32(viewport[2]) / width;
 	MATRIX_MULT4x4 = 0;
 	MATRIX_MULT4x4 = 0;
@@ -1042,6 +1042,9 @@ GL_STATIC_INL void glResetMatrixStack(void) {
 	// stack overflow ack ?
 	GFX_STATUS |= 1 << 15;
 	
+	// make sure there are no push/pops that haven't executed yet
+	while(GFX_STATUS & BIT(14));
+	
 	// pop the stacks to the top...seems projection stack is only 1 deep??
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix((GFX_STATUS>>13) & 1);
@@ -1058,7 +1061,7 @@ GL_STATIC_INL void glSetOutlineColor(int id, rgb color) { GFX_EDGE_TABLE[id] = c
 
 /*! \brief Loads a toon table 
 \param pointer to the 32 color palette to load into the toon table*/
-GL_STATIC_INL void glSetToonTable(uint16 *table) {
+GL_STATIC_INL void glSetToonTable(const uint16 *table) {
 	int i;
 	for(i = 0; i < 32; i++ )
 		GFX_TOON_TABLE[i] = table[i];
@@ -1083,18 +1086,18 @@ GL_STATIC_INL void glGetFixed(const GL_GET_ENUM param, int32* f) {
 		case GL_GET_MATRIX_ROTATION:
 			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
 			for(i = 0; i < 9; i++) f[i] = MATRIX_READ_ROTATION[i];
-				break;
+			break;
 		case GL_GET_MATRIX_MODELVIEW:
 			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
 			for(i = 0; i < 16; i++) f[i] = MATRIX_READ_MODELVIEW[i];
-				break;
+			break;
 		case GL_GET_MATRIX_PROJECTION:
 			glMatrixMode(GL_POSITION);
 			glPushMatrix(); // save the current state of the position matrix
 			glLoadIdentity(); // load an identity matrix into the position matrix so that the modelview matrix = projection matrix
 			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
 				for(i = 0; i < 16; i++) f[i] = MATRIX_READ_MODELVIEW[i]; // read out the projection matrix
-					glPopMatrix(1); // restore the position matrix
+			glPopMatrix(1); // restore the position matrix
 			break;
 		case GL_GET_MATRIX_POSITION:
 			glMatrixMode(GL_PROJECTION);
@@ -1102,7 +1105,7 @@ GL_STATIC_INL void glGetFixed(const GL_GET_ENUM param, int32* f) {
 			glLoadIdentity(); // load a identity matrix into the projection matrix so that the modelview matrix = position matrix
 			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
 				for(i = 0; i < 16; i++) f[i] = MATRIX_READ_MODELVIEW[i]; // read out the position matrix
-					glPopMatrix(1); // restore the projection matrix
+			glPopMatrix(1); // restore the projection matrix
 			break;
 		default: 
 			break;
@@ -1243,7 +1246,7 @@ GL_STATIC_INL void glRotateZ(float angle) {
 	glRotateZi((int)(angle * LUT_SIZE / 360.0));
 }
 
-/*! \brief Places projection matrix into ortho graphic mode
+/*! \brief Multiplies the current matrix into ortho graphic mode
 \warning FLOAT VERSION!!!! please use glOrthof32()
 \param left left vertical clipping plane
 \param right right vertical clipping plane
