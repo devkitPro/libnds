@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.37 2007-02-22 06:24:25 gabebear Exp $
+	$Id: videoGL.h,v 1.38 2007-02-24 21:08:40 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,13 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.37  2007/02/22 06:24:25  gabebear
+	-  changed glClearColor() so that it handles alpha as a fourth argument; the real OpenGL function takes alpha as a fourth argument.
+	-  got rid of glClearAlpha() because glClearColor now handles this, glClearAlpha() was only recently added.
+	- changed all array/pointer parameters that are constant in their functions to const so that you can pass arrays of constant data to those functions.
+	- fixed glResetMatrixStack(); if a push or pop had just been executed it didn't work properly.
+	- fixed some comments
+	
 	Revision 1.36  2007/02/18 20:13:55  wntrmute
 	fix doxygen tag
 	
@@ -671,7 +678,7 @@ GL_STATIC_INL void glViewPort(uint8 x1, uint8 y1, uint8 x2, uint8 y2) { GFX_VIEW
 
 /*! \brief This seems to have the same effect as calling swiWaitForVBlank()<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A> */
-GL_STATIC_INL void glFlush(void) { GFX_FLUSH = 2; }
+GL_STATIC_INL void glFlush(void) { GFX_FLUSH = 0; }
 
 /*! \brief The DS uses a table for shinyness..this generates a half-ass one */
 GL_STATIC_INL void glMaterialShinyness(void) {
