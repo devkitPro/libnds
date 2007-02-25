@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: serial.h,v 1.11 2007-02-19 01:27:26 wntrmute Exp $
+  $Id: serial.h,v 1.12 2007-02-25 15:54:47 wntrmute Exp $
 
   ARM7 serial control
 
@@ -26,6 +26,9 @@
     distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.11  2007/02/19 01:27:26  wntrmute
+  use gbatek names for registers
+
   Revision 1.10  2007/02/06 11:59:12  wntrmute
   *** empty log message ***
 
@@ -159,6 +162,7 @@
 #define FIRMWARE_READ 0x03
 #define FIRMWARE_PW   0x0A
 #define FIRMWARE_PP   0x02
+#define FIRMWARE_FAST 0x0B
 #define FIRMWARE_PE   0xDB
 #define FIRMWARE_SE   0xD8
 #define FIRMWARE_DP   0xB9
