@@ -25,6 +25,9 @@
 		distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.9  2007/01/23 21:58:27  wntrmute
+  correct bus/card ownership macros
+
   Revision 1.8  2007/01/14 07:58:55  wntrmute
   change WAIT_CR to REG_EXEMEMCNT/REG_EXEMEMSTAT
   change bus owner funtions to static inline
@@ -55,9 +58,9 @@
 
 
 #ifdef ARM9
-#define REG_EXEMEMCNT (*(vuint16*)0x04000204)
+#define REG_EXMEMCNT (*(vuint16*)0x04000204)
 #else
-#define REG_EXEMEMSTAT (*(vuint16*)0x04000204)
+#define REG_EXMEMSTAT (*(vuint16*)0x04000204)
 #endif
 
 #define ARM7_MAIN_RAM_PRIORITY BIT(15)
@@ -223,19 +226,19 @@ extern "C" {
 
 // Changes only the gba rom bus ownership
 static inline void sysSetCartOwner(bool arm9) {
-  REG_EXEMEMCNT = (REG_EXEMEMCNT & ~ARM7_OWNS_ROM) | (arm9 ? 0 :  ARM7_OWNS_ROM);
+  REG_EXMEMCNT = (REG_EXMEMCNT & ~ARM7_OWNS_ROM) | (arm9 ? 0 :  ARM7_OWNS_ROM);
 }
 // Changes only the nds card bus ownership
 static inline void sysSetCardOwner(bool arm9) {
-  REG_EXEMEMCNT = (REG_EXEMEMCNT & ~ARM7_OWNS_CARD) | (arm9 ? 0 : ARM7_OWNS_CARD);
+  REG_EXMEMCNT = (REG_EXMEMCNT & ~ARM7_OWNS_CARD) | (arm9 ? 0 : ARM7_OWNS_CARD);
 }
 
 // Changes all bus ownerships
 static inline void sysSetBusOwners(bool arm9rom, bool arm9card) {
-  uint16 pattern = REG_EXEMEMCNT & ~(ARM7_OWNS_CARD|ARM7_OWNS_ROM);
+  uint16 pattern = REG_EXMEMCNT & ~(ARM7_OWNS_CARD|ARM7_OWNS_ROM);
   pattern = pattern | (arm9card ?  0: ARM7_OWNS_CARD ) |
                       (arm9rom ?  0: ARM7_OWNS_ROM );
-  REG_EXEMEMCNT = pattern;
+  REG_EXMEMCNT = pattern;
 }
 
 #endif

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: registers_alt.h,v 1.12 2007-02-19 01:27:26 wntrmute Exp $
+	$Id: registers_alt.h,v 1.13 2007-03-01 10:12:43 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.12  2007/02/19 01:27:26  wntrmute
+	use gbatek names for registers
+	
 	Revision 1.11  2007/01/26 22:37:41  wntrmute
 	defines for SERIAL_CR & SERIAL_DATA changed to REG_ updates from addresses
 	
@@ -78,9 +81,9 @@
 #define	REG_DISPCNT		(*(vu32*)0x4000000)
 
 #ifdef ARM9
-#define WAIT_CR	REG_EXEMEMCNT
+#define WAIT_CR	REG_EXMEMCNT
 #else
-#define WAIT_CR	REG_EXEMEMSTAT
+#define WAIT_CR	REG_EXMEMSTAT
 #endif
 
 #define DISP_SR			REG_DISPSTAT
