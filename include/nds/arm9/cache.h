@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: cache.h,v 1.5 2006-07-04 01:45:04 wntrmute Exp $
+	$Id: cache.h,v 1.6 2007-03-07 05:51:28 gabebear Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2006/07/04 01:45:04  wntrmute
+	add instruction cache functions
+	
 	Revision 1.4  2005/11/14 11:51:21  wntrmute
 	begin doxygenation
 
@@ -52,50 +55,45 @@ extern "C" {
 
 
 /*! \fn IC_InvalidateAll()
-
 	\brief invalidate entire instruction cache.
-
 */
 void	IC_InvalidateAll();
 
-/*! \fn IC_InvalidateRange(void * base, u32 size)
-
+	
+/*! \fn IC_InvalidateRange(const void *base, u32 size)
 	\brief invalidate the instruction cache for a range of addresses.
 	\param base base address of the region to invalidate
 	\param size size of the region to invalidate.
 */
-void	IC_InvalidateRange(void *base, u32 size);
+void	IC_InvalidateRange(const void *base, u32 size);
+
 
 /*! \fn DC_FlushAll()
-
 	\brief flush the entire data cache to memory.
-
 */
 void	DC_FlushAll();
 
-/*! \fn DC_FlushRange(void * base, u32 size)
 
+/*! \fn DC_FlushRange(const void *base, u32 size)
 	\brief flush the data cache for a range of addresses to memory.
-
 	\param base base address of the region to flush.
 	\param size size of the region to flush.
 */
-void	DC_FlushRange(void *base, u32 size);
+void	DC_FlushRange(const void *base, u32 size);
+
 
 /*! \fn DC_InvalidateAll()
-
 	\brief invalidate the entire data cache.
-
 */
 void	DC_InvalidateAll();
 
-/*! \fn DC_InvalidateRange(void * base, u32 size)
 
+/*! \fn DC_InvalidateRange(const void *base, u32 size)
 	\brief invalidate the data cache for a range of addresses.
 	\param base base address of the region to invalidate
 	\param size size of the region to invalidate.
 */
-void	DC_InvalidateRange(void *base, u32 size);
+void	DC_InvalidateRange(const void *base, u32 size);
 
 #ifdef __cplusplus
 }
