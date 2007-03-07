@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.38 2007-02-24 21:08:40 gabebear Exp $
+	$Id: videoGL.h,v 1.39 2007-03-07 05:44:24 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.38  2007/02/24 21:08:40  gabebear
+	changed default glFlush so it uses the Z value for depth instead of W value, the W value doesn't work for ortho views
+	
 	Revision 1.37  2007/02/22 06:24:25  gabebear
 	-  changed glClearColor() so that it handles alpha as a fourth argument; the real OpenGL function takes alpha as a fourth argument.
 	-  got rid of glClearAlpha() because glClearColor now handles this, glClearAlpha() was only recently added.
@@ -151,6 +154,7 @@
 #include <nds/bios.h>
 #include <nds/arm9/math.h>
 #include <nds/arm9/trig_lut.h>
+#include <nds/arm9/cache.h>
 
 /*---------------------------------------------------------------------------------
 	lut resolution for trig functions
@@ -348,6 +352,15 @@ typedef enum {
 	GL_GET_TEXTURE_WIDTH,       /*!< returns the width of the currently bound texture. Use glGetInt() to retrieve */
 	GL_GET_TEXTURE_HEIGHT       /*!< returns the height of the currently bound texture. Use glGetInt() to retrieve */
 } GL_GET_ENUM;
+
+
+/*! \brief Enums for glFlush() Enums<BR>
+<A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A><BR>
+related functions: glEnable(), glDisable(), glInit() */
+enum GLFLUSH_ENUM {
+	GL_TRANS_MANUALSORT = (1<<0), /*!< enable manual sorting of translucent polygons, otherwise uses Y-sorting */
+	GL_WBUFFERING       = (1<<1)  /*!< enable W depth buffering of vertices, otherwise uses Z depth buffering */
+};
 
 ////////////////////////////////////////////////////////////
 // Misc. constants
@@ -676,9 +689,10 @@ GL_STATIC_INL void glMatrixMode(GL_MATRIX_MODE_ENUM mode) { MATRIX_CONTROL = mod
 \param y2 the top of the viewport */
 GL_STATIC_INL void glViewPort(uint8 x1, uint8 y1, uint8 x2, uint8 y2) { GFX_VIEWPORT = (x1) + (y1 << 8) + (x2 << 16) + (y2 << 24); }
 
-/*! \brief This seems to have the same effect as calling swiWaitForVBlank()<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A> */
-GL_STATIC_INL void glFlush(void) { GFX_FLUSH = 0; }
+/*! \brief Waits for a Vblank and swaps the buffers(like swiWaitForVBlank), but lets you specify some 3D options<BR>
+<A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
+\param mode flags from GLFLUSH_ENUM for enabling Y-sorting of translucent polygons and W-Buffering of all vertices*/
+GL_STATIC_INL void glFlush(uint32 mode) { GFX_FLUSH = mode; }
 
 /*! \brief The DS uses a table for shinyness..this generates a half-ass one */
 GL_STATIC_INL void glMaterialShinyness(void) {
@@ -696,16 +710,20 @@ GL_STATIC_INL void glMaterialShinyness(void) {
 
 /*! \brief throws a packed list of commands into the graphics FIFO via asyncronous DMA<BR>
 The first 32bits is the length of the packed command list, followed by a the packed list.<BR>
+If you want to do this really fast then write your own code that that does this synchronously and only flushes the cache when the list is changed<BR>
 There is sometimes a problem when you pack the GFX_END command into a list, so don't. GFX_END is a dummy command and never needs called<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dgeometrycommands">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dgeometrycommands</A> */
 GL_STATIC_INL void glCallList(const u32* list) {
 	u32 count = *list++;
 	
+	// flush the area that we are going to DMA
+	DC_FlushRange(list, count*4);
+	
 	// don't start DMAing while anything else is being DMAed because FIFO DMA is touchy as hell
 	//    If anyone can explain this better that would be great. -- gabebear
 	while((DMA_CR(0) & DMA_BUSY)||(DMA_CR(1) & DMA_BUSY)||(DMA_CR(2) & DMA_BUSY)||(DMA_CR(3) & DMA_BUSY));
 	
-	// send the list asynchronously via DMA to the FIFO
+	// send the packed list asynchronously via DMA to the FIFO
 	DMA_SRC(0) = (uint32)list;
 	DMA_DEST(0) = 0x4000400;
 	DMA_CR(0) = DMA_FIFO | count;
