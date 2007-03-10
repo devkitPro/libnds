@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.39 2007-03-07 05:44:24 gabebear Exp $
+	$Id: videoGL.h,v 1.40 2007-03-10 17:16:42 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.39  2007/03/07 05:44:24  gabebear
+	- add glFlush parameters for y-sorting and w-buffering
+	- fix glCallList so that it flushes the range to be DMAed
+	
 	Revision 1.38  2007/02/24 21:08:40  gabebear
 	changed default glFlush so it uses the Z value for depth instead of W value, the W value doesn't work for ortho views
 	
@@ -1064,19 +1068,19 @@ GL_STATIC_INL void gluPickMatrix(int x, int y, int width, int height, const int 
 
 /*! \brief Resets matrix stack to top level */
 GL_STATIC_INL void glResetMatrixStack(void) {
-	// stack overflow ack ?
-	GFX_STATUS |= 1 << 15;
-	
 	// make sure there are no push/pops that haven't executed yet
 	while(GFX_STATUS & BIT(14));
 	
 	// pop the stacks to the top...seems projection stack is only 1 deep??
 	glMatrixMode(GL_PROJECTION);
-	glPopMatrix((GFX_STATUS>>13) & 1);
+	glPopMatrix((GFX_STATUS>>13) & 1); // this will error if we are already at the bottom, but that gets reset here in a sec anyway
 	
 	// 31 deep modelview matrix
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix((GFX_STATUS >> 8) & 0x1F);
+	
+	// stack overflow ack ?
+	GFX_STATUS |= 1 << 15;
 }
 
 /*! \brief Specifies an edge color for polygons 
