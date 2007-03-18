@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.33 2007-02-22 06:24:25 gabebear Exp $
+	$Id: videoGL.c,v 1.34 2007-03-18 17:12:32 gabebear Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,13 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.33  2007/02/22 06:24:25  gabebear
+	-  changed glClearColor() so that it handles alpha as a fourth argument; the real OpenGL function takes alpha as a fourth argument.
+	-  got rid of glClearAlpha() because glClearColor now handles this, glClearAlpha() was only recently added.
+	- changed all array/pointer parameters that are constant in their functions to const so that you can pass arrays of constant data to those functions.
+	- fixed glResetMatrixStack(); if a push or pop had just been executed it didn't work properly.
+	- fixed some comments
+	
 	Revision 1.32  2007/02/11 13:18:26  wntrmute
 	correct doxygen errors
 	use GL_TEXTURE_TYPE_ENUM as type, not parameter
@@ -201,6 +208,9 @@ void glInit(void) {
 
 	// Clear overflows from list memory
 	glResetMatrixStack();
+	
+	// prime the vertex/polygon buffers
+	glFlush(0);
 
 	// reset the control bits
 	GFX_CONTROL = 0;
