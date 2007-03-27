@@ -49,10 +49,10 @@ export BASEFLAGS	:=	-g -Wall -O2\
 				-I$(INCDIR)
 
 
-.PHONY:	all libs dist docs clean lib/libnds9.a lib/libnds7.a 
+.PHONY:	all libs dist docs clean lib/libnds9.a  lib/libnds7.a
 
 #---------------------------------------------------------------------------------
-all:	lib lib/libnds9.a  lib/libnds7.a
+all:	lib lib/libnds9.a  lib/libnds7.a basic.arm7
 #---------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------
@@ -90,23 +90,33 @@ lib:
 #---------------------------------------------------------------------------------
 clean:
 #---------------------------------------------------------------------------------
-	rm -fr $(DEPENDS) $(BUILD) *.bz2
+	rm -fr $(DEPENDS) $(BUILD) *.bz2 
+	$(MAKE) TARGET=$(CURDIR)/basic -C basicARM7 clean
 
 #---------------------------------------------------------------------------------
-dist: all
+dist: all dist-src dist-bin
 #---------------------------------------------------------------------------------
-	@tar --exclude=*CVS* -cvjf libnds-src-$(DATESTRING).tar.bz2 source include libnds_license.txt Makefile Makefile.arm9 Makefile.arm7
-	@tar --exclude=*CVS* -cvjf libnds-$(DATESTRING).tar.bz2 include lib libnds_license.txt
+
+dist-src:
+	@tar	--exclude=*CVS* -cvjf libnds-src-$(DATESTRING).tar.bz2 source include \
+			basicARM7/Makefile basicARM7/source libnds_license.txt Makefile Makefile.arm9 Makefile.arm7
+
+dist-bin:
+	@tar --exclude=*CVS* -cvjf libnds-$(DATESTRING).tar.bz2 include lib libnds_license.txt basic.arm7
 
 #---------------------------------------------------------------------------------
-install: dist
+install: dist-bin
 #---------------------------------------------------------------------------------
 	mkdir -p $(DEVKITPRO)/libnds
 	bzip2 -cd libnds-$(DATESTRING).tar.bz2 | tar -xv -C $(DEVKITPRO)/libnds
-	#$(MAKE) -C $(DEVKITPRO)/nds_default_arm7 install
 
 #---------------------------------------------------------------------------------
 docs:
 #---------------------------------------------------------------------------------
 	doxygen libnds.dox
 	cat warn.log
+
+#---------------------------------------------------------------------------------
+basic.arm7: lib/libnds7.a
+#---------------------------------------------------------------------------------
+	@$(MAKE) -C basicARM7 TARGET=$(CURDIR)/basic LIBNDS=$(CURDIR)
