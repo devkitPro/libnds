@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.34 2007-03-18 17:12:32 gabebear Exp $
+	$Id: videoGL.c,v 1.35 2007-04-02 07:44:32 gabebear Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.34  2007/03/18 17:12:32  gabebear
+	updated glInit so that it calls glFlush once to prime the vertex/polygon buffers
+	
 	Revision 1.33  2007/02/22 06:24:25  gabebear
 	-  changed glClearColor() so that it handles alpha as a fourth argument; the real OpenGL function takes alpha as a fourth argument.
 	-  got rid of glClearAlpha() because glClearColor now handles this, glClearAlpha() was only recently added.
@@ -215,24 +218,27 @@ void glInit(void) {
 	// reset the control bits
 	GFX_CONTROL = 0;
 
-	//reset the rear-plane(a.k.a. clear color) to black, ID=0, and opaque
+	// reset the rear-plane(a.k.a. clear color) to black, ID=0, and opaque
 	glClearColor(0,0,0,31);
 	glClearPolyID(0);
 
-	//reset stored texture locations
+	// reset stored texture locations
 	glResetTextures();
+	
+	// reset the depth to it's max
+	glClearDepth(GL_MAX_DEPTH);
 
 	GFX_TEX_FORMAT = 0;
 	GFX_POLY_FORMAT = 0;
   
 	glMatrixMode(GL_PROJECTION);
-	glIdentity();
+	glLoadIdentity();
 
 	glMatrixMode(GL_MODELVIEW);
-	glIdentity();
+	glLoadIdentity();
 
 	glMatrixMode(GL_TEXTURE);
-	glIdentity();
+	glLoadIdentity();
 }
 
 //---------------------------------------------------------------------------------

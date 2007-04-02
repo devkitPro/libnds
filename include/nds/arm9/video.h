@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.36 2007-02-20 05:17:04 gabebear Exp $
+	$Id: video.h,v 1.37 2007-04-02 07:44:32 gabebear Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.36  2007/02/20 05:17:04  gabebear
+	added position test defines
+	
 	Revision 1.35  2007/02/12 03:32:29  wntrmute
 	add leading zero to VRAM_B_MAIN_SPRITE enums
 	
@@ -735,6 +738,9 @@ typedef struct sSpriteRotation {
 #define GFX_VIEWPORT		(*(vuint32*) 0x04000580)
 #define GFX_TOON_TABLE		((vuint16*)  0x04000380)
 #define GFX_EDGE_TABLE		((vuint16*)  0x04000330)
+#define GFX_FOG_COLOR		(*(vuint32*) 0x04000358)
+#define GFX_FOG_OFFSET		(*(vuint32*) 0x0400035C)
+#define GFX_FOG_TABLE		((vuint8*)   0x04000360)
 #define GFX_BOX_TEST		(*(vint32*)  0x040005C0)
 #define GFX_POS_TEST		(*(vuint32*) 0x040005C4)
 #define GFX_POS_RESULT		((vint32*)   0x04000620)
@@ -763,8 +769,8 @@ typedef struct sSpriteRotation {
 #define MATRIX_MULT3x3		(*(vint32*) 0x04000468)
 
 //matrix operation results
-#define MATRIX_READ_MODELVIEW	((vint32*) (0x04000640))
-#define MATRIX_READ_ROTATION	((vint32*) (0x04000680))
+#define MATRIX_READ_CLIP		((vint32*) (0x04000640))
+#define MATRIX_READ_VECTOR		((vint32*) (0x04000680))
 #define POINT_RESULT			((vint32*) (0x04000620))
 #define VECTOR_RESULT			((vuint16*)(0x04000630))
 
