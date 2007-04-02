@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.42 2007-03-13 00:59:20 gabebear Exp $
+	$Id: videoGL.h,v 1.43 2007-04-02 07:43:48 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.42  2007/03/13 00:59:20  gabebear
+	I'm not sure why, but under popping the projection matrix was causing all 3D to fail.
+	
 	Revision 1.41  2007/03/12 04:10:19  gabebear
 	woops, seems that you need to clear push/pop errors before checking if there are any pending push/pops
 	
@@ -282,15 +285,18 @@ typedef enum {
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes</A><BR>
 related functions: glPolyFmt(), glInit(), POLY_ALPHA(), POLY_ID() */
 enum GL_POLY_FORMAT_ENUM {
-	POLY_DECAL           = (1<<4), /*!< enable polygon decal mode */
-	POLY_TOON_SHADING    = (1<<5), /*!< enable toon shading */
-	POLY_CULL_BACK       = (1<<7), /*!< cull rear polygons */
-	POLY_CULL_FRONT      = (1<<6), /*!< cull front polygons */
-	POLY_CULL_NONE       = (3<<6), /*!< don't cull any polygons */
 	POLY_FORMAT_LIGHT0   = (1<<0), /*!< enable light number 0 */
 	POLY_FORMAT_LIGHT1   = (1<<1), /*!< enable light number 1 */
 	POLY_FORMAT_LIGHT2   = (1<<2), /*!< enable light number 2 */
-	POLY_FORMAT_LIGHT3   = (1<<3)  /*!< enable light number 3 */
+	POLY_FORMAT_LIGHT3   = (1<<3), /*!< enable light number 3 */
+	POLY_MODULATION      = (0<<4), /*!< enable modulation shading mode; this is the default */
+	POLY_DECAL           = (1<<4), /*!< enable decal shading */
+	POLY_TOON_HIGHLIGHT  = (2<<4), /*!< enable toon/highlight shading mode */
+	POLY_SHADOW          = (3<<4), /*!< enable shadow shading */
+	POLY_CULL_FRONT      = (1<<6), /*!< cull front polygons */
+	POLY_CULL_BACK       = (2<<6), /*!< cull rear polygons */
+	POLY_CULL_NONE       = (3<<6), /*!< don't cull any polygons */
+	POLY_FOG             = (1<<15) /*!< enable/disable fog for this polygon */
 };
 
 /*! \brief Enums for size of a texture, specify one for horizontal and one for vertical
@@ -314,15 +320,14 @@ enum GL_TEXTURE_PARAM_ENUM {
 	GL_TEXTURE_WRAP_T = (1 << 17), /*!< wrap(repeat) texture on T axis */
 	GL_TEXTURE_FLIP_S = (1 << 18), /*!< flip texture on S axis when wrapping */
 	GL_TEXTURE_FLIP_T = (1 << 19), /*!< flip texture on T axis when wrapping */
-	GL_TEXTURE_COLOR0_TRANSPARENT = (1<<29), /*!< interpret color 0 as clear, same as GL_TEXTURE_ALPHA_MASK */
-	GL_TEXTURE_ALPHA_MASK = (1 << 29), /*!< interpret color 0 as clear, same as GL_TEXTURE_COLOR0_TRANSPARENT */
+	GL_TEXTURE_COLOR0_TRANSPARENT = (1<<29), /*!< interpret color 0 as clear, same as old GL_TEXTURE_ALPHA_MASK */
 	TEXGEN_OFF      = (0<<30), /*!< use unmodified texcoord */
 	TEXGEN_TEXCOORD = (1<<30), /*!< multiply texcoords by the texture-matrix */
 	TEXGEN_NORMAL   = (2<<30), /*!< set texcoords equal to normal * texture-matrix, used for spherical reflection mapping */
 	TEXGEN_POSITION = (3<<30)  /*!< set texcoords equal to vertex * texture-matrix */
 };
 
-/*! \brief 3D Display Control Register Enums<BR>
+/*! \brief Enums for texture formats<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureformats">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureformats</A><BR>
 related functions: glTexImage2d(), glTexParameter() */
 typedef enum {
@@ -346,25 +351,29 @@ enum DISP3DCNT_ENUM {
 	GL_BLEND           = (1<<3),  /*!< enable/disable alpha blending */
 	GL_ANTIALIAS       = (1<<4),  /*!< nable/disable edge antialiasing; polygons must have different polygon IDs for the effect to work and the rear plane must be clear */
 	GL_OUTLINE         = (1<<5),  /*!< enable/disable edge coloring; the high 3bits of the polygon ID determine the color; glSetOutlineColor() sets the available colors */
+	GL_FOG_ONLY_ALPHA  = (1<<6),  /*!< enable = fade into background?; disable = don't fade? */
+	GL_FOG             = (1<<7),  /*!< enables/disables fog */
 	GL_COLOR_UNDERFLOW = (1<<12), /*!< enable = color buffer underflow, setting resets overflow flag; disable = no color buffer overflow */
 	GL_POLY_OVERFLOW   = (1<<13), /*!< enable = polygon/vertex buffer overflow, setting resets overflow flag; disable = no polygon/vertex buffer overflow */
 	GL_CLEAR_BMP       = (1<<14)  /*!< rear/clear plane is in BMP mode; disable = rear/color plane is in clear mode */
 };
 
-/*! \brief related functions: glGetInt(), glGetFixed() */
+/*! \brief Enums for reading stuff from the geometry engine<BR>
+<A HREF="http://nocash.emubase.de/gbatek.htm#ds3diomap">http://nocash.emubase.de/gbatek.htm#ds3diomap</A><BR>
+related functions: glGetInt(), glGetFixed()*/
 typedef enum {
 	GL_GET_VERTEX_RAM_COUNT,    /*!< returns a count of vertexes currently stored in hardware vertex ram. Use glGetInt() to retrieve */
 	GL_GET_POLYGON_RAM_COUNT,   /*!< returns a count of polygons currently stored in hardware polygon ram. Use glGetInt() to retrieve */
-	GL_GET_MATRIX_ROTATION,     /*!< returns the current 3x3 rotation matrix. Use glGetFixed() to retrieve */
+	GL_GET_MATRIX_VECTOR,		/*!< returns the current 3x3 directional vector matrix. Use glGetFixed() to retrieve */
 	GL_GET_MATRIX_POSITION,     /*!< returns the current 4x4 position matrix. Use glGetFixed() to retrieve */
 	GL_GET_MATRIX_PROJECTION,   /*!< returns the current 4x4 projection matrix. Use glGetFixed() to retrieve */
-	GL_GET_MATRIX_MODELVIEW,    /*!< returns the current 4x4 modelview matrix. Use glGetFixed() to retrieve */
+	GL_GET_MATRIX_CLIP,			/*!< returns the current 4x4 clip matrix. Use glGetFixed() to retrieve */
 	GL_GET_TEXTURE_WIDTH,       /*!< returns the width of the currently bound texture. Use glGetInt() to retrieve */
 	GL_GET_TEXTURE_HEIGHT       /*!< returns the height of the currently bound texture. Use glGetInt() to retrieve */
 } GL_GET_ENUM;
 
 
-/*! \brief Enums for glFlush() Enums<BR>
+/*! \brief Enums for glFlush()<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A><BR>
 related functions: glEnable(), glDisable(), glInit() */
 enum GLFLUSH_ENUM {
@@ -574,10 +583,10 @@ GL_STATIC_INL void glBegin(GL_GLBEGIN_ENUM mode) { GFX_BEGIN = mode; }
 /*! \brief Ends a polygon group, this seems to be a dummy function that does absolutely nothing, feel free to never use it. */
 GL_STATIC_INL void glEnd(void) { GFX_END = 0; }
 
-/*! \brief generally set to GL_MAX_DEPTH. OK, I'm not really sure what this does --gabebear<BR>
+/*! \brief reset the depth buffer to this value; generally set this to GL_MAX_DEPTH.<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3drearplane">GBATEK http://nocash.emubase.de/gbatek.htm#ds3drearplane</A>
 \param depth Something to do with the depth buffer, generally set to GL_MAX_DEPTH */
-GL_STATIC_INL void glClearDepth(uint16 depth) { GFX_CLEAR_DEPTH = depth; }
+GL_STATIC_INL void glClearDepth(fixed12d3 depth) { GFX_CLEAR_DEPTH = depth; }
 
 /*! \brief Set the color for following vertices
 \param red the red component (0-31)
@@ -677,14 +686,12 @@ GL_STATIC_INL void glLight(int id, rgb color, v10 x, v10 y, v10 z) {
 
 /*! \brief the normal to use for following vertices<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A>
+\warning The nature of the format means that you can't represent the following normals exactly (0,0,1), (0,1,0), or (1,0,0)
 \param normal the packed normal(3 * 10bit x, y, z) */
 GL_STATIC_INL void glNormal(uint32 normal) { GFX_NORMAL = normal; }
 
 /*! \brief loads an identity matrix to the current matrix, same as glIdentity(void) */
 GL_STATIC_INL void glLoadIdentity(void) { MATRIX_IDENTITY = 0; }
-
-/*! \brief loads an identity matrix to the current matrix, same as glLoadIdentity(void) */
-GL_STATIC_INL void glIdentity(void) { MATRIX_IDENTITY = 0; }
 
 /*! \brief change the current matrix mode<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A><BR>
@@ -941,8 +948,6 @@ GL_STATIC_INL void glOrthof32(int32 left, int32 right, int32 bottom, int32 top, 
 	MATRIX_MULT4x4 = -divf32(top + bottom, top - bottom); //0;  
 	MATRIX_MULT4x4 = -divf32(zFar + zNear, zFar - zNear);//0;  
 	MATRIX_MULT4x4 = floattof32(1.0F);
-
-	glStoreMatrix(0);
 }
 
 /*! \brief Places the camera at the specified location and orientation (fixed point version)
@@ -982,21 +987,21 @@ GL_STATIC_INL void gluLookAtf32(int32 eyex, int32 eyey, int32 eyez, int32 lookAt
 	
 	
 	// should we use MATRIX_MULT4x3? 
-	MATRIX_LOAD4x3 = side[0]; 
-	MATRIX_LOAD4x3 = up[0]; 
-	MATRIX_LOAD4x3 = forward[0]; 
+	MATRIX_MULT4x3 = side[0]; 
+	MATRIX_MULT4x3 = up[0]; 
+	MATRIX_MULT4x3 = forward[0]; 
 	
-	MATRIX_LOAD4x3 = side[1]; 
-	MATRIX_LOAD4x3 = up[1]; 
-	MATRIX_LOAD4x3 = forward[1]; 
+	MATRIX_MULT4x3 = side[1]; 
+	MATRIX_MULT4x3 = up[1]; 
+	MATRIX_MULT4x3 = forward[1]; 
 	
-	MATRIX_LOAD4x3 = side[2]; 
-	MATRIX_LOAD4x3 = up[2]; 
-	MATRIX_LOAD4x3 = forward[2]; 
+	MATRIX_MULT4x3 = side[2]; 
+	MATRIX_MULT4x3 = up[2]; 
+	MATRIX_MULT4x3 = forward[2]; 
 	
-	MATRIX_LOAD4x3 = -dotf32(eye,side); 
-	MATRIX_LOAD4x3 = -dotf32(eye,up); 
-	MATRIX_LOAD4x3 = -dotf32(eye,forward); 
+	MATRIX_MULT4x3 = -dotf32(eye,side); 
+	MATRIX_MULT4x3 = -dotf32(eye,up); 
+	MATRIX_MULT4x3 = -dotf32(eye,forward); 
 	
 }
 
@@ -1027,8 +1032,6 @@ GL_STATIC_INL void glFrustumf32(int32 left, int32 right, int32 bottom, int32 top
 	MATRIX_MULT4x4 = 0;
 	MATRIX_MULT4x4 = -divf32(2 * mulf32(far, near), far - near);
 	MATRIX_MULT4x4 = 0;
-	
-	glStoreMatrix(0);
 }
 
 /*! \brief Utility function which sets up the projection matrix (fixed point version)
@@ -1079,17 +1082,23 @@ GL_STATIC_INL void glResetMatrixStack(void) {
 		GFX_STATUS |= 1 << 15; // clear push/pop errors or push/pop busy bit never clears
 	}
 	
-	GFX_STATUS |= 1 << 15; // clear any push/pop error that may still be set
-	
 	// pop the projection stack to the top; poping 0 off an empty stack causes an error... weird?
-	if((GFX_STATUS&(1<<13))==0) {
+	if((GFX_STATUS&(1<<13))!=0) {
 		glMatrixMode(GL_PROJECTION);
-		glPopMatrix((GFX_STATUS>>13) & 1);
+		glPopMatrix(1);
 	}
 	
-	// 31 deep modelview matrix
+	// 31 deep modelview matrix; 32nd entry works but sets error flag
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix((GFX_STATUS >> 8) & 0x1F);
+	
+	// load identity to all the matrices
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glMatrixMode(GL_TEXTURE);
+	glLoadIdentity();
 }
 
 /*! \brief Specifies an edge color for polygons 
@@ -1115,34 +1124,36 @@ GL_STATIC_INL void glSetToonTableRange(int start, int end, rgb color) {
 		GFX_TOON_TABLE[i] = color;
 }
 
-/*! \brief Grabs fixed format of state variables
+/*! \brief Grabs fixed format of state variables<BR>
+OpenGL's modelview matrix is handled on the DS with two matrices. The combination of the DS's position matrix and directional vector matrix hold the data that is in OpenGL's one modelview matrix. (a.k.a. modelview = postion and vector)<BR>
+<A HREF="http://nocash.emubase.de/gbatek.htm#ds3diomap">http://nocash.emubase.de/gbatek.htm#ds3diomap</A>
 \param param The state variable to retrieve
 \param f pointer with room to hold the requested data */
 GL_STATIC_INL void glGetFixed(const GL_GET_ENUM param, int32* f) {
 	int i;
 	switch (param) {
-		case GL_GET_MATRIX_ROTATION:
+		case GL_GET_MATRIX_VECTOR:
 			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
-			for(i = 0; i < 9; i++) f[i] = MATRIX_READ_ROTATION[i];
+			for(i = 0; i < 9; i++) f[i] = MATRIX_READ_VECTOR[i];
 			break;
-		case GL_GET_MATRIX_MODELVIEW:
+		case GL_GET_MATRIX_CLIP:
 			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
-			for(i = 0; i < 16; i++) f[i] = MATRIX_READ_MODELVIEW[i];
+			for(i = 0; i < 16; i++) f[i] = MATRIX_READ_CLIP[i];
 			break;
 		case GL_GET_MATRIX_PROJECTION:
 			glMatrixMode(GL_POSITION);
 			glPushMatrix(); // save the current state of the position matrix
-			glLoadIdentity(); // load an identity matrix into the position matrix so that the modelview matrix = projection matrix
+			glLoadIdentity(); // load an identity matrix into the position matrix so that the clip matrix = projection matrix
 			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
-				for(i = 0; i < 16; i++) f[i] = MATRIX_READ_MODELVIEW[i]; // read out the projection matrix
+				for(i = 0; i < 16; i++) f[i] = MATRIX_READ_CLIP[i]; // read out the projection matrix
 			glPopMatrix(1); // restore the position matrix
 			break;
 		case GL_GET_MATRIX_POSITION:
 			glMatrixMode(GL_PROJECTION);
 			glPushMatrix(); // save the current state of the projection matrix
-			glLoadIdentity(); // load a identity matrix into the projection matrix so that the modelview matrix = position matrix
+			glLoadIdentity(); // load a identity matrix into the projection matrix so that the clip matrix = position matrix
 			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
-				for(i = 0; i < 16; i++) f[i] = MATRIX_READ_MODELVIEW[i]; // read out the position matrix
+				for(i = 0; i < 16; i++) f[i] = MATRIX_READ_CLIP[i]; // read out the position matrix
 			glPopMatrix(1); // restore the projection matrix
 			break;
 		default: 
@@ -1155,10 +1166,10 @@ GL_STATIC_INL void glGetFixed(const GL_GET_ENUM param, int32* f) {
 \param alphaThreshold minimum alpha value that will be used (0-15) */
 GL_STATIC_INL void glAlphaFunc(int alphaThreshold) { GFX_ALPHA_TEST = alphaThreshold; }
 
-/*! \brief set the minimum alpha value that will be used<BR>
+/*! \brief Stop the drawing of polygons that are a certain distance from the camera.<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
-\param depth polygons that are beyond this depth will not be drawn; 15bit value. */
-GL_STATIC_INL void glCutoffDepth(fixed12d3 depth) { GFX_CUTOFF_DEPTH = depth; }
+\param polygons that are beyond this W-value(distance from camera) will not be drawn; 15bit value. */
+GL_STATIC_INL void glCutoffDepth(fixed12d3 wVal) { GFX_CUTOFF_DEPTH = wVal; }
 
 
 
