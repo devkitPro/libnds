@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.43 2007-04-02 07:43:48 gabebear Exp $
+	$Id: videoGL.h,v 1.44 2007-04-07 01:28:10 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,26 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.43  2007/04/02 07:43:48  gabebear
+	- GL_TEXTURE_TYPE_ENUM comment are fixed
+	- add POLY_MODULATION and POLY_SHADOW
+	- got rid of old glIdentity()
+	- got rid of old GL_TEXTURE_ALPHA_MASK
+	- add glClearDepth(GL_MAX_DEPTH); to glInit
+	- change gluLookAt to multiply instead of load
+	- glCutoffDepth comments were wrong
+	- glClearDepth were wrong
+	- glGetFixed() Problems:
+	    + modelview was really reading the clip matrix; fixed
+	    + renamed rotation matrix to vector matrix, syncing the terms with GBATEK
+	    + added comment that modelview is really a combo of the directional and position
+	- add warning that normals can't be (0,0,1), (0,1,0) or (1,0,0)
+	- get rid of glStoreMatrix(0) in glOrtho(), glFrustumf32() because it didn't make any sense
+	- glResetMatrixStack() Changes:
+	    + was popping projection stack only when empty!
+	    + moved glLoadIndetity() from glInit() into here
+	- add fog defines
+	
 	Revision 1.42  2007/03/13 00:59:20  gabebear
 	I'm not sure why, but under popping the projection matrix was causing all 3D to fail.
 	
@@ -211,11 +231,11 @@ typedef short int v16;       /*!< \brief vertex 4.12 fixed format */
 #define floattov16(n)        ((v16)((n) * (1 << 12))) /*!< \brief convert float to v16 */
 #define VERTEX_PACK(x,y)     (((x) & 0xFFFF) | ((y) << 16)) /*!< \brief Pack to v16 values into one 32bit value */
 
-typedef short int v10;       /*!< \brief normal .10 fixed point, NOT USED FOR 10bit VERTEXS!!!*/
+typedef short int v10;       /*!< \brief normal .10 fixed point, NOT USED FOR 10bit VERTEXES!!!*/
 #define inttov10(n)          ((n) << 9) /*!< \brief convert int to v10 */
 #define f32tov10(n)          ((v10)(n >> 3)) /*!< \brief convert f32 to v10 */
 #define v10toint(n)          ((n) >> 9) /*!< \brief convert v10 to int */
-#define floattov10(n)        ((v10)((n) * (1 << 9))) /*!< \brief convert float to v10 */
+#define floattov10(n)        ((n>.998) ? 0x1FF : ((v10)((n)*(1<<9)))) /*!< \brief convert float to v10 */
 #define NORMAL_PACK(x,y,z)   (((x) & 0x3FF) | (((y) & 0x3FF) << 10) | ((z) << 20)) /*!< \brief Pack 3 v10 normals into a 32bit value */
 
 //////////////////////////////////////////////////////////////////////
@@ -1268,9 +1288,6 @@ GL_STATIC_INL void glTranslatef(float x, float y, float z) {
 \param y y component of the normal, vector must be normalized
 \param z z component of the normal, vector must be normalized */
 GL_STATIC_INL void glNormal3f(float x, float y, float z) {
-	if(x >= 1 || x <= -1) x *= .95;
-	if(y >= 1 || y <= -1) y *= .95;
-	if(z >= 1 || z <= -1) z *= .95;
 	glNormal(NORMAL_PACK(floattov10(x), floattov10(y), floattov10(z)));
 }
 
