@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: registers_alt.h,v 1.13 2007-03-01 10:12:43 wntrmute Exp $
+	$Id: registers_alt.h,v 1.14 2007-05-01 22:48:09 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.13  2007/03/01 10:12:43  wntrmute
+	correct spelling of REG_EXMEMCNT
+	
 	Revision 1.12  2007/02/19 01:27:26  wntrmute
 	use gbatek names for registers
 	
@@ -149,6 +152,8 @@
 #define SERIAL_DATA     REG_SPIDATA
 #define SIO_CR          REG_SIOCNT
 #define R_CR            REG_RCNT
+
+#define	DISP_CAPTURE	REG_DISPCAPCNT
 
 
 /*	secondary screen */

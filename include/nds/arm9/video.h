@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.37 2007-04-02 07:44:32 gabebear Exp $
+	$Id: video.h,v 1.38 2007-05-01 22:48:09 wntrmute Exp $
 
 	Video registers and defines
 
@@ -26,6 +26,10 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.37  2007/04/02 07:44:32  gabebear
+	- MATRIX_READ_MODELVIEW is MATRIX_READ_CLIP
+	- add defines for fog
+	
 	Revision 1.36  2007/02/20 05:17:04  gabebear
 	added position test defines
 	
@@ -598,7 +602,7 @@ typedef struct {
 
 // Display capture control
 
-#define	DISP_CAPTURE  (*(vuint32*)0x04000064)
+#define	REG_DISPCAPCNT	(*(vuint32*)0x04000064)
 
 #define DCAP_ENABLE    BIT(31)
 #define DCAP_MODE(n)   (((n) & 3) << 29)
