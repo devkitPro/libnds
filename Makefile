@@ -49,19 +49,19 @@ export BASEFLAGS	:=	-g -Wall -O2\
 				-I$(INCDIR)
 
 
-.PHONY:	all libs dist docs clean lib/libnds9.a  lib/libnds7.a
+.PHONY:	all dist docs clean lib/libnds9.a  lib/libnds7.a
 
 #---------------------------------------------------------------------------------
-all:	lib lib/libnds9.a  lib/libnds7.a basic.arm7
+all:	lib/libnds9.a  basic.arm7
 #---------------------------------------------------------------------------------
 
 #---------------------------------------------------------------------------------
-lib/libnds9.a: $(DEPENDS)/arm9 $(BUILD)/arm9
+lib/libnds9.a: lib $(DEPENDS)/arm9 $(BUILD)/arm9
 #---------------------------------------------------------------------------------
 	@$(MAKE) -C $(BUILD)/arm9 -f $(BASEDIR)/Makefile.arm9
 
 #---------------------------------------------------------------------------------
-lib/libnds7.a: $(DEPENDS)/arm7 $(BUILD)/arm7
+lib/libnds7.a: lib $(DEPENDS)/arm7 $(BUILD)/arm7
 #---------------------------------------------------------------------------------
 	@$(MAKE) -C $(BUILD)/arm7 -f $(BASEDIR)/Makefile.arm7
 
@@ -101,7 +101,7 @@ dist-src:
 	@tar	--exclude=*CVS* -cvjf libnds-src-$(DATESTRING).tar.bz2 source include \
 			basicARM7/Makefile basicARM7/source libnds_license.txt Makefile Makefile.arm9 Makefile.arm7
 
-dist-bin:
+dist-bin: lib/libnds9.a  basic.arm7
 	@tar --exclude=*CVS* -cvjf libnds-$(DATESTRING).tar.bz2 include lib libnds_license.txt basic.arm7
 
 #---------------------------------------------------------------------------------
