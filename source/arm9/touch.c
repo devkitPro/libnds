@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.4 2005-10-09 20:27:23 wntrmute Exp $
+	$Id: touch.c,v 1.5 2007-05-01 22:53:09 wntrmute Exp $
 
 	touch screen input code
 
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.4  2005/10/09 20:27:23  wntrmute
+	add check for arm7 updating IPC
+	
 	Revision 1.3  2005/08/30 17:53:11  wntrmute
 	only include required headers
 	
@@ -45,7 +48,6 @@
 //---------------------------------------------------------------------------------
 touchPosition touchReadXY() {
 //---------------------------------------------------------------------------------
-	while (IPC->mailBusy);
 	
 	touchPosition touchPos;
 
