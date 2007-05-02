@@ -108,7 +108,7 @@ dist-bin: lib/libnds9.a  basic.arm7
 install: dist-bin
 #---------------------------------------------------------------------------------
 	mkdir -p $(DEVKITPRO)/libnds
-	bzip2 -cd libnds-$(DATESTRING).tar.bz2 | tar -xv -C $(DEVKITPRO)/libnds
+	bzip2 -cd libnds-$(DATESTRING).tar.bz2 | tar -xvf - -C $(DEVKITPRO)/libnds
 
 #---------------------------------------------------------------------------------
 docs:
