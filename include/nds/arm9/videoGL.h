@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.44 2007-04-07 01:28:10 gabebear Exp $
+	$Id: videoGL.h,v 1.45 2007-05-29 00:35:09 gabebear Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -28,6 +28,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.44  2007/04/07 01:28:10  gabebear
+	fixed normal(v10) float stuff so that scale is done in the define
+	
 	Revision 1.43  2007/04/02 07:43:48  gabebear
 	- GL_TEXTURE_TYPE_ENUM comment are fixed
 	- add POLY_MODULATION and POLY_SHADOW
@@ -197,8 +200,12 @@
 #define LUT_SIZE (512)
 #define LUT_MASK (0x1FF)
 
-#define GLuint u32
-#define GLfloat float
+////////////////////////////////////////////////////////////
+// Misc. constants
+////////////////////////////////////////////////////////////
+
+#define MAX_TEXTURES 2048  //this should be enough ! but feel free to change
+
 
 //////////////////////////////////////////////////////////////////////
 // Fixed point / floating point / integer conversion macros
@@ -401,12 +408,30 @@ enum GLFLUSH_ENUM {
 	GL_WBUFFERING       = (1<<1)  /*!< enable W depth buffering of vertices, otherwise uses Z depth buffering */
 };
 
-////////////////////////////////////////////////////////////
-// Misc. constants
-////////////////////////////////////////////////////////////
 
-#define MAX_TEXTURES 2048  //this should be enough ! but feel free to change
-#define GL_LIGHTING    1   // no idea what this is for / who defined it
+/*---------------------------------------------------------------------------------
+This struct hold hidden globals for videoGL. The structure is initialized in the
+.c file and returned by glGetGlobals() so that it can be used across compilation
+units without problem. This is automatically done by glInit() so don't worry too
+much about it. This is only an issue because of hte mix of inlined/real functions.
+---------------------------------------------------------------------------------*/
+typedef struct {
+	GL_MATRIX_MODE_ENUM matrixMode; // holds the current Matrix Mode
+	
+	// holds the current state of the clear color register
+	uint32 clearColor; // state of clear color register
+	
+	// texture globals
+	uint32 textures[MAX_TEXTURES];
+	uint32 activeTexture;
+	uint32* nextBlock;
+	uint32 nextPBlock;
+	int nameCount;
+	
+} gl_hidden_globals;
+
+// Pointer to global data for videoGL
+static gl_hidden_globals* glGlob = 0;
 
 //---------------------------------------------------------------------------------
 //Fifo commands
@@ -447,13 +472,6 @@ enum GLFLUSH_ENUM {
 #ifdef __cplusplus
 extern "C" {
 #endif
-	
-/*! \brief Sets texture coordinates for following vertices<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A>
-\warning FLOAT VERSION!!!! please use glTexCoord2t16()
-\param s S(a.k.a. U) texture coordinate (0.0 - 1.0)
-\param t T(a.k.a. V) texture coordinate (0.0 - 1.0)*/
-void glTexCoord2f(float s, float t);
 
 /*! \brief Rotates the model view matrix by angle about the specified unit vector
 \param angle The angle to rotate by
@@ -530,24 +548,12 @@ void glTexCoord2f32(int32 u, int32 v);
 \param color the color to set for that material property */
 void glMaterialf(GL_MATERIALS_ENUM mode, rgb color);
 
-/*! \brief Initializes the gl state machine (must be called once before using gl calls) */
-void glInit(void);
+// This handles initialization of the GL state; this is called from glInit to keep globals synced between compilation units
+void glInit_C(void);
 
-/*! \brief Grabs integer state variables from openGL
-\param param The state variable to retrieve
-\param i pointer with room to hold the requested data */
-void glGetInt(GL_GET_ENUM param, int* i);
+// This returns a pointer to the globals for videoGL
+gl_hidden_globals* glGetGlobals();
 
-/*! \brief sets the color of the rear-plane(a.k.a Clear Color/Plane)
-\param red component (0-31)
-\param green component (0-31)
-\param blue component (0-31)
-\param alpha from 0(clear) to 31(opaque)*/
-void glClearColor(uint8 red, uint8 green, uint8 blue, uint8 alpha);
-
-/*! \brief sets the polygon ID of the rear-plane(a.k.a. Clear/Color Plane), useful for antialiasing and edge coloring
-\param ID the polygon ID to give the rear-plane */
-void glClearPolyID(uint8 ID);
 
 #ifdef __cplusplus
 }
@@ -1191,6 +1197,60 @@ GL_STATIC_INL void glAlphaFunc(int alphaThreshold) { GFX_ALPHA_TEST = alphaThres
 \param polygons that are beyond this W-value(distance from camera) will not be drawn; 15bit value. */
 GL_STATIC_INL void glCutoffDepth(fixed12d3 wVal) { GFX_CUTOFF_DEPTH = wVal; }
 
+/*! \brief Initializes the gl state machine (must be called once before using gl calls) */
+GL_STATIC_INL void glInit() {
+	glGlob = glGetGlobals(); // make sure globals are synced between compilation units
+	glInit_C(); // actually does the initialization
+}
+
+/*! \brief sets the color of the rear-plane(a.k.a Clear Color/Plane)
+\param red component (0-31)
+\param green component (0-31)
+\param blue component (0-31)
+\param alpha from 0(clear) to 31(opaque)*/
+GL_STATIC_INL void glClearColor(uint8 red, uint8 green, uint8 blue, uint8 alpha) {
+	GFX_CLEAR_COLOR = glGlob->clearColor = ( glGlob->clearColor & 0xFFE08000) | (0x7FFF & RGB15(red, green, blue)) | ((alpha & 0x1F) << 16);
+}
+
+/*! \brief sets the polygon ID of the rear-plane(a.k.a. Clear/Color Plane), useful for antialiasing and edge coloring
+\param ID the polygon ID to give the rear-plane */
+GL_STATIC_INL void glClearPolyID(uint8 ID) {
+	GFX_CLEAR_COLOR = glGlob->clearColor = ( glGlob->clearColor & 0xC0FFFFFF) | (( ID & 0x3F ) << 24 );
+}
+
+/*! \brief Grabs integer state variables from openGL
+\param param The state variable to retrieve
+\param i pointer with room to hold the requested data */
+GL_STATIC_INL void glGetInt(GL_GET_ENUM param, int* i) {
+	switch (param) {
+		case GL_GET_POLYGON_RAM_COUNT:
+			*i = GFX_POLYGON_RAM_USAGE;
+			break;
+		case GL_GET_VERTEX_RAM_COUNT:
+			*i = GFX_VERTEX_RAM_USAGE;
+			break;
+		case GL_GET_TEXTURE_WIDTH:
+			*i = 8 << (((glGlob->textures[glGlob->activeTexture]) >> 20) & 7);
+			break;
+		case GL_GET_TEXTURE_HEIGHT:
+			*i = 8 << (((glGlob->textures[glGlob->activeTexture]) >> 23) & 7);
+			break;
+		default:
+			break;
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1215,8 +1275,7 @@ GL_STATIC_INL void glCutoffDepth(fixed12d3 wVal) { GFX_CUTOFF_DEPTH = wVal; }
 //////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////////////
 //
-//  All floating point functions except glTexCoord2f.
-//    glTexCoord2f is a regular function because of the way texture memory is allocated.
+//  All floating point functions.
 //
 
 /*! \brief specifies a vertex location
@@ -1365,7 +1424,17 @@ GL_STATIC_INL void gluPerspective(float fovy, float aspect, float zNear, float z
 	gluPerspectivef32((int)(fovy * LUT_SIZE / 360.0), floattof32(aspect), floattof32(zNear), floattof32(zFar));    
 }
 
-
+/*! \brief Sets texture coordinates for following vertices<BR>
+<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A>
+\warning FLOAT VERSION!!!! please use glTexCoord2t16()
+\param s S(a.k.a. U) texture coordinate (0.0 - 1.0)
+\param t T(a.k.a. V) texture coordinate (0.0 - 1.0)*/
+GL_STATIC_INL void glTexCoord2f(float s, float t) {
+	int x = ((glGlob->textures[glGlob->activeTexture]) >> 20) & 7; 
+	int y = ((glGlob->textures[glGlob->activeTexture]) >> 23) & 7; 
+	
+	glTexCoord2t16(floattot16(s*(8 << x)), floattot16(t*(8<<y)));
+}
 
 
 #endif // #ifndef VIDEOGL_ARM9_INCLUDE

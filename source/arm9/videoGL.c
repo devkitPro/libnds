@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.35 2007-04-02 07:44:32 gabebear Exp $
+	$Id: videoGL.c,v 1.36 2007-05-29 00:35:09 gabebear Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -26,6 +26,10 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.35  2007/04/02 07:44:32  gabebear
+	- MATRIX_READ_MODELVIEW is MATRIX_READ_CLIP
+	- add defines for fog
+	
 	Revision 1.34  2007/03/18 17:12:32  gabebear
 	updated glInit so that it calls glFlush once to prime the vertex/polygon buffers
 	
@@ -128,15 +132,18 @@
 #include <nds/arm9/videoGL.h>
 #include <nds/arm9/trig_lut.h>
 
-// holds the current state of the clear color register, initialized in glInit()
-static uint32 clear_bits = 0;
+// this is the actual data of the globals for videoGL
+//   Please use the glGlob pointer to access this data since that makes it easier to move stuff in/out of the header.
+static gl_hidden_globals glGlobalData;
 
+// This returns the pointer to the globals for videoGL
+gl_hidden_globals* glGetGlobals() {
+	return &glGlobalData;
+}
 
 //---------------------------------------------------------------------------------
-// kinda big to be inlined, so it isn't
 void glRotatef32i(int angle, int32 x, int32 y, int32 z) {
 //---------------------------------------------------------------------------------
-
 	int32 axis[3];
 	int32 sine = SIN[angle &  LUT_MASK];
 	int32 cosine = COS[angle & LUT_MASK];
@@ -159,7 +166,6 @@ void glRotatef32i(int angle, int32 x, int32 y, int32 z) {
 	MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[0]), axis[2]) - mulf32(axis[1], sine);
 	MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[1]), axis[2]) + mulf32(axis[0], sine);
 	MATRIX_MULT3x3 = cosine + mulf32(mulf32(one_minus_cosine, axis[2]), axis[2]);
-
 }
 
 
@@ -172,26 +178,20 @@ void glMaterialf(GL_MATERIALS_ENUM mode, rgb color) {
 	static uint32 specular_emission = 0;
 
 	switch(mode) {
-
 		case GL_AMBIENT:
 			diffuse_ambient = (color << 16) | (diffuse_ambient & 0xFFFF);
 			break;
-
 		case GL_DIFFUSE:
 			diffuse_ambient = color | (diffuse_ambient & 0xFFFF0000);
 			break;
-
 		case GL_AMBIENT_AND_DIFFUSE:
 			diffuse_ambient= color + (color << 16);
 			break;
-
 		case GL_SPECULAR:
 			specular_emission = color | (specular_emission & 0xFFFF0000);
 			break;
-
 		case GL_SHININESS:
 			break;
-
 		case GL_EMISSION:
 			specular_emission = (color << 16) | (specular_emission & 0xFFFF);
 			break;
@@ -202,16 +202,26 @@ void glMaterialf(GL_MATERIALS_ENUM mode, rgb color) {
 }
 
 //---------------------------------------------------------------------------------
-void glInit(void) {
+void glInit_C(void) {
 //---------------------------------------------------------------------------------
+	glGlob = glGetGlobals();
+
+	glGlob->clearColor = 0;
+
+	// init texture globals
+	glGlob->activeTexture = 0;
+	glGlob->nextBlock = (uint32*)0x06800000;
+	glGlob->nextPBlock = 0;
+	glGlob->nameCount = 1;
+
 	while (GFX_STATUS & (1<<27)); // wait till gfx engine is not busy
-  
+
 	// Clear the FIFO
 	GFX_STATUS |= (1<<29);
 
 	// Clear overflows from list memory
 	glResetMatrixStack();
-	
+
 	// prime the vertex/polygon buffers
 	glFlush(0);
 
@@ -224,13 +234,13 @@ void glInit(void) {
 
 	// reset stored texture locations
 	glResetTextures();
-	
+
 	// reset the depth to it's max
 	glClearDepth(GL_MAX_DEPTH);
 
 	GFX_TEX_FORMAT = 0;
 	GFX_POLY_FORMAT = 0;
-  
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
@@ -242,25 +252,12 @@ void glInit(void) {
 }
 
 //---------------------------------------------------------------------------------
-// Texture
-//---------------------------------------------------------------------------------
-// Texture globals
-//---------------------------------------------------------------------------------
-
-uint32 textures[MAX_TEXTURES];
-
-uint32 activeTexture = 0;
-
-uint32* nextBlock = (uint32*)0x06800000;
-uint32  nextPBlock = 0;
-int nameCount = 1;
-//---------------------------------------------------------------------------------
 void glResetTextures(void) {
 //---------------------------------------------------------------------------------
-	activeTexture = 0;
-	nextBlock = (uint32*)0x06800000;
-	nextPBlock = 0;
-	nameCount = 1;
+	glGlob->activeTexture = 0;
+	glGlob->nextBlock = (uint32*)0x06800000;
+	glGlob->nextPBlock = 0;
+	glGlob->nameCount = 1;
 }
 
 //---------------------------------------------------------------------------------
@@ -272,17 +269,13 @@ void glResetTextures(void) {
 
 int glGenTextures(int n, int *names) {
 //---------------------------------------------------------------------------------
-	
-
 	int index = 0;
-
 	for(index = 0; index < n; index++) {
-		if(nameCount >= MAX_TEXTURES)
+		if(glGlob->nameCount >= MAX_TEXTURES)
 			return 0;
 		else
-			names[index] = nameCount++;
+			names[index] = glGlob->nameCount++;
 	}
-
 	return 1;
 }
 
@@ -296,10 +289,10 @@ void glBindTexture(int target, int name) {
 	if (name == 0) 
 		GFX_TEX_FORMAT = 0; 
 	else 
-		GFX_TEX_FORMAT = textures[name]; 
+		GFX_TEX_FORMAT = glGlob->textures[name]; 
 
-	
-	activeTexture = name;
+
+	glGlob->activeTexture = name;
 }
 //---------------------------------------------------------------------------------
 // glColorTable establishes the location of the current palette.
@@ -315,21 +308,12 @@ void glColorTable( uint8 format, uint32 addr ) {
 //---------------------------------------------------------------------------------
 void glTexCoord2f32(int32 u, int32 v) { 
 //---------------------------------------------------------------------------------
-  int x, y; 
-   
-  x = ((textures[activeTexture]) >> 20) & 7; 
-  y = ((textures[activeTexture]) >> 23) & 7; 
+	int x, y; 
 
-  glTexCoord2t16(f32tot16 (mulf32(u,inttof32(8<<x))), f32tot16 (mulf32(v,inttof32(8<<y)))); 
-}
+	x = ((glGlob->textures[glGlob->activeTexture]) >> 20) & 7; 
+	y = ((glGlob->textures[glGlob->activeTexture]) >> 23) & 7; 
 
-//---------------------------------------------------------------------------------
-void glTexCoord2f(float s, float t) {
-//---------------------------------------------------------------------------------
-	int x = ((textures[activeTexture]) >> 20) & 7; 
-    int y = ((textures[activeTexture]) >> 23) & 7; 
-    
-    glTexCoord2t16(floattot16(s*(8 << x)), floattot16(t*(8<<y)));
+	glTexCoord2t16(f32tot16 (mulf32(u,inttof32(8<<x))), f32tot16 (mulf32(v,inttof32(8<<y)))); 
 }
 
 //---------------------------------------------------------------------------------
@@ -342,7 +326,7 @@ void glTexParameter(	uint8 sizeX, uint8 sizeY,
 						GL_TEXTURE_TYPE_ENUM mode,
 						uint32 param) {
 //---------------------------------------------------------------------------------
-	textures[activeTexture] = param | (sizeX << 20) | (sizeY << 23) | (((uint32)addr >> 3) & 0xFFFF) | (mode << 26);
+	glGlob->textures[glGlob->activeTexture] = param | (sizeX << 20) | (sizeY << 23) | (((uint32)addr >> 3) & 0xFFFF) | (mode << 26);
 }
 //---------------------------------------------------------------------------------
 //glGetTexturePointer gets a pointer to vram which contains the texture
@@ -350,37 +334,36 @@ void glTexParameter(	uint8 sizeX, uint8 sizeY,
 //---------------------------------------------------------------------------------
 void* glGetTexturePointer(	int name) {
 //---------------------------------------------------------------------------------
-	return (void*) ((textures[name] & 0xFFFF) << 3);
+	return (void*) ((glGlob->textures[name] & 0xFFFF) << 3);
 }
 
 //---------------------------------------------------------------------------------
 u32 glGetTexParameter(){
 //---------------------------------------------------------------------------------
-  return textures[activeTexture];
+	return glGlob->textures[glGlob->activeTexture];
 }
 
 
 //---------------------------------------------------------------------------------
-inline uint32 alignVal( uint32 val, uint32 to )
-{
-  return (val & (to-1))? (val & ~(to-1)) + to : val;
+inline uint32 alignVal( uint32 val, uint32 to ) {
+	return (val & (to-1))? (val & ~(to-1)) + to : val;
 }
 
 //---------------------------------------------------------------------------------
-int getNextPaletteSlot(u16 count, uint8 format){
+int getNextPaletteSlot(u16 count, uint8 format) {
 //---------------------------------------------------------------------------------
-  // ensure the result aligns on a palette block for this format
-  uint32 result = alignVal(nextPBlock, 1<<(4-(format==GL_RGB4)));
-  
-  // convert count to bytes and align to next (smallest format) palette block
-  count = alignVal( count<<1, 1<<3 ); 
+	// ensure the result aligns on a palette block for this format
+	uint32 result = alignVal(glGlob->nextPBlock, 1<<(4-(format==GL_RGB4)));
 
-  // ensure that end is within palette video mem
-  if( result+count > 0x10000 )   // VRAM_F - VRAM_E
-    return -1;
+	// convert count to bytes and align to next (smallest format) palette block
+	count = alignVal( count<<1, 1<<3 ); 
 
-  nextPBlock = result+count;
-  return (int)result;
+	// ensure that end is within palette video mem
+	if( result+count > 0x10000 )   // VRAM_F - VRAM_E
+		return -1;
+
+	glGlob->nextPBlock = result+count;
+	return (int)result;
 } 
 
 //---------------------------------------------------------------------------------
@@ -409,55 +392,53 @@ uint16* vramGetBank(uint16 *addr) {
 //---------------------------------------------------------------------------------
 int vramIsTextureBank(uint16 *addr) {
 //---------------------------------------------------------------------------------
-   uint16* vram = vramGetBank(addr);
+	uint16* vram = vramGetBank(addr);
 
-   if(vram == VRAM_A)
-   {
-      if((VRAM_A_CR & 3) == ((VRAM_A_TEXTURE) & 3))
-         return 1;
-      else return 0;
-   }
-   else if(vram == VRAM_B)
-   {
-      if((VRAM_B_CR & 3) == ((VRAM_B_TEXTURE) & 3))
-         return 1;
-      else return 0;
-   }
-   else if(vram == VRAM_C)
-   {
-      if((VRAM_C_CR & 3) == ((VRAM_C_TEXTURE) & 3))
-         return 1;
-      else return 0;
-   }
-   else if(vram == VRAM_D)
-   {
-      if((VRAM_D_CR & 3) == ((VRAM_D_TEXTURE) & 3))
-         return 1;
-      else return 0;
-   }
-   else
-      return 0;
-   
+	if(vram == VRAM_A)
+	{
+		if((VRAM_A_CR & 3) == ((VRAM_A_TEXTURE) & 3))
+			return 1;
+		else return 0;
+	}
+	else if(vram == VRAM_B)
+	{
+		if((VRAM_B_CR & 3) == ((VRAM_B_TEXTURE) & 3))
+			return 1;
+		else return 0;
+	}
+	else if(vram == VRAM_C)
+	{
+		if((VRAM_C_CR & 3) == ((VRAM_C_TEXTURE) & 3))
+			return 1;
+		else return 0;
+	}
+	else if(vram == VRAM_D)
+	{
+		if((VRAM_D_CR & 3) == ((VRAM_D_TEXTURE) & 3))
+			return 1;
+		else return 0;
+	}
+	else
+		return 0;
 } 
 //---------------------------------------------------------------------------------
 uint32* getNextTextureSlot(int size) {
 //---------------------------------------------------------------------------------
-   uint32* result = nextBlock;
-   nextBlock += size >> 2;
+	uint32* result = glGlob->nextBlock;
+	glGlob->nextBlock += size >> 2;
 
-   //uh-oh...out of texture memory in this bank...find next one assigned to textures
-   while(!vramIsTextureBank((uint16*)nextBlock - 1) && nextBlock <= (uint32*)VRAM_E)
-   {
-      nextBlock = (uint32*)vramGetBank((uint16*)result) + (0x20000 >> 2); //next bank
-      result = nextBlock;        
-      nextBlock += size >> 2;
-   }
+	//uh-oh...out of texture memory in this bank...find next one assigned to textures
+	while(!vramIsTextureBank((uint16*)glGlob->nextBlock - 1) && glGlob->nextBlock <= (uint32*)VRAM_E)
+	{
+		glGlob->nextBlock = (uint32*)vramGetBank((uint16*)result) + (0x20000 >> 2); //next bank
+		result = glGlob->nextBlock;        
+		glGlob->nextBlock += size >> 2;
+	}
 
-   if(nextBlock > (uint32*)VRAM_E)
-      return 0;
-
-   else return result;   
-
+	if(glGlob->nextBlock > (uint32*)VRAM_E) {
+		result = 0;
+	}
+	return result;
 } 
 
 //---------------------------------------------------------------------------------
@@ -467,112 +448,75 @@ uint32* getNextTextureSlot(int size) {
 //---------------------------------------------------------------------------------
 int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, int param, const uint8* texture) {
 //---------------------------------------------------------------------------------
-  uint32 size = 0;
-  uint32* addr;
-  uint32 vramTemp;
+	uint32 size = 0;
+	uint32* addr;
+	uint32 vramTemp;
 
-  size = 1 << (sizeX + sizeY + 6);
-  
+	size = 1 << (sizeX + sizeY + 6);
 
-  switch (type) {
-    case GL_RGB:
-    case GL_RGBA:
-      size = size << 1;
-      break;
-    case GL_RGB4:
-      size = size >> 2;
-      break;
-    case GL_RGB16:
-      size = size >> 1;
-      break;
 
-    default:
-      break;
-  }
-  
-  addr = getNextTextureSlot(size);
-  
-  if(!addr)
-    return 0;
+	switch (type) {
+		case GL_RGB:
+		case GL_RGBA:
+			size = size << 1;
+			break;
+		case GL_RGB4:
+			size = size >> 2;
+			break;
+		case GL_RGB16:
+			size = size >> 1;
+			break;
+		default:
+			break;
+	}
 
-  // unlock texture memory
-  vramTemp = vramSetMainBanks(VRAM_A_LCD,VRAM_B_LCD,VRAM_C_LCD,VRAM_D_LCD);
+	addr = getNextTextureSlot(size);
 
-  if (type == GL_RGB) {
-    // We do GL_RGB as GL_RGBA, but we set each alpha bit to 1 during the copy
-    u16 * src = (u16*)texture;
-    u16 * dest = (u16*)addr;
-    
-    glTexParameter(sizeX, sizeY, addr, GL_RGBA, param);
-    
-    while (size--) {
-      *dest++ = *src | (1 << 15);
-      src++;
-    }
-  } else {
-    // For everything else, we do a straight copy
-    glTexParameter(sizeX, sizeY, addr, type, param);
-    swiCopy((uint32*)texture, addr , size / 4 | COPY_MODE_WORD);
-  }
+	if(!addr)
+	return 0;
 
-  vramRestoreMainBanks(vramTemp);
+	// unlock texture memory
+	vramTemp = vramSetMainBanks(VRAM_A_LCD,VRAM_B_LCD,VRAM_C_LCD,VRAM_D_LCD);
 
-  return 1;
+	if (type == GL_RGB) {
+		// We do GL_RGB as GL_RGBA, but we set each alpha bit to 1 during the copy
+		u16 * src = (u16*)texture;
+		u16 * dest = (u16*)addr;
+
+		glTexParameter(sizeX, sizeY, addr, GL_RGBA, param);
+
+		while (size--) {
+			*dest++ = *src | (1 << 15);
+			src++;
+		}
+	} else {
+		// For everything else, we do a straight copy
+		glTexParameter(sizeX, sizeY, addr, type, param);
+		swiCopy((uint32*)texture, addr , size / 4 | COPY_MODE_WORD);
+	}
+	vramRestoreMainBanks(vramTemp);
+	return 1;
 }
 
- //---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 void glTexLoadPal(const u16* pal, u16 count, u32 addr) {
- //---------------------------------------------------------------------------------
- 	vramSetBankE(VRAM_E_LCD);
- 		
+//---------------------------------------------------------------------------------
+	vramSetBankE(VRAM_E_LCD);
 	swiCopy( pal, &VRAM_E[addr>>1] , count / 2 | COPY_MODE_WORD);
- 
- 	vramSetBankE(VRAM_E_TEX_PALETTE);
+	vramSetBankE(VRAM_E_TEX_PALETTE);
 }
- 
+
 //---------------------------------------------------------------------------------
 int gluTexLoadPal(const u16* pal, u16 count, uint8 format) {
 //---------------------------------------------------------------------------------
-  int addr = getNextPaletteSlot(count, format);
-  
-  if( addr>=0 )
-    glTexLoadPal(pal, count, (u32) addr);
-  
-  return addr;
- }
+	int addr = getNextPaletteSlot(count, format);
+	if( addr>=0 )
+		glTexLoadPal(pal, count, (u32) addr);
 
-//---------------------------------------------------------------------------------
-void glGetInt(GL_GET_ENUM param, int* i) {
-//---------------------------------------------------------------------------------
-  switch (param) {
-    case GL_GET_POLYGON_RAM_COUNT:
-      *i = GFX_POLYGON_RAM_USAGE;
-      break;
-    case GL_GET_VERTEX_RAM_COUNT:
-      *i = GFX_VERTEX_RAM_USAGE;
-      break;
-    case GL_GET_TEXTURE_WIDTH:
-      *i = 8 << (((textures[activeTexture]) >> 20) & 7);
-      break;
-    case GL_GET_TEXTURE_HEIGHT:
-      *i = 8 << (((textures[activeTexture]) >> 23) & 7);
-      break;
-    default:
-      break;
-  }
+	return addr;
 }
 
 
-//---------------------------------------------------------------------------------
-void glClearColor(uint8 red, uint8 green, uint8 blue, uint8 alpha) {
-//---------------------------------------------------------------------------------
-	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0xFFE08000) | (0x7FFF & RGB15(red, green, blue)) | ((alpha & 0x1F) << 16);
-}
 
-//---------------------------------------------------------------------------------
-void glClearPolyID(uint8 ID) {
-//---------------------------------------------------------------------------------
-	GFX_CLEAR_COLOR = clear_bits = (clear_bits & 0xC0FFFFFF) | (( ID & 0x3F ) << 24 );
-}
 
 
