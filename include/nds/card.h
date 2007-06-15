@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: card.h,v 1.4 2006-08-06 07:51:48 chishm Exp $
+	$Id: card.h,v 1.5 2007-06-15 22:42:35 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -22,15 +22,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.3  2005/12/27 00:57:51  darkfader
-	CARD_DATA -> REG_IPC_FIFO_RX
-	
-	Revision 1.2  2005/08/30 17:52:24  wntrmute
-	corrected CARD_CR1
-	fixed cardReadEeprom
-	
 
 ---------------------------------------------------------------------------------*/
 
@@ -86,16 +77,46 @@ extern "C" {
 
 void cardWriteCommand(const uint8 * command);
 
-//fix me DARKFADER!!!!
 void cardPolledTransfer(uint32 flags, uint32 * destination, uint32 length, const uint8 * command);
 void cardStartTransfer(const uint8 * command, uint32 * destination, int channel, uint32 flags);
 uint32 cardWriteAndRead(const uint8 * command, uint32 flags);
+
+// These commands require the cart to not be initialized yet, which may mean the user
+// needs to eject and reinsert the cart or they will return random data.
 void cardRead00(uint32 address, uint32 * destination, uint32 length, uint32 flags);
 void cardReadHeader(uint8 * header);
 int cardReadID(uint32 flags);
+
+// Reads from the EEPROM
 void cardReadEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype);
+
+// Writes to the EEPROM. TYPE 3 EEPROM must be erased first (I think?)
 void cardWriteEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype);
 
+// Returns the ID of the EEPROM chip? Doesn't work well, most chips give ff,ff
+// i = 0 or 1
+uint8 cardEepromReadID(uint8 i); 
+
+// Sends a command to the EEPROM
+uint8 cardEepromCommand(uint8 command, uint32 address); 
+
+/*
+ * -1:no card or no EEPROM
+ *  0:unknown                 PassMe?
+ *  1:TYPE 1  4Kbit(512Byte)  EEPROM
+ *  2:TYPE 2 64Kbit(8KByte)or 512kbit(64Kbyte)   EEPROM
+ *  3:TYPE 3  2Mbit(256KByte) FLASH MEMORY (some rare 4Mbit and 8Mbit chips also)
+ */
+int cardEepromGetType(void);
+
+// Returns the size in bytes of EEPROM
+uint32 cardEepromGetSize();
+
+// Erases the entire chip. TYPE 3 chips MUST be erased before writing to them. (I think?)
+void cardEepromChipErase(void);
+
+// Erases a single sector of the TYPE 3 chip
+void cardEepromSectorErase(uint32 address);
 
 #ifdef __cplusplus
 }

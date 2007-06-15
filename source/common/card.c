@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: card.c,v 1.9 2006-08-06 07:51:48 chishm Exp $
+	$Id: card.c,v 1.10 2007-06-15 22:42:43 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -24,6 +24,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2006/08/06 07:51:48  chishm
+	command function parameter changed to "const uint8 *" type
+	
 	Revision 1.8  2006/01/17 00:10:11  dovoto
 	Loopy added a fix to cardPolledTransfer
 	
@@ -51,6 +54,7 @@
 ---------------------------------------------------------------------------------*/
 #include "nds/card.h"
 #include "nds/dma.h"
+#include "nds/memory.h"
 
 
 //---------------------------------------------------------------------------------
@@ -147,6 +151,123 @@ static inline void EepromWaitBusy()	{
 }
 
 //---------------------------------------------------------------------------------
+uint8 cardEepromReadID(uint8 i) {
+//---------------------------------------------------------------------------------
+    return cardEepromCommand(/*READID*/0xAB, i&1);
+}
+
+//---------------------------------------------------------------------------------
+uint8 cardEepromCommand(uint8 command, uint32 address) {
+//---------------------------------------------------------------------------------
+    uint8 retval;
+    int k;
+    CARD_CR1 = /*E*/0x8000 | /*SEL*/0x2000 | /*MODE*/0x40;
+
+    CARD_CR1 = 0xFFFF;
+    CARD_EEPDATA = command;
+
+    EepromWaitBusy();
+
+    CARD_EEPDATA = (address >> 16) & 0xFF;
+    EepromWaitBusy();
+
+    CARD_EEPDATA = (address >> 8) & 0xFF;
+    EepromWaitBusy();
+
+    CARD_EEPDATA = (address) & 0xFF;
+    EepromWaitBusy();
+
+    for(k=0;k<256;k++)
+    {
+        retval = CARD_EEPDATA;
+        if(retval!=0xFF)
+            break;
+        EepromWaitBusy();
+    }
+
+    CARD_CR1 = /*MODE*/0x40;
+    return retval;
+}
+
+//---------------------------------------------------------------------------------
+int cardEepromGetType(void)
+//---------------------------------------------------------------------------------
+{
+        uint8 c00;
+        uint8 c05;
+        uint8 c9f;
+        uint8 c03;
+
+#ifdef ARM9
+        sysSetBusOwners(BUS_OWNER_ARM9, BUS_OWNER_ARM9);
+#endif
+
+        c03=cardEepromCommand(0x03,0);
+        c05=cardEepromCommand(0x05,0);
+        c9f=cardEepromCommand(0x9f,0);
+        c00=cardEepromCommand(0x00,0);
+
+        if((c00==0x00) && (c9f==0x00)) return 0; // PassMe? 
+        if((c00==0xff) && (c05==0xff) && (c9f==0xff))return -1;
+
+        if((c00==0xff) &&  (c05 & 0xFD) == 0xF0 && (c9f==0xff))return 1;
+        if((c00==0xff) &&  (c05 & 0xFD) == 0x00 && (c9f==0xff))return 2;
+        if((c00==0xff) &&  (c05 & 0xFD) == 0x00 && (c9f==0x00))return 3;
+        if((c00==0xff) &&  (c05 & 0xFD) == 0x00 && (c9f==0x12))return 3;        //      NEW TYPE 3
+        if((c00==0xff) &&  (c05 & 0xFD) == 0x00 && (c9f==0x13))return 3;        //      NEW TYPE 3+  4Mbit
+        if((c00==0xff) &&  (c05 & 0xFD) == 0x00 && (c9f==0x14))return 3;        //      NEW TYPE 3++ 8Mbit MK4-FLASH Memory
+
+        return 0;
+}
+
+//---------------------------------------------------------------------------------
+uint32 cardEepromGetSize() {
+//---------------------------------------------------------------------------------
+
+    int type = cardEepromGetType();
+
+    if(type == -1)
+        return 0;
+    if(type == 0)
+        return 8192;
+    if(type == 1)
+        return 512;
+    if(type == 2) {
+        static const uint32 offset0 = (8*1024-1);        //      8KB
+        static const uint32 offset1 = (2*8*1024-1);      //      16KB
+        u8 buf1;     //      +0k data        read -> write
+        u8 buf2;     //      +8k data        read -> read
+        u8 buf3;     //      +0k ~data          write
+        u8 buf4;     //      +8k data new    comp buf2
+        cardReadEeprom(offset0,&buf1,1,type);
+        cardReadEeprom(offset1,&buf2,1,type);
+        buf3=~buf1;
+        cardWriteEeprom(offset0,&buf3,1,type);
+        cardReadEeprom (offset1,&buf4,1,type);
+        cardWriteEeprom(offset0,&buf1,1,type);
+        if(buf4!=buf2)      //      +8k
+            return 8*1024;  //       8KB(64kbit)
+        else
+            return 64*1024; //      64KB(512kbit)
+    }
+    if(type == 3) {
+        uint8 c9f;
+        c9f=cardEepromCommand(0x9f,0);
+
+        if(c9f==0x14)         
+            return 1024*1024; //   NEW TYPE 3++ 8Mbit(1024KByte)
+
+        if(c9f==0x13)         
+            return 512*1024;  //   NEW TYPE 3+ 4Mbit(512KByte)
+
+        return 256*1024;      //   TYPE 3  2Mbit(256KByte)
+    }
+
+    return 0;
+}
+
+
+//---------------------------------------------------------------------------------
 void cardReadEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype) {
 //---------------------------------------------------------------------------------
 
@@ -156,11 +277,14 @@ void cardReadEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype)
 
     if (addrtype == 3) {
         CARD_EEPDATA = (address >> 16) & 0xFF;
-    } else if (addrtype >= 2) {
+	    EepromWaitBusy();
+    } 
+    
+    if (addrtype >= 2) {
         CARD_EEPDATA = (address >> 8) & 0xFF;
+	    EepromWaitBusy();
     }
 
-	EepromWaitBusy();
 
 	CARD_EEPDATA = (address) & 0xFF;
     EepromWaitBusy();
@@ -171,17 +295,23 @@ void cardReadEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype)
         *data++ = CARD_EEPDATA;
         length--;
     }
+
+    EepromWaitBusy();
     CARD_CR1 = /*MODE*/0x40;
 }
 
 
-// NOTE: does not work for small EEPROMs
 //---------------------------------------------------------------------------------
 void cardWriteEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype) {
 //---------------------------------------------------------------------------------
 
 	uint32 address_end = address + length;
 	int i;
+    int maxblocks = 32;
+    if(addrtype == 1) maxblocks = 16;
+    if(addrtype == 2) maxblocks = 32;
+    if(addrtype == 3) maxblocks = 256;
+
 	while (address < address_end) {
 		// set WEL (Write Enable Latch)
 		CARD_CR1 = /*E*/0x8000 | /*SEL*/0x2000 | /*MODE*/0x40;
@@ -190,17 +320,102 @@ void cardWriteEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype
 
 		// program maximum of 32 bytes
 		CARD_CR1 = /*E*/0x8000 | /*SEL*/0x2000 | /*MODE*/0x40;
-		CARD_EEPDATA = 0x02 | ((addrtype == 1) ? address>>8<<3 : 0); EepromWaitBusy();
-		if (addrtype > 1) { CARD_EEPDATA = address >> 8; EepromWaitBusy(); }
-		CARD_EEPDATA = address & 0xFF; EepromWaitBusy();
-		for (i=0; address<address_end && i<32; i++, address++) { CARD_EEPDATA = *data++; EepromWaitBusy(); }
+
+        if(addrtype == 1) {
+        //  WRITE COMMAND 0x02 + A8 << 3
+            CARD_EEPDATA = 0x02 | (address & BIT(8)) >> (8-3) ;
+            EepromWaitBusy();
+            CARD_EEPDATA = address & 0xFF;
+            EepromWaitBusy();
+        }
+        else if(addrtype == 2) {
+            CARD_EEPDATA = 0x02;
+            EepromWaitBusy();
+            CARD_EEPDATA = address >> 8;
+            EepromWaitBusy();
+            CARD_EEPDATA = address & 0xFF;
+            EepromWaitBusy();
+        }
+        else if(addrtype == 3) {
+            CARD_EEPDATA = 0x02;
+            EepromWaitBusy();
+            CARD_EEPDATA = (address >> 16) & 0xFF;
+            EepromWaitBusy();
+            CARD_EEPDATA = (address >> 8) & 0xFF;
+            EepromWaitBusy();
+            CARD_EEPDATA = address & 0xFF;
+            EepromWaitBusy();
+        }
+
+		for (i=0; address<address_end && i<maxblocks; i++, address++) { 
+            CARD_EEPDATA = *data++; 
+            EepromWaitBusy(); 
+        }
 		CARD_CR1 = /*MODE*/0x40;
 
 		// wait programming to finish
 		CARD_CR1 = /*E*/0x8000 | /*SEL*/0x2000 | /*MODE*/0x40;
 		CARD_EEPDATA = 0x05; EepromWaitBusy();
 		do { CARD_EEPDATA = 0; EepromWaitBusy(); } while (CARD_EEPDATA & 0x01);	// WIP (Write In Progress) ?
-		CARD_CR1 = /*MODE*/0x40;
+        EepromWaitBusy();
+        CARD_CR1 = /*MODE*/0x40;
 	}
 }
+
+
+//  Chip Erase : clear FLASH MEMORY (TYPE 3 ONLY)
+//---------------------------------------------------------------------------------
+void cardEepromChipErase(void) {
+//---------------------------------------------------------------------------------
+    int sz;
+    sz=cardEepromGetSize();
+    cardEepromSectorErase(0x00000);
+    cardEepromSectorErase(0x10000);
+    cardEepromSectorErase(0x20000);
+    cardEepromSectorErase(0x30000);
+    if(sz==512*1024)
+    {
+        cardEepromSectorErase(0x40000);
+        cardEepromSectorErase(0x50000);
+        cardEepromSectorErase(0x60000);
+        cardEepromSectorErase(0x70000);
+    }
+}
+
+//  COMMAND Sec.erase 0xD8
+void cardEepromSectorErase(uint32 address)
+{
+        // set WEL (Write Enable Latch)
+        CARD_CR1 = /*E*/0x8000 | /*SEL*/0x2000 | /*MODE*/0x40;
+        CARD_EEPDATA = 0x06;
+        EepromWaitBusy();
+
+        CARD_CR1 = /*MODE*/0x40;
+
+        // SectorErase 0xD8
+        CARD_CR1 = /*E*/0x8000 | /*SEL*/0x2000 | /*MODE*/0x40;
+        CARD_EEPDATA = 0xD8;
+        EepromWaitBusy();
+        CARD_EEPDATA = (address >> 16) & 0xFF;
+        EepromWaitBusy();
+        CARD_EEPDATA = (address >> 8) & 0xFF;
+        EepromWaitBusy();
+        CARD_EEPDATA = address & 0xFF;
+        EepromWaitBusy();
+
+        CARD_CR1 = /*MODE*/0x40;
+
+        // wait erase to finish
+        CARD_CR1 = /*E*/0x8000 | /*SEL*/0x2000 | /*MODE*/0x40;
+        CARD_EEPDATA = 0x05;
+        EepromWaitBusy();
+
+        do
+        {
+            CARD_EEPDATA = 0;
+            EepromWaitBusy();
+        } while (CARD_EEPDATA & 0x01);  // WIP (Write In Progress) ?
+        CARD_CR1 = /*MODE*/0x40;
+}
+
 
