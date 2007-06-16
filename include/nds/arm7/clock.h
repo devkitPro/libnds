@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: clock.h,v 1.5 2007-02-19 01:28:13 wntrmute Exp $
+	$Id: clock.h,v 1.6 2007-06-16 01:08:54 wntrmute Exp $
 
 	ARM7 realtime clock
 
@@ -24,14 +24,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.4  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-	
-	Revision 1.3  2005/08/01 23:18:22  wntrmute
-	adjusted headers for logging
-	
 
 ---------------------------------------------------------------------------------*/
 
@@ -139,6 +131,7 @@ void rtcGetData(uint8 * data, uint32 size);
 void BCDToInteger(uint8 * data, uint32 length);
 void integerToBCD(uint8 * data, uint32 length);
 
+void initClockIRQ();
 
 #ifdef __cplusplus
 }

@@ -1,6 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: clock.c,v 1.5 2007-02-19 01:28:13 wntrmute Exp $
-
+	$Id: clock.c,v 1.6 2007-06-16 01:09:02 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (Joat)
@@ -24,19 +23,15 @@
 	3.	This notice may not be removed or altered from any source
 			distribution.
 
-	$Log: not supported by cvs2svn $
-	Revision 1.4  2005/10/21 22:43:06  wntrmute
-	Removed bogus ASSERT
-	
-	Revision 1.3  2005/09/20 05:05:52  wntrmute
-	added header logging
-	tidied formatting
-	
-
 ---------------------------------------------------------------------------------*/
 
 #include "nds/bios.h"
 #include "nds/arm7/clock.h"
+#include "nds/interrupts.h"
+#include "nds/ipc.h"
+
+#include <time.h>
+
 
 
 // Delay (in swiDelay units) for each bit transfer
@@ -219,6 +214,65 @@ void rtcSetTime(uint8 * time) {
 	rtcTransaction(command, 4, 0, 0);
 }
 
+//---------------------------------------------------------------------------------
+void syncRTC() {
+//---------------------------------------------------------------------------------
+	if (++IPC->time.rtc.seconds == 60 ) {
+		IPC->time.rtc.seconds = 0;
+		if (++IPC->time.rtc.minutes == 60) {
+			IPC->time.rtc.minutes  = 0;
+			if (++IPC->time.rtc.hours == 24) {
+				rtcGetTimeAndDate((uint8 *)&(IPC->time.rtc.year));
+			}
+		}
+	}
+	
+	IPC->unixTime++;
+}
+
+//---------------------------------------------------------------------------------
+void initClockIRQ() {
+//---------------------------------------------------------------------------------
+
+	REG_RCNT = 0x8100;
+	irqSet(IRQ_NETWORK, syncRTC);
+	// Reset the clock if needed
+	rtcReset();
+
+	uint8 command[4];
+	command[0] = READ_STATUS_REG2;
+	rtcTransaction(command, 1, &command[1], 1);
+
+	command[0] = WRITE_STATUS_REG2;
+	command[1] = 0x41;
+	rtcTransaction(command, 2, 0, 0);
+	
+	command[0] = WRITE_INT_REG1;
+	command[1] = 0x01;
+	rtcTransaction(command, 2, 0, 0);
+	
+	command[0] = WRITE_INT_REG2;
+	command[1] = 0x00;
+	command[2] = 0x21;
+	command[3] = 0x35;
+	rtcTransaction(command, 4, 0, 0);
+
+	// Read all time settings on first start
+	rtcGetTimeAndDate((uint8 *)&(IPC->time.rtc.year));
 
 
+	struct tm currentTime;
+
+	currentTime.tm_sec  = IPC->time.rtc.seconds;
+	currentTime.tm_min  = IPC->time.rtc.minutes;
+	currentTime.tm_hour = IPC->time.rtc.hours;
+
+	currentTime.tm_mday = IPC->time.rtc.day;
+	currentTime.tm_mon  = IPC->time.rtc.month - 1;
+	currentTime.tm_year = IPC->time.rtc.year + 100;
+	
+	currentTime.tm_isdst = -1;
+	
+	IPC->unixTime = mktime(&currentTime);
+}
 

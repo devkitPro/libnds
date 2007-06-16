@@ -96,27 +96,21 @@ void VblankHandler(void) {
 int main(int argc, char ** argv) {
 //---------------------------------------------------------------------------------
 
-
-	// Reset the clock if needed
-	rtcReset();
-
 	//enable sound
 	powerON(POWER_SOUND);
 	SOUND_CR = SOUND_ENABLE | SOUND_VOL(0x7F);
 
 	irqInit();
 
+	// Start the RTC tracking IRQ
+	initClockIRQ();
+
 	irqSet(IRQ_VBLANK, VblankHandler);
 
 	SetYtrigger(80);
 	irqSet(IRQ_VCOUNT, VcountHandler);
 
-
-
 	irqEnable( IRQ_VBLANK | IRQ_VCOUNT);
-
-
-	IPC->mailBusy = 0;
 
 	// Keep the ARM7 out of main RAM
 	while (1) swiWaitForVBlank();

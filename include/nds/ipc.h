@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: ipc.h,v 1.15 2007-02-19 01:29:24 wntrmute Exp $
+	$Id: ipc.h,v 1.16 2007-06-16 01:08:54 wntrmute Exp $
 
 	Inter Processor Communication
 
@@ -25,37 +25,12 @@
 	3.	This notice may not be removed or altered from any source
 		distribution.
 
-	$Log: not supported by cvs2svn $
-	Revision 1.14  2007/01/19 14:46:00  wntrmute
-	name anonymous structs and unions for -std=c99
-	
-	Revision 1.13  2006/01/17 09:47:00  wntrmute
-	*** empty log message ***
-	
-	Revision 1.12  2005/09/20 04:59:04  wntrmute
-	replaced defines with enums
-	replaced macros with static inlines
-	
-	Revision 1.11  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-
-	Revision 1.10  2005/08/03 05:26:42  wntrmute
-	use BIT macro
-	corrected header include
-
-	Revision 1.9  2005/07/27 02:20:05  wntrmute
-	resynchronise with ndslib
-	Updated GL with float wrappers for NeHe
-
-
 ---------------------------------------------------------------------------------*/
 
 #ifndef NDS_IPC_INCLUDE
 #define NDS_IPC_INCLUDE
 
-
 #include <nds/jtypes.h>
-
 
 //---------------------------------------------------------------------------------
 typedef struct sTransferSoundData {
@@ -82,11 +57,11 @@ typedef struct sTransferSound {
 //---------------------------------------------------------------------------------
 typedef struct sTransferRegion {
 //---------------------------------------------------------------------------------
-	vint16 touchX,   touchY;		// TSC X, Y
+	vint16 touchX,   touchY;	// TSC X, Y
 	vint16 touchXpx, touchYpx;	// TSC X, Y pixel values
 	vint16 touchZ1,  touchZ2;	// TSC x-panel measurements
 	vuint16 tdiode1,  tdiode2; 	// TSC temperature diodes
-	vuint32 temperature;			// TSC computed temperature
+	vuint32 temperature;		// TSC computed temperature
 
 	uint16 buttons;				// X, Y, /PENIRQ buttons
 
@@ -97,14 +72,15 @@ typedef struct sTransferRegion {
 			vu8 command;
 			vu8 year;		//add 2000 to get 4 digit year
 			vu8 month;		//1 to 12
-			vu8 day;			//1 to (days in month)
+			vu8 day;		//1 to (days in month)
 
-			vu8 weekday;			// day of week
+			vu8 weekday;	// day of week
 			vu8 hours;		//0 to 11 for AM, 52 to 63 for PM
-			vu8 minutes;		//0 to 59
-			vu8 seconds;		//0 to 59
+			vu8 minutes;	//0 to 59
+			vu8 seconds;	//0 to 59
 		} rtc;
 	} time;
+	vint32	unixTime;
 
 	uint16 battery;			// battery life ??  hopefully.  :)
 	uint16 aux;				// i have no idea...
