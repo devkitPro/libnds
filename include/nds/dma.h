@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: dma.h,v 1.6 2006-02-10 00:13:00 desktopman Exp $
+	$Id: dma.h,v 1.7 2007-06-16 01:06:39 wntrmute Exp $
 
 	Copyright (C) 2005
 		Jason Rogers (dovoto)
@@ -23,20 +23,6 @@
 
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.5  2006/01/17 09:41:12  wntrmute
-	finished correcting DMA_START_CARD
-	
-	Revision 1.4  2006/01/17 00:44:10  dovoto
-	Fixed DMA_START_CARD
-	
-	Revision 1.3  2006/01/12 09:10:47  wntrmute
-	Added key repeat as suggested by pepsiman
-	
-	Revision 1.2  2005/09/14 06:19:36  wntrmute
-	added header logging
-	
 
 ---------------------------------------------------------------------------------*/
 
@@ -143,6 +129,14 @@ static inline void dmaCopyAsynch(const void * source, void * dest, uint32 size) 
 	DMA_DEST(3) = (uint32)dest;
 	DMA_CR(3) = DMA_COPY_HALFWORDS | (size>>1);
 }
+
+static inline void dmaFillWords( const void* src, void* dest, uint32 size) {
+	DMA_SRC(3) = (uint32)src;
+	DMA_DEST(3) = (uint32)dest;
+	DMA_CR(3) = DMA_SRC_FIX | DMA_COPY_WORDS | (size>>2);
+	while(DMA_CR(3) & DMA_BUSY);
+}
+
 
 static inline int dmaBusy(uint8 channel) {
 	return (DMA_CR(channel) & DMA_BUSY)>>31;
