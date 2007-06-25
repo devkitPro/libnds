@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.18 2007-01-27 00:08:38 wntrmute Exp $
+	$Id: system.h,v 1.19 2007-06-25 20:21:42 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -25,64 +25,6 @@
 
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.17  2007/01/14 07:58:55  wntrmute
-	change WAIT_CR to REG_EXEMEMCNT/REG_EXEMEMSTAT
-	change bus owner funtions to static inline
-	move WAIT_CR to registers_alt.h
-	
-	Revision 1.16  2006/12/17 11:14:59  wntrmute
-	use REG_POWERCNT
-	POWER_CR defined in registers_alt.h
-	
-	Revision 1.15  2006/08/03 09:36:09  wntrmute
-	use leading zero
-	
-	Revision 1.14  2006/06/26 11:26:32  wntrmute
-	remove //////
-	
-	Revision 1.13  2006/06/17 00:26:40  wntrmute
-	correct SetYtrigger function
-
-	Revision 1.12  2006/06/16 07:35:14  wntrmute
-	more moves to REG_ values
-	implement SetYtrigger helper function
-	set bits in REG_DISPSTAT for IRQ_VCOUNT
-
-	Revision 1.11  2006/02/25 02:18:53  wntrmute
-	doxygenation updates
-
-	Revision 1.10  2006/02/21 00:06:41  wntrmute
-	changed powerON to OR values
-	added powerSET function to set value directly
-
-	Revision 1.9  2005/11/27 12:30:24  wntrmute
-	reverted to correct hardware REGisters
-
-	Revision 1.8  2005/11/27 07:55:14  joatski
-	Fixed my mistake in the changelogs
-
-	Revision 1.7  2005/11/27 07:49:19  joatski
-	Renamed REG_KEYINPUT and REG_KEYCNT back to KEYS and KEYS_CR, as the alternatives are defined in registers_alt.h.
-
-	Revision 1.6  2005/10/11 03:08:58  dovoto
-	added lcdMainOnTop() and llcdMainOnBottom()
-
-	Revision 1.5  2005/09/07 18:03:36  wntrmute
-	renamed key input registers
-	moved key bit definitions to input.h
-
-	Revision 1.4  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-
-	Revision 1.3  2005/08/03 05:24:42  wntrmute
-	adjusted header for logging
-	tidied formatting
-	powerON sets not ORs
-	powerOFF inverts paramter
-	use BIT macro
-
 
 ---------------------------------------------------------------------------------*/
 
@@ -217,7 +159,10 @@ enum ARM7_power
 #define POWER_SOUND       BIT(0)
 #define POWER_UNKNOWN     BIT(1)
 #endif /* DOXYGEN */
-#endif
+
+void readUserSettings();
+
+#endif /* ARM7 */
 
 //!	User's DS settings.
 /*!	\struct tPERSONAL_DATA
