@@ -55,6 +55,12 @@ void initSystem(void) {
 	}
 
 	VRAM_CR = 0x80808080;
+	VRAM_E_CR = 0x80;
+	VRAM_F_CR = 0x80;
+	VRAM_G_CR = 0x80;
+	VRAM_H_CR = 0x80;
+	VRAM_I_CR = 0x80;
+
 	(*(vu32*)0x027FFE04) = 0;  // temporary variable
 	PALETTE[0] = 0xFFFF;
 	dmaFillWords((void*)0x027FFE04, PALETTE+1, (2*1024)-2);
