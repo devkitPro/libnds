@@ -20,17 +20,6 @@
   3.  This notice may not be removed or altered from any source
       distribution.
 
-  $Log: not supported by cvs2svn $
-  Revision 1.2  2006/06/26 02:06:30  wntrmute
-  use correct register defines
-
-  Revision 1.1  2006/02/06 22:29:32  joatski
-  Added writePowerManagement, readPowerManagement, and readFirmware to serial.h, as well as some associated defines.
-
-  Created spi.c to contain the code for these two.
-
-
-
 ---------------------------------------------------------------------------------*/
 
 #include <nds/arm7/serial.h>

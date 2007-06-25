@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.19 2006-12-16 22:29:37 wntrmute Exp $
+	$Id: touch.c,v 1.20 2007-06-25 20:23:35 wntrmute Exp $
 
 	Touch screen control for the ARM7
 
@@ -24,62 +24,6 @@
 			must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 			distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.18  2006/04/04 23:05:19  wntrmute
-	Added pressure reading to touchscreen function
-	
-	Revision 1.17  2006/02/21 23:50:10  wntrmute
-	corrected build errors
-	
-	Revision 1.16  2006/02/21 20:25:49  dovoto
-	Fixed some compilation errors (missing paranthesis and missing include)
-	
-	Revision 1.15  2006/02/21 00:28:32  wntrmute
-	disable interrupts around touch screen reading
-	
-	Revision 1.14  2006/01/30 18:59:45  wntrmute
-	improved touch code
-	
-	Revision 1.13  2006/01/12 11:13:55  wntrmute
-	modified touch reading code from suggesrions found here -> http://forum.gbadev.org/viewtopic.php?t=7980
-	
-	Revision 1.12  2005/12/17 01:03:05  wntrmute
-	corrected typos
-	changed to median values
-	
-	Revision 1.11  2005/12/11 22:49:53  wntrmute
-	use con for console device name
-	
-	Revision 1.10  2005/10/17 15:35:56  wntrmute
-	use weighted averaging
-	
-	Revision 1.9  2005/10/03 21:19:34  wntrmute
-	use ratiometric mode
-	lock touchscreen on and average several readings
-	
-	Revision 1.8  2005/09/12 06:51:58  wntrmute
-	tidied touch code
-	
-	Revision 1.7  2005/09/07 18:05:37  wntrmute
-	use macros for device settings
-
-	Revision 1.6  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-
-	Revision 1.5  2005/08/01 23:12:17  wntrmute
-	extended touchReadXY to return touchscreen co-ordinates as well as screen co-ordinates
-
-	Revision 1.4  2005/07/29 00:57:40  wntrmute
-	updated file headers
-	added touchReadXY function
-	made header C++ compatible
-
-	Revision 1.3  2005/07/12 17:32:20  wntrmute
-	updated file header
-
-	Revision 1.2  2005/07/11 23:12:15  wntrmute
-	*** empty log message ***
 
 ---------------------------------------------------------------------------------*/
 

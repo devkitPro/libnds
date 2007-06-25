@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: audio.c,v 1.2 2005-09-20 05:07:16 wntrmute Exp $
+	$Id: audio.c,v 1.3 2007-06-25 20:23:35 wntrmute Exp $
 
 
 	Copyright (C) 2005
@@ -21,8 +21,6 @@
 			must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 			distribution.
-
-	$Log: not supported by cvs2svn $
 
 ---------------------------------------------------------------------------------*/
 

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: microphone.c,v 1.4 2005-09-07 18:06:27 wntrmute Exp $
+	$Id: microphone.c,v 1.5 2007-06-25 20:23:35 wntrmute Exp $
 
 	Microphone control for the ARM7
 
@@ -25,16 +25,6 @@
      must not be misrepresented as being the original software.
   3. This notice may not be removed or altered from any source
      distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.3  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-
-	Revision 1.2  2005/07/14 08:00:57  wntrmute
-	resynchronise with ndslib
-
-	Revision 1.1  2005/07/12 17:32:20  wntrmute
-	added microphone functions
 
 ---------------------------------------------------------------------------------*/
 #include <nds/arm7/audio.h>

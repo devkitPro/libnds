@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: bios.h,v 1.9 2006-07-04 01:55:05 wntrmute Exp $
+  $Id: bios.h,v 1.10 2007-06-25 20:23:26 wntrmute Exp $
 
   BIOS functions
 
@@ -24,28 +24,6 @@
       must not be misrepresented as being the original software.
   3.  This notice may not be removed or altered from any source
       distribution.
-
-  $Log: not supported by cvs2svn $
-  Revision 1.8  2006/06/30 05:04:07  crossraleigh
-  Changed swiCopy's prototype so const_cast isn't needed in C++
-
-  Revision 1.7  2006/06/26 02:07:34  wntrmute
-  doxygenation
-
-  Revision 1.6  2006/03/03 07:21:17  joatski
-  Fixed a couple of little bugs (e.g. swiSetHaltCR using r0 instead of r2 on ARM7)
-  Commented out ARM7 swis in ARM9 mode, and vis versa
-
-  Revision 1.5  2005/08/23 17:06:10  wntrmute
-  converted all endings to unix
-
-  Revision 1.4  2005/08/03 05:26:42  wntrmute
-  use BIT macro
-  corrected header include
-
-  Revision 1.3  2005/08/01 23:18:22  wntrmute
-  adjusted headers for logging
-
 
 ---------------------------------------------------------------------------------*/
 
