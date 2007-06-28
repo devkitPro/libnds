@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.38 2007-05-01 22:48:09 wntrmute Exp $
+	$Id: video.h,v 1.39 2007-06-28 00:00:13 wntrmute Exp $
 
 	Video registers and defines
 
@@ -24,111 +24,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.37  2007/04/02 07:44:32  gabebear
-	- MATRIX_READ_MODELVIEW is MATRIX_READ_CLIP
-	- add defines for fog
-	
-	Revision 1.36  2007/02/20 05:17:04  gabebear
-	added position test defines
-	
-	Revision 1.35  2007/02/12 03:32:29  wntrmute
-	add leading zero to VRAM_B_MAIN_SPRITE enums
-	
-	Revision 1.34  2007/02/10 05:30:11  dovoto
-	Added background control overlay struct for easier access to background control registers
-	
-	Revision 1.33  2007/02/07 17:02:00  wntrmute
-	add global CHAR and SCREEN offset macros
-	
-	Revision 1.32  2007/01/14 11:41:51  wntrmute
-	add leading zero to VRAM macros with addresses
-	
-	Revision 1.31  2007/01/14 11:31:22  wntrmute
-	bogus fixed types removed from libnds
-	
-	Revision 1.30  2007/01/11 05:35:41  dovoto
-	Applied gabebear patch # 1632896
-	fix gluPickMatrix()
-	- no float / f32 version because all the parameters will always be regular ints
-	- it actually works now
-	
-	fix gluFrustrumf32() and gluFrustum()
-	- rename to glFrustrum because this is a GL function, not GLU (I'm breaking stuff...)
-	- no longer changes matrix mode to projection (it's useful for more than projection)
-	- multiplies instead of loads
-	
-	fix glOrthof32()
-	- no longer changes matrix mode to projection (it's useful for more than projection)
-	- multiplies instead of loads
-	
-	fix glGetFixed()
-	- correctly waits for graphics engine to stop before getting any matrix
-	- added ability to get projection and modelview matrices
-	- fixed projection matrix get (it was grabbing modelview)
-	- getting projection or position matrices now uses the matrix stack to preserve
-	the other matrix. Not many people use the matrix stack and you would normally
-	only do this at the beginning of a program so I doubt it will be a problem.
-	
-	Revision 1.29  2006/08/19 07:07:10  dovoto
-	Found a few more mapping defines that were missing or ambigous
-	
-	Revision 1.28  2006/08/19 06:41:44  dovoto
-	updated mappoing for vram A B main sprite and C, D arm7 vram
-	
-	Revision 1.25  2006/07/19 21:10:34  wntrmute
-	add libgba compatibility macros
-	
-	Revision 1.24  2006/07/18 15:45:09  wntrmute
-	added handy macros from libgba
-
-	Revision 1.23  2006/07/04 12:10:57  wntrmute
-	add macros for extended palette slots
-
-	Revision 1.22  2006/07/02 17:08:17  wntrmute
-	object scaling registers are signed
-
-	Revision 1.21  2006/05/13 13:38:51  wntrmute
-	updated for registers moved to main headers
-
-	Revision 1.20  2006/02/10 00:17:55  desktopman
-	Added MODE_FIFO for main memory to FIFO display mode
-
-	Revision 1.19  2006/02/02 00:11:57  wntrmute
-	corrected BG_64x32 & BG_32x64 defines
-
-	Revision 1.18  2006/01/12 09:13:14  wntrmute
-	remove duplicate ATTR0_BMP
-
-	Revision 1.17  2006/01/05 08:13:26  dovoto
-	Fixed gluLookAt (again)
-	Major update to palette handling (likely a breaking change if you were using the gl texture palettes from before)
-
-	Revision 1.16  2005/12/12 14:36:03  wntrmute
-	*** empty log message ***
-
-	Revision 1.15  2005/11/27 04:37:00  joatski
-	Added DISP_CAPTURE and associated macros
-	Added GFX_CUTOFF_DEPTH
-	Renamed GFX_ALPHA to GFX_ALPHA_TEST
-
-	Revision 1.14  2005/11/26 20:31:15  joatski
-	vramRestorMainBanks changed to vramRestoreMainBanks
-	Added some comment lines between defines
-
-	Revision 1.13  2005/11/07 04:13:41  dovoto
-	Added register definitions for box test and matrix reading
-
-	Revision 1.12  2005/10/05 21:56:58  wntrmute
-	corrected BG_BMP8_1024x512 & BG_BMP8_512x1024 defines
-
-	Revision 1.11  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-
-	Revision 1.10  2005/08/01 23:18:22  wntrmute
-	adjusted headers for logging
-
 
 ---------------------------------------------------------------------------------*/
 
@@ -640,68 +535,6 @@ typedef struct {
 
 #define WRAPAROUND              0x1
 
-// Sprite control defines
-
-// Attribute 0 consists of 8 bits of Y plus the following flags:
-#define ATTR0_NORMAL			(0<<8)
-#define ATTR0_ROTSCALE			(1<<8)
-#define ATTR0_DISABLED			(2<<8)
-#define ATTR0_ROTSCALE_DOUBLE	(3<<8)
-
-#define ATTR0_TYPE_NORMAL		(0<<10)
-#define ATTR0_TYPE_BLENDED		(1<<10)
-#define ATTR0_TYPE_WINDOWED		(2<<10)
-#define ATTR0_BMP				(3<<10)
-
-#define ATTR0_MOSAIC			(1<<12)
-
-#define ATTR0_COLOR_16		(0<<13) //16 color in tile mode...16 bit in bitmap mode
-#define ATTR0_COLOR_256		(1<<13)
-
-#define ATTR0_SQUARE		(0<<14)
-#define ATTR0_WIDE			(1<<14)
-#define ATTR0_TALL			(2<<14)
-
-#define OBJ_Y(m)			((m)&0x00ff)
-
-// Atribute 1 consists of 9 bits of X plus the following flags:
-#define ATTR1_ROTDATA(n)      ((n)<<9)  // note: overlaps with flip flags
-#define ATTR1_FLIP_X          (1<<12)
-#define ATTR1_FLIP_Y          (1<<13)
-#define ATTR1_SIZE_8          (0<<14)
-#define ATTR1_SIZE_16         (1<<14)
-#define ATTR1_SIZE_32         (2<<14)
-#define ATTR1_SIZE_64         (3<<14)
-
-#define OBJ_X(m)			((m)&0x01ff)
-
-// Atribute 2 consists of the following:
-#define ATTR2_PRIORITY(n)     ((n)<<10)
-#define ATTR2_PALETTE(n)      ((n)<<12)
-#define ATTR2_ALPHA(n)		  ((n)<<12)
-
-
-// Sprite structures
-
-typedef struct sSpriteEntry {
-  uint16 attribute[3];
-  uint16 filler;
-} SpriteEntry, * pSpriteEntry;
-
-
-typedef struct sSpriteRotation {
-  uint16 filler1[3];
-  int16 hdx;
-
-  uint16 filler2[3];
-  int16 hdy;
-
-  uint16 filler3[3];
-  int16 vdx;
-
-  uint16 filler4[3];
-  int16 vdy;
-} SpriteRotation, * pSpriteRotation;
 
 // 3D core control
 
