@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.39 2007-06-28 00:00:13 wntrmute Exp $
+	$Id: video.h,v 1.40 2007-06-28 00:52:49 wntrmute Exp $
 
 	Video registers and defines
 
@@ -497,7 +497,8 @@ typedef struct {
 
 // Display capture control
 
-#define	REG_DISPCAPCNT	(*(vuint32*)0x04000064)
+#define	REG_DISPCAPCNT		(*(vuint32*)0x04000064)
+#define REG_ DISP_MMEM_FIFO	(*(vuint32*)0x04000068)
 
 #define DCAP_ENABLE    BIT(31)
 #define DCAP_MODE(n)   (((n) & 3) << 29)
@@ -508,32 +509,6 @@ typedef struct {
 #define DCAP_BANK(n)   (((n) & 3) << 16)
 #define DCAP_B(n)      (((n) & 0x1F) << 8)
 #define DCAP_A(n)      (((n) & 0x1F) << 0)
-
-// Background control defines
-
-// BGxCNT defines ///
-#define BG_MOSAIC_ENABLE    0x40
-#define BG_COLOR_256      0x80
-#define BG_COLOR_16        0x0
-
-#define CHAR_BASE_BLOCK(n)    (((n)*0x4000)+0x6000000)
-#define CHAR_BASE_BLOCK_SUB(n)    (((n)*0x4000)+0x6200000)
-#define SCREEN_BASE_BLOCK(n)  (((n)*0x800)+0x6000000)
-#define SCREEN_BASE_BLOCK_SUB(n)  (((n)*0x800)+0x6200000)
-
-#define CHAR_SHIFT        2
-#define SCREEN_SHIFT      8
-#define TEXTBG_SIZE_256x256    0x0
-#define TEXTBG_SIZE_256x512    0x8000
-#define TEXTBG_SIZE_512x256    0x4000
-#define TEXTBG_SIZE_512x512    0xC000
-
-#define ROTBG_SIZE_128x128    0x0
-#define ROTBG_SIZE_256x256    0x4000
-#define ROTBG_SIZE_512x512    0x8000
-#define ROTBG_SIZE_1024x1024  0xC000
-
-#define WRAPAROUND              0x1
 
 
 // 3D core control

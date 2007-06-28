@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: nds.h,v 1.12 2007-06-28 00:32:47 wntrmute Exp $
+	$Id: nds.h,v 1.13 2007-06-28 00:52:49 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.12  2007/06/28 00:32:47  wntrmute
+	add sprite.h
+	
 	Revision 1.11  2006/07/04 01:44:31  wntrmute
 	remove CP15 header
 	
@@ -72,6 +75,7 @@ extern "C" {
 #ifdef ARM9
 //---------------------------------------------------------------------------------
 
+#include <nds/arm9/background.h>
 #include <nds/arm9/boxtest.h>
 #include <nds/arm9/cache.h>
 #include <nds/arm9/console.h>
