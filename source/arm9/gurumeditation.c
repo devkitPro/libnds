@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: gurumeditation.c,v 1.6 2006-08-03 09:35:36 wntrmute Exp $
+  $Id: gurumeditation.c,v 1.7 2007-06-28 01:03:28 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
@@ -21,25 +21,6 @@
   3. This notice may not be removed or altered from any source
      distribution.
 
-  $Log: not supported by cvs2svn $
-  Revision 1.5  2006/07/06 02:14:33  wntrmute
-  read r15 in enterException
-  add return to bios
-
-  Revision 1.4  2006/06/21 20:12:39  wntrmute
-  thumb ldrsh has register offset
-
-  Revision 1.3  2006/06/19 19:12:01  wntrmute
-  correct prototypes again
-  add defaultHandler function to install default handler
-
-  Revision 1.2  2006/06/19 18:22:25  wntrmute
-  completed thumb address calculations
-
-  Revision 1.1  2006/06/19 14:09:37  wntrmute
-  split default exception handler into separate file
-  correct prototypes
-
 ---------------------------------------------------------------------------------*/
 
 #include <nds/jtypes.h>
@@ -48,6 +29,7 @@
 #include <nds/arm9/video.h>
 #include <nds/arm9/console.h>
 #include <nds/arm9/exceptions.h>
+#include <nds/arm9/background.h>
 
 #include <stdio.h>
 
