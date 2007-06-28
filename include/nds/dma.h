@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: dma.h,v 1.7 2007-06-16 01:06:39 wntrmute Exp $
+	$Id: dma.h,v 1.8 2007-06-28 00:33:22 wntrmute Exp $
 
 	Copyright (C) 2005
 		Jason Rogers (dovoto)
@@ -137,6 +137,12 @@ static inline void dmaFillWords( const void* src, void* dest, uint32 size) {
 	while(DMA_CR(3) & DMA_BUSY);
 }
 
+static inline void dmaFillHalfWords( const void* src, void* dest, uint32 size) {
+	DMA_SRC(3) = (uint32)src;
+	DMA_DEST(3) = (uint32)dest;
+	DMA_CR(3) = DMA_SRC_FIX | DMA_COPY_HALFWORDS | (size>>1);
+	while(DMA_CR(3) & DMA_BUSY);
+}
 
 static inline int dmaBusy(uint8 channel) {
 	return (DMA_CR(channel) & DMA_BUSY)>>31;
