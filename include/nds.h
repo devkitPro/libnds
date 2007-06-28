@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: nds.h,v 1.11 2006-07-04 01:44:31 wntrmute Exp $
+	$Id: nds.h,v 1.12 2007-06-28 00:32:47 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.11  2006/07/04 01:44:31  wntrmute
+	remove CP15 header
+	
 	Revision 1.10  2006/06/18 21:16:26  wntrmute
 	added arm9 exception handler API
 
@@ -82,6 +85,7 @@ extern "C" {
 #include <nds/arm9/trig_lut.h>
 #include <nds/arm9/video.h>
 #include <nds/arm9/videoGL.h>
+#include <nds/arm9/sprite.h>
 
 #endif // #ifdef ARM9
 
