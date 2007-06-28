@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: ndsmotion.c,v 1.4 2007-05-22 18:05:26 dovoto Exp $
+	$Id: ndsmotion.c,v 1.5 2007-06-28 00:54:07 wntrmute Exp $
 
 	DS Motion Card/DS Motion Pak functionality
 	
@@ -26,27 +26,13 @@
 	3.	This notice may not be removed or altered from any source
 		distribution.
 
-	$Log: not supported by cvs2svn $
-	
-	Revision 1.4  2007/05/18 9:35:01  KeithE
-	Added support for DS Motion Pak and MK6
-	Added motion_init() to determine which type of motion sensor is present (0 if none)
-	motion_init() NEEDS TO BE RUN BEFORE USING THE MOTION SENSOR FUNCTIONS
-	Added input parameter to motion_read_ functions that contains the motion sensor type
-	Use motion_init() to check whether a DS Motion Sensor is inserted
-	
-	Revision 1.3  2007/01/10 16:47:30  dovoto
-	Added calibtation settings to ds motion code
-	
-	Revision 1.2  2007/01/09 06:23:43  dovoto
-	Fixed logging header for ndsmotion.h and ndsmotion.c
-	
-
 ---------------------------------------------------------------------------------*/
 
-#include <nds.h>
+#include <nds/card.h>
+#include <nds/system.h>
+#include <nds/memory.h>
+#include <nds/bios.h>
 #include <nds/arm9/ndsmotion.h>
-
 
 #define WAIT_CYCLES 185
 

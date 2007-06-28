@@ -2,7 +2,7 @@
 
 	initSystem.c -- Code for initialising the DS
 
-	Copyright (C) 2005
+	Copyright (C) 2007
 	Dave Murphy (WinterMute)
 
 	This software is provided 'as-is', without any express or implied

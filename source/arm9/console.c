@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.18 2006-05-23 03:51:16 wntrmute Exp $
+	$Id: console.c,v 1.19 2007-06-28 00:54:07 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -23,71 +23,17 @@
 	3.	This notice may not be removed or altered from any source
 		distribution.
 
-	$Log: not supported by cvs2svn $
-	Revision 1.17  2006/05/13 13:37:15  wntrmute
-	updated for newlib driver API
-	
-	Revision 1.16  2006/01/17 09:40:11  wntrmute
-	corrected off by one error in console clear code
-	
-	Revision 1.15  2006/01/10 05:45:02  dovoto
-	Added a consoleClear because i can....
-	
-	Revision 1.14  2005/12/11 22:49:53  wntrmute
-	use con for console device name
-	
-	Revision 1.13  2005/11/07 04:11:53  dovoto
-	Added consoleDemoInit for prototyping
-	
-	Revision 1.12  2005/10/26 05:22:34  bigredpimp
-	Added Line Clearing escape sequences
-	- "\x1b[K" & "\x1b[0K" = clear from cursor to end of line
-	- "\x1b[1K" = clear from cursor to beginning of line
-	- "\x1b[2K" = clear entire line
-	
-	Changed & Added to Screen Clearing escape sequences
-	- "\x1b[0J" = clear from cursor to end of screen
-	- "\x1b[1J" = clear from cursor to beginning of screen
-	- "\x1b[2J" = clear whole screen and set cursor at 0,0
-	
-	Revision 1.11  2005/10/20 20:54:44  wntrmute
-	doxygenation
-	use siscanf
-	
-	Revision 1.10  2005/09/12 06:50:23  wntrmute
-	removed *printAt
-	added ansi escape sequences
-	
-	Revision 1.9  2005/09/04 00:24:44  wntrmute
-	exposed consoleSetPos
-	move iprintAt and printAt to separate files
-
-	Revision 1.8  2005/08/31 01:10:33  wntrmute
-	reworked console into stdio
-
-	Revision 1.7  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-
-	Revision 1.6  2005/08/22 08:09:05  wntrmute
-	removed unnecessary headers
-
-	Revision 1.5  2005/07/30 23:20:38  dovoto
-	Fixed an error with printf for strings that end with a formating character.
-
-	Revision 1.4  2005/07/14 08:00:57  wntrmute
-	resynchronise with ndslib
-
-
 ---------------------------------------------------------------------------------*/
 
 #include <nds/jtypes.h>
+#include <nds/memory.h>
 #include <nds/arm9/console.h>
 #include <nds/arm9/video.h>
-#include <nds/memory.h>
+#include <nds/arm9/background.h>
 #include <default_font_bin.h>
+
 #include <stdio.h>
 #include <stdarg.h>
-
 #include <sys/iosupport.h>
 
 //	global console variables
