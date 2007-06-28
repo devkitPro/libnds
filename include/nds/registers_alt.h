@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: registers_alt.h,v 1.14 2007-05-01 22:48:09 wntrmute Exp $
+	$Id: registers_alt.h,v 1.15 2007-06-28 00:32:26 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -23,46 +23,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.13  2007/03/01 10:12:43  wntrmute
-	correct spelling of REG_EXMEMCNT
-	
-	Revision 1.12  2007/02/19 01:27:26  wntrmute
-	use gbatek names for registers
-	
-	Revision 1.11  2007/01/26 22:37:41  wntrmute
-	defines for SERIAL_CR & SERIAL_DATA changed to REG_ updates from addresses
-	
-	Revision 1.10  2007/01/23 21:59:22  wntrmute
-	replace key register defines
-	
-	Revision 1.9  2007/01/14 07:58:55  wntrmute
-	change WAIT_CR to REG_EXEMEMCNT/REG_EXEMEMSTAT
-	change bus owner funtions to static inline
-	move WAIT_CR to registers_alt.h
-	
-	Revision 1.8  2006/12/17 11:14:59  wntrmute
-	use REG_POWERCNT
-	POWER_CR defined in registers_alt.h
-	
-	Revision 1.7  2006/08/03 09:35:14  wntrmute
-	use defines for easier replacement of deprecated values
-	
-	Revision 1.6  2006/06/16 07:35:14  wntrmute
-	more moves to REG_ values
-	implement SetYtrigger helper function
-	set bits in REG_DISPSTAT for IRQ_VCOUNT
-
-	Revision 1.5  2006/05/13 13:38:51  wntrmute
-	updated for registers moved to main headers
-
-	Revision 1.4  2005/11/27 13:48:20  wntrmute
-	added deprecation notice
-
-	Revision 1.3  2005/09/07 17:59:37  wntrmute
-	added header logging
-
 
 ---------------------------------------------------------------------------------*/
 
@@ -325,8 +285,8 @@
 #define	REG_MTX_CONTROL		(*(vu32*) 0x4000440)
 #define	REG_MTX_PUSH		(*(vu32*) 0x4000444)
 #define	REG_MTX_POP			(*(vu32*) 0x4000448)
-#define	REG_MTX_SCALE		(*(volatile	f32*) 0x400046C)
-#define	REG_MTX_TRANSLATE	(*(volatile	f32*) 0x4000470)
+#define	REG_MTX_SCALE		(*(vint32*) 0x400046C)
+#define	REG_MTX_TRANSLATE	(*(vint32*) 0x4000470)
 #define	REG_MTX_RESTORE		(*(vu32*) 0x4000450)
 #define	REG_MTX_STORE		(*(vu32*) 0x400044C)
 #define	REG_MTX_IDENTITY	(*(vu32*) 0x4000454)
