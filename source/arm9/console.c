@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.c,v 1.19 2007-06-28 00:54:07 wntrmute Exp $
+	$Id: console.c,v 1.20 2007-07-07 20:25:36 bigredpimp Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -56,6 +56,7 @@ static u16 fontOffset;
 static u16 fontStart;
 
 //	the 16-color palette to use
+bool fontBold = false;
 static u16 fontPal;
 
 static int consoleInitialised = 0;
@@ -201,15 +202,11 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 				chr = *(tmp++);
 				i++; count++; escapelen++;
 				int parameter;
+				
 				switch (chr) {
-					case 'H':
-						siscanf(escapeseq,"[%d;%dH", &row, &col);
-						escaping = false;
-						break;
-					case 'f':
-						siscanf(escapeseq,"[%d;%df", &row, &col);
-						escaping = false;
-						break;
+					/////////////////////////////////////////
+					// Cursor directional movement
+					/////////////////////////////////////////
 					case 'A':
 						siscanf(escapeseq,"[%dA", &parameter);
 						row =  (row - parameter) < 0 ? 0 : row - parameter;
@@ -230,24 +227,44 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 						col =  (col - parameter) < 0 ? 0 : col - parameter;
 						escaping = false;
 						break;
+					/////////////////////////////////////////
+					// Cursor position movement
+					/////////////////////////////////////////
+					case 'H':
+					case 'f':
+						siscanf(escapeseq,"[%d;%df", &row, &col);
+						escaping = false;
+						break;
+					/////////////////////////////////////////
+					// Screen clear
+					/////////////////////////////////////////
+					case 'J':
+						consoleCls(escapeseq[escapelen-2]);
+						escaping = false;
+						break;
+					/////////////////////////////////////////
+					// Line clear
+					/////////////////////////////////////////
 					case 'K':
 						consoleClearLine(escapeseq[escapelen-2]);
 						escaping = false;
 						break;
+					/////////////////////////////////////////
+					// Save cursor position
+					/////////////////////////////////////////
 					case 's':
 						savedX = col;
 						savedY = row;
 						escaping = false;
 						break;
+					/////////////////////////////////////////
+					// Load cursor position
+					/////////////////////////////////////////
 					case 'u':
 						col = savedX;
 						row = savedY;
 						escaping = false;
 						break;
-					case 'J':
-						consoleCls(escapeseq[escapelen-2]);
-						escaping = false;
-					break;
 				}
 			} while (escaping);
 		continue;
@@ -379,6 +396,10 @@ void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth) {
 	consoleInit((u16*)default_font_bin, charBase, 256, 0, map, CONSOLE_USE_COLOR255, bitDepth);
 }
 
+//void consoleInitColorDefault(u16* map, u16* charBase) {
+//	consoleInit((u16*)default_font_bin, charBase, 256, 0, map, CONSOLE_USE_COLOR255, bitDepth);
+//}
+
 //---------------------------------------------------------------------------------
 static void newRow() {
 //---------------------------------------------------------------------------------
@@ -406,22 +427,26 @@ void consolePrintChar(char c) {
 	}
 
 	switch(c) {
-
-	case 10:
-	case 11:
-	case 12:
-	case 13:
-		newRow();
-		col = 0;
-		break;
-	case 9:
-		col += TAB_SIZE;
-		break;
-	default:
-		fontMap[col + row * CONSOLE_WIDTH] = fontPal | (u16)(c + fontOffset - fontStart);
-		col++;
-		break;
-
+		/*
+			The only special characters we will handle are tab (\t), carriage return (\r) & line feed (\n).
+			Carriage return & line feed will function the same: go to next line and put cursor at the beginning.
+			For everything else, use VT sequences.
+			
+			Reason: VT sequences are more specific to the task of cursor placement.
+			The special escape sequences \b \f & \v are archaic and non-portable.
+		*/
+		case 9:
+			col += TAB_SIZE;
+			break;
+		case 10:
+		case 13:
+			newRow();
+			col = 0;
+			break;
+		default:
+			fontMap[col + row * CONSOLE_WIDTH] = fontPal | (u16)(c + fontOffset - fontStart);
+			++col;
+			break;
 	}
 }
 
