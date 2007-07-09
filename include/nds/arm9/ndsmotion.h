@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: ndsmotion.h,v 1.7 2007-06-28 00:53:59 wntrmute Exp $
+	$Id: ndsmotion.h,v 1.8 2007-07-09 15:52:55 wntrmute Exp $
 
 	DS Motion Card/DS Motion Pak functionality
 	
@@ -28,7 +28,7 @@
 
 ---------------------------------------------------------------------------------*/
 
-/*! \file motion.h 
+/*! \file ndsmotion.h 
 \brief interface code for the ds motion card, ds motion pak, MK6 
 
 */
@@ -59,7 +59,7 @@ int motion_init();
 */
 void motion_deinit();
 
-/*! \fn void motion_enable()
+/*! \fn signed int motion_read_x()
 \brief  read the X acceleration
 */
 signed int motion_read_x();
@@ -142,7 +142,7 @@ default is 1680
 */
 void motion_set_offs_gyro();
 
-/*! \fn int motion_rotation(int rotation)
+/*! \fn int motion_rotation()
 \brief converts raw rotation value to degrees per second
 */
 int motion_rotation();
@@ -152,7 +152,7 @@ int motion_rotation();
 */
 MotionCalibration* motion_get_calibration();
 
-/*! \fn MotionCalibration* motion_get_calibraion()
+/*! \fn void motion_set_calibration(MotionCalibration* cal)
 \brief This sets the calibration settings.  Intended
 to restore saved calibration settings
 */
