@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: jtypes.h,v 1.15 2007-01-14 11:31:22 wntrmute Exp $
+	$Id: jtypes.h,v 1.16 2007-07-09 15:51:11 wntrmute Exp $
 
 	jtypes.h -- Common types (and a few useful macros)
 
@@ -27,6 +27,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.15  2007/01/14 11:31:22  wntrmute
+	bogus fixed types removed from libnds
+	
 	Revision 1.14  2006/04/04 23:05:19  wntrmute
 	Added pressure reading to touchscreen function
 	
@@ -61,7 +64,6 @@
 
 	Revision 1.5  2005/07/22 17:39:53  wntrmute
 	removed useless section macros
-
 
 ---------------------------------------------------------------------------------*/
 #ifndef NDS_JTYPES_INCLUDE
@@ -98,45 +100,46 @@
 
 #define BIT(n) (1 << (n))
 
-typedef unsigned char           uint8;
-typedef unsigned short int      uint16;
-typedef unsigned int            uint32;
-typedef unsigned long long int  uint64;
+// define libnds types in terms of stdint
+#include <stdint.h>
 
-typedef signed char             int8;
-typedef signed short int        int16;
-typedef signed int              int32;
-typedef signed long long int    int64;
+typedef uint8_t		uint8;
+typedef uint16_t	uint16;
+typedef uint32_t	uint32;
+typedef uint64_t	uint64;
 
-typedef float                   float32;
-typedef double                  float64;
+typedef int8_t		int8;
+typedef int16_t		int16;
+typedef int32_t		int32;
+typedef int64_t		int64;
 
-typedef volatile uint8          vuint8;
-typedef volatile uint16         vuint16;
-typedef volatile uint32         vuint32;
-typedef volatile uint64         vuint64;
+typedef float		float32;
+typedef double		float64;
 
-typedef volatile int8           vint8;
-typedef volatile int16          vint16;
-typedef volatile int32          vint32;
-typedef volatile int64          vint64;
+typedef volatile uint8_t	vuint8;
+typedef volatile uint16_t	vuint16;
+typedef volatile uint32_t	vuint32;
+typedef volatile uint64_t	vuint64;
+
+typedef volatile int8_t		vint8;
+typedef volatile int16_t	vint16;
+typedef volatile int32_t	vint32;
+typedef volatile int64_t	vint64;
 
 typedef volatile float32        vfloat32;
 typedef volatile float64        vfloat64;
 
-typedef uint8                   byte;
+typedef uint8_t		byte;
 
+typedef uint8_t		u8;
+typedef uint16_t	u16;
+typedef uint32_t	u32;
+typedef uint64_t	u64;
 
-
-typedef unsigned char           u8;
-typedef unsigned short int      u16;
-typedef unsigned int            u32;
-typedef unsigned long long int  u64;
-
-typedef signed char             s8;
-typedef signed short int        s16;
-typedef signed int              s32;
-typedef signed long long int    s64;
+typedef int8_t		s8;
+typedef int16_t		s16;
+typedef int32_t		s32;
+typedef int64_t		s64;
 
 typedef volatile u8          vu8;
 typedef volatile u16         vu16;
@@ -165,11 +168,10 @@ typedef struct touchPosition {
 typedef enum { false, true } bool;
 #endif
 
+// Handy function pointer typedefs
 typedef void ( * IntFn)(void);
 typedef void (* VoidFunctionPointer)(void);
 typedef void (* fp)(void);
-
-
 
 //---------------------------------------------------------------------------------
 #endif
