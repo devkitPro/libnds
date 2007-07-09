@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: userSettings.c,v 1.1 2007-06-25 20:21:49 wntrmute Exp $
+	$Id: userSettings.c,v 1.2 2007-07-09 15:55:11 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -36,19 +36,30 @@ void readUserSettings() {
 
 	short slot1count, slot2count;
 	short slot1CRC, slot2CRC;
-	
-	readFirmware( 0x3FE00, &slot1, sizeof(PERSONAL_DATA));
-	readFirmware( 0x3FF00, &slot2, sizeof(PERSONAL_DATA));
-	readFirmware( 0x3FE70, &slot1count, 2);
-	readFirmware( 0x3FF70, &slot2count, 2);
-	readFirmware( 0x3FE72, &slot1CRC, 2);
-	readFirmware( 0x3FF72, &slot2CRC, 2);
 
+	uint32 userSettingsBase;
+	readFirmware( 0x20, &userSettingsBase,2);
+	
+	uint32 slot1Address = userSettingsBase * 8;
+	uint32 slot2Address = userSettingsBase * 8 + 0x100;
+	
+	readFirmware( slot1Address , &slot1, sizeof(PERSONAL_DATA));
+	readFirmware( slot2Address , &slot2, sizeof(PERSONAL_DATA));
+	readFirmware( slot1Address + 0x70, &slot1count, 2);
+	readFirmware( slot2Address + 0x70, &slot2count, 2);
+	readFirmware( slot1Address + 0x72, &slot1CRC, 2);
+	readFirmware( slot2Address + 0x72, &slot2CRC, 2);
+
+	// default to slot 1 user Settings
 	void *currentSettings = &slot1;
 	
 	short calc1CRC = swiCRC16( 0xffff, &slot1, sizeof(PERSONAL_DATA));
 	short calc2CRC = swiCRC16( 0xffff, &slot2, sizeof(PERSONAL_DATA));
-	 
+
+	// bail out if neither slot is valid
+	if ( calc1CRC != slot1CRC && calc2CRC != slot2CRC) return;
+	
+	// if both slots are valid pick the most recent
 	if ( calc1CRC == slot1CRC && calc2CRC == slot2CRC ) { 
 		currentSettings = (slot2count == (( slot2count + 1 ) & 0x7f) ? &slot2 : &slot1);
 	} else {
