@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: serial.h,v 1.12 2007-02-25 15:54:47 wntrmute Exp $
+  $Id: serial.h,v 1.13 2007-07-09 15:53:48 wntrmute Exp $
 
   ARM7 serial control
 
@@ -24,37 +24,6 @@
     must not be misrepresented as being the original software.
   3.  This notice may not be removed or altered from any source
     distribution.
-
-  $Log: not supported by cvs2svn $
-  Revision 1.11  2007/02/19 01:27:26  wntrmute
-  use gbatek names for registers
-
-  Revision 1.10  2007/02/06 11:59:12  wntrmute
-  *** empty log message ***
-
-  Revision 1.9  2006/07/08 06:25:31  wntrmute
-  move old register definitions to registers_alt.h
-
-  Revision 1.8  2006/06/26 11:26:32  wntrmute
-  remove //////
-
-  Revision 1.7  2006/02/06 22:29:32  joatski
-  Added writePowerManagement, readPowerManagement, and readFirmware to serial.h, as well as some associated defines.
-
-  Created spi.c to contain the code for these two.
-
-  Revision 1.6  2005/09/07 18:02:07  wntrmute
-  renamed SPI registers
-
-  Revision 1.5  2005/08/23 17:06:10  wntrmute
-  converted all endings to unix
-
-  Revision 1.4  2005/08/03 05:16:02  wntrmute
-  added PM control definitions
-
-  Revision 1.3  2005/08/01 23:18:22  wntrmute
-  adjusted headers for logging
-
 
 ---------------------------------------------------------------------------------*/
 
@@ -134,8 +103,8 @@
 #define PM_READ_REGISTER (1<<7)
 
 // PM control register bits - power control
-#define PM_SOUND_PWR         BIT(0)    // Power the sound hardware (needed to hear stuff in GBA mode too)
-#define PM_SOUND_VOL         BIT(1)    // ?
+#define PM_SOUND_AMP         BIT(0)    // Power the sound hardware (needed to hear stuff in GBA mode too)
+#define PM_SOUND_SPEAKERS    BIT(1)    // Power the main speakers, headphone output will still work.
 #define PM_BACKLIGHT_BOTTOM  BIT(2)    // Enable the top backlight if set
 #define PM_BACKLIGHT_TOP     BIT(3)    // Enable the bottom backlight if set
 #define PM_SYSTEM_PWR        BIT(6)    // Turn the power *off* if set
