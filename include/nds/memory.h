@@ -24,30 +24,6 @@
 	3.	This notice may not be removed or altered from any source
 		distribution.
 
-  $Log: not supported by cvs2svn $
-  Revision 1.9  2007/01/23 21:58:27  wntrmute
-  correct bus/card ownership macros
-
-  Revision 1.8  2007/01/14 07:58:55  wntrmute
-  change WAIT_CR to REG_EXEMEMCNT/REG_EXEMEMSTAT
-  change bus owner funtions to static inline
-  move WAIT_CR to registers_alt.h
-
-  Revision 1.7  2006/06/26 11:24:55  wntrmute
-  correct sysSetBusOwners
-  correct WAIT_CR defines
-
-  Revision 1.6  2006/03/03 07:23:46  joatski
-  Added tNDSHeader and tNDSBanner types.
-  Defined NDSHeader as a structure at the 'standard' location for the NDS header to reside (0x027FFE00)
-  Added VRAM define for ARM7 mode at 0x06000000
-
-  Revision 1.5  2006/02/21 00:09:40  wntrmute
-  corrected packing on tGBAHeader struct
-
-  Revision 1.4  2005/11/27 07:54:23  joatski
-  Added log line, again!
-
 ---------------------------------------------------------------------------------*/
 
 #ifndef NDS_MEMORY_INCLUDE

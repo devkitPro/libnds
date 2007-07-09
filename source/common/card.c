@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: card.c,v 1.10 2007-06-15 22:42:43 wntrmute Exp $
+	$Id: card.c,v 1.11 2007-07-09 15:54:33 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -22,33 +22,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.9  2006/08/06 07:51:48  chishm
-	command function parameter changed to "const uint8 *" type
-	
-	Revision 1.8  2006/01/17 00:10:11  dovoto
-	Loopy added a fix to cardPolledTransfer
-	
-	Revision 1.7  2006/01/05 04:05:40  dovoto
-	Fixed a reference to CARD_DATA to be refer to CARD_DATA_RD
-	
-	Revision 1.6  2005/11/07 01:09:53  wntrmute
-	corrected card read header address
-	corrected line endings
-	
-	Revision 1.5  2005/10/21 22:43:06  wntrmute
-	Removed bogus ASSERT
-	
-	Revision 1.4  2005/09/14 06:21:58  wntrmute
-	and address bytes in cardRead00
-	
-	Revision 1.3  2005/09/12 06:55:21  wntrmute
-	replaced EepromWaitBusy macro with static inline
-
-	Revision 1.2  2005/08/30 17:52:24  wntrmute
-	corrected CARD_CR1
-	fixed cardReadEeprom
 
 
 ---------------------------------------------------------------------------------*/
