@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: timers.h,v 1.9 2007-01-27 00:07:30 wntrmute Exp $
+	$Id: timers.h,v 1.10 2007-07-18 05:20:45 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -22,11 +22,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.8  2006/05/05 05:32:06  wntrmute
-	consistency formatting
-	
 
 ---------------------------------------------------------------------------------*/
 

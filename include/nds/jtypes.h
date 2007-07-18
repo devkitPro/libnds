@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: jtypes.h,v 1.16 2007-07-09 15:51:11 wntrmute Exp $
+	$Id: jtypes.h,v 1.17 2007-07-18 05:20:45 wntrmute Exp $
 
 	jtypes.h -- Common types (and a few useful macros)
 
@@ -25,45 +25,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.15  2007/01/14 11:31:22  wntrmute
-	bogus fixed types removed from libnds
-	
-	Revision 1.14  2006/04/04 23:05:19  wntrmute
-	Added pressure reading to touchscreen function
-	
-	Revision 1.13  2005/10/21 22:43:05  wntrmute
-	Removed bogus ASSERT
-	
-	Revision 1.12  2005/09/03 17:07:25  wntrmute
-	added function pointer for interrupts
-	
-	Revision 1.11  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-
-	Revision 1.10  2005/08/22 08:09:48  wntrmute
-	added f32 here
-
-	Revision 1.9  2005/08/03 17:38:05  wntrmute
-	added touch struct
-
-	Revision 1.8  2005/07/29 00:55:04  wntrmute
-	removed more useless section macros
-
-	Revision 1.7  2005/07/29 00:40:50  wntrmute
-	removed useless section macros
-	added C++ compatible bool
-
-	Revision 1.6  2005/07/28 03:54:19  dovoto
-	Adjusted trig_lut so that cos and sin look tables are visible to all.
-
-	Math.h no includes the trig_lut header.
-
-	added some typedefs to jtypes for compatibility with ndslib.
-
-	Revision 1.5  2005/07/22 17:39:53  wntrmute
-	removed useless section macros
 
 ---------------------------------------------------------------------------------*/
 #ifndef NDS_JTYPES_INCLUDE
