@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.19 2007-06-25 20:21:42 wntrmute Exp $
+	$Id: system.h,v 1.20 2007-07-18 05:21:22 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -228,5 +228,20 @@ typedef struct tPERSONAL_DATA {
 
 //!	Default location for the user's personal data (see %PERSONAL_DATA).
 #define PersonalData ((PERSONAL_DATA*)0x27FFC80)
+
+//!	argv structure
+/*!	\struct __argv
+
+	structure used to set up argc/argv on the DS
+
+*/
+struct __argv {
+	int argvMagic;		//!< argv magic number, set to 0x5f617267 ('_arg') if valid 
+	char *commandLine;	//!< base address of command line, set of null terminated strings
+	int length;			//!< total length of command line
+};
+
+//!	Default location for the libnds argv structure.
+#define libnds_argv		(struct __argv *)0x027FFE88;
 
 #endif
