@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.21 2007-07-19 05:15:27 wntrmute Exp $
+	$Id: system.h,v 1.22 2007-07-23 12:50:07 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -242,6 +242,9 @@ struct __argv {
 };
 
 //!	Default location for the libnds argv structure.
-#define libnds_argv		((struct __argv *)0x027FFE88)
+#define libnds_argv		((struct __argv *)0x027FFF70)
+
+// argv struct magic number
+#define argvMagic 0x5f617267
 
 #endif
