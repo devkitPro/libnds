@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interruptDispatcher.s,v 1.9 2007-01-10 15:48:27 wntrmute Exp $
+	$Id: interruptDispatcher.s,v 1.10 2007-08-11 06:00:23 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -22,6 +22,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2007/01/10 15:48:27  wntrmute
+	remove unused code
+	
 	Revision 1.8  2006/12/16 09:10:02  wntrmute
 	acknowledge interrupt before calling handler
 	
@@ -70,7 +73,7 @@ IntrMain:
 	ldr	r1, [r3, #0x208]	@ r1 = IME
 	str	r3, [r3, #0x208]	@ disable IME
 	mrs	r0, spsr
-	stmfd	sp!, {r0-r1,r3}		@ {spsr, IME, REG_BASE}
+	stmfd	sp!, {r0-r1,r3,lr}	@ {spsr, IME, REG_BASE, lr_irq}
 
 	ldr	r1, [r3,#0x210]		@ REG_IE
 	ldr	r2, [r3,#0x214]		@ REG_IF
@@ -98,7 +101,7 @@ findIRQ:
 no_handler:
 @---------------------------------------------------------------------------------
 	str	r1, [r3, #0x0214]	@ IF Clear
-	ldmfd   sp!, {r0-r1,r3}		@ {spsr, IME, REG_BASE}
+	ldmfd   sp!, {r0-r1,r3,lr}	@ {spsr, IME, REG_BASE, lr_irq}
 	str	r1, [r3, #0x208]	@ restore REG_IME
 	mov	pc,lr
 
@@ -128,18 +131,18 @@ got_handler:
 @---------------------------------------------------------------------------------
 IntrRet:
 @---------------------------------------------------------------------------------
-	pop	{lr}
 	mov	r3, #0x4000000		@ REG_BASE
 	str	r3, [r3, #0x208]	@ disable IME
+	pop	{lr}
 
 	mrs	r3, cpsr
 	bic	r3, r3, #0xdf		@ \__
 	orr	r3, r3, #0x92		@ /  --> Disable IRQ. Enable FIQ. Set CPU mode to IRQ.
 	msr	cpsr, r3
 
-	ldmfd   sp!, {r0-r1,r3}		@ {spsr, IME, REG_BASE}
-	str	r1, [r3, #0x208]	@ restore REG_IME
+	ldmfd   sp!, {r0-r1,r3,lr}	@ {spsr, IME, REG_BASE, lr_irq}
 	msr	spsr, r0		@ restore spsr
+	str	r1, [r3, #0x208]	@ restore REG_IME
 	mov	pc,lr
 
 	.pool
