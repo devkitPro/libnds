@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.h,v 1.46 2007-09-02 04:28:10 wntrmute Exp $
+	$Id: videoGL.h,v 1.47 2007-09-02 23:38:25 wntrmute Exp $
 
 	videoGL.h -- Video API vaguely similar to OpenGL
 
@@ -903,7 +903,7 @@ GL_STATIC_INL void gluLookAtf32(int32 eyex, int32 eyey, int32 eyez, int32 lookAt
 \param near Location of a the near clipping plane (parallel to viewing window)
 \param far Location of a the far clipping plane (parallel to viewing window) */
 GL_STATIC_INL void glFrustumf32(int32 left, int32 right, int32 bottom, int32 top, int32 near, int32 far) {
-	MATRIX_MULT4x4 = divf32(2*near, right - left);
+/*	MATRIX_MULT4x4 = divf32(2*near, right - left);
 	MATRIX_MULT4x4 = 0;
 	MATRIX_MULT4x4 = divf32(right + left, right - left);
 	MATRIX_MULT4x4 = 0;
@@ -922,6 +922,29 @@ GL_STATIC_INL void glFrustumf32(int32 left, int32 right, int32 bottom, int32 top
 	MATRIX_MULT4x4 = 0;
 	MATRIX_MULT4x4 = -divf32(2 * mulf32(far, near), far - near);
 	MATRIX_MULT4x4 = 0;
+*/
+
+
+	MATRIX_MULT4x4 = divf32(2*near, right - left);
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = 0;
+ 
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = divf32(2*near, top - bottom);
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = 0;
+ 
+	MATRIX_MULT4x4 = divf32(right + left, right - left);
+	MATRIX_MULT4x4 = divf32(top + bottom, top - bottom);
+	MATRIX_MULT4x4 = -divf32(far + near, far - near);
+	MATRIX_MULT4x4 = floattof32(-1.0F);
+ 
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = 0;
+	MATRIX_MULT4x4 = -divf32(2 * mulf32(far, near), far - near);
+	MATRIX_MULT4x4 = 0;
+
 }
 
 /*! \brief Utility function which sets up the projection matrix (fixed point version)
@@ -932,7 +955,7 @@ GL_STATIC_INL void glFrustumf32(int32 left, int32 right, int32 bottom, int32 top
 GL_STATIC_INL void gluPerspectivef32(int fovy, int32 aspect, int32 zNear, int32 zFar) {
 	int32 xmin, xmax, ymin, ymax;
 	
-	ymax = mulf32(zNear, TAN[fovy & LUT_MASK]);
+	ymax = mulf32(zNear, TAN[(fovy>>1) & LUT_MASK]);
 	ymin = -ymax;
 	xmin = mulf32(ymin, aspect);
 	xmax = mulf32(ymax, aspect);
@@ -1105,39 +1128,8 @@ GL_STATIC_INL void glGetInt(GL_GET_ENUM param, int* i) {
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////
-////////////                                                                  ////////////
-////////////                                                                  ////////////
-////////////                                                                  ////////////
-////////////                    INLINED FlOAT WRAPPERS                        ////////////
-////////////                                                                  ////////////
-////////////                                                                  ////////////
-////////////                                                                  ////////////
-//////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////////////////////////////
+//---------------------------------------------------------------------------------
+//                    INLINED FlOAT WRAPPERS
 //
 //  All floating point functions.
 //

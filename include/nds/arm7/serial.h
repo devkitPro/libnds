@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: serial.h,v 1.13 2007-07-09 15:53:48 wntrmute Exp $
+  $Id: serial.h,v 1.14 2007-09-02 23:38:25 wntrmute Exp $
 
   ARM7 serial control
 
@@ -112,9 +112,11 @@
 
 // PM control register bits - LED control
 #define PM_LED_CONTROL(m)    ((m)<<4)  // ?
-#define PM_LED_ON     (0<<4)  // Steady on
-#define PM_LED_SLEEP  (2<<4)  // Blinking, mostly off
-#define PM_LED_BLINK  (3<<4)  // Blinking, mostly on
+
+
+#define PM_LED_ON		(0<<4)	// Steady on
+#define PM_LED_SLEEP	(1<<4)	// Blinking, mostly off
+#define PM_LED_BLINK	(3<<4)	// Blinking, mostly on
 
 
 #define PM_AMP_OFFSET  2
