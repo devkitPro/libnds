@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-$Id: boxtest.h,v 1.1 2005-11-07 04:11:10 dovoto Exp $
+$Id: boxtest.h,v 1.2 2007-09-02 04:23:52 wntrmute Exp $
 
 BoxTest.h -- Code for performing hardware box test against viewing frustrum
 
@@ -27,7 +27,6 @@ must not be misrepresented as being the original software.
 3.	This notice may not be removed or altered from any source
 distribution.
 
-$Log: 
 
 ---------------------------------------------------------------------------------*/
 #ifndef BOX_TEST_INCLUDE

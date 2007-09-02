@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: videoGL.c,v 1.36 2007-05-29 00:35:09 gabebear Exp $
+	$Id: videoGL.c,v 1.37 2007-09-02 04:24:19 wntrmute Exp $
 
 	Video API vaguely similar to OpenGL
 
@@ -25,102 +25,6 @@
   3. This notice may not be removed or altered from any source
      distribution.
 
-	$Log: not supported by cvs2svn $
-	Revision 1.35  2007/04/02 07:44:32  gabebear
-	- MATRIX_READ_MODELVIEW is MATRIX_READ_CLIP
-	- add defines for fog
-	
-	Revision 1.34  2007/03/18 17:12:32  gabebear
-	updated glInit so that it calls glFlush once to prime the vertex/polygon buffers
-	
-	Revision 1.33  2007/02/22 06:24:25  gabebear
-	-  changed glClearColor() so that it handles alpha as a fourth argument; the real OpenGL function takes alpha as a fourth argument.
-	-  got rid of glClearAlpha() because glClearColor now handles this, glClearAlpha() was only recently added.
-	- changed all array/pointer parameters that are constant in their functions to const so that you can pass arrays of constant data to those functions.
-	- fixed glResetMatrixStack(); if a push or pop had just been executed it didn't work properly.
-	- fixed some comments
-	
-	Revision 1.32  2007/02/11 13:18:26  wntrmute
-	correct doxygen errors
-	use GL_TEXTURE_TYPE_ENUM as type, not parameter
-	
-	Revision 1.31  2007/02/10 16:30:57  gabebear
-	masks were glClearColor(), glClearAlpha(), and glClearPolyID() were wrong
-	
-	Revision 1.30  2007/02/10 16:01:10  gabebear
-	- fixed some comments
-	- removed CVS revision comments from videoGL.h and videoGL.c that were dated 2005 and older
-	
-	Revision 1.29  2007/02/10 05:13:46  gabebear
-	- emptied videoGL.inl into videoGL.h so that doxygen works and because having the ability to remove inline functions isn't important anymore(I think).
-	- emptied inlineGL.c; inlineGL.c and videoGL.inl should be deleted
-	- inlined most functions. GCC "should" be able to work out if something that is inlined in the code really shouldn't be and create object code for the function. I believe I made pretty sane choices so I doubt this will be an issue.
-	- fixed TEXTURE_PACK so that u and v are correct.
-	- removed glTexCoord1i because it's not terribly useful and the fix to TEXTURE_PACK will make programs that use this and another glTexCoord fail, this was the only function that had S and T mapped correctly. The function does map to the OpenGL call pretty well, but it wasn't used properly in the examples. In the examples it was used to set two texcoords, which was more confusing than just using GFX_TEX_COORD directly. The OpenGL version only sets the S texcoord and sets T to 0.
-	- GL_LIGHTING was defined, I deleted it. GL_LIGHTING is used with glEnable to swap between coloring vertices with normals/materials and coloring with the current color. The DS doesn't handle vertex colors like this. The color of a vertex on the DS is determined by the last command that computes a vertex color. The two commands that set vertex colors are glNormal() and glColor(), whichever was last executed determines the color of the vertex drawn. Implementing the OpenGL way of doing this on the DS would be a rather big waste of time and the current define didn't make any sense anyway.
-	- removed glTranslate3f32(delta) because it doesn't map to an OpenGL call, or even make much sense. I doubt anyone was using it.
-	- removed all depreciated functions
-	- linking issues kept me from typing the sizeX/sizeY params on glTexImage2d() and glTexParameter() to GL_TEXTURE_SIZE_ENUM. I'm not sure how to fix this without inlining glTexImage2d() and glTexParameter().
-	
-	Revision 1.28  2007/01/31 22:57:28  gabebear
-	- corrected typo where glClearAlpha() was glClearAplpha()
-	- added doxygen for glClear*** functions
-	
-	Revision 1.27  2007/01/30 00:15:48  gabebear
-	 - got rid of extra flags in glEnable and glDisable
-	 - added glInit() which does pretty much the same thing that glReset did. It just initializes the GL-state at the start of the program and then never needs called again. Initializing the state explicitly should make code more stable when using different boot methods that may have fiddled with default states.
-	 - depreciated glReset, because glInit does the same job better, setting up everythign per frame was a waste
-	 - glInit sets up the read-plane(a.ka. clear-color) as blank instead of a bmp, and sets it's so that it is totally opaque with a poly-ID of zero. This lets antialiasing, and outlining work with simple glEnables!!!
-	 - Changed glClearColor so that it sets the rear-plane ID instead of palette[0]
-	 - added glClearAlpha() that sets the alpha of the rear-plane
-	 - added glClearPolyID() that sets how things get outlined and antialiased
-	
-	I haven't tested this against the examples, another patch is on the way to fix the examples
-	
-	Revision 1.26  2007/01/20 00:30:48  dovoto
-	Updated the glTexCoord2f() to pull texture size from state...texture sizes other than 128x128 should now work with the floating point version.
-	
-	Revision 1.25  2007/01/14 11:31:22  wntrmute
-	bogus fixed types removed from libnds
-	
-	Revision 1.24  2007/01/11 05:35:41  dovoto
-	Applied gabebear patch # 1632896
-	fix gluPickMatrix()
-	- no float / f32 version because all the parameters will always be regular ints
-	- it actually works now
-	
-	fix gluFrustrumf32() and gluFrustum()
-	- rename to glFrustrum because this is a GL function, not GLU (I'm breaking stuff...)
-	- no longer changes matrix mode to projection (it's useful for more than projection)
-	- multiplies instead of loads
-	
-	fix glOrthof32()
-	- no longer changes matrix mode to projection (it's useful for more than projection)
-	- multiplies instead of loads
-	
-	fix glGetFixed()
-	- correctly waits for graphics engine to stop before getting any matrix
-	- added ability to get projection and modelview matrices
-	- fixed projection matrix get (it was grabbing modelview)
-	- getting projection or position matrices now uses the matrix stack to preserve
-	the other matrix. Not many people use the matrix stack and you would normally
-	only do this at the beginning of a program so I doubt it will be a problem.
-	
-	Revision 1.23  2006/08/03 04:59:08  dovoto
-	Added gluPickMatrix... (untested)
-	
-	Revision 1.22  2006/05/08 03:23:32  dovoto
-	*** empty log message ***
-	
-	Revision 1.20  2006/05/08 03:19:51  dovoto
-	Added glGetTexturePointer which allows the user to retreive a pointer to texture memory for the named texture.
-	
-	Small fix to the texture reset code.  The texture name is now reset as well.
-	
-	Revision 1.19  2006/01/05 08:13:26  dovoto
-	Fixed gluLookAt (again)
-	Major update to palette handling (likely a breaking change if you were using the gl texture palettes from before)
-	
 
 ---------------------------------------------------------------------------------*/
 

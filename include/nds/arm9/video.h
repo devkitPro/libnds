@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.40 2007-06-28 00:52:49 wntrmute Exp $
+	$Id: video.h,v 1.41 2007-09-02 04:23:53 wntrmute Exp $
 
 	Video registers and defines
 
@@ -324,14 +324,14 @@ void videoSetModeSub( uint32 mode)  { SUB_DISPLAY_CR = mode; }
 #define BG_MAP_BASE(base)  ((base) << 8)
 #define BG_BMP_BASE(base)  ((base) << 8)
 
-#define BG_MAP_RAM(base)  (((base)*0x800) + 0x06000000)
-#define BG_MAP_RAM_SUB(base) (((base)*0x800) + 0x06200000)
+#define BG_MAP_RAM(base)		(((base)*0x800) + 0x06000000)
+#define BG_MAP_RAM_SUB(base)	(((base)*0x800) + 0x06200000)
 
-#define BG_TILE_RAM(base) (((base)*0x4000) + 0x06000000)
-#define BG_TILE_RAM_SUB(base) (((base)*0x4000) + 0x06200000)
+#define BG_TILE_RAM(base)		(((base)*0x4000) + 0x06000000)
+#define BG_TILE_RAM_SUB(base)	(((base)*0x4000) + 0x06200000)
 
-#define BG_BMP_RAM(base)  (((base)*0x4000) + 0x06000000)
-#define BG_BMP_RAM_SUB(base) (((base)*0x4000) + 0x06200000)
+#define BG_BMP_RAM(base)		(((base)*0x4000) + 0x06000000)
+#define BG_BMP_RAM_SUB(base)	(((base)*0x4000) + 0x06200000)
 
 #define BG_WRAP_OFF    (0)
 #define BG_WRAP_ON     (1 << 13)
