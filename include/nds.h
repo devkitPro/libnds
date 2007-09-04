@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: nds.h,v 1.13 2007-06-28 00:52:49 wntrmute Exp $
+	$Id: nds.h,v 1.14 2007-09-04 15:18:36 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -25,26 +25,6 @@
 
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.12  2007/06/28 00:32:47  wntrmute
-	add sprite.h
-	
-	Revision 1.11  2006/07/04 01:44:31  wntrmute
-	remove CP15 header
-	
-	Revision 1.10  2006/06/18 21:16:26  wntrmute
-	added arm9 exception handler API
-
-	Revision 1.9  2006/04/26 05:52:37  wntrmute
-	added all headers to main nds header
-
-	Revision 1.8  2005/08/31 01:09:46  wntrmute
-	removed spurious comment
-
-	Revision 1.7  2005/08/23 17:06:09  wntrmute
-	converted all endings to unix
-
 
 ---------------------------------------------------------------------------------*/
 
