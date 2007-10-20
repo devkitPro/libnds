@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: nds.h,v 1.14 2007-09-04 15:18:36 wntrmute Exp $
+	$Id: nds.h,v 1.15 2007-10-20 20:47:42 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -81,7 +81,6 @@ extern "C" {
 #include <nds/arm7/clock.h>
 #include <nds/arm7/serial.h>
 #include <nds/arm7/touch.h>
-#include <nds/arm7/wifi.h>
 
 #endif // #ifdef ARM7
 
