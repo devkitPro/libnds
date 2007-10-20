@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.16 2007-02-11 13:19:17 wntrmute Exp $
+	$Id: interrupts.h,v 1.17 2007-10-20 20:42:56 wntrmute Exp $
 
 	Interrupt registers and vector pointers
 
@@ -25,48 +25,6 @@
 
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.15  2007/02/06 12:00:32  wntrmute
-	use uint32 for irqEnable
-	
-	Revision 1.14  2006/05/05 05:31:37  wntrmute
-	use __irq_vector and __irq_flags from linkscript
-	
-	Revision 1.13  2006/04/26 05:11:31  wntrmute
-	rebase dtcm, take __irq_flags and __irq_vector from linker script
-	move arm7 irq vector & irq flags to actual locations
-	
-	Revision 1.12  2006/04/23 18:19:15  wntrmute
-	reworked interrupt code to allow dtcm moving
-	
-	Revision 1.11  2005/11/07 01:11:08  wntrmute
-	more doxygen
-	moved IntrMain declaration to C file
-	
-	Revision 1.10  2005/10/03 21:21:21  wntrmute
-	doxygenation
-	
-	Revision 1.9  2005/09/20 05:15:35  wntrmute
-	added doxygen tagging
-	
-	Revision 1.8  2005/09/19 20:59:47  dovoto
-	Added glOrtho and glOrthof32.  No change to interrupts.h
-
-	Revision 1.7  2005/09/14 06:20:57  wntrmute
-	use enum for IRQ_MASKS and IME_VALUES
-
-	Revision 1.6  2005/09/04 16:27:22  wntrmute
-	added 1 to MAX_INTERRUPTS
-
-	Revision 1.5  2005/09/03 17:09:35  wntrmute
-	added interworking aware interrupt dispatcher
-
-	Revision 1.4  2005/08/03 05:17:26  wntrmute
-	use BIT macro for consistency
-
-	Revision 1.3  2005/08/01 23:18:22  wntrmute
-	adjusted headers for logging
 
 
 ---------------------------------------------------------------------------------*/

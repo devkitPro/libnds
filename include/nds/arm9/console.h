@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: console.h,v 1.11 2006-02-23 00:14:02 wntrmute Exp $
+	$Id: console.h,v 1.12 2007-10-20 20:42:56 wntrmute Exp $
 
 	console functions
 
@@ -24,37 +24,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.10  2006/01/10 05:45:02  dovoto
-	Added a consoleClear because i can....
-	
-	Revision 1.9  2005/11/14 11:57:16  wntrmute
-	Corrected doxygen comments
-	
-	Revision 1.8  2005/11/07 04:11:53  dovoto
-	Added consoleDemoInit for prototyping
-	
-	Revision 1.7  2005/10/20 20:54:44  wntrmute
-	doxygenation
-	use siscanf
-	
-	Revision 1.6  2005/09/12 06:50:23  wntrmute
-	removed *printAt
-	added ansi escape sequences
-	
-	Revision 1.5  2005/09/04 00:24:44  wntrmute
-	exposed consoleSetPos
-	move iprintAt and printAt to separate files
-
-	Revision 1.4  2005/08/31 01:10:33  wntrmute
-	reworked console into stdio
-
-	Revision 1.3  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-
-	Revision 1.2  2005/08/01 23:18:22  wntrmute
-	adjusted headers for logging
 
 
 ---------------------------------------------------------------------------------*/

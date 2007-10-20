@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: gbfs.h,v 1.3 2007-01-10 15:51:01 wntrmute Exp $
+	$Id: gbfs.h,v 1.4 2007-10-20 20:43:23 wntrmute Exp $
 
 	access object in a GBFS file
 
@@ -26,14 +26,6 @@
 	AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
 	OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
 	IN THE SOFTWARE.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.2  2005/08/23 17:06:09  wntrmute
-	converted all endings to unix
-	
-	Revision 1.1  2005/08/04 17:55:44  wntrmute
-	added gbfs
-
 
 ---------------------------------------------------------------------------------*/
 

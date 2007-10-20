@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: cache.h,v 1.6 2007-03-07 05:51:28 gabebear Exp $
+	$Id: cache.h,v 1.7 2007-10-20 20:42:56 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -24,20 +24,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.5  2006/07/04 01:45:04  wntrmute
-	add instruction cache functions
-	
-	Revision 1.4  2005/11/14 11:51:21  wntrmute
-	begin doxygenation
-
-	Revision 1.3  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-
-	Revision 1.2  2005/07/25 16:10:43  wntrmute
-	updated file header
-
 
 ---------------------------------------------------------------------------------*/
 /*! \file cache.h
