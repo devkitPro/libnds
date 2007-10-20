@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: audio.h,v 1.13 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: audio.h,v 1.14 2007-10-20 20:41:01 wntrmute Exp $
 
 	ARM7 audio control
 
@@ -24,11 +24,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.12  2005/08/01 23:18:12  wntrmute
-	adjusted headers for logging
-	
 
 ---------------------------------------------------------------------------------*/
 
