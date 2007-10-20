@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-$Id: boxtest.h,v 1.2 2007-09-02 04:23:52 wntrmute Exp $
+$Id: boxtest.h,v 1.3 2007-10-20 20:39:39 wntrmute Exp $
 
 BoxTest.h -- Code for performing hardware box test against viewing frustrum
 
@@ -43,7 +43,7 @@ distribution.
 #ifdef __cplusplus
 extern "C" {
 #endif
-/*! \fn int BoxTest(v16 x, v16 y, v16 z, v16 height, v16 width, v16 depth)
+/*! \fn int BoxTest(v16 x, v16 y, v16 z, v16 width, v16 height, v16 depth)
 \brief Performs a test to determine if the provided box is in the view frustrum.
 \param x (x, y, z) point of a vertex on the box
 \param y (x, y, z) point of a vertex on the box
@@ -54,48 +54,48 @@ extern "C" {
 
 \return non zero if any or all of the box is in the view frustum
 */
-int BoxTest(v16 x, v16 y, v16 z, v16 height, v16 width, v16 depth);
+int BoxTest(v16 x, v16 y, v16 z, v16 width, v16 height, v16 depth);
 
-/*! \fn int BoxTestf(float x, float y, float z, float height, float width, float depth)
+/*! \fn int BoxTestf(float x, float y, float z, float width, float height, float depth)
 \brief Performs a test to determine if the provided box is in the view frustum.
 \param x (x, y, z) point of a vertex on the box
 \param y (x, y, z) point of a vertex on the box
 \param z (x, y, z) point of a vertex on the box
-\param height (height, width, depth) describe the size of the box referenced from (x, y, z)
-\param width (height, width, depth) describe the size of the box referenced from (x, y, z)
-\param depth (height, width, depth) describe the size of the box referenced from (x, y, z)
+\param width (width, height, depth) describe the size of the box referenced from (x, y, z)
+\param height (width, height, depth) describe the size of the box referenced from (x, y, z)
+\param depth (width, height, depth) describe the size of the box referenced from (x, y, z)
 
 \return non zero if any or all of the box is in the view frustum
 */
-int BoxTestf(float x, float y, float z, float height, float width, float depth);
+int BoxTestf(float x, float y, float z, float width, float height, float depth);
 
-/*! \fn void BoxTest_Asynch(v16 x, v16 y, v16 z, v16 height, v16 width, v16 depth)
+/*! \fn void BoxTest_Asynch(v16 x, v16 y, v16 z, v16 width, v16 height, v16 depth)
 \brief Performs a test to determine if the provided box is in the view frustum.
 \param x (x, y, z) point of a vertex on the box
 \param y (x, y, z) point of a vertex on the box
 \param z (x, y, z) point of a vertex on the box
-\param height (height, width, depth) describe the size of the box referenced from (x, y, z)
-\param width (height, width, depth) describe the size of the box referenced from (x, y, z)
-\param depth (height, width, depth) describe the size of the box referenced from (x, y, z)
+\param width (width, height, depth) describe the size of the box referenced from (x, y, z)
+\param height (width, height, depth) describe the size of the box referenced from (x, y, z)
+\param depth (width, height, depth) describe the size of the box referenced from (x, y, z)
 
 Performs a test to determine if the provided box is in the view frustum.  BoxTestResult must be called to get the result of this 
 operation.
 */
 void BoxTest_Asynch(v16 x, v16 y, v16 z, v16 height, v16 width, v16 depth);
 
-/*! \fn void BoxTestf_Asynch(float x, float y, float z, float height, float width, float depth)
+/*! \fn void BoxTestf_Asynch(float x, float y, float z, float width, float height, float depth)
 \brief Performs a test to determine if the provided box is in the view frustum.
 \param x (x, y, z) point of a vertex on the box
 \param y (x, y, z) point of a vertex on the box
 \param z (x, y, z) point of a vertex on the box
-\param height (height, width, depth) describe the size of the box referenced from (x, y, z)
-\param width (height, width, depth) describe the size of the box referenced from (x, y, z)
-\param depth (height, width, depth) describe the size of the box referenced from (x, y, z)
+\param width (width, height, depth) describe the size of the box referenced from (x, y, z)
+\param height (width, height, depth) describe the size of the box referenced from (x, y, z)
+\param depth (width, height, depth) describe the size of the box referenced from (x, y, z)
 
 Performs a test to determine if the provided box is in the view frustum.  BoxTestResult must be called to get the result of this 
 operation.
 */
-void BoxTestf_Asynch(float x, float y, float z, float height, float width, float depth);
+void BoxTestf_Asynch(float x, float y, float z, float width, float height, float depth);
 
 /*! \fn void BoxTestResult(void)
 \brief Gets the result of the last box test.  Needed for asynch box test calls.
