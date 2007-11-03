@@ -66,7 +66,7 @@ void initSystem(void) {
 	dmaFillWords((void*)0x027FFE04, PALETTE+1, (2*1024)-2);
 	dmaFillWords((void*)0x027FFE04, OAM,    2*1024);
 	dmaFillWords((void*)0x027FFE04, (void*)0x04000000, 0x56);  //clear main display registers
-	dmaFillWords((void*)0x027FFE04, (void*)0x04001000, 0x56);  //clear sub  display registers
+	dmaFillWords((void*)0x027FFE04, (void*)0x04001008, 0x56);  //clear sub  display registers
 	dmaFillWords((void*)0x027FFE04, VRAM,  656*1024);
 
 	REG_DISPSTAT = 0;
