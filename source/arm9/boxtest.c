@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-$Id: boxtest.c,v 1.4 2007-10-20 20:39:46 wntrmute Exp $
 
 	BoxTest.c -- Code for performing hardware box test against viewing frustrum
 

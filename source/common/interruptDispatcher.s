@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: interruptDispatcher.s,v 1.10 2007-08-11 06:00:23 wntrmute Exp $
+	$Id: interruptDispatcher.s,v 1.11 2007-11-03 05:04:05 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
@@ -21,35 +21,6 @@
 	3.	This notice may not be removed or altered from any source
 		distribution.
 
-	$Log: not supported by cvs2svn $
-	Revision 1.9  2007/01/10 15:48:27  wntrmute
-	remove unused code
-	
-	Revision 1.8  2006/12/16 09:10:02  wntrmute
-	acknowledge interrupt before calling handler
-	
-	Revision 1.7  2006/04/26 05:11:31  wntrmute
-	rebase dtcm, take __irq_flags and __irq_vector from linker script
-	move arm7 irq vector & irq flags to actual locations
-	
-	Revision 1.6  2006/04/23 18:19:15  wntrmute
-	reworked interrupt code to allow dtcm moving
-	
-	Revision 1.5  2005/12/12 13:01:55  wntrmute
-	disable interrupts on return from user handler
-	
-	Revision 1.4  2005/10/21 22:43:42  wntrmute
-	restore REG_IME on exit from null handler
-	
-	Revision 1.3  2005/09/27 18:21:53  wntrmute
-	safer nested interrupt support
-	
-	Revision 1.2  2005/09/04 16:37:01  wntrmute
-	check for NULL handler
-	
-	Revision 1.1  2005/09/03 17:09:35  wntrmute
-	added interworking aware interrupt dispatcher
-	
 
 ---------------------------------------------------------------------------------*/
 

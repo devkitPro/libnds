@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: interrupts.h,v 1.17 2007-10-20 20:42:56 wntrmute Exp $
 
 	Interrupt registers and vector pointers
 

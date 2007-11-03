@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: ndsmotion.c,v 1.5 2007-06-28 00:54:07 wntrmute Exp $
 
 	DS Motion Card/DS Motion Pak functionality
 	

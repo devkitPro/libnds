@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: sound.c,v 1.3 2005-09-12 06:53:27 wntrmute Exp $
 
 	Sound Functions
 
@@ -22,13 +21,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.2  2005/08/04 17:57:58  wntrmute
-	playSoundBlock internal only
-
-	Revision 1.1  2005/08/03 05:28:07  wntrmute
-	added arm9 sound functions
 
 
 ---------------------------------------------------------------------------------*/

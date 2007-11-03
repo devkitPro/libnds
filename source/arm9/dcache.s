@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-  $Id: dcache.s,v 1.1 2006-07-04 01:35:32 wntrmute Exp $
 
   Copyright (C) 2005
   	Michael Noland (joat)
@@ -22,16 +21,6 @@
      must not be misrepresented as being the original software.
   3. This notice may not be removed or altered from any source
      distribution.
-
-  $Log: not supported by cvs2svn $
-  Revision 1.5  2006/06/18 21:18:32  wntrmute
-  *** empty log message ***
-
-  Revision 1.4  2005/08/23 17:06:10  wntrmute
-  converted all endings to unix
-
-  Revision 1.3  2005/08/03 05:12:29  wntrmute
-  adjusted header for logging
 
 ---------------------------------------------------------------------------------*/
 #define ICACHE_SIZE	0x2000

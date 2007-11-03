@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: biosCalls.s,v 1.5 2006-03-15 12:37:14 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -22,19 +21,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.4  2006/03/03 07:20:14  joatski
-	Fixed a couple of little bugs (e.g. swiSetHaltCR using r0 instead of r2 on ARM7)
-	Commented out ARM7 swis in ARM9 mode, and vis versa
-	
-	Revision 1.3  2006/01/17 00:13:36  dovoto
-	Fixed swi 08 so lable and global matched "swiChangeSoundBias"
-	
-	Revision 1.2  2005/09/03 13:47:13  wntrmute
-	added logging to header
-	reformatted for legibility
-	
 
 ---------------------------------------------------------------------------------*/
 

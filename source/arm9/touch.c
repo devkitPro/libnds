@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.5 2007-05-01 22:53:09 wntrmute Exp $
 
 	touch screen input code
 
@@ -22,19 +21,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.4  2005/10/09 20:27:23  wntrmute
-	add check for arm7 updating IPC
-	
-	Revision 1.3  2005/08/30 17:53:11  wntrmute
-	only include required headers
-	
-	Revision 1.2  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-
-	Revision 1.1  2005/08/04 17:58:30  wntrmute
-	added touch co-ordinate wrapper
 
 
 

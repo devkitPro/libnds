@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: pcx.c,v 1.9 2007-01-19 14:46:00 wntrmute Exp $
 
  	Copyright (C) 2005
 		Jason Rogers (dovoto)
@@ -21,32 +20,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.8  2005/11/07 04:12:34  dovoto
-	Fixed palette rounding issue
-	
-	Revision 1.7  2005/10/11 05:05:26  dovoto
-	Added imageTileData(sImage* img) to allow loading of pcx as sprite data.
-	Updated pcx.c to set image bit per pixel field
-	
-	Revision 1.6  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-	
-	Revision 1.5  2005/08/03 18:08:13  wntrmute
-	*** empty log message ***
-	
-	Revision 1.4  2005/08/03 05:18:06  wntrmute
-	tidied formatting
-	
-	Revision 1.3  2005/08/03 05:05:59  dovoto
-	added rounding to palette conversion
-	
-	Revision 1.2  2005/08/01 23:18:22  wntrmute
-	adjusted headers for logging
-	
-	Revision 1.1  2005/07/27 02:20:52  wntrmute
-	add image functions
 
 ---------------------------------------------------------------------------------*/
 #include <nds/jtypes.h>

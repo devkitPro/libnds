@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: userSettings.c,v 1.2 2007-07-09 15:55:11 wntrmute Exp $
 
 	Copyright (C) 2005
 		Dave Murphy (WinterMute)
