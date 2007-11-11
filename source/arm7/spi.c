@@ -66,6 +66,7 @@ void readFirmware(uint32 address, void * destination, uint32 size) {
 	// Read the data
 	while (size--) {
 		REG_SPIDATA = 0;
+		if ( size == 0 ) REG_SPICNT = SPI_ENABLE | SPI_BYTE_MODE | SPI_DEVICE_FIRMWARE;
 		while (REG_SPICNT & SPI_BUSY);
 		*buffer++ = (REG_SPIDATA & 0xFF);
 	}
