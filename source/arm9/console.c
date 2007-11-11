@@ -222,7 +222,7 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 						escaping = false;
 						break;
 					case 'D':
-						siscanf(escapeseq,"[%dC", &parameter);
+						siscanf(escapeseq,"[%dD", &parameter);
 						col =  (col - parameter) < 0 ? 0 : col - parameter;
 						escaping = false;
 						break;
@@ -264,6 +264,29 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 						row = savedY;
 						escaping = false;
 						break;
+					/////////////////////////////////////////
+					// Color scan codes
+					/////////////////////////////////////////
+					case 'm':
+						siscanf(escapeseq,"[%dm", &parameter);
+						
+						//only handle 30-37,39 and 40-47 for the color changes
+						parameter -= 30; 
+						
+						//39 is the reset code
+						if(parameter == 9){
+						    parameter = 15;
+						}
+						else if(parameter > 8){ 
+							parameter -= 2;
+						}
+						
+						if(parameter < 16 && parameter >= 0){
+							fontPal = parameter << 12;
+						}
+						
+						escaping = false;
+					    break;
 				}
 			} while (escaping);
 		continue;
@@ -304,6 +327,34 @@ void consoleInit(	u16* font, u16* charBase,
 					u16* map, u8 pal, u8 bitDepth) {
 //---------------------------------------------------------------------------------
 	int i;
+
+	u16* palette = BG_PALETTE_SUB;
+	
+	//check which display is being utilized
+	if(charBase < BG_GFX_SUB){
+		palette = BG_PALETTE;
+	}
+	
+	//set up the palette for color printing
+	palette[1 * 16 - 1] = RGB15(0,0,0); //30 normal black
+	palette[2 * 16 - 1] = RGB15(15,0,0); //31 normal red	 
+	palette[3 * 16 - 1] = RGB15(0,15,0); //32 normal green	
+	palette[4 * 16 - 1] = RGB15(15,15,0); //33 normal yellow	
+	
+	palette[5 * 16 - 1] = RGB15(0,0,15); //34 normal blue
+	palette[6 * 16 - 1] = RGB15(15,0,15); //35 normal magenta
+	palette[7 * 16 - 1] = RGB15(0,15,15); //36 normal cyan
+	palette[8 * 16 - 1] = RGB15(24,24,24); //37 normal white
+	
+	palette[9 * 16 - 1 ] = RGB15(15,15,15); //40 bright black
+	palette[10 * 16 - 1] = RGB15(31,0,0); //41 bright red
+	palette[11 * 16 - 1] = RGB15(0,31,0); //42 bright green
+	palette[12 * 16 - 1] = RGB15(31,31,0);	//43 bright yellow
+	
+	palette[13 * 16 - 1] = RGB15(0,0,31); //44 bright blue
+	palette[14 * 16 - 1] = RGB15(31,0,31);	//45 bright magenta
+	palette[15 * 16 - 1] = RGB15(0,31,31);	//46 bright cyan
+	palette[16 * 16 - 1] = RGB15(31,31,31); //47 & 39 bright white
 
 	row = col = 0;
 
@@ -383,8 +434,7 @@ void consoleDemoInit(void) {
 
 	SUB_BG0_CR = BG_MAP_BASE(31);
 
-	BG_PALETTE_SUB[255] = RGB15(31,31,31);	//by default font will be rendered with color 255
-
+	
 	//consoleInit() is a lot more flexible but this gets you up and running quick
 	consoleInitDefault((u16*)SCREEN_BASE_BLOCK_SUB(31), (u16*)CHAR_BASE_BLOCK_SUB(0), 16);
 }
