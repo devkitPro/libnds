@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: math.h,v 1.12 2007-01-14 11:31:22 wntrmute Exp $
 
 	math functions
 
@@ -24,29 +23,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.11  2006/07/06 02:16:01  wntrmute
-	tidy formatting
-	
-	Revision 1.10  2006/06/01 01:44:26  crossraleigh
-	Fixed spelling of DIV_REMAINDER
-
-	Revision 1.9  2005/12/12 14:36:03  wntrmute
-	*** empty log message ***
-
-	Revision 1.8  2005/09/07 18:07:29  wntrmute
-	corrected fdiv64 and mod64
-
-	Revision 1.7  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-
-	Revision 1.6  2005/08/22 08:03:50  wntrmute
-	removed unnecessary includes
-
-	Revision 1.5  2005/08/01 23:18:22  wntrmute
-	adjusted headers for logging
-
 
 ---------------------------------------------------------------------------------*/
 
