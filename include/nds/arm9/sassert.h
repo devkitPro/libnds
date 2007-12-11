@@ -45,15 +45,11 @@ extern "C" {
 #define sassert(e,s)  	((void)0)
 #else
 
-#ifdef __STDC__
-#define sassert(e,s)       ((e) ? (void)0 : __assert(__FILE__, __LINE__, s))
-#else   /* PCC */
-#define sassert(e,s)       ((e) ? (void)0 : __assert(__FILE__, __LINE__, s))
-#endif
+#define sassert(e,msg)       ((e) ? (void)0 : __sassert(__FILE__, __LINE__, #e, msg))
 
 #endif /* NDEBUG */
 
-void _EXFUN(__assert,(const char *, int, const char *));
+void __sassert(const char *fileName, int lineNumber, const char* conditionString, const char* message);
 
 #ifdef __cplusplus
 }
