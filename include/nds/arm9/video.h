@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: video.h,v 1.41 2007-09-02 04:23:53 wntrmute Exp $
+	$Id: video.h,v 1.42 2007-12-11 03:50:11 dovoto Exp $
 
 	Video registers and defines
 
@@ -36,10 +36,13 @@
 #endif
 
 #include <nds/jtypes.h>
+#include <nds/arm9/sassert.h>
+#include <stdio.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 
 // macro creates a 15 bit color from 3x5 bit components
 #define RGB15(r,g,b)  ((r)|((g)<<5)|((b)<<10))
@@ -230,6 +233,7 @@ void vramSetBankI(VRAM_I_TYPE i);
 
 #define ENABLE_3D    (1<<3)
 
+#define DISPLAY_ENABLE_SHIFT 8
 #define DISPLAY_BG0_ACTIVE    (1 << 8)
 #define DISPLAY_BG1_ACTIVE    (1 << 9)
 #define DISPLAY_BG2_ACTIVE    (1 << 10)
@@ -290,150 +294,35 @@ void vramSetBankI(VRAM_I_TYPE i);
 
 static inline
 void videoSetMode( uint32 mode)  { DISPLAY_CR = mode; }
+
 static inline
 void videoSetModeSub( uint32 mode)  { SUB_DISPLAY_CR = mode; }
+
+static inline
+int videoGetMode() {return (DISPLAY_CR & 0x30007);}
+
+static inline
+int videoGetModeSub() {return (SUB_DISPLAY_CR & 0x30007);}
+
+static inline 
+bool video3DEnabled() {return (DISPLAY_CR & ENABLE_3D) ? true : false;}
+
+static inline 
+void videoBgEnable(int number) {DISPLAY_CR |= 1 << (DISPLAY_ENABLE_SHIFT + number);}
+
+static inline 
+void videoBgEnableSub(int number) {SUB_DISPLAY_CR |= 1 << (DISPLAY_ENABLE_SHIFT + number);}
+
+static inline 
+void videoBgDisable(int number) {DISPLAY_CR &= ~(1 << (DISPLAY_ENABLE_SHIFT + number));}
+
+static inline 
+void videoBgDisableSub(int number) {DISPLAY_CR &= ~(1 << (DISPLAY_ENABLE_SHIFT + number));}
+
 
 #define BRIGHTNESS     (*(vuint16*)0x0400006C)
 #define SUB_BRIGHTNESS (*(vuint16*)0x0400106C)
 
-#define BGCTRL			((vuint16*)0x04000008)
-#define BG0_CR		(*(vuint16*)0x04000008)
-#define BG1_CR		(*(vuint16*)0x0400000A)
-#define BG2_CR		(*(vuint16*)0x0400000C)
-#define BG3_CR		(*(vuint16*)0x0400000E)
-
-#define BGCTRL_SUB		((vuint16*)0x04001008)
-#define SUB_BG0_CR     (*(vuint16*)0x04001008)
-#define SUB_BG1_CR     (*(vuint16*)0x0400100A)
-#define SUB_BG2_CR     (*(vuint16*)0x0400100C)
-#define SUB_BG3_CR     (*(vuint16*)0x0400100E)
-
-#define BG_256_COLOR   (BIT(7))
-#define BG_16_COLOR    (0)
-
-#define BG_MOSAIC_ON   (BIT(6))
-#define BG_MOSAIC_OFF  (0)
-
-#define BG_PRIORITY(n) (n)
-#define BG_PRIORITY_0  (0)
-#define BG_PRIORITY_1  (1)
-#define BG_PRIORITY_2  (2)
-#define BG_PRIORITY_3  (3)
-
-#define BG_TILE_BASE(base) ((base) << 2)
-#define BG_MAP_BASE(base)  ((base) << 8)
-#define BG_BMP_BASE(base)  ((base) << 8)
-
-#define BG_MAP_RAM(base)		(((base)*0x800) + 0x06000000)
-#define BG_MAP_RAM_SUB(base)	(((base)*0x800) + 0x06200000)
-
-#define BG_TILE_RAM(base)		(((base)*0x4000) + 0x06000000)
-#define BG_TILE_RAM_SUB(base)	(((base)*0x4000) + 0x06200000)
-
-#define BG_BMP_RAM(base)		(((base)*0x4000) + 0x06000000)
-#define BG_BMP_RAM_SUB(base)	(((base)*0x4000) + 0x06200000)
-
-#define BG_WRAP_OFF    (0)
-#define BG_WRAP_ON     (1 << 13)
-
-#define BG_32x32       (0 << 14)
-#define BG_64x32       (1 << 14)
-#define BG_32x64       (2 << 14)
-#define BG_64x64       (3 << 14)
-
-#define BG_RS_16x16    (0 << 14)
-#define BG_RS_32x32    (1 << 14)
-#define BG_RS_64x64    (2 << 14)
-#define BG_RS_128x128  (3 << 14)
-
-#define BG_BMP8_128x128 (BG_RS_16x16 | BG_256_COLOR)
-#define BG_BMP8_256x256 (BG_RS_32x32 | BG_256_COLOR)
-#define BG_BMP8_512x256 (BG_RS_64x64 | BG_256_COLOR)
-#define BG_BMP8_512x512 (BG_RS_128x128 | BG_256_COLOR)
-#define BG_BMP8_1024x512 BIT(14)
-#define BG_BMP8_512x1024 0
-
-#define BG_BMP16_128x128 (BG_RS_16x16 | BG_256_COLOR | BIT(2))
-#define BG_BMP16_256x256 (BG_RS_32x32 | BG_256_COLOR | BIT(2))
-#define BG_BMP16_512x256 (BG_RS_64x64 | BG_256_COLOR | BIT(2))
-#define BG_BMP16_512x512 (BG_RS_128x128 | BG_256_COLOR | BIT(2))
-
-#define BG_PALETTE_SLOT0 0
-#define BG_PALETTE_SLOT1 0
-#define BG_PALETTE_SLOT2 BIT(13)
-#define BG_PALETTE_SLOT3 BIT(13)
-
-typedef struct {
-	u16 x;
-	u16 y;
-} bg_scroll;
-
-typedef struct {
-    u16 xdx;
-    u16 xdy;
-    u16 ydx;
-    u16 ydy;
-    u32 centerX;
-    u32 centerY;    
-} bg_rotation;
-
-typedef struct {
-    u16 control[4];
-    bg_scroll scroll[4];
-    bg_rotation bg2_rotation;
-    bg_rotation bg3_rotation;
-} bg_attribute;
-
-#define BACKGROUND           (*((bg_attribute *)0x04000008))
-#define BACKGROUND_SUB       (*((bg_attribute *)0x04001008))
-
-#define BG_OFFSET ((bg_scroll *)(0x04000010))
-
-#define BG0_X0         (*(vuint16*)0x04000010)
-#define BG0_Y0         (*(vuint16*)0x04000012)
-#define BG1_X0         (*(vuint16*)0x04000014)
-#define BG1_Y0         (*(vuint16*)0x04000016)
-#define BG2_X0         (*(vuint16*)0x04000018)
-#define BG2_Y0         (*(vuint16*)0x0400001A)
-#define BG3_X0         (*(vuint16*)0x0400001C)
-#define BG3_Y0         (*(vuint16*)0x0400001E)
-
-#define BG2_XDX        (*(vuint16*)0x04000020)
-#define BG2_XDY        (*(vuint16*)0x04000022)
-#define BG2_YDX        (*(vuint16*)0x04000024)
-#define BG2_YDY        (*(vuint16*)0x04000026)
-#define BG2_CX         (*(vuint32*)0x04000028)
-#define BG2_CY         (*(vuint32*)0x0400002C)
-
-#define BG3_XDX        (*(vuint16*)0x04000030)
-#define BG3_XDY        (*(vuint16*)0x04000032)
-#define BG3_YDX        (*(vuint16*)0x04000034)
-#define BG3_YDY        (*(vuint16*)0x04000036)
-#define BG3_CX         (*(vuint32*)0x04000038)
-#define BG3_CY         (*(vuint32*)0x0400003C)
-
-#define SUB_BG0_X0     (*(vuint16*)0x04001010)
-#define SUB_BG0_Y0     (*(vuint16*)0x04001012)
-#define SUB_BG1_X0     (*(vuint16*)0x04001014)
-#define SUB_BG1_Y0     (*(vuint16*)0x04001016)
-#define SUB_BG2_X0     (*(vuint16*)0x04001018)
-#define SUB_BG2_Y0     (*(vuint16*)0x0400101A)
-#define SUB_BG3_X0     (*(vuint16*)0x0400101C)
-#define SUB_BG3_Y0     (*(vuint16*)0x0400101E)
-
-#define SUB_BG2_XDX    (*(vuint16*)0x04001020)
-#define SUB_BG2_XDY    (*(vuint16*)0x04001022)
-#define SUB_BG2_YDX    (*(vuint16*)0x04001024)
-#define SUB_BG2_YDY    (*(vuint16*)0x04001026)
-#define SUB_BG2_CX     (*(vuint32*)0x04001028)
-#define SUB_BG2_CY     (*(vuint32*)0x0400102C)
-
-#define SUB_BG3_XDX    (*(vuint16*)0x04001030)
-#define SUB_BG3_XDY    (*(vuint16*)0x04001032)
-#define SUB_BG3_YDX    (*(vuint16*)0x04001034)
-#define SUB_BG3_YDY    (*(vuint16*)0x04001036)
-#define SUB_BG3_CX     (*(vuint32*)0x04001038)
-#define SUB_BG3_CY     (*(vuint32*)0x0400103C)
 
 // Window 0
 #define WIN0_X0        (*(vuint8*)0x04000041)
