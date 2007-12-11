@@ -26,6 +26,10 @@
 	distribution.
 
 ---------------------------------------------------------------------------------*/
+/*! \file sprite.h
+    \brief nds sprite functionality.
+*/
+
 #ifndef _libnds_sprite_h_
 #define _libnds_sprite_h_
 
@@ -76,7 +80,7 @@
 #define ATTR2_ALPHA(n)		  ((n)<<12)
 
 /**
- * @enum tObjMode
+ * @enum ObjMode
  * @brief Sprite display mode.
  */
 typedef enum
@@ -86,10 +90,10 @@ typedef enum
 	OBJMODE_WINDOWED,	/**< Sprite can be seen only inside the sprite window. */
 	OBJMODE_BITMAP,		/**< Sprite is not using tiles - per pixel image data. */
  
-} tObjMode;
+} ObjMode;
  
 /**
- * @enum tObjShape
+ * @enum ObjShape
  * @brief Sprite shape mode.
  */
 typedef enum {
@@ -97,10 +101,10 @@ typedef enum {
 	OBJSHAPE_WIDE,		/**< Sprite shape is NxM with N > M (Height < Width). */
 	OBJSHAPE_TALL,		/**< Sprite shape is NxM with N < M (Height > Width). */
 	OBJSHAPE_FORBIDDEN,	/**< Sprite shape is undefined. */
-} tObjShape;
+} ObjShape;
  
 /**
- * @enum tObjSize
+ * @enum ObjSize
  * @brief Object shape mode.
  */
 typedef enum {
@@ -108,19 +112,19 @@ typedef enum {
 	OBJSIZE_16,		/**< Major sprite size is 16px. */
 	OBJSIZE_32,		/**< Major sprite size is 32px. */
 	OBJSIZE_64,		/**< Major sprite size is 64px. */
-} tObjSize;
+} ObjSize;
 
 /**
- * @enum tObjColMode
+ * @enum ObjColMode
  * @brief Object color mode.
  */
 typedef enum {
 	OBJCOLOR_16,		/**< sprite has 16 colors. */
 	OBJCOLOR_256,		/**< sprite has 256 colors. */
-} tObjColMode;
+} ObjColMode;
 
 /**
- * @enum tObjColMode
+ * @enum ObjPriority
  * @brief Object color mode.
  */
 typedef enum {
@@ -128,10 +132,12 @@ typedef enum {
 	OBJPRIORITY_1,		/**< sprite priority level 1. */
 	OBJPRIORITY_2,		/**< sprite priority level 2. */
 	OBJPRIORITY_3,		/**< sprite priority level 3 - lowest. */
-} tObjPriority;
+} ObjPriority;
 
-// Sprite structures
-
+/**
+ * @union SpriteEntry
+ * @brief A bitfield of sprite attribute goodness...uggly to look at but not so bad to use
+ */
 typedef union {
 	struct {
  
@@ -146,10 +152,10 @@ typedef union {
 				struct {
 					bool isRotoscale		:1;	/**< Sprite uses affine parameters if set. */
 					bool rsDouble			:1;	/**< Sprite bounds is doubled (isRotoscale set). */
-					tObjMode objMode		:2;	/**< Sprite object mode. */
+					ObjMode objMode		:2;	/**< Sprite object mode. */
 					bool isMosaic			:1;	/**< Enables mosaic effect if set. */
-					tObjColMode colMode		:1;	/**< Sprite color mode. */
-					tObjShape objShape		:2;	/**< Sprite shape. */
+					ObjColMode colMode		:1;	/**< Sprite color mode. */
+					ObjShape objShape		:2;	/**< Sprite shape. */
 				};
 			};
 		};
@@ -171,7 +177,7 @@ typedef union {
 					struct {
 						u8					:1;
 						u8 rsMatrixIdx		:5; /**< Affine parameter number to use (isRotoscale set). */
-						tObjSize objSize	:2; /**< Sprite size. */
+						ObjSize objSize	:2; /**< Sprite size. */
 					};
 				};
 			};
@@ -179,11 +185,11 @@ typedef union {
  
 		struct {
 			u16 tileIdx						:10;/**< Upper-left tile index. */
-			tObjPriority objPriority		:2;	/**< Sprite priority. */
+			ObjPriority objPriority		:2;	/**< Sprite priority. */
 			u8 objPal						:4;	/**< Sprite palette to use in paletted color modes. */
 		};
  
-		u16 attribute3;							/**< Four of those are used as a sprite rotation matrice */
+		u16 attribute3;							/**< Unused! Four of those are used as a sprite rotation matrice */
 	};
  
 	struct {
@@ -193,32 +199,36 @@ typedef union {
  
 } SpriteEntry, * pSpriteEntry;
 
+/**
+ * @struct SpriteRotation
+ * @brief A sprite rotation entry
+ */
+typedef struct {
+  uint16 filler1[3]; /**< Unused! Filler for the sprite entry attributes which overlap these */
+  int16 hdx;		 /**< The change in x per horizontal pixel */
 
-typedef struct sSpriteRotation {
-  uint16 filler1[3];
-  int16 hdx;
+  uint16 filler2[3];  /**< Unused! Filler for the sprite entry attributes which overlap these */
+  int16 hdy;		  /**< The change in y per horizontal pixel */
 
-  uint16 filler2[3];
-  int16 hdy;
+  uint16 filler3[3];  /**< Unused! Filler for the sprite entry attributes which overlap these */
+  int16 vdx;		  /**< The change in x per vertical pixel */
 
-  uint16 filler3[3];
-  int16 vdx;
-
-  uint16 filler4[3];
-  int16 vdy;
+  uint16 filler4[3];  /**< Unused! Filler for the sprite entry attributes which overlap these */
+  int16 vdy;			/**< The change in y per vertical pixel */
+  
 } SpriteRotation, * pSpriteRotation;
 
 #define SPRITE_COUNT 128
 #define MATRIX_COUNT 32
 
 /**
- * @union tOAM
+ * @union OAM
  * @brief Final OAM representation in memory
 */
 typedef union {
 	SpriteEntry spriteBuffer[SPRITE_COUNT];
 	SpriteRotation matrixBuffer[MATRIX_COUNT];
-} tOAM;
+} OAMTable;
  
 
 #endif // _libnds_sprite_h_
