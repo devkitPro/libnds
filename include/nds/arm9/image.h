@@ -1,6 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: image.h,v 1.5 2007-01-19 14:45:59 wntrmute Exp $
-
 
   Copyright (C) 2005
 			Jason Rogers (dovoto)
@@ -23,21 +21,6 @@
   3. This notice may not be removed or altered from any source
      distribution.
 
-	$Log: not supported by cvs2svn $
-	Revision 1.4  2005/10/11 05:05:26  dovoto
-	Added imageTileData(sImage* img) to allow loading of pcx as sprite data.
-	Updated pcx.c to set image bit per pixel field
-	
-	Revision 1.3  2005/08/30 17:56:21  wntrmute
-	add video.h
-	
-	Revision 1.2  2005/08/11 14:53:00  desktopman
-	Added image24to16(sImage* img)
-
-	Revision 1.1  2005/07/27 02:20:52  wntrmute
-	add image functions
-
-
 ---------------------------------------------------------------------------------*/
 #ifndef IMAGE_H
 #define IMAGE_H
@@ -59,9 +42,9 @@
 
     union
     {
-       unsigned char* data8;
-       unsigned short* data16;
-       unsigned int* data32;
+       u8* data8;
+       u16* data16;
+       u32* data32;
     } image;
 
  } sImage, *psImage;
