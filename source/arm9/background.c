@@ -58,15 +58,15 @@ vuint16* bgControl[8] =
 
 bg_scroll* bgScrollTable[8] = 
 {
-	(bg_scroll*)0x04000010,
-	(bg_scroll*)0x04000014,
-	(bg_scroll*)0x04000018,
-	(bg_scroll*)0x0400001A,
+	&BG_OFFSET[0],
+	&BG_OFFSET[1],
+	&BG_OFFSET[2],
+	&BG_OFFSET[3],
 	
-	(bg_scroll*)0x04001010,
-	(bg_scroll*)0x04001014,
-	(bg_scroll*)0x04001018,
-	(bg_scroll*)0x0400101A,
+	&BG_OFFSET_SUB[0],
+	&BG_OFFSET_SUB[1],
+	&BG_OFFSET_SUB[2],
+	&BG_OFFSET_SUB[3]
 };
 
 bg_rotation* bgRotation[8] = 
