@@ -136,7 +136,7 @@ typedef enum {
 
 /**
  * @union SpriteEntry
- * @brief A bitfield of sprite attribute goodness...uggly to look at but not so bad to use
+ * @brief A bitfield of sprite attribute goodness...ugly to look at but not so bad to use
  */
 typedef union {
 	struct {

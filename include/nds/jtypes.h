@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: jtypes.h,v 1.17 2007-07-18 05:20:45 wntrmute Exp $
 
 	jtypes.h -- Common types (and a few useful macros)
 

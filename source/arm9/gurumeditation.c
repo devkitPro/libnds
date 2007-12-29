@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-  $Id: gurumeditation.c,v 1.7 2007-06-28 01:03:28 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
