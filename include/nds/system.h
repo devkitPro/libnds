@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: system.h,v 1.22 2007-07-23 12:50:07 wntrmute Exp $
 
 	Power control, keys, and HV clock registers
 
@@ -245,6 +244,6 @@ struct __argv {
 #define libnds_argv		((struct __argv *)0x027FFF70)
 
 // argv struct magic number
-#define argvMagic 0x5f617267
+#define ARGV_MAGIC 0x5f617267
 
 #endif
