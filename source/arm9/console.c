@@ -173,11 +173,32 @@ static void consoleClearLine(char mode) {
 		}
 	}
 }
+
+extern void nocashMessage(const char* ptr);
+
+//---------------------------------------------------------------------------------
+int nocash_write(struct _reent *r,int fd,const char *ptr,int len) {
+//---------------------------------------------------------------------------------
+	int count = 0;
+	
+	if(!ptr || len <= 0) return -1;
+
+	while(count < len)
+	{
+		
+		nocashMessage(ptr + count);
+		
+		count += (len - count) > 80 ? 80 : len - count;
+
+	}
+	
+	return len;
+}
+
+
 //---------------------------------------------------------------------------------
 int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 //---------------------------------------------------------------------------------
-
-	if (!consoleInitialised) return -1;
 
 	char chr;
 
@@ -185,8 +206,11 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 	char *tmp = (char*)ptr;
 
 	if(!tmp || len<=0) return -1;
-
+	
+	if (!consoleInitialised) return -1;
+	
 	i = 0;
+	
 	while(*tmp!='\0' && i<len) {
 
 		chr = *(tmp++);
@@ -310,6 +334,16 @@ const devoptab_t dotab_stdout = {
 };
 
 
+const devoptab_t dotab_stderr = {
+	"nocash",
+	0,
+	NULL,
+	NULL,
+	nocash_write,
+	NULL,
+	NULL,
+	NULL
+};
 /*---------------------------------------------------------------------------------
 	consoleInit
 	param:
@@ -416,12 +450,28 @@ void consoleInit(	u16* font, u16* charBase,
 	}
 
 	devoptab_list[STD_OUT] = &dotab_stdout;
-	devoptab_list[STD_ERR] = &dotab_stdout;
-	setvbuf(stderr, NULL , _IONBF, 0);
 	setvbuf(stdout, NULL , _IONBF, 0);
+
 	consoleCls('2');
 	consoleInitialised = 1;
 
+}
+
+//---------------------------------------------------------------------------------
+void consoleDebugInit(DebugDevice device){
+//---------------------------------------------------------------------------------
+
+	if(device & DB_NOCASH)
+	{
+		devoptab_list[STD_ERR] = &dotab_stderr;
+		setvbuf(stderr, NULL , _IONBF, 0);
+	}
+	
+	if(device & DB_CONSOLE)
+	{
+		devoptab_list[STD_ERR] = &dotab_stdout;
+		setvbuf(stderr, NULL , _IONBF, 0);
+	}
 }
 
 //---------------------------------------------------------------------------------

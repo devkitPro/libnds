@@ -36,11 +36,20 @@
 
 #define CONSOLE_USE_COLOR255 16
 
+
 #include <nds/jtypes.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*! \brief Console debug devices supported by libnds */
+typedef enum 
+{
+	DB_NOCASH = 0x1, /*! \brief Prints debug statements to no$gba debug window */
+	DB_CONSOLE = 0x02 /*! \brief Prints debug statements to DS console window */
+}DebugDevice;
+
 /*! \fn void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16* map, u8 pal, u8 bitDepth)
 	\brief Initialise the console.
 	\param font	base address of the 16 color font to use
@@ -79,6 +88,13 @@ void consoleDemoInit(void);
 \brief Clears the screan by iprintf("\x1b[2J");
 */
 void consoleClear(void);
+
+/*! \fn void consoleDebugInit(DebugDevice device)
+	\brief Initializes debug console output on stderr to the specified device
+	\param device The debug device (or devices) to output debug print statements to
+*/
+void consoleDebugInit(DebugDevice device);
+
 #ifdef __cplusplus
 }
 #endif
