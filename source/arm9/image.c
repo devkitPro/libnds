@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: image.c,v 1.7 2007-01-19 14:46:00 wntrmute Exp $
+	$Id: image.c,v 1.8 2008-02-09 12:27:38 dovoto Exp $
 
 
 	Copyright (C) 2005
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.7  2007/01/19 14:46:00  wntrmute
+	name anonymous structs and unions for -std=c99
+	
 	Revision 1.6  2005/10/11 05:05:26  dovoto
 	Added imageTileData(sImage* img) to allow loading of pcx as sprite data.
 	Updated pcx.c to set image bit per pixel field
@@ -144,7 +147,7 @@ void imageTileData(sImage* img) {
 
 	free(img->image.data32);
 	
-	img->image.data32 = temp;
+	img->image.data32 = (unsigned int*)temp;
 }
 
 //---------------------------------------------------------------------------------
