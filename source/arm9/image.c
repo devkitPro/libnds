@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: image.c,v 1.8 2008-02-09 12:27:38 dovoto Exp $
+	$Id: image.c,v 1.9 2008-02-09 14:46:50 dovoto Exp $
 
 
 	Copyright (C) 2005
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.8  2008/02/09 12:27:38  dovoto
+	Added a cast to remove a warning
+	
 	Revision 1.7  2007/01/19 14:46:00  wntrmute
 	name anonymous structs and unions for -std=c99
 	
@@ -147,7 +150,7 @@ void imageTileData(sImage* img) {
 
 	free(img->image.data32);
 	
-	img->image.data32 = (unsigned int*)temp;
+	img->image.data32 = (u32*)temp;
 }
 
 //---------------------------------------------------------------------------------
