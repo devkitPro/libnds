@@ -30,6 +30,27 @@
     \brief nds background defines and functionality.
 */
 
+/*! 
+	\example Graphics/2D/BackgroundAllInOne/source/advanced.cpp
+	These examples cover rotation and scaling of backgrounds
+*/		
+
+/*!
+	\example Graphics/2D/BackgroundAllInOne/source/basic.cpp
+	These examples cover basic initialization and loading of various backgrounds
+*/
+
+/*!
+	\example Graphics/2D/BackgroundAllInOne/source/scrolling.cpp
+	These examples cover background scrolling
+*/
+
+/*!
+	\example Graphics/2D/BackgroundAllInOne/source/handmade.cpp
+	This example loads a map created in code
+*/
+
+
 #ifndef _libnds_background_h_
 #define _libnds_background_h_
 
@@ -111,11 +132,11 @@ extern BgState bgState[8];
  */
 typedef enum
 {
-	BgType_Text, /**< Tiled background with 16 bit tile indexes and no allowed rotation or scaling >*/
-	BgType_Rotation, /**< Tiled background with 8 bit tile indexes Can be scaled and rotated >*/
-	BgType_ExRotation, /**< Tiled background with 16 bit tile indexes Can be scaled and rotated >*/
-	BgType_Bmp8, /**< Bitmap background with 8 bit color values which index into a 256 color palette >*/
-	BgType_Bmp16 /**< Bitmap background with 16 bit color values of the form aBBBBBGGGGGRRRRR
+	BgType_Text, /*!< Tiled background with 16 bit tile indexes and no allowed rotation or scaling >*/
+	BgType_Rotation, /*!< Tiled background with 8 bit tile indexes Can be scaled and rotated >*/
+	BgType_ExRotation, /*!< Tiled background with 16 bit tile indexes Can be scaled and rotated >*/
+	BgType_Bmp8, /*!< Bitmap background with 8 bit color values which index into a 256 color palette >*/
+	BgType_Bmp16 /*!< Bitmap background with 16 bit color values of the form aBBBBBGGGGGRRRRR
 					(if 'a' is set the pixel will be rendered...if not the pixel will be transperant >*/
 	
 }BgType;
@@ -128,32 +149,32 @@ typedef enum
  */
 typedef enum
 {
-	BgSize_R_128x128 =   (0 << 14), /**< 128 x 128 pixel rotation background */
-	BgSize_R_256x256 =   (1 << 14), /**< 256 x 256 pixel rotation background */
-	BgSize_R_512x512 =   (2 << 14), /**< 512 x 512 pixel rotation background */
-	BgSize_R_1024x1024 = (3 << 14), /**< 1024 x 1024 pixel rotation background */
+	BgSize_R_128x128 =   (0 << 14), /*!< 128 x 128 pixel rotation background */
+	BgSize_R_256x256 =   (1 << 14), /*!< 256 x 256 pixel rotation background */
+	BgSize_R_512x512 =   (2 << 14), /*!< 512 x 512 pixel rotation background */
+	BgSize_R_1024x1024 = (3 << 14), /*!< 1024 x 1024 pixel rotation background */
 	
-	BgSize_T_256x256 = (0 << 14) | (1 << 16), /**< 256 x 256 pixel text background */
-	BgSize_T_512x256 = (1 << 14) | (1 << 16), /**< 512 x 256 pixel text background */
-	BgSize_T_256x512 = (2 << 14) | (1 << 16), /**< 256 x 512 pixel text background */
-	BgSize_T_512x512 = (3 << 14) | (1 << 16), /**< 512 x 512 pixel text background */
+	BgSize_T_256x256 = (0 << 14) | (1 << 16), /*!< 256 x 256 pixel text background */
+	BgSize_T_512x256 = (1 << 14) | (1 << 16), /*!< 512 x 256 pixel text background */
+	BgSize_T_256x512 = (2 << 14) | (1 << 16), /*!< 256 x 512 pixel text background */
+	BgSize_T_512x512 = (3 << 14) | (1 << 16), /*!< 512 x 512 pixel text background */
 	
-	BgSize_ER_128x128 = (0 << 14) | (2 << 16), /**< 128 x 128 pixel extended rotation background */
-	BgSize_ER_256x256 = (1 << 14) | (2 << 16), /**< 256 x 256 pixel extended rotation background */
-	BgSize_ER_512x512 = (2 << 14) | (2 << 16), /**< 512 x 512 pixel extended rotation background */
-	BgSize_ER_1024x1024 = (3 << 14) | (2 << 16),/**< 1024 x 1024 extended pixel rotation background */
+	BgSize_ER_128x128 = (0 << 14) | (2 << 16), /*!< 128 x 128 pixel extended rotation background */
+	BgSize_ER_256x256 = (1 << 14) | (2 << 16), /*!< 256 x 256 pixel extended rotation background */
+	BgSize_ER_512x512 = (2 << 14) | (2 << 16), /*!< 512 x 512 pixel extended rotation background */
+	BgSize_ER_1024x1024 = (3 << 14) | (2 << 16),/*!< 1024 x 1024 extended pixel rotation background */
 
-	BgSize_B8_128x128 =  ((0 << 14) | BIT(7) | (3 << 16)),  /**< 128 x 128 pixel 8 bit bitmap background */
-	BgSize_B8_256x256 =  ((1 << 14) | BIT(7) | (3 << 16)),  /**< 256 x 256 pixel 8 bit bitmap background */
-	BgSize_B8_512x256 =  ((2 << 14) | BIT(7) | (3 << 16)),  /**< 512 x 256 pixel 8 bit bitmap background */
-	BgSize_B8_512x512 =  ((3 << 14) | BIT(7) | (3 << 16)),  /**< 512 x 512 pixel 8 bit bitmap background */
-	BgSize_B8_1024x512 = (1 << 14) | (3 << 16),		    	/**< 1024 x 512 pixel 8 bit bitmap background */
-	BgSize_B8_512x1024 = (0) | (3 << 16),					/**< 512 x 1024 pixel 8 bit bitmap background */
+	BgSize_B8_128x128 =  ((0 << 14) | BIT(7) | (3 << 16)),  /*!< 128 x 128 pixel 8 bit bitmap background */
+	BgSize_B8_256x256 =  ((1 << 14) | BIT(7) | (3 << 16)),  /*!< 256 x 256 pixel 8 bit bitmap background */
+	BgSize_B8_512x256 =  ((2 << 14) | BIT(7) | (3 << 16)),  /*!< 512 x 256 pixel 8 bit bitmap background */
+	BgSize_B8_512x512 =  ((3 << 14) | BIT(7) | (3 << 16)),  /*!< 512 x 512 pixel 8 bit bitmap background */
+	BgSize_B8_1024x512 = (1 << 14) | (3 << 16),		    	/*!< 1024 x 512 pixel 8 bit bitmap background */
+	BgSize_B8_512x1024 = (0) | (3 << 16),					/*!< 512 x 1024 pixel 8 bit bitmap background */
 
-	BgSize_B16_128x128 = ((0 << 14) | BIT(7) | BIT(2) | (4 << 16)),  /**< 128 x 128 pixel 16 bit bitmap background */
-	BgSize_B16_256x256 = ((1 << 14) | BIT(7) | BIT(2) | (4 << 16)),  /**< 256 x 256 pixel 16 bit bitmap background */
-	BgSize_B16_512x256 = ((2 << 14) | BIT(7) | BIT(2) | (4 << 16)),  /**< 512 x 512 pixel 16 bit bitmap background */
-	BgSize_B16_512x512 = ((3 << 14) | BIT(7) | BIT(2) | (4 << 16)),  /**< 1024 x 1024 pixel 16 bit bitmap background */
+	BgSize_B16_128x128 = ((0 << 14) | BIT(7) | BIT(2) | (4 << 16)),  /*!< 128 x 128 pixel 16 bit bitmap background */
+	BgSize_B16_256x256 = ((1 << 14) | BIT(7) | BIT(2) | (4 << 16)),  /*!< 256 x 256 pixel 16 bit bitmap background */
+	BgSize_B16_512x256 = ((2 << 14) | BIT(7) | BIT(2) | (4 << 16)),  /*!< 512 x 512 pixel 16 bit bitmap background */
+	BgSize_B16_512x512 = ((3 << 14) | BIT(7) | BIT(2) | (4 << 16)),  /*!< 1024 x 1024 pixel 16 bit bitmap background */
 
 }BgSize;
 
@@ -250,7 +271,7 @@ int bgInit(int layer, BgType type, BgSize size, int mapBase, int tileBase)
 
 static inline 
 /*! \fn bgInitSub(int layer, BgType type, BgSize size, int mapBase, int tileBase);
-	\brief Initializes a background on the main display
+	\brief Initializes a background on the sub display
 		Sets up background control register with specified settings and defaults to 256 color mode
 		for tiled backgrounds.  
 		Sets the rotation/scale attributes for rot/ex rot backgrounds to 1:1 scale and 0 angle of rotation.
@@ -470,7 +491,7 @@ void bgSetMosaicSub(unsigned int dx, unsigned int dy)
 
 static inline 
 /*! \fn bgGetPriority(int id)
-	\brief Sets the background priority
+	\brief Gets the background priority
 	\param id 
 		background id returned from bgInit or bgInitSub
 	\return
@@ -498,7 +519,7 @@ int bgGetMapBase(int id)
 
 static inline 
 /*! \fn bgGetTileBase(int id)
-	\brief Sets the background tile base
+	\brief Gets the background tile base
 	\param id 
 		background id returned from bgInit or bgInitSub
 	\return
