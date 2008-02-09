@@ -386,7 +386,7 @@ void videoBgDisableSub(int number) {DISPLAY_CR &= ~(1 << (DISPLAY_ENABLE_SHIFT +
 // Display capture control
 
 #define	REG_DISPCAPCNT		(*(vuint32*)0x04000064)
-#define REG_ DISP_MMEM_FIFO	(*(vuint32*)0x04000068)
+#define REG_DISP_MMEM_FIFO	(*(vuint32*)0x04000068)
 
 #define DCAP_ENABLE    BIT(31)
 #define DCAP_MODE(n)   (((n) & 3) << 29)

@@ -29,6 +29,7 @@
 #include <nds/arm9/console.h>
 #include <nds/arm9/video.h>
 #include <nds/arm9/background.h>
+#include <nds/debug.h>
 #include <default_font_bin.h>
 
 #include <stdio.h>
@@ -173,8 +174,6 @@ static void consoleClearLine(char mode) {
 		}
 	}
 }
-
-extern void nocashMessage(const char* ptr);
 
 //---------------------------------------------------------------------------------
 int nocash_write(struct _reent *r,int fd,const char *ptr,int len) {
@@ -322,7 +321,7 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 	return count;
 }
 
-const devoptab_t dotab_stdout = {
+static const devoptab_t dotab_stdout = {
 	"con",
 	0,
 	NULL,
@@ -334,7 +333,7 @@ const devoptab_t dotab_stdout = {
 };
 
 
-const devoptab_t dotab_stderr = {
+static const devoptab_t dotab_stderr = {
 	"nocash",
 	0,
 	NULL,
@@ -494,10 +493,6 @@ void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth) {
 //---------------------------------------------------------------------------------
 	consoleInit((u16*)default_font_bin, charBase, 256, 0, map, CONSOLE_USE_COLOR255, bitDepth);
 }
-
-//void consoleInitColorDefault(u16* map, u16* charBase) {
-//	consoleInit((u16*)default_font_bin, charBase, 256, 0, map, CONSOLE_USE_COLOR255, bitDepth);
-//}
 
 //---------------------------------------------------------------------------------
 static void newRow() {

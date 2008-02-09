@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: nds.h,v 1.15 2007-10-20 20:47:42 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -44,6 +43,7 @@ extern "C" {
 #include <nds/jtypes.h>
 #include <nds/bios.h>
 #include <nds/card.h>
+#include <nds/debug.h>
 #include <nds/dma.h>
 #include <nds/interrupts.h>
 #include <nds/ipc.h>
@@ -71,7 +71,9 @@ extern "C" {
 #include <nds/arm9/videoGL.h>
 #include <nds/arm9/sprite.h>
 
+//---------------------------------------------------------------------------------
 #endif // #ifdef ARM9
+//---------------------------------------------------------------------------------
 
 //---------------------------------------------------------------------------------
 #ifdef ARM7
@@ -82,7 +84,9 @@ extern "C" {
 #include <nds/arm7/serial.h>
 #include <nds/arm7/touch.h>
 
+//---------------------------------------------------------------------------------
 #endif // #ifdef ARM7
+//---------------------------------------------------------------------------------
 
 
 #ifdef __cplusplus
