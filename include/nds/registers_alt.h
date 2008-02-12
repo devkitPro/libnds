@@ -37,7 +37,7 @@
 #define	NDS_REGISTERS_H
 
 
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 
 
 #define	REG_DISPCNT		(*(vu32*)0x4000000)

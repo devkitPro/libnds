@@ -23,7 +23,7 @@
 	
 ---------------------------------------------------------------------------------*/
 
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 #include <nds/arm9/video.h>
 
 

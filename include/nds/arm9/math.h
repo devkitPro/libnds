@@ -29,7 +29,7 @@
 #ifndef MATH_ARM9_INCLUDE
 #define MATH_ARM9_INCLUDE
 
-#include <nds/jtypes.h>
+#include "nds/ndstypes.h"
 
 //  Math coprocessor register definitions
 

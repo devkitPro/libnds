@@ -40,36 +40,37 @@
 extern "C" {
 #endif
 
-#include <nds/ndstypes.h>
-#include <nds/bios.h>
-#include <nds/card.h>
-#include <nds/debug.h>
-#include <nds/dma.h>
-#include <nds/interrupts.h>
-#include <nds/ipc.h>
-#include <nds/memory.h>
-#include <nds/system.h>
-#include <nds/timers.h>
+#include "nds/ndstypes.h"
+#include "nds/bios.h"
+#include "nds/card.h"
+#include "nds/debug.h"
+#include "nds/dma.h"
+#include "nds/interrupts.h"
+#include "nds/ipc.h"
+#include "nds/memory.h"
+#include "nds/system.h"
+#include "nds/timers.h"
+#include "nds/fifocommon.h"
 
 //---------------------------------------------------------------------------------
 #ifdef ARM9
 //---------------------------------------------------------------------------------
 
-#include <nds/arm9/background.h>
-#include <nds/arm9/boxtest.h>
-#include <nds/arm9/cache.h>
-#include <nds/arm9/console.h>
-#include <nds/arm9/exceptions.h>
-#include <nds/arm9/image.h>
-#include <nds/arm9/input.h>
-#include <nds/arm9/math.h>
-#include <nds/arm9/pcx.h>
-#include <nds/arm9/rumble.h>
-#include <nds/arm9/sound.h>
-#include <nds/arm9/trig_lut.h>
-#include <nds/arm9/video.h>
-#include <nds/arm9/videoGL.h>
-#include <nds/arm9/sprite.h>
+#include "nds/arm9/background.h"
+#include "nds/arm9/boxtest.h"
+#include "nds/arm9/cache.h"
+#include "nds/arm9/console.h"
+#include "nds/arm9/exceptions.h"
+#include "nds/arm9/image.h"
+#include "nds/arm9/input.h"
+#include "nds/arm9/math.h"
+#include "nds/arm9/pcx.h"
+#include "nds/arm9/rumble.h"
+#include "nds/arm9/sound.h"
+#include "nds/arm9/trig_lut.h"
+#include "nds/arm9/video.h"
+#include "nds/arm9/videoGL.h"
+#include "nds/arm9/sprite.h"
 
 //---------------------------------------------------------------------------------
 #endif // #ifdef ARM9
@@ -79,10 +80,10 @@ extern "C" {
 #ifdef ARM7
 //---------------------------------------------------------------------------------
 
-#include <nds/arm7/audio.h>
-#include <nds/arm7/clock.h>
-#include <nds/arm7/serial.h>
-#include <nds/arm7/touch.h>
+#include "nds/arm7/audio.h"
+#include "nds/arm7/clock.h"
+#include "nds/arm7/serial.h"
+#include "nds/arm7/touch.h"
 
 //---------------------------------------------------------------------------------
 #endif // #ifdef ARM7

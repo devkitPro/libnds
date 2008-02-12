@@ -37,7 +37,7 @@
 #define CONSOLE_USE_COLOR255 16
 
 
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 
 #ifdef __cplusplus
 extern "C" {

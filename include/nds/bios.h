@@ -40,7 +40,7 @@ extern "C" {
 #endif
 
 
-#include <nds/ndstypes.h>
+#include "nds/ndstypes.h"
 
 
 typedef struct DecompressionStream {

@@ -22,7 +22,7 @@
      distribution.
 	
 ---------------------------------------------------------------------------------*/
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 #include <nds/memory.h>
 #include <nds/arm9/rumble.h>
 

@@ -27,7 +27,7 @@
 
 ---------------------------------------------------------------------------------*/
 
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 #include <nds/memory.h>
 #include <nds/bios.h>
 #include <nds/arm9/math.h>

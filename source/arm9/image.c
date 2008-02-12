@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: image.c,v 1.9 2008-02-09 14:46:50 dovoto Exp $
+	$Id: image.c,v 1.10 2008-02-12 02:10:13 wntrmute Exp $
 
 
 	Copyright (C) 2005
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.9  2008/02/09 14:46:50  dovoto
+	Fixed warning on cast
+	
 	Revision 1.8  2008/02/09 12:27:38  dovoto
 	Added a cast to remove a warning
 	
@@ -52,7 +55,7 @@
 
 
 ---------------------------------------------------------------------------------*/
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 #include <nds/arm9/image.h>
 #include <nds/dma.h>
 

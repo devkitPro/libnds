@@ -37,7 +37,7 @@
 #error Sprites are only available on the ARM9
 #endif
 
-#include <nds/jtypes.h>
+#include "nds/ndstypes.h"
 
 // Sprite control defines
 
