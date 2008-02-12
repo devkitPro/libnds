@@ -203,7 +203,8 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 
 	int i, count = 0;
 	char *tmp = (char*)ptr;
-
+	int intensity = 0;
+	
 	if(!tmp || len<=0) return -1;
 	
 	if (!consoleInitialised) return -1;
@@ -291,9 +292,9 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 					// Color scan codes
 					/////////////////////////////////////////
 					case 'm':
-						siscanf(escapeseq,"[%dm", &parameter);
+						siscanf(escapeseq,"[%d;%dm", &parameter, &intensity);
 						
-						//only handle 30-37,39 and 40-47 for the color changes
+						//only handle 30-37,39 and intensity for the color changes
 						parameter -= 30; 
 						
 						//39 is the reset code
@@ -303,7 +304,9 @@ int con_write(struct _reent *r,int fd,const char *ptr,int len) {
 						else if(parameter > 8){ 
 							parameter -= 2;
 						}
-						
+						else if(intensity){
+							parameter += 8;
+						}
 						if(parameter < 16 && parameter >= 0){
 							fontPal = parameter << 12;
 						}

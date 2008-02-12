@@ -43,11 +43,14 @@
 extern "C" {
 #endif
 
-/*! \brief Console debug devices supported by libnds */
+/**
+ * \enum DebugDevice
+ * \brief Console debug devices supported by libnds 
+ */
 typedef enum 
 {
-	DB_NOCASH = 0x1, /*! \brief Prints debug statements to no$gba debug window */
-	DB_CONSOLE = 0x02 /*! \brief Prints debug statements to DS console window */
+	DB_NOCASH = 0x1, /*!< Prints debug statements to no$gba debug window >*/
+	DB_CONSOLE = 0x02 /*!< Prints debug statements to DS console window >*/
 }DebugDevice;
 
 /*! \fn void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16* map, u8 pal, u8 bitDepth)
