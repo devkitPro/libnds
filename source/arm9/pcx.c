@@ -22,7 +22,7 @@
 		distribution.
 
 ---------------------------------------------------------------------------------*/
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 #include <nds/arm9/video.h>
 #include <nds/arm9/image.h>
 #include <malloc.h>

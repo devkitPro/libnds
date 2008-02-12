@@ -40,7 +40,7 @@
 extern "C" {
 #endif
 
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 #include <nds/bios.h>
 #include <nds/card.h>
 #include <nds/debug.h>

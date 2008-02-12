@@ -1,8 +1,8 @@
 /*---------------------------------------------------------------------------------
 
-	jtypes.h -- Common types (and a few useful macros)
+	ndstypes.h -- Common types (and a few useful macros)
 
-	Copyright (C) 2005
+	Copyright (C) 2005 - 2008
 		Michael Noland (joat)
 		Jason Rogers (dovoto)
 		Dave Murphy (WinterMute)
@@ -26,8 +26,8 @@
 		distribution.
 
 ---------------------------------------------------------------------------------*/
-#ifndef NDS_JTYPES_INCLUDE
-#define NDS_JTYPES_INCLUDE
+#ifndef _NDSTYPES_INCLUDE
+#define _NDSTYPES_INCLUDE
 //---------------------------------------------------------------------------------
 
 

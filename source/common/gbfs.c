@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: gbfs.c,v 1.5 2006-05-05 05:32:06 wntrmute Exp $
+	$Id: gbfs.c,v 1.6 2008-02-12 00:46:07 wntrmute Exp $
 
 	access object in a GBFS file
 
@@ -28,6 +28,9 @@
 	IN THE SOFTWARE.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.5  2006/05/05 05:32:06  wntrmute
+	consistency formatting
+	
 	Revision 1.4  2006/02/25 02:31:12  wntrmute
 	tabs, not spaces
 	
@@ -52,7 +55,7 @@
 
 #include <stdlib.h>
 #include <string.h>
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 #include "gbfs.h"
 
 /*---------------------------------------------------------------------------------

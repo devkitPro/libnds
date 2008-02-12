@@ -54,13 +54,13 @@
 #ifndef _libnds_background_h_
 #define _libnds_background_h_
 
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 #include <nds/arm9/video.h>
 #include <nds/arm9/sassert.h>
 #include <nds/memory.h>
 #include <nds/dma.h>
-#include <string.h>
 #include <nds/arm9/trig_lut.h>
+#include <string.h>
 
 
 #define MAP_BASE_SHIFT 8

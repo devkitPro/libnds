@@ -24,7 +24,7 @@
 
 ---------------------------------------------------------------------------------*/
 
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 #include <nds/memory.h>
 #include <nds/arm9/console.h>
 #include <nds/arm9/video.h>

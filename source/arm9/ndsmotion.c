@@ -294,7 +294,7 @@ signed int motion_read_z(void) {
 			swiDelay(WAIT_CYCLES); // wait for data ready
 			High_byte = V_SRAM[0]; // get the high byte
 			swiDelay(WAIT_CYCLES); // wait for data ready
-			Low_byte = V_SRAM[0]; // get the low byte
+			Low_byte = V_SRAM[0];  // get the low byte
 			swiDelay(WAIT_CYCLES); // wait after for Motion Pak to be ready for next command
 			output = (signed int)( (High_byte<<8 | Low_byte)>>4);
 			return output;

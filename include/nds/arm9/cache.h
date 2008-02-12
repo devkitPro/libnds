@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: cache.h,v 1.7 2007-10-20 20:42:56 wntrmute Exp $
+	$Id: cache.h,v 1.8 2008-02-12 00:45:58 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -37,7 +37,7 @@
 extern "C" {
 #endif
 
-#include "nds/jtypes.h"
+#include "nds/ndstypes.h"
 
 
 /*! \fn IC_InvalidateAll()

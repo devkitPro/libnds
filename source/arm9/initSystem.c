@@ -25,7 +25,7 @@
 	distribution.
 
 ---------------------------------------------------------------------------------*/
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 #include <nds/system.h>
 #include <nds/memory.h>
 #include <nds/timers.h>

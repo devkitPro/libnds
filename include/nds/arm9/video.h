@@ -34,7 +34,7 @@
 #error Video is only available on the ARM9
 #endif
 
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 #include <nds/arm9/sassert.h>
 #include <stdio.h>
 

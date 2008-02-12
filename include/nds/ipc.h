@@ -29,7 +29,7 @@
 #ifndef NDS_IPC_INCLUDE
 #define NDS_IPC_INCLUDE
 
-#include <nds/jtypes.h>
+#include "ndstypes.h"
 
 //---------------------------------------------------------------------------------
 typedef struct sTransferSoundData {

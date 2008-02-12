@@ -28,7 +28,7 @@
 #define NDS_CARD_INCLUDE
 
 
-#include "jtypes.h"
+#include "ndstypes.h"
 
 // Card bus
 #define CARD_CR1       (*(vuint16*)0x040001A0)

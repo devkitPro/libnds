@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: exceptions.c,v 1.4 2006-06-19 19:12:01 wntrmute Exp $
+  $Id: exceptions.c,v 1.5 2008-02-12 00:46:07 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
@@ -22,6 +22,10 @@
      distribution.
 
   $Log: not supported by cvs2svn $
+  Revision 1.4  2006/06/19 19:12:01  wntrmute
+  correct prototypes again
+  add defaultHandler function to install default handler
+
   Revision 1.3  2006/06/19 18:21:39  wntrmute
   corrected prototypes
 
@@ -35,7 +39,7 @@
 
 ---------------------------------------------------------------------------------*/
 
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 #include <nds/arm9/exceptions.h>
 
 //---------------------------------------------------------------------------------

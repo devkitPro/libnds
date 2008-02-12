@@ -37,7 +37,7 @@
 #ifndef NDS_INTERRUPTS_INCLUDE
 #define NDS_INTERRUPTS_INCLUDE
 
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 
 /*! \enum IRQ_MASKS
 	\brief values allowed for REG_IE and REG_IF
@@ -60,7 +60,7 @@ enum IRQ_MASKS {
 	IRQ_CART			=	BIT(13),	/*!< GBA cartridge interrupt mask */
 	IRQ_IPC_SYNC		=	BIT(16),	/*!< IPC sync interrupt mask */
 	IRQ_FIFO_EMPTY		=	BIT(17),	/*!< Send FIFO empty interrupt mask */
-	IRQ_FIFO_NOT_EMPTY	=	BIT(18),	/*!< Receive FIFO empty interrupt mask */
+	IRQ_FIFO_NOT_EMPTY	=	BIT(18),	/*!< Receive FIFO not empty interrupt mask */
 	IRQ_CARD			=	BIT(19),	/*!< interrupt mask */
 	IRQ_CARD_LINE		=	BIT(20),	/*!< interrupt mask */
 	IRQ_GEOMETRY_FIFO	=	BIT(21),	/*!< geometry FIFO interrupt mask */

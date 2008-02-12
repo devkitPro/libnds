@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: timers.h,v 1.10 2007-07-18 05:20:45 wntrmute Exp $
+	$Id: timers.h,v 1.11 2008-02-12 00:45:58 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -46,7 +46,7 @@ extern "C" {
 //---------------------------------------------------------------------------------
 
 
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 
 // Timers
 

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.20 2007-06-25 20:23:35 wntrmute Exp $
+	$Id: touch.c,v 1.21 2008-02-12 00:46:07 wntrmute Exp $
 
 	Touch screen control for the ARM7
 
@@ -27,7 +27,7 @@
 
 ---------------------------------------------------------------------------------*/
 
-#include <nds/jtypes.h>
+#include <nds/ndstypes.h>
 #include <nds/system.h>
 #include <nds/arm7/touch.h>
 #include <nds/interrupts.h>

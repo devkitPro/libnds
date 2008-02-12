@@ -30,7 +30,7 @@
 #define NDS_MEMORY_INCLUDE
 
 
-#include "jtypes.h"
+#include "ndstypes.h"
 
 
 #ifdef ARM9

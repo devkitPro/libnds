@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: input.h,v 1.14 2006-02-25 02:18:53 wntrmute Exp $
+	$Id: input.h,v 1.15 2008-02-12 00:45:58 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -27,6 +27,9 @@
      distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.14  2006/02/25 02:18:53  wntrmute
+	doxygenation updates
+	
 	Revision 1.13  2006/01/12 09:10:47  wntrmute
 	Added key repeat as suggested by pepsiman
 	
@@ -93,7 +96,6 @@
 #define	INPUT_HEADER_INCLUDE
 //---------------------------------------------------------------------------------
 
-#include <nds/jtypes.h>
 
 // Keyboard
 
