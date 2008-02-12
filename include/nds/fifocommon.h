@@ -99,10 +99,39 @@ bool fifoSendDatamsg(int channel, int num_words, u32 * data_array);
 //  Alternately, use the FifoForce*Handler functions, to set regardless - these are specificly designed to try to prevent misuse.
 // Another note on setting handlers: Setting the handler for a channel feeds the queue of buffered messages to the new handler, if there are any unread messages.
 // FifoSetAddressHandler - Set a callback to receive incoming address messages on a specific channel.
+
+/*! \fn fifoSetAddressHandler(int channel, FifoAddressHandlerFunc newhandler, void * userdata)
+	\param channel
+	\param newhandler
+	\param userdata
+	
+	\brief Set user address message callback
+
+	Set a callback to receive incoming address messages on a specific channel.
+*/
 bool fifoSetAddressHandler(int channel, FifoAddressHandlerFunc newhandler, void * userdata);
-// FifoSetValue16Handler - Set a callback to receive incoming value16 messages on a specific channel.
+
+/*! \fn fifoSetValue32Handler(int channel, FifoValue32HandlerFunc newhandler, void * userdata)
+	\param channel
+	\param newhandler
+	\param userdata
+	
+	\brief Set user value32 message callback
+
+	Set a callback to receive incoming value32 messages on a specific channel.
+*/
 bool fifoSetValue32Handler(int channel, FifoValue32HandlerFunc newhandler, void * userdata);
 // FifoSetDatamsgHandler - Set a callback to receive incoming data sequences on a specific channel.
+
+/*! \fn fifoSetValue32Handler(int channel, FifoValue32HandlerFunc newhandler, void * userdata)
+	\param channel
+	\param newhandler
+	\param userdata
+	
+	\brief Set user data message callback
+
+	Set a callback to receive incoming data messages on a specific channel.
+*/
 bool fifoSetDatamsgHandler(int channel, FifoDatamsgHandlerFunc newhandler, void * userdata);
 
 // fifoForceAddressHandler - Set a callback to receive incoming address messages on a specific channel. (and always succeed)
