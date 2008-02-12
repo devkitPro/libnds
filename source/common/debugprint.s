@@ -43,7 +43,7 @@ nocashMessage:  // params = { string }
 //---------------------------------------------------------------------------------
 // copy string into buffer
 //---------------------------------------------------------------------------------
-        ldr     r1,=1f      // get buffer address
+        adr     r1,buffer   // get buffer address
         mov     r2, #120    // max length = 120
 3:      ldrb    r3, [r0]    // load character
         strb    r3, [r1]    // store character
@@ -61,7 +61,7 @@ nocashMessage:  // params = { string }
         b       2f          // skip the text section
         .hword  0x6464      // second ID
         .hword  0           // flags
-1:
+buffer:
         .space  120         // data
 2:      bx      lr          // exit
  
