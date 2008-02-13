@@ -117,8 +117,8 @@ void bgSetRotate(int id, int angle)
 	bgState[id].angle = angle & 0x1ff;
 
 	// Compute sin and cos
-	angleSin = SIN[bgState[id].angle];
-	angleCos = COS[bgState[id].angle];
+	angleSin = sinFixed(angle);//SIN[bgState[id].angle];
+	angleCos = cosFixed(angle);//COS[bgState[id].angle];
  
 	// Set the background registers
 	pa = ( angleCos * bgState[id].scaleX ) >> 12;

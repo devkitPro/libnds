@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: trig_lut.h,v 1.7 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: trig_lut.h,v 1.8 2008-02-13 21:11:29 dovoto Exp $
 
 	Trig_lut.h provides access to external precompiled trig look up tables
 
@@ -25,27 +25,27 @@
 	3.	This notice may not be removed or altered from any source
 		distribution.
 
-	$Log: not supported by cvs2svn $
-	Revision 1.6  2005/08/01 23:18:22  wntrmute
-	adjusted headers for logging
-	
-	Revision 1.5  2005/07/29 00:35:52  wntrmute
-	update file header
-	reference externs directly
+
 
 ---------------------------------------------------------------------------------*/
 #ifndef TRIG_LUT_H
 #define TRIG_LUT_H
 
 
-extern short COS_bin[];
+
 extern short SIN_bin[];
-extern short TAN_bin[];
 
 
-#define COS COS_bin
-#define SIN SIN_bin
-#define TAN TAN_bin
+#ifdef __cplusplus
+extern "C" {
+#endif
+int sinFixed(int angle);
+int cosFixed(int angle);
+int tanFixed(int angle);
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif 

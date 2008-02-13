@@ -717,8 +717,8 @@ GL_STATIC_INL void glMultMatrix3x3(const m3x3 * m) {
 /*! \brief Rotates the current modelview matrix by angle about the x axis 
 \param angle The angle to rotate by (angle is 0-511) */
 GL_STATIC_INL void glRotateXi(int angle) {
-	int32 sine = SIN[angle &  LUT_MASK];
-	int32 cosine = COS[angle & LUT_MASK];
+	int32 sine = sinFixed(angle);//SIN[angle &  LUT_MASK];
+	int32 cosine = cosFixed(angle);//COS[angle & LUT_MASK];
 	
 	MATRIX_MULT3x3 = inttof32(1);
 	MATRIX_MULT3x3 = 0;
@@ -736,8 +736,8 @@ GL_STATIC_INL void glRotateXi(int angle) {
 /*! \brief Rotates the current modelview matrix by angle about the y axis 
 \param angle The angle to rotate by (angle is 0-511) */
 GL_STATIC_INL void glRotateYi(int angle) {
-	int32 sine = SIN[angle &  LUT_MASK];
-	int32 cosine = COS[angle & LUT_MASK];
+	int32 sine = sinFixed(angle);//SIN[angle &  LUT_MASK];
+	int32 cosine = cosFixed(angle);//COS[angle & LUT_MASK];
 	
 	MATRIX_MULT3x3 = cosine;
 	MATRIX_MULT3x3 = 0;
@@ -755,8 +755,8 @@ GL_STATIC_INL void glRotateYi(int angle) {
 /*! \brief Rotates the current modelview matrix by angle about the z axis 
 \param angle The angle to rotate by (angle is 0-511) */
 GL_STATIC_INL void glRotateZi(int angle) {
-	int32 sine = SIN[angle &  LUT_MASK];
-	int32 cosine = COS[angle & LUT_MASK];
+	int32 sine = sinFixed(angle);//SIN[angle &  LUT_MASK];
+	int32 cosine = cosFixed(angle);//COS[angle & LUT_MASK];
 	
 	MATRIX_MULT3x3 = cosine;
 	MATRIX_MULT3x3 = sine;
@@ -896,7 +896,9 @@ GL_STATIC_INL void glFrustumf32(int32 left, int32 right, int32 bottom, int32 top
 GL_STATIC_INL void gluPerspectivef32(int fovy, int32 aspect, int32 zNear, int32 zFar) {
 	int32 xmin, xmax, ymin, ymax;
 	
-	ymax = mulf32(zNear, TAN[(fovy>>1) & LUT_MASK]);
+	//ymax = mulf32(zNear, TAN[(fovy>>1) & LUT_MASK]);
+	ymax = mulf32(zNear, tanFixed(fovy>>1));
+	
 	ymin = -ymax;
 	xmin = mulf32(ymin, aspect);
 	xmax = mulf32(ymax, aspect);
