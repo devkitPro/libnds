@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.21 2008-02-12 00:46:07 wntrmute Exp $
+	$Id: touch.c,v 1.22 2008-02-21 23:39:23 dovoto Exp $
 
 	Touch screen control for the ARM7
 
@@ -274,7 +274,7 @@ void UpdateRange(uint8 *this_range, int16 last_dist_max, u8 data_error, u8 tsc_t
 //---------------------------------------------------------------------------------
 // reading pixel position:
 //---------------------------------------------------------------------------------
-touchPosition touchReadXY() {
+touchPosition touchReadXY(void) {
 //---------------------------------------------------------------------------------
 
 	int16 dist_max_y, dist_max_x, dist_max;

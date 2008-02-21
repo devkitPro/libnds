@@ -37,8 +37,8 @@ touchPosition touchReadXY() {
 	
 	touchPosition touchPos;
 
-	touchPos.x = IPC->touchX;
-	touchPos.y = IPC->touchY;
+	touchPos.rawx = IPC->touchX;
+	touchPos.rawy = IPC->touchY;
 
 	touchPos.px = IPC->touchXpx;
 	touchPos.py = IPC->touchYpx;
@@ -47,3 +47,16 @@ touchPosition touchReadXY() {
 
 }
 
+//---------------------------------------------------------------------------------
+void touchRead(touchPosition *data) {
+//---------------------------------------------------------------------------------
+	data->rawx = IPC->touchX;
+	data->rawy = IPC->touchY;
+
+	data->px = IPC->touchXpx;
+	data->py = IPC->touchYpx;
+	
+	data->z1 = IPC->touchZ1;
+	data->z2 = IPC->touchZ2;
+
+}

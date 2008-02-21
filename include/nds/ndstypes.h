@@ -111,14 +111,7 @@ typedef volatile s16          vs16;
 typedef volatile s32          vs32;
 typedef volatile s64          vs64;
 
-typedef struct touchPosition {
-	int16	x;
-	int16	y;
-	int16	px;
-	int16	py;
-	int16	z1;
-	int16	z2;
-} touchPosition;
+
 
 
 #ifndef __cplusplus

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.h,v 1.9 2007-10-20 20:41:01 wntrmute Exp $
+	$Id: touch.h,v 1.10 2008-02-21 23:39:23 dovoto Exp $
 
 	Microphone control for the ARM7
 
@@ -57,8 +57,16 @@ extern "C" {
 
 
 
-touchPosition touchReadXY();
+typedef struct touchPosition {
+	int16	x;    //!< Raw x value from the A2D
+	int16	y;    //!< Raw x value from the A2D
+	int16	px;   //!< Processes pixel X value
+	int16	py;   //!< Processes pixel Y value
+	int16	z1;   //!< Raw cross panel resistance
+	int16	z2;   //!< Raw cross panel resistance
+} touchPosition;
 
+touchPosition touchReadXY(void);
 uint16 touchRead(uint32 command);
 uint32 touchReadTemperature(int * t1, int * t2);
 

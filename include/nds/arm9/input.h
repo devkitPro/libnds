@@ -64,7 +64,7 @@ extern "C" {
 //!	Obtains the current keypad state.
 /*!	Call this function once per main loop in order to use the keypad functions.
 */
-void scanKeys();
+void scanKeys(void);
 
 //!	Obtains the current keypad held state.
 uint32 keysHeld(void);
@@ -84,8 +84,27 @@ void keysSetRepeat( u8 setDelay, u8 setRepeat );
 //! Obtains the current keypad released state.
 uint32 keysUp(void);
 
-//!	Obtains the current touchscreen co-ordinates.
-touchPosition touchReadXY();
+/*! \struct touchPosition
+	\brief holds data related to the touch screen
+*/
+typedef struct touchPosition {
+	int16	rawx; //!< Raw x value from the A2D
+	int16	rawy; //!< Raw x value from the A2D
+	int16	px;   //!< Processes pixel X value
+	int16	py;   //!< Processes pixel Y value
+	int16	z1;   //!< Raw cross panel resistance
+	int16	z2;   //!< Raw cross panel resistance
+} touchPosition;
+
+__attribute__ ((deprecated)) touchPosition touchReadXY() ;
+
+
+/*!	\function touchRead(touchPosition *data)
+	\brief touchRObtains the current keypad state.
+	Call this function once per main loop in order to use the keypad functions.
+*/
+void touchRead(touchPosition *data);
+
 
 #ifdef __cplusplus
 }
