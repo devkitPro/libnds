@@ -30,6 +30,7 @@
 #define NDS_IPC_INCLUDE
 
 #include "ndstypes.h"
+#include <time.h>
 
 //---------------------------------------------------------------------------------
 typedef struct sTransferSoundData {
@@ -79,7 +80,7 @@ typedef struct sTransferRegion {
 			vu8 seconds;	//0 to 59
 		} rtc;
 	} time;
-	vint32	unixTime;
+	time_t	unixTime;
 
 	uint16 battery;			// battery life ??  hopefully.  :)
 	uint16 aux;				// i have no idea...
