@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: trig_lut.h,v 1.8 2008-02-13 21:11:29 dovoto Exp $
 
 	Trig_lut.h provides access to external precompiled trig look up tables
 
@@ -31,16 +30,39 @@
 #ifndef TRIG_LUT_H
 #define TRIG_LUT_H
 
+/*!	\file trig_lut.h
 
-
-extern short SIN_bin[];
+	\brief fixed point trig functions
+*/
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-int sinFixed(int angle);
+/*! \fn cosFixed( int angle )
+	\param angle
+	
+	\brief fixed point cosine
+	
+	
+*/
 int cosFixed(int angle);
+/*! \fn sinFixed( int angle )
+	\param angle
+	
+	\brief fixed point sine
+	
+	
+*/
+int sinFixed(int angle);
+
+/*! \fn tanFixed( int angle )
+	\param angle
+	
+	\brief fixed point tangent
+	
+	
+*/
 int tanFixed(int angle);
 
 #ifdef __cplusplus
