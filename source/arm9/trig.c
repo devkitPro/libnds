@@ -24,25 +24,29 @@
 
 #include <nds/arm9/trig_lut.h>
 
-#define SIN SIN_bin
+// externally generated sine table 4.12 format
+extern short SIN_bin[];
 
-int sinFixed(int angle)
-{
+//---------------------------------------------------------------------------------
+int sinFixed(int angle) {
+//---------------------------------------------------------------------------------
 	angle &= 511;
 	
 	if(angle < 256)
-		return SIN[angle];
+		return SIN_bin[angle];
 	
-	return -SIN[angle - 256];
+	return -SIN_bin[angle - 256];
 }
 
-int cosFixed(int angle)
-{
+//---------------------------------------------------------------------------------
+int cosFixed(int angle) {
+//---------------------------------------------------------------------------------
 	return sinFixed(angle + 128);
 }
 
-int tanFixed(int angle)
-{
+//---------------------------------------------------------------------------------
+int tanFixed(int angle) {
+//---------------------------------------------------------------------------------
 	int cos = cosFixed(angle);
 	int sin = sinFixed(angle);
 	
