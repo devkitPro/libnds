@@ -10,7 +10,7 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 BUILD		:= build
 
-ARM9SOURCES :=	source/arm9 source/common source/arm9/gfx
+ARM9SOURCES :=	source/arm9 source/common
 ARM9GFXDIR  :=  source/arm9/gfx
 ARM7SOURCES :=	source/arm7 source/common
 
@@ -33,7 +33,9 @@ ARM9GFXFILES    :=  $(foreach dir,$(ARM9GFXDIR),$(notdir $(wildcard $(dir)/*.png
 ARM7CFILES	:=	$(foreach dir,$(ARM7SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 ARM7SFILES	:=	$(foreach dir,$(ARM7SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 
-export ARM9_VPATH	:=	$(foreach dir,$(ARM9SOURCES),$(BASEDIR)/$(dir))
+export ARM9_VPATH	:=	$(foreach dir,$(ARM9SOURCES),$(BASEDIR)/$(dir)) \
+						$(foreach dir,$(ARM9GFXDIR),$(BASEDIR)/$(dir))
+
 export ARM7_VPATH	:=	$(foreach dir,$(ARM7SOURCES),$(BASEDIR)/$(dir))
 
 export ARM9OBJS :=	$(ARM9GFXFILES:.png=.o) $(ARM9BINFILES:.bin=.o) $(ARM9CFILES:.c=.o) $(ARM9SFILES:.s=.o) 
