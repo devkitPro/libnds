@@ -9,6 +9,11 @@ $(LIBDIR)/libnds9.a:	$(ARM9OBJS)
 
 -include $(DEPSDIR)/*.d
 
+
+	
 %.o	:	%.bin
 	@echo $(notdir $<)
 	@$(bin2o)
+	
+%.s	%h : %.png %.grit
+	grit $< -fts -o$*

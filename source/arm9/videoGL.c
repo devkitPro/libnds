@@ -116,7 +116,8 @@ void glInit_C(void) {
 	glGlob->nextBlock = (uint32*)0x06800000;
 	glGlob->nextPBlock = 0;
 	glGlob->nameCount = 1;
-
+	DynamicArrayInit(&glGlob->texturePtrs, 16);
+	
 	while (GFX_STATUS & (1<<27)); // wait till gfx engine is not busy
 
 	// Clear the FIFO
@@ -237,7 +238,7 @@ void glTexParameter(	uint8 sizeX, uint8 sizeY,
 //---------------------------------------------------------------------------------
 void* glGetTexturePointer(	int name) {
 //---------------------------------------------------------------------------------
-	return (void*) ((glGlob->textures[name] & 0xFFFF) << 3);
+	return (void*) DynamicArrayGet(&glGlob->texturePtrs, name);
 }
 
 //---------------------------------------------------------------------------------
@@ -285,7 +286,7 @@ uint16* vramGetBank(uint16 *addr) {
 	else if(addr >= VRAM_F && addr < VRAM_G)
 		return VRAM_F;
 	else if(addr >= VRAM_G && addr < VRAM_H)
-		return VRAM_H;
+		return VRAM_G;
 	else if(addr >= VRAM_H && addr < VRAM_I)
 		return VRAM_H;
 	else return VRAM_I;
@@ -378,6 +379,8 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 	if(!addr)
 	return 0;
 
+	DynamicArraySet(&glGlob->texturePtrs, glGlob->activeTexture, addr);
+ 
 	// unlock texture memory
 	vramTemp = vramSetMainBanks(VRAM_A_LCD,VRAM_B_LCD,VRAM_C_LCD,VRAM_D_LCD);
 

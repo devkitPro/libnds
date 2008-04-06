@@ -45,10 +45,14 @@
 #define DMA3_DEST      (*(vuint32*)0x040000D8)
 #define DMA3_CR        (*(vuint32*)0x040000DC)
 
+
 #define DMA_SRC(n)     (*(vuint32*)(0x040000B0+(n*12)))
 #define DMA_DEST(n)    (*(vuint32*)(0x040000B4+(n*12)))
 #define DMA_CR(n)      (*(vuint32*)(0x040000B8+(n*12)))
 
+#ifdef ARM9
+#define DMA_FILL(n)    (*(vuint32*)(0x040000E0+(n*4)))
+#endif
 
 // DMA control register contents
 // The defaults are 16-bit, increment source/dest addresses, no irq
@@ -129,15 +133,29 @@ static inline void dmaCopyAsynch(const void * source, void * dest, uint32 size) 
 	DMA_CR(3) = DMA_COPY_HALFWORDS | (size>>1);
 }
 
-static inline void dmaFillWords( const void* src, void* dest, uint32 size) {
-	DMA_SRC(3) = (uint32)src;
-	DMA_DEST(3) = (uint32)dest;
+static inline void dmaFillWords( u32 value, void* dest, uint32 size) {
+#ifdef ARM7	
+	(*(vu32*)0x027FFE04) = (vu32) value;
+	DMA_SRC(3) = 0x027FFE04;
+#else	
+	DMA_FILL(3) = (vuint32)value;
+	DMA_SRC(3) = (uint32)&DMA_FILL(3);
+#endif	
+
+    DMA_DEST(3) = (uint32)dest;
 	DMA_CR(3) = DMA_SRC_FIX | DMA_COPY_WORDS | (size>>2);
 	while(DMA_CR(3) & DMA_BUSY);
 }
 
-static inline void dmaFillHalfWords( const void* src, void* dest, uint32 size) {
-	DMA_SRC(3) = (uint32)src;
+static inline void dmaFillHalfWords( u16 value, void* dest, uint32 size) {
+#ifdef ARM7	
+	(*(vu32*)0x027FFE04) = (vu32) value;
+	DMA_SRC(3) = 0x027FFE04;
+#else	
+	DMA_FILL(3) = (vuint32)value;
+	DMA_SRC(3) = (uint32)&DMA_FILL(3);
+#endif
+
 	DMA_DEST(3) = (uint32)dest;
 	DMA_CR(3) = DMA_SRC_FIX | DMA_COPY_HALFWORDS | (size>>1);
 	while(DMA_CR(3) & DMA_BUSY);

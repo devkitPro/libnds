@@ -47,7 +47,7 @@ extern "C" {
 #define RGB15(r,g,b)  ((r)|((g)<<5)|((b)<<10))
 #define RGB5(r,g,b)  ((r)|((g)<<5)|((b)<<10))
 #define RGB8(r,g,b)  (((r)>>3)|(((g)>>3)<<5)|(((b)>>3)<<10))
-
+#define ARGB16(a, r, g, b) ( ((a) << 15) | (r)|((g)<<5)|((b)<<10))
 
 #define SCREEN_HEIGHT 192
 #define SCREEN_WIDTH  256
@@ -279,6 +279,8 @@ void vramSetBankI(VRAM_I_TYPE i);
 #define DISPLAY_SPR_1D_BMP_SIZE_128	(0 << 22)
 #define DISPLAY_SPR_1D_BMP_SIZE_256	(1 << 22)
 
+//mask to clear all attributes related to sprites from display control
+#define DISPLAY_SPRITE_ATTR_MASK  ((7 << 4) | (7 << 20) | (1 << 31))
 
 #define DISPLAY_SPR_EXT_PALETTE		(1 << 31)
 #define DISPLAY_BG_EXT_PALETTE		(1 << 30)
@@ -320,7 +322,7 @@ static inline
 void videoBgDisable(int number) {DISPLAY_CR &= ~(1 << (DISPLAY_ENABLE_SHIFT + number));}
 
 static inline 
-void videoBgDisableSub(int number) {DISPLAY_CR &= ~(1 << (DISPLAY_ENABLE_SHIFT + number));}
+void videoBgDisableSub(int number) {SUB_DISPLAY_CR &= ~(1 << (DISPLAY_ENABLE_SHIFT + number));}
 
 
 #define BRIGHTNESS     (*(vuint16*)0x0400006C)

@@ -69,17 +69,17 @@ bg_scroll* bgScrollTable[8] =
 	&BG_OFFSET_SUB[3]
 };
 
-bg_rotation* bgRotation[8] = 
+bg_transform* bgTransform[8] = 
 {
-	(bg_rotation*)0,
-	(bg_rotation*)0,
-	(bg_rotation*)0x04000020,
-	(bg_rotation*)0x04000030,
+	(bg_transform*)0,
+	(bg_transform*)0,
+	(bg_transform*)0x04000020,
+	(bg_transform*)0x04000030,
 	
-	(bg_rotation*)0,
-	(bg_rotation*)0,
-	(bg_rotation*)0x04001020,
-	(bg_rotation*)0x04001030,
+	(bg_transform*)0,
+	(bg_transform*)0,
+	(bg_transform*)0x04001020,
+	(bg_transform*)0x04001030,
 };
 
 BgState bgState[8];
@@ -117,37 +117,35 @@ void bgSetRotate(int id, int angle)
 	bgState[id].angle = angle & 0x1ff;
 
 	// Compute sin and cos
-	angleSin = sinFixed(angle);//SIN[bgState[id].angle];
-	angleCos = cosFixed(angle);//COS[bgState[id].angle];
+	angleSin = sinFixed(angle);
+	angleCos = cosFixed(angle);
  
 	// Set the background registers
-	pa = ( angleCos * bgState[id].scaleX ) >> 12;
-	pb = (-angleSin * bgState[id].scaleX ) >> 12;
-	pc = ( angleSin * bgState[id].scaleY ) >> 12;
-	pd = ( angleCos * bgState[id].scaleY ) >> 12;
+	pa = ( angleCos * bgState[id].centerX ) >> 12;
+	pb = (-angleSin * bgState[id].centerX ) >> 12;
+	pc = ( angleSin * bgState[id].centerY ) >> 12;
+	pd = ( angleCos * bgState[id].centerY ) >> 12;
 
-	bgRotation[id]->xdx = pa;
-	bgRotation[id]->xdy = pb;
-	bgRotation[id]->ydx = pc;
-	bgRotation[id]->ydy = pd;
+	bgTransform[id]->xdx = pa;
+	bgTransform[id]->xdy = pb;
+	bgTransform[id]->ydx = pc;
+	bgTransform[id]->ydy = pd;
 
-	bgRotation[id]->centerX  = (bgState[id].scrollX) - ((pa * bgState[id].centerX + pb * bgState[id].centerY) >> 8);
-	bgRotation[id]->centerY  = (bgState[id].scrollY) - ((pc * bgState[id].centerX + pd * bgState[id].centerY) >> 8);
-	
+	bgTransform[id]->dx  = (bgState[id].scrollX) - ((pa * bgState[id].centerX + pb * bgState[id].centerY) >> 8);
+	bgTransform[id]->dy  = (bgState[id].scrollY) - ((pc * bgState[id].centerX + pd * bgState[id].centerY) >> 8);
 }
 
 //initializes and enables the appropriate background with the supplied attributes
 //returns an id which must be supplied to the remainder of the background functions
-
 int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase)
 {
 	
 	BGCTRL[layer] = BG_MAP_BASE(mapBase) | BG_TILE_BASE(tileBase) 
-					| size | ((type == BgType_Text) ? BG_256_COLOR : 0);
+					| size | ((type == BgType_Text8bpp) ? BG_256_COLOR : 0);
 	
 	memset(&bgState[layer], sizeof(BgState), 0);
 
-	if(type != BgType_Text)
+	if(type != BgType_Text8bpp && type != BgType_Text4bpp)
 	{		
 		bgState[layer].scaleX = 1 << 8;
 		bgState[layer].scaleY = 1 << 8;
@@ -166,11 +164,11 @@ int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase)
 int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBase)
 {
  	BGCTRL_SUB[layer] = BG_MAP_BASE(mapBase) | BG_TILE_BASE(tileBase) 
-					| size | ((type == BgType_Text) ? BG_256_COLOR : 0) ;
+					| size | ((type == BgType_Text8bpp) ? BG_256_COLOR : 0) ;
 
 	memset(&bgState[layer + 4], sizeof(BgState), 0);
 
-	if(type != BgType_Text)
+	if(type != BgType_Text8bpp && type != BgType_Text4bpp)
 	{		
 		bgSetScale(layer + 4, 1 << 8, 1 << 8);
 	}

@@ -10,7 +10,8 @@ include $(DEVKITARM)/ds_rules
 #---------------------------------------------------------------------------------
 BUILD		:= build
 
-ARM9SOURCES :=	source/arm9 source/common
+ARM9SOURCES :=	source/arm9 source/common source/arm9/gfx
+ARM9GFXDIR  :=  source/arm9/gfx
 ARM7SOURCES :=	source/arm7 source/common
 
 DATESTRING	:=	$(shell date +%Y)$(shell date +%m)$(shell date +%d)
@@ -23,9 +24,11 @@ export DEPENDS	:=	$(BASEDIR)/deps
 export INCDIR	:=	$(BASEDIR)/include
 export BUILDDIR	:=	$(BASEDIR)/$(BUILD)
 
+
 ARM9CFILES	:=	$(foreach dir,$(ARM9SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 ARM9SFILES	:=	$(foreach dir,$(ARM9SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 ARM9BINFILES	:=	$(foreach dir,$(ARM9SOURCES),$(notdir $(wildcard $(dir)/*.bin)))
+ARM9GFXFILES    :=  $(foreach dir,$(ARM9GFXDIR),$(notdir $(wildcard $(dir)/*.png)))
 
 ARM7CFILES	:=	$(foreach dir,$(ARM7SOURCES),$(notdir $(wildcard $(dir)/*.c)))
 ARM7SFILES	:=	$(foreach dir,$(ARM7SOURCES),$(notdir $(wildcard $(dir)/*.s)))
@@ -33,7 +36,7 @@ ARM7SFILES	:=	$(foreach dir,$(ARM7SOURCES),$(notdir $(wildcard $(dir)/*.s)))
 export ARM9_VPATH	:=	$(foreach dir,$(ARM9SOURCES),$(BASEDIR)/$(dir))
 export ARM7_VPATH	:=	$(foreach dir,$(ARM7SOURCES),$(BASEDIR)/$(dir))
 
-export ARM9OBJS :=	$(ARM9BINFILES:.bin=.o) $(ARM9CFILES:.c=.o) $(ARM9SFILES:.s=.o)
+export ARM9OBJS :=	$(ARM9GFXFILES:.png=.o) $(ARM9BINFILES:.bin=.o) $(ARM9CFILES:.c=.o) $(ARM9SFILES:.s=.o) 
 export ARM9INC	:=	-I$(BUILDDIR)/arm9
 export ARM7OBJS :=	$(ARM7CFILES:.c=.o) $(ARM7SFILES:.s=.o)
 export ARM7INC	:=	-I$(BUILDDIR)/arm7
@@ -120,3 +123,5 @@ docs:
 basic.arm7: lib/libnds7.a
 #---------------------------------------------------------------------------------
 	@$(MAKE) -C basicARM7 TARGET=$(CURDIR)/basic LIBNDS=$(CURDIR)
+	
+

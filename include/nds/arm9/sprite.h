@@ -38,6 +38,9 @@
 #endif
 
 #include "nds/ndstypes.h"
+#include "nds/arm9/video.h"
+#include "nds/memory.h"
+#include "nds/system.h"
 
 // Sprite control defines
 
@@ -79,10 +82,7 @@
 #define ATTR2_PALETTE(n)      ((n)<<12)
 #define ATTR2_ALPHA(n)		  ((n)<<12)
 
-/**
- * @enum ObjMode
- * @brief Sprite display mode.
- */
+
 typedef enum
 {
 	OBJMODE_NORMAL,		/**< No special mode is on - Normal sprite state. */
@@ -90,12 +90,9 @@ typedef enum
 	OBJMODE_WINDOWED,	/**< Sprite can be seen only inside the sprite window. */
 	OBJMODE_BITMAP,		/**< Sprite is not using tiles - per pixel image data. */
  
-} ObjMode;
+} ObjBlendMode;
  
-/**
- * @enum ObjShape
- * @brief Sprite shape mode.
- */
+
 typedef enum {
 	OBJSHAPE_SQUARE,	/**< Sprite shape is NxN (Height == Width). */
 	OBJSHAPE_WIDE,		/**< Sprite shape is NxM with N > M (Height < Width). */
@@ -103,10 +100,7 @@ typedef enum {
 	OBJSHAPE_FORBIDDEN,	/**< Sprite shape is undefined. */
 } ObjShape;
  
-/**
- * @enum ObjSize
- * @brief Object shape mode.
- */
+
 typedef enum {
 	OBJSIZE_8,		/**< Major sprite size is 8px. */
 	OBJSIZE_16,		/**< Major sprite size is 16px. */
@@ -114,19 +108,13 @@ typedef enum {
 	OBJSIZE_64,		/**< Major sprite size is 64px. */
 } ObjSize;
 
-/**
- * @enum ObjColMode
- * @brief Object color mode.
- */
+
 typedef enum {
 	OBJCOLOR_16,		/**< sprite has 16 colors. */
 	OBJCOLOR_256,		/**< sprite has 256 colors. */
 } ObjColMode;
 
-/**
- * @enum ObjPriority
- * @brief Object color mode.
- */
+
 typedef enum {
 	OBJPRIORITY_0,		/**< sprite priority level 0 - highest. */
 	OBJPRIORITY_1,		/**< sprite priority level 1. */
@@ -142,7 +130,7 @@ typedef union {
 	struct {
  
 		struct {
-			u16 posY						:8;	/**< Sprite Y position. */
+			u16 y						:8;	/**< Sprite Y position. */
 			union {
 				struct {
 					u8 						:1;
@@ -150,19 +138,19 @@ typedef union {
 					u8						:6;
 				};
 				struct {
-					bool isRotoscale		:1;	/**< Sprite uses affine parameters if set. */
-					bool rsDouble			:1;	/**< Sprite bounds is doubled (isRotoscale set). */
-					ObjMode objMode		:2;	/**< Sprite object mode. */
+					bool isRotateScale		:1;	/**< Sprite uses affine parameters if set. */
+					bool isSizeDouble			:1;	/**< Sprite bounds is doubled (isRotoscale set). */
+					ObjBlendMode blendMode		:2;	/**< Sprite object mode. */
 					bool isMosaic			:1;	/**< Enables mosaic effect if set. */
-					ObjColMode colMode		:1;	/**< Sprite color mode. */
-					ObjShape objShape		:2;	/**< Sprite shape. */
+					ObjColMode colorMode		:1;	/**< Sprite color mode. */
+					ObjShape shape		:2;	/**< Sprite shape. */
 				};
 			};
 		};
  
 		union {
 			struct {
-				u16 posX					:9;	/**< Sprite X position. */
+				u16 x					:9;	/**< Sprite X position. */
 				u8 							:7;
 			};
 			struct {
@@ -176,17 +164,20 @@ typedef union {
 					};
 					struct {
 						u8					:1;
-						u8 rsMatrixIdx		:5; /**< Affine parameter number to use (isRotoscale set). */
-						ObjSize objSize	:2; /**< Sprite size. */
+						u8 rotationIndex		:5; /**< Affine parameter number to use (isRotoscale set). */
+						ObjSize size	:2; /**< Sprite size. */
 					};
 				};
 			};
 		};
  
 		struct {
-			u16 tileIdx						:10;/**< Upper-left tile index. */
-			ObjPriority objPriority		:2;	/**< Sprite priority. */
-			u8 objPal						:4;	/**< Sprite palette to use in paletted color modes. */
+			u16 gfxIndex						:10;/**< Upper-left tile index. */
+			ObjPriority priority		:2;	/**< Sprite priority. */
+			
+				u8 palette						:4;	/**< Sprite palette to use in paletted color modes. */
+				
+		
 		};
  
 		u16 attribute3;							/**< Unused! Four of those are used as a sprite rotation matrice */
@@ -221,14 +212,170 @@ typedef struct {
 #define SPRITE_COUNT 128
 #define MATRIX_COUNT 32
 
-/**
- * @union OAM
- * @brief Final OAM representation in memory
-*/
+
 typedef union {
-	SpriteEntry spriteBuffer[SPRITE_COUNT];
+	SpriteEntry oamBuffer[SPRITE_COUNT];
 	SpriteRotation matrixBuffer[MATRIX_COUNT];
 } OAMTable;
  
+/**! \enum SpriteSize
+*    Enumerates all sizes supported by the 2D engine
+*/
+typedef enum {
+   SpriteSize_8x8   = (OBJSIZE_8 << 14) | (OBJSHAPE_SQUARE << 12) | (8*8>>5), /**< 8x8 */
+   SpriteSize_16x16 = (OBJSIZE_16 << 14) | (OBJSHAPE_SQUARE << 12) | (16*16>>5), /**< 16x16 */
+   SpriteSize_32x32 = (OBJSIZE_32 << 14) | (OBJSHAPE_SQUARE << 12) | (32*32>>5), /**< 32x32 */
+   SpriteSize_64x64 = (OBJSIZE_64 << 14) | (OBJSHAPE_SQUARE << 12) | (64*64>>5), /**< 64x64 */
+
+   SpriteSize_16x8  = (OBJSIZE_8 << 14)  | (OBJSHAPE_WIDE << 12) | (16*8>>5),/**< 16x8 */
+   SpriteSize_32x8  = (OBJSIZE_16 << 14) | (OBJSHAPE_WIDE << 12) | (32*8>>5),/**< 32x8 */
+   SpriteSize_32x16 = (OBJSIZE_32 << 14) | (OBJSHAPE_WIDE << 12) | (32*16>>5),/**< 32x16 */
+   SpriteSize_64x32 = (OBJSIZE_64 << 14) | (OBJSHAPE_WIDE << 12) | (64*32>>5),/**< 64x32 */
+
+   SpriteSize_8x16  = (OBJSIZE_8 << 14)  | (OBJSHAPE_TALL << 12) | (8*16>>5),/**< 8x16 */
+   SpriteSize_8x32  = (OBJSIZE_16 << 14) | (OBJSHAPE_TALL << 12) | (8*32>>5),/**< 8x32 */
+   SpriteSize_16x32 = (OBJSIZE_32 << 14) | (OBJSHAPE_TALL << 12) | (16*32>>5),/**< 16x32 */
+   SpriteSize_32x64 = (OBJSIZE_64 << 14) | (OBJSHAPE_TALL << 12) | (32*64>>5)/**< 32x64 */
+
+}SpriteSize;
+
+/**! \enum SpriteMapping
+*    Graphics memory layout options
+*/
+typedef enum{
+   SpriteMapping_1D_32 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_32 | (0 << 28), /**< 1D tile mapping 32 byte boundary between offset */
+   SpriteMapping_1D_64 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_64 | (1 << 28),/**< 1D tile mapping 64 byte boundary between offset */
+   SpriteMapping_1D_128 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_128 | (2 << 28),/**< 1D tile mapping 128 byte boundary between offset */
+   SpriteMapping_1D_256 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_256 | (3 << 28),/**< 1D tile mapping 256 byte boundary between offset */
+   SpriteMapping_2D = DISPLAY_SPR_2D | (4 << 28),/**< 2D tile mapping 32 byte boundary between offset */
+   SpriteMapping_Bmp_1D_128 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP |DISPLAY_SPR_1D_BMP_SIZE_128 | (5 << 28),/**< 1D bitmap mapping 128 byte boundary between offset */
+   SpriteMapping_Bmp_1D_256 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP |DISPLAY_SPR_1D_BMP_SIZE_256 | (6 << 28),/**< 1D bitmap mapping 256 byte boundary between offset */
+   SpriteMapping_Bmp_2D_128 = DISPLAY_SPR_2D | DISPLAY_SPR_2D_BMP_128 | (7 << 28),/**< 2D bitmap mapping 128 pixels wide bitmap */
+   SpriteMapping_Bmp_2D_256 = DISPLAY_SPR_2D | DISPLAY_SPR_2D_BMP_256 | (8 << 28)/**< 2D bitmap mapping 256 pixels wide bitmap */
+}SpriteMapping;
+
+/**! \enum SpriteColorFormat
+*    Color formats for sprite graphics
+*/
+typedef enum{
+   SpriteColorFormat_16Color = OBJCOLOR_16,/**< 16 colors per sprite*/
+   SpriteColorFormat_256Color = OBJCOLOR_256,/**< 256 colors per sprite*/
+   SpriteColorFormat_Bmp = OBJMODE_BITMAP/**< 16-bit sprites*/
+}SpriteColorFormat;
+
+
+typedef struct 
+{
+   u16 nextFree;
+   u16 size;
+}AllocHeader;
+
+/**! \struct OamState
+*   Holds the state for a 2D sprite engine, there are two of these objects
+*   oamMain and oamSub and these must be passed in to all oam functions
+*/
+typedef struct
+{
+	int gfxOffsetStep; /**< The distance between tiles as 2^gfxOffsetStep */
+	s16 firstFree;/**< pointer to the first free block of tiles */
+	AllocHeader *allocBuffer; /**< allocation buffer for graphics allocation */
+	s16 allocBufferSize; /**< current size of the allocation buffer */
+	SpriteEntry *oamMemory; /**< pointer to shadow oam memory */
+	SpriteRotation *oamRotationMemory; /**< pointer to shadow oam memory for rotation */
+	
+}OamState;
+
+//!oamMain an object representing the main 2D engine
+extern OamState oamMain;
+//!oamSub an object representing the sub 2D engine
+extern OamState oamSub;
+
+/**  \fn void oamInit(OamState* oam, SpriteMapping mapping, bool extPalette)
+*    \brief Initializes the 2D sprite engine
+*    \param oam must be: &oamMain or &oamSub
+*    \param mapping the mapping mode 
+*    \param extPalette if true the engine sets up extended palettes for 8bpp sprites
+*/
+void oamInit(OamState* oam, SpriteMapping mapping, bool extPalette);
+
+/**  \fn void oamDisable(OamState* oam)
+*    \brief Disables sprite rendering
+*    \param oam must be: &oamMain or &oamSub
+*/
+void oamDisable(OamState* oam );
+/**  \fn void oamEnable(OamState* oam)
+*    \brief Enables sprite rendering
+*    \param oam must be: &oamMain or &oamSub
+*/
+void oamEnable(OamState* oam );
+
+/**  \fn u16* oamGetGfxPtr(OamState* oam, int gfxOffsetIndex)
+*    \brief translates an oam offset into a video ram address
+*    \param oam must be: &oamMain or &oamSub
+*    \param gfxOffsetIndex the index to compute
+*    \return the address in vram corresponding to the supplied offset
+*/
+u16* oamGetGfxPtr(OamState* oam, int gfxOffsetIndex);
+
+/**  \fn u16* oamAllocateGfx(OamState *oam, SpriteSize size, SpriteColorFormat colorFormat)
+*    \brief translates an oam offset into a video ram address
+*    \param oam must be: &oamMain or &oamSub
+*    \param size the size of the sprite to allocate
+*    \param colorFormat the color format of the sprite
+*    \return the address in vram of the allocated sprite
+*/
+u16* oamAllocateGfx(OamState *oam, SpriteSize size, SpriteColorFormat colorFormat);
+
+/**  \fn void oamFreeGfx(OamState *oam, const void* gfxOffset)
+*    \brief translates an oam offset into a video ram address
+*    \param oam must be: &oamMain or &oamSub
+*    \param gfxOffset a vram offset obtained from oamAllocateGfx
+*/
+void oamFreeGfx(OamState *oam, const void* gfxOffset);
+
+/**  \fn void oamSet(OamState* oam, int id,  int x, int y, int palette_alpha, SpriteSize size,SpriteColorFormat format, const void* gfxOffset, bool hide)
+*    \brief sets an oam entry to the supplied values
+*    \param oam must be: &oamMain or &oamSub
+*    \param id the oam number to be set [0 - 127]
+*    \param x the x location of the sprite in pixels
+*    \param y the y location of the sprite in pixels
+*    \param palette_alpha the palette number for 4bpp and 8bpp (extended palette mode), or the alpha value for bitmap sprites (bitmap sprites must specify a value > 0 to display) [0-15]
+*    \param size the size of the sprite
+*    \param format the color format of the sprite
+*    \param gfxOffset the video memory address of the sprite graphics (not an offset)
+*    \param hide if non zero (true) the sprite will be hidden
+*/
+void oamSet(OamState* oam, int id,  int x, int y, int palette_alpha, SpriteSize size,SpriteColorFormat format, const void* gfxOffset, bool hide);
+
+/**  \fn void oamUpdate(OamState* oam);
+*    \brief causes oam memory to be updated...must be called during vblank if using oam api
+*    \param oam must be: &oamMain or &oamSub
+*/
+void oamUpdate(OamState* oam);
+
+/**  \fn void oamRotate(OamState* oam, int rotId, int angle, int sx, int sy)
+*    \brief sets the specified rotation scale entry
+*    \param oam must be: &oamMain or &oamSub
+*    \param rotId the rotation entry to set
+*    \param angle the ccw angle to rotate [0-511]
+*    \param sx the inverse scale factor in the x direction 
+*    \param sy the inverse scale factor in the y direction
+*/
+void oamRotate(OamState* oam, int rotId, int angle, int sx, int sy);
+
+/**  \fn void oamPrintAllocStatus(OamState *oam)
+*    \brief function for printing the allocation state
+*    \param oam must be: &oamMain or &oamSub
+*/
+void oamPrintAllocStatus(OamState *oam);
+
+/**  \fn void oamCountFragments(OamState *oam)
+*    \brief determines the number of fragments in the allocation engine
+*    \param oam must be: &oamMain or &oamSub
+*/
+int oamCountFragments(OamState *oam);
+
+
+
 
 #endif // _libnds_sprite_h_

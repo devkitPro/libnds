@@ -40,6 +40,7 @@
 #include "nds/arm9/cache.h"
 #include "nds/arm9/trig_lut.h"
 #include "nds/arm9/math.h"
+#include "nds/dynamicArray.h"
 
 // for some reason doxygen doesn't like "static inline" but is fine with "GL_STATIC_INL"
 #define GL_STATIC_INL static inline
@@ -281,6 +282,7 @@ typedef struct {
 	
 	// texture globals
 	uint32 textures[MAX_TEXTURES];
+	DynamicArray texturePtrs;
 	uint32 activeTexture;
 	uint32* nextBlock;
 	uint32 nextPBlock;
@@ -440,9 +442,9 @@ GL_STATIC_INL void glEnd(void) { GFX_END = 0; }
 GL_STATIC_INL void glClearDepth(fixed12d3 depth) { GFX_CLEAR_DEPTH = depth; }
 
 /*! \brief Set the color for following vertices
-\param red the red component (0-31)
-\param green the green component (0-31)
-\param blue the blue component (0-31) */
+\param red the red component (0-255) Bottom 3 bits ignored
+\param green the green component (0-255) Bottom 3 bits ignored
+\param blue the blue component (0-255) Bottom 3 bits ignored*/
 
 GL_STATIC_INL void glColor3b(uint8 red, uint8 green, uint8 blue) { GFX_COLOR = (vuint32)RGB15(red>>3, green>>3, blue>>3); }
 

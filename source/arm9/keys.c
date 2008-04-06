@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-	$Id: keys.c,v 1.15 2006-07-04 01:45:31 wntrmute Exp $
+	$Id: keys.c,v 1.16 2008-04-06 06:31:13 dovoto Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -25,6 +25,9 @@
 		distribution.
 
 	$Log: not supported by cvs2svn $
+	Revision 1.15  2006/07/04 01:45:31  wntrmute
+	remove unused variables
+	
 	Revision 1.14  2006/07/02 17:36:51  wntrmute
 	remove unnecessary IPC reads
 
@@ -115,7 +118,7 @@ uint32 keysHeld(void) {
 //------------------------------------------------------------------------------
 uint32 keysDown(void) {
 //------------------------------------------------------------------------------
-	return (keys ^ keysold) & keys;
+	return (keys &~ keysold);
 }
 
 //------------------------------------------------------------------------------

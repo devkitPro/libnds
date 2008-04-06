@@ -60,6 +60,7 @@ extern "C" {
 #include "nds/arm9/boxtest.h"
 #include "nds/arm9/cache.h"
 #include "nds/arm9/console.h"
+#include "nds/arm9/keyboard.h"
 #include "nds/arm9/exceptions.h"
 #include "nds/arm9/image.h"
 #include "nds/arm9/input.h"

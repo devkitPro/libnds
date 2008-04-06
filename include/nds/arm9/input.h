@@ -99,9 +99,9 @@ typedef struct touchPosition {
 __attribute__ ((deprecated)) touchPosition touchReadXY() ;
 
 
-/*!	\function touchRead(touchPosition *data)
+/*!	\fn touchRead(touchPosition *data)
 	\brief touchRObtains the current keypad state.
-	Call this function once per main loop in order to use the keypad functions.
+	\param data a touchPosition ptr which will be filled by the function
 */
 void touchRead(touchPosition *data);
 

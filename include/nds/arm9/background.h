@@ -85,19 +85,19 @@ typedef struct {
 } bg_scroll;
 
 typedef struct {
-    u16 xdx;
-    u16 xdy;
-    u16 ydx;
-    u16 ydy;
-    u32 centerX;
-    u32 centerY;    
-} bg_rotation;
+    s16 xdx; /*!change in x per dx*/
+    s16 ydx; /*!change in y per dx*/
+    s16 xdy; /*!change in x per dy*/
+    s16 ydy; /*!change in y per dy*/
+    s32 dx;  /*!map x value which corresponds to the screen origin*/
+    s32 dy;  /*!map y value which corresponds to the screen origin*/  
+} bg_transform;
 
 typedef struct {
     u16 control[4];
     bg_scroll scroll[4];
-    bg_rotation bg2_rotation;
-    bg_rotation bg3_rotation;
+    bg_transform bg2_rotation;
+    bg_transform bg3_rotation;
 } bg_attribute;
 
 
@@ -123,7 +123,7 @@ typedef struct
 //id -> register look up tables
 extern vuint16* bgControl[8];
 extern bg_scroll* bgScrollTable[8];
-extern bg_rotation* bgRotation[8];
+extern bg_transform* bgTransform[8];
 
 
 extern BgState bgState[8];
@@ -134,7 +134,8 @@ extern BgState bgState[8];
  */
 typedef enum
 {
-	BgType_Text, /*!< Tiled background with 16 bit tile indexes and no allowed rotation or scaling >*/
+	BgType_Text8bpp, /*!< 8bpp Tiled background with 16 bit tile indexes and no allowed rotation or scaling >*/
+	BgType_Text4bpp, /*!< 4bpp Tiled background with 16 bit tile indexes and no allowed rotation or scaling >*/
 	BgType_Rotation, /*!< Tiled background with 8 bit tile indexes Can be scaled and rotated >*/
 	BgType_ExRotation, /*!< Tiled background with 16 bit tile indexes Can be scaled and rotated >*/
 	BgType_Bmp8, /*!< Bitmap background with 8 bit color values which index into a 256 color palette >*/
@@ -263,7 +264,7 @@ int bgInit(int layer, BgType type, BgSize size, int mapBase, int tileBase)
     sassert(tileBase >= 0 && tileBase <= 15, "Background tile base is out of range");
     sassert(mapBase >=0 && mapBase <= 31, "Background Map Base is out of range");
 	sassert(layer != 0 || !video3DEnabled(), "Background 0 is currently being used for 3D display");
-	sassert(layer > 1 || type == BgType_Text, "Incorect background type for mode");
+	sassert(layer > 1 || type == BgType_Text8bpp || type == BgType_Text4bpp, "Incorect background type for mode");
 	//sassert((size != BgSize_B8_512x1024 && size != BgSize_B8_1024x512) || videoGetMode() == 6, "Incorect background type for mode"); 
 	sassert(tileBase == 0 || type < BgType_Bmp8, "Tile base is unused for bitmaps.  Can be offset using mapBase * 16KB");
 	sassert((mapBase == 0 || type != BgType_Bmp8) || (size != BgSize_B8_512x1024 && size != BgSize_B8_1024x512), "Large Bitmaps cannot be offset");
@@ -298,7 +299,7 @@ int bgInitSub(int layer, BgType type, BgSize size, int mapBase, int tileBase)
     sassert(layer >= 0 && layer <= 3, "Only layers 0 - 3 are supported");
     sassert(tileBase >= 0 && tileBase <= 15, "Background tile base is out of range");
     sassert(mapBase >=0 && mapBase <= 31, "Background Map Base is out of range");
-	sassert(layer > 1 || type == BgType_Text, "Incorect background type for mode");
+	sassert(layer > 1 || type == BgType_Text8bpp|| type == BgType_Text4bpp , "Incorect background type for mode");
 	sassert(tileBase == 0 || type < BgType_Bmp8, "Tile base is unused for bitmaps.  Can be offset using mapBase * 16KB");
 	sassert((size != BgSize_B8_512x1024 && size != BgSize_B8_1024x512), "Sub Display has no large Bitmaps");
 
@@ -558,7 +559,7 @@ void* bgGetGfxPtr(int id)
 	if(bgState[id].type < BgType_Bmp8)
 		return (id < 4) ? (void*)(BG_TILE_RAM(bgGetTileBase(id))) : ((void*)BG_TILE_RAM_SUB(bgGetTileBase(id)));
 	else
-		return (id < 4) ? (void*)(BG_GFX + 0x2048 * (bgGetMapBase(id))) : (void*)(BG_GFX_SUB + 0x2048 * (bgGetMapBase(id)));
+		return (id < 4) ? (void*)(BG_GFX + 0x800 * (bgGetMapBase(id))) : (void*)(BG_GFX_SUB + 0x800 * (bgGetMapBase(id)));
 }
 
 
