@@ -1,5 +1,8 @@
+-W3
+
 -gB4
 
 -m
 
+#-gzl decompress not working for some reason
 -Z!

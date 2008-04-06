@@ -29,9 +29,10 @@
 #include <sys/iosupport.h>
 #include "keyboardGfx.h"
 #include <nds/ndstypes.h>
+#include <nds/bios.h>
 #include <nds/arm9/keyboard.h>
 #include <nds/arm9/input.h>
-#include <nds/bios.h>
+#include <nds/decompress.h>
 #include <nds/arm9/background.h>
 #include <string.h>
 #include <stdio.h>
@@ -332,7 +333,7 @@ void keyboardInit(Keyboard* keyboard)
 
    memset(bgGetMapPtr(keyboard->background), 0, 64);
 
-  
+//   decompress(bgGetGfxPtr(keyboard->background), keyboard->tiles, LZ77Vram);
    dmaCopy(keyboard->tiles, bgGetGfxPtr(keyboard->background) + keyboard->tileOffset / 2, keyboard->tileLen);
    dmaCopy(keyboard->palette, BG_PALETTE_SUB, keyboard->paletteLen);
    dmaCopy(keyboard->lower->mapDataPressed, bgGetMapPtr(keyboard->background), 
