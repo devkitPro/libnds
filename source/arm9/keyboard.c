@@ -31,6 +31,7 @@
 #include <nds/ndstypes.h>
 #include <nds/arm9/keyboard.h>
 #include <nds/arm9/input.h>
+#include <nds/bios.h>
 #include <nds/arm9/background.h>
 #include <string.h>
 #include <stdio.h>
