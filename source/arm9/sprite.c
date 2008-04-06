@@ -8,9 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-SpriteEntry OamMemory[128];
 SpriteEntry OamMemorySub[128];
+SpriteEntry OamMemory[128];
+
 
 OamState oamMain = 
 {
@@ -18,8 +18,7 @@ OamState oamMain =
    0, 
    NULL, 
    32, 
-   OamMemory,  
-   (SpriteRotation *)OamMemory
+   {OamMemory}
 };
 
 OamState oamSub = 
@@ -28,13 +27,11 @@ OamState oamSub =
    0, 
    NULL, 
    32, 
-   OamMemorySub,  
-   (SpriteRotation *)OamMemorySub
+   {OamMemorySub}
 };
 
 void oamInit(OamState *oam, SpriteMapping mapping, bool extPalette)
 {
-   //todo: this needs to handle different boundary sizes of bmp and tile sprite mapping
    int i;
    int extPaletteFlag = extPalette ? 1 : 0;
 
@@ -42,7 +39,7 @@ void oamInit(OamState *oam, SpriteMapping mapping, bool extPalette)
    
    int zero = 0;
 
-   swiFastCopy(&zero, oam->oamMemory, (sizeof(OamMemory) >> 1) | COPY_MODE_FILL);
+   memset(oam->oamMemory, 0, sizeof(OamMemory));
    
    for(i = 0; i < 128; i++)
    {
@@ -55,19 +52,17 @@ void oamInit(OamState *oam, SpriteMapping mapping, bool extPalette)
       oam->oamRotationMemory[i].vdy = (1<<8);
    }
 
-   //interrupts may not be on at this point
-   while(!(REG_DISPSTAT & DISP_IN_VBLANK));
-
+   swiWaitForVBlank();
 
    if(oam == &oamMain)
    {
-      swiFastCopy(oam->oamMemory, OAM, (sizeof(OamMemory)) >> 1);
+      memcpy(OAM, oam->oamMemory, (sizeof(OamMemory)));
       DISPLAY_CR &= ~DISPLAY_SPRITE_ATTR_MASK;
       DISPLAY_CR |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;      
    }
    else
    {
-      swiFastCopy(oam->oamMemory, OAM_SUB, (sizeof(OamMemory)) >> 1);
+      memcpy(OAM_SUB, oam->oamMemory, (sizeof(OamMemory)));
       SUB_DISPLAY_CR &= ~DISPLAY_SPRITE_ATTR_MASK;
       SUB_DISPLAY_CR |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;      
    }
@@ -397,11 +392,11 @@ void oamUpdate(OamState* oam)
 {
    if(oam == &oamMain)
    {
-      swiFastCopy(oam->oamMemory, OAM, (sizeof(OamMemory)) >> 1);
+      memcpy(OAM, oam->oamMemory, (sizeof(OamMemory)));
    }
    else
    {
-      swiFastCopy(oam->oamMemory, OAM_SUB, (sizeof(OamMemory)) >> 1);
+       memcpy(OAM_SUB, oam->oamMemory, (sizeof(OamMemory)));
    }
 }
 

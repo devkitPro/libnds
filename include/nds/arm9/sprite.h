@@ -248,8 +248,8 @@ typedef enum{
    SpriteMapping_1D_128 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_128 | (2 << 28) | 2,/**< 1D tile mapping 128 byte boundary between offset */
    SpriteMapping_1D_256 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_256 | (3 << 28) | 3,/**< 1D tile mapping 256 byte boundary between offset */
    SpriteMapping_2D = DISPLAY_SPR_2D | (4 << 28),/**< 2D tile mapping 32 byte boundary between offset */
-   SpriteMapping_Bmp_1D_128 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP |DISPLAY_SPR_1D_BMP_SIZE_128 | (5 << 28) | 2,/**< 1D bitmap mapping 128 byte boundary between offset */
-   SpriteMapping_Bmp_1D_256 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP |DISPLAY_SPR_1D_BMP_SIZE_256 | (6 << 28) | 3,/**< 1D bitmap mapping 256 byte boundary between offset */
+   SpriteMapping_Bmp_1D_128 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_128 | DISPLAY_SPR_1D_BMP |DISPLAY_SPR_1D_BMP_SIZE_128 | (5 << 28) | 2,/**< 1D bitmap mapping 128 byte boundary between offset */
+   SpriteMapping_Bmp_1D_256 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_256 | DISPLAY_SPR_1D_BMP |DISPLAY_SPR_1D_BMP_SIZE_256 | (6 << 28) | 3,/**< 1D bitmap mapping 256 byte boundary between offset */
    SpriteMapping_Bmp_2D_128 = DISPLAY_SPR_2D | DISPLAY_SPR_2D_BMP_128 | (7 << 28) | 2,/**< 2D bitmap mapping 128 pixels wide bitmap */
    SpriteMapping_Bmp_2D_256 = DISPLAY_SPR_2D | DISPLAY_SPR_2D_BMP_256 | (8 << 28) | 3/**< 2D bitmap mapping 256 pixels wide bitmap */
 }SpriteMapping;
@@ -280,9 +280,11 @@ typedef struct
 	s16 firstFree;/**< pointer to the first free block of tiles */
 	AllocHeader *allocBuffer; /**< allocation buffer for graphics allocation */
 	s16 allocBufferSize; /**< current size of the allocation buffer */
-	SpriteEntry *oamMemory; /**< pointer to shadow oam memory */
-	SpriteRotation *oamRotationMemory; /**< pointer to shadow oam memory for rotation */
-	
+	union
+   {
+      SpriteEntry *oamMemory; /**< pointer to shadow oam memory */
+	   SpriteRotation *oamRotationMemory; /**< pointer to shadow oam memory for rotation */
+   };
 }OamState;
 
 //!oamMain an object representing the main 2D engine
@@ -291,7 +293,10 @@ extern OamState oamMain;
 extern OamState oamSub;
 
 /**  \fn void oamInit(OamState* oam, SpriteMapping mapping, bool extPalette)
-*    \brief Initializes the 2D sprite engine
+*    \brief Initializes the 2D sprite engine  In order to mix tiled and bitmap sprites 
+            use SpriteMapping_Bmp_1D_128 or SpriteMapping_Bmp_1D_256.  This will set mapping for both
+            to 1D and give same sized boundaries so the sprite gfx allocation will function.  VBlank IRQ must
+            be enabled for this function to work.
 *    \param oam must be: &oamMain or &oamSub
 *    \param mapping the mapping mode 
 *    \param extPalette if true the engine sets up extended palettes for 8bpp sprites
