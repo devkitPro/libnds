@@ -243,15 +243,15 @@ typedef enum {
 *    Graphics memory layout options
 */
 typedef enum{
-   SpriteMapping_1D_32 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_32 | (0 << 28), /**< 1D tile mapping 32 byte boundary between offset */
-   SpriteMapping_1D_64 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_64 | (1 << 28),/**< 1D tile mapping 64 byte boundary between offset */
-   SpriteMapping_1D_128 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_128 | (2 << 28),/**< 1D tile mapping 128 byte boundary between offset */
-   SpriteMapping_1D_256 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_256 | (3 << 28),/**< 1D tile mapping 256 byte boundary between offset */
+   SpriteMapping_1D_32 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_32 | (0 << 28) | 0, /**< 1D tile mapping 32 byte boundary between offset */
+   SpriteMapping_1D_64 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_64 | (1 << 28) | 1,/**< 1D tile mapping 64 byte boundary between offset */
+   SpriteMapping_1D_128 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_128 | (2 << 28) | 2,/**< 1D tile mapping 128 byte boundary between offset */
+   SpriteMapping_1D_256 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_256 | (3 << 28) | 3,/**< 1D tile mapping 256 byte boundary between offset */
    SpriteMapping_2D = DISPLAY_SPR_2D | (4 << 28),/**< 2D tile mapping 32 byte boundary between offset */
-   SpriteMapping_Bmp_1D_128 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP |DISPLAY_SPR_1D_BMP_SIZE_128 | (5 << 28),/**< 1D bitmap mapping 128 byte boundary between offset */
-   SpriteMapping_Bmp_1D_256 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP |DISPLAY_SPR_1D_BMP_SIZE_256 | (6 << 28),/**< 1D bitmap mapping 256 byte boundary between offset */
-   SpriteMapping_Bmp_2D_128 = DISPLAY_SPR_2D | DISPLAY_SPR_2D_BMP_128 | (7 << 28),/**< 2D bitmap mapping 128 pixels wide bitmap */
-   SpriteMapping_Bmp_2D_256 = DISPLAY_SPR_2D | DISPLAY_SPR_2D_BMP_256 | (8 << 28)/**< 2D bitmap mapping 256 pixels wide bitmap */
+   SpriteMapping_Bmp_1D_128 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP |DISPLAY_SPR_1D_BMP_SIZE_128 | (5 << 28) | 2,/**< 1D bitmap mapping 128 byte boundary between offset */
+   SpriteMapping_Bmp_1D_256 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP |DISPLAY_SPR_1D_BMP_SIZE_256 | (6 << 28) | 3,/**< 1D bitmap mapping 256 byte boundary between offset */
+   SpriteMapping_Bmp_2D_128 = DISPLAY_SPR_2D | DISPLAY_SPR_2D_BMP_128 | (7 << 28) | 2,/**< 2D bitmap mapping 128 pixels wide bitmap */
+   SpriteMapping_Bmp_2D_256 = DISPLAY_SPR_2D | DISPLAY_SPR_2D_BMP_256 | (8 << 28) | 3/**< 2D bitmap mapping 256 pixels wide bitmap */
 }SpriteMapping;
 
 /**! \enum SpriteColorFormat

@@ -38,26 +38,8 @@ void oamInit(OamState *oam, SpriteMapping mapping, bool extPalette)
    int i;
    int extPaletteFlag = extPalette ? 1 : 0;
 
-   switch (mapping)
-   {
-   case SpriteMapping_1D_32:
-      oam->gfxOffsetStep = 5;
-      break;
-   case SpriteMapping_1D_64:
-      oam->gfxOffsetStep = 6;
-      break;
-   case SpriteMapping_1D_128:
-   case SpriteMapping_Bmp_1D_128:
-      oam->gfxOffsetStep = 7;
-      break;
-   case SpriteMapping_1D_256:
-   case SpriteMapping_Bmp_1D_256:
-      oam->gfxOffsetStep = 8;
-      break;
-   default:
-      break;
-   }
-
+   oam->gfxOffsetStep = (mapping & 3) + 5;
+   
    int zero = 0;
 
    swiFastCopy(&zero, oam->oamMemory, (sizeof(OamMemory) >> 1) | COPY_MODE_FILL);
@@ -81,13 +63,13 @@ void oamInit(OamState *oam, SpriteMapping mapping, bool extPalette)
    {
       swiFastCopy(oam->oamMemory, OAM, (sizeof(OamMemory)) >> 1);
       DISPLAY_CR &= ~DISPLAY_SPRITE_ATTR_MASK;
-      DISPLAY_CR |= DISPLAY_SPR_ACTIVE | (mapping & 0xfffffff) | extPaletteFlag;      
+      DISPLAY_CR |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;      
    }
    else
    {
       swiFastCopy(oam->oamMemory, OAM_SUB, (sizeof(OamMemory)) >> 1);
       SUB_DISPLAY_CR &= ~DISPLAY_SPRITE_ATTR_MASK;
-      SUB_DISPLAY_CR |= DISPLAY_SPR_ACTIVE | (mapping & 0xfffffff) | extPaletteFlag;      
+      SUB_DISPLAY_CR |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;      
    }
 }
 
