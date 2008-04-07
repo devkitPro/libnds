@@ -34,7 +34,9 @@
 
 #include "nds/ndstypes.h"
 
-
+#ifndef STATIC_INL
+#define STATIC_INL static inline
+#endif
 
 #define DIV_CR				(*(vuint16*)(0x04000280))
 #define DIV_NUMERATOR64		(*(vint64*) (0x04000290))
@@ -64,13 +66,14 @@
 
 //  Fixed Point versions
 
-/**! \fn static int32 divf32(int32 num, int32 den)
-*   \brief Fixed point divide
-*   \param num Takes 20.12 numerator and denominator
-*   \param den Takes 20.12 numerator and denominator
-*   \return returns 20.12 result
+STATIC_INL
+/** \fn divf32(int32 num, int32 den)
+*    \brief Fixed point divide
+*    \param num Takes 20.12 numerator and denominator
+*    \param den Takes 20.12 numerator and denominator
+*    \return returns 20.12 result
 */
-static inline int32 divf32(int32 num, int32 den)
+int32 divf32(int32 num, int32 den)
 {
 	DIV_CR = DIV_64_32;
 
@@ -84,25 +87,26 @@ static inline int32 divf32(int32 num, int32 den)
 	return (DIV_RESULT32);
 }
 
-
-/**! \fn  static int32 mulf32(int32 a, int32 b)
+STATIC_INL 
+/** \fn  static int32 mulf32(int32 a, int32 b)
 *   \brief Fixed point multiply
 *   \param a Takes 20.12 
 *   \param b Takes 20.12 
 *   \return returns 20.12 result
 */
-static inline int32 mulf32(int32 a, int32 b)
+int32 mulf32(int32 a, int32 b)
 {
 	long long result = (long long)a*(long long)b;
 	return (int32)(result >> 12);
 }
 
-/**! \fn static int32 sqrtf32(int32 a)
+STATIC_INL 
+/** \fn int32 sqrtf32(int32 a)
 *   \brief Fixed point sqrt
 *   \param a Takes 20.12 
 *   \return returns 20.12 result
 */
-static inline int32 sqrtf32(int32 a)
+int32 sqrtf32(int32 a)
 {
 	SQRT_CR = SQRT_64;
 
@@ -117,13 +121,14 @@ static inline int32 sqrtf32(int32 a)
 
 //  Integer versions
 
-/**! \fn static int32 div32(int32 num, int32 den)
+STATIC_INL 
+/** \fn  int32 div32(int32 num, int32 den)
 *   \brief integer divide
 *   \param num  numerator
 *   \param den  denominator
 *   \return returns 32 bit integer result
 */
-static inline int32 div32(int32 num, int32 den)
+int32 div32(int32 num, int32 den)
 {
 	DIV_CR = DIV_32_32;
 
@@ -137,13 +142,14 @@ static inline int32 div32(int32 num, int32 den)
 	return (DIV_RESULT32);
 }
 
-/**! \fn static int32 mod32(int32 num, int32 den)
+STATIC_INL 
+/** \fn  int32 mod32(int32 num, int32 den)
 *   \brief integer modulous
 *   \param num  numerator
 *   \param den  denominator
 *   \return returns 32 bit integer remainder
 */
-static inline int32 mod32(int32 num, int32 den)
+int32 mod32(int32 num, int32 den)
 {
 	DIV_CR = DIV_32_32;
 
@@ -157,13 +163,14 @@ static inline int32 mod32(int32 num, int32 den)
 	return (DIV_REMAINDER32);
 }
 
-/**! \fn static int32 div64(int64 num, int32 den)
+STATIC_INL 
+/** \fn  int32 div64(int64 num, int32 den)
 *   \brief integer 64 bit divide
 *   \param num  64 bit numerator
 *   \param den  32 bit denominator
 *   \return returns 32 bit integer result
 */
-static inline int32 div64(int64 num, int32 den)
+int32 div64(int64 num, int32 den)
 {
 	DIV_CR = DIV_64_32;
 
@@ -177,13 +184,14 @@ static inline int32 div64(int64 num, int32 den)
 	return (DIV_RESULT32);
 }
 
-/**! \fn static int32 mod64(int64 num, int32 den)
+STATIC_INL 
+/** \fn int32 mod64(int64 num, int32 den)
 *   \brief integer 64 bit modulous
 *   \param num  64 bit numerator
 *   \param den  32 bit denominator
 *   \return returns 32 bit integer remainder
 */
-static inline int32 mod64(int64 num, int32 den)
+int32 mod64(int64 num, int32 den)
 {
 	DIV_CR = DIV_64_32;
 
@@ -197,12 +205,13 @@ static inline int32 mod64(int64 num, int32 den)
 	return (DIV_REMAINDER32);
 }
 
-/**! \fn static int32 sqrt32(int a)
+STATIC_INL 
+/** \fn int32 sqrt32(int a)
 *   \brief integer sqrt
 *   \param a 32 bit integer argument
 *   \return returns 32 bit integer result
 */
-static inline int32 sqrt32(int a)
+int32 sqrt32(int a)
 {
 	SQRT_CR = SQRT_32;
 
@@ -216,7 +225,8 @@ static inline int32 sqrt32(int a)
 }
 
 
-/**! \fn static void crossf32(int32 *a, int32 *b, int32 *result)
+STATIC_INL 
+/** \fn void crossf32(int32 *a, int32 *b, int32 *result)
 *   \brief 1.19.12 fixed point cross product function result = AxB
 *   \param a pointer to fixed 3x3 matrix 
 *   \param b pointer to fixed 3x3 matrix 
@@ -226,7 +236,7 @@ static inline int32 sqrt32(int a)
 * y = Az * Bx - Bz * Ax
 * z = Ax * By - Bx * Ay
 */
-static inline void crossf32(int32 *a, int32 *b, int32 *result)
+void crossf32(int32 *a, int32 *b, int32 *result)
 {
 	result[0] = mulf32(a[1], b[2]) - mulf32(b[1], a[2]);
 	result[1] = mulf32(a[2], b[0]) - mulf32(b[2], a[0]);
@@ -234,7 +244,8 @@ static inline void crossf32(int32 *a, int32 *b, int32 *result)
 }
 
 
-/**! \fn static int32 dotf32(int32 *a, int32 *b)
+STATIC_INL 
+/** \fn int32 dotf32(int32 *a, int32 *b)
 *   \brief 1.19.12 fixed point dot product function result = A dot B
 *   \param a pointer to fixed 3x3 matrix 
 *   \param b pointer to fixed 3x3 matrix 
@@ -242,14 +253,15 @@ static inline void crossf32(int32 *a, int32 *b, int32 *result)
 * Dot Product
 * result = Ax * Bx + Ay * By + Az * Bz
 */
-static inline int32 dotf32(int32 *a, int32 *b)
+int32 dotf32(int32 *a, int32 *b)
 {
 	return mulf32(a[0], b[0]) + mulf32(a[1], b[1]) + mulf32(a[2], b[2]);
 }
 
 
 
-/**! \fn static void normalizef32(int32* a)
+STATIC_INL 
+/** \fn void normalizef32(int32* a)
 *   \brief 1.19.12 fixed point normalize function A = A  / |A|
 *   \param a pointer to fixed 3x3 matrix 
 * Normalize
@@ -257,7 +269,7 @@ static inline int32 dotf32(int32 *a, int32 *b)
 * Ay = Ay / mag
 * Az = Az / mag
 */
-static inline void normalizef32(int32* a)
+void normalizef32(int32* a)
 {
 	// magnitude = sqrt ( Ax^2 + Ay^2 + Az^2 )
 	int32 magnitude = sqrtf32( mulf32(a[0], a[0]) + mulf32(a[1], a[1]) + mulf32(a[2], a[2]) );

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: ndsmotion.h,v 1.8 2007-07-09 15:52:55 wntrmute Exp $
+	$Id: ndsmotion.h,v 1.9 2008-04-07 03:54:56 dovoto Exp $
 
 	DS Motion Card/DS Motion Pak functionality
 	
@@ -47,140 +47,149 @@ typedef struct
 extern "C" {
 #endif
 
-/*! \fn int motion_init()
+/*! \fn int motion_init(void)
 \brief  Initializes the DS Motion Sensor.
 Run this before using any of the DS Motion Sensor functions
 save the return value and pass it to the other motion_ functions
 */
-int motion_init();
+int motion_init(void);
 
-/*! \fn int motion_deinit()
+/*! \fn int motion_deinit(void)
 \brief  Deinitializes the DS Motion Sensor
 */
-void motion_deinit();
+void motion_deinit(void);
 
-/*! \fn signed int motion_read_x()
+/*! \fn signed int motion_read_x(void)
 \brief  read the X acceleration
 */
-signed int motion_read_x();
+signed int motion_read_x(void);
 
-/*! \fn signed int motion_read_y()
+/*! \fn signed int motion_read_y(void)
 \brief  read the Y acceleration
 */
-signed int motion_read_y();
+signed int motion_read_y(void);
 
-/*! \fn signed int motion_read_z()
+/*! \fn signed int motion_read_z(void)
 \brief  read the Z acceleration
 */
-signed int motion_read_z();
+signed int motion_read_z(void);
 
-/*! \fn signed int motion_read_gyro()
+/*! \fn signed int motion_read_gyro(void)
 \brief  read the Z rotational speed
 */
-signed int motion_read_gyro();
+signed int motion_read_gyro(void);
 
-/*! \fn int motion_acceleration_x()
+/*! \fn int motion_acceleration_x(void)
 \brief gets acceleration value to mili G (where g is 9.8 m/s*s)
 */
-int motion_acceleration_x();
+int motion_acceleration_x(void);
 
-/*! \fn int motion_acceleration_y()
+/*! \fn int motion_acceleration_y(void)
 \brief gets acceleration value to mili G (where g is 9.8 m/s*s)
 */
-int motion_acceleration_y();
+int motion_acceleration_y(void);
 
-/*! \fn int motion_acceleration_z()
+/*! \fn int motion_acceleration_z(void)
 \brief gets acceleration value to mili G (where g is 9.8 m/s*s)
 */
-int motion_acceleration_z();
+int motion_acceleration_z(void);
 
 /*! \fn void motion_set_sens_x(int sens)
 \brief this should be passed the raw reading at 1g for accurate
 acceleration calculations.  Default is 819
+\param sens the raw reading at 1g for accurate
+acceleration calculations 
 */
 void motion_set_sens_x(int sens);
 
 /*! \fn void motion_set_sens_y(int sens)
 \brief this should be passed the raw reading at 1g for accurate
 acceleration calculations.  Default is 819
+\param sens the raw reading at 1g for accurate
+acceleration calculations 
 */
 void motion_set_sens_y(int sens);
 
 /*! \fn void motion_set_sens_z(int sens)
 \brief this should be passed the raw reading at 1g for accurate
 acceleration calculations.  Default is 819
+\param sens the raw reading at 1g for accurate
+acceleration calculations 
 */
 void motion_set_sens_z(int sens);
 
 /*! \fn void motion_set_sens_x(int sens)
 \brief this should be passed the raw reading at 1g for accurate
 acceleration calculations.  Default is 825
+\param sens the raw reading at 1g for accurate
+acceleration calculations 
 */
 void motion_set_sens_gyro(int sens);
 
-/*! \fn void motion_set_offs_x()
+/*! \fn void motion_set_offs_x(void)
 \brief this should be called when the axis is under no acceleration
 default is 2048
 */
-void motion_set_offs_x();
+void motion_set_offs_x(void);
 
-/*! \fn void motion_set_offs_y()
+/*! \fn void motion_set_offs_y(void)
 \brief this should be called when the axis is under no acceleration
 default is 2048
 */
-void motion_set_offs_y();
+void motion_set_offs_y(void);
 
-/*! \fn void motion_set_offs_z()
+/*! \fn void motion_set_offs_z(void)
 \brief this should be called when the axis is under no acceleration
 default is 2048
 */
-void motion_set_offs_z();
+void motion_set_offs_z(void);
 
-/*! \fn void motion_set_offs_gyro()
+/*! \fn void motion_set_offs_gyro(void)
 \brief this should be called when the axis is under no rotation
 default is 1680
 */
-void motion_set_offs_gyro();
+void motion_set_offs_gyro(void);
 
-/*! \fn int motion_rotation()
+/*! \fn int motion_rotation(void)
 \brief converts raw rotation value to degrees per second
 */
-int motion_rotation();
+int motion_rotation(void);
 
-/*! \fn MotionCalibration* motion_get_calibration()
+/*! \fn MotionCalibration* motion_get_calibration(void)
 \brief This returns the current calibration settings for saving
 */
-MotionCalibration* motion_get_calibration();
+MotionCalibration* motion_get_calibration(void);
 
 /*! \fn void motion_set_calibration(MotionCalibration* cal)
 \brief This sets the calibration settings.  Intended
 to restore saved calibration settings
+\param cal the calibration settings 
 */
 void motion_set_calibration(MotionCalibration* cal);
 
-/*! \fn MotionCalibration* motion_enable_ain_1()
+/*! \fn MotionCalibration* motion_enable_ain_1(void)
 \brief This enables the analog input number 1.
 Required before reading analog input number 1.
 */
-void motion_enable_ain_1();
+void motion_enable_ain_1(void);
 
-/*! \fn MotionCalibration* motion_enable_ain_2()
+/*! \fn MotionCalibration* motion_enable_ain_2(void)
 \brief This enables the analog input number 2.
 Required before reading analog input number 2.
 */
-void motion_enable_ain_2();
+void motion_enable_ain_2(void);
 
-/*! \fn MotionCalibration* motion_read_ain_1()
+/*! \fn MotionCalibration* motion_read_ain_1(void)
 \brief This reads the analog input number 1.
 analog input number 1 needs to be enabled before reading.
 */
-int motion_read_ain_1();
+int motion_read_ain_1(void);
 
-/*! \fn MotionCalibration* motion_read_ain_2()
+/*! \fn MotionCalibration* motion_read_ain_2(void)
 \brief This reads the analog input number 2.
 analog input number 2 needs to be enabled before reading.
 */
-int motion_read_ain_2();
+int motion_read_ain_2(void);
 
 #ifdef __cplusplus
 }

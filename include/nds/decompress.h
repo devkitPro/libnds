@@ -33,6 +33,7 @@
 	Decompressing graphics to vram using lz77 
 */		
 
+
 #ifndef NDS_DECOMPRESS
 #define NDS_DECOMPRESS
 
@@ -40,20 +41,21 @@
 
 typedef u8 (*getByteCallback)(u8 *source);
 
+/** \brief the types of decompression available */
 typedef enum
 {
-   LZ77,
-   LZ77Vram,
-   HUFF,
-   RLE,
-   RLEVram
+   LZ77, /** \brief LZ77 decompression  */
+   LZ77Vram,/** \brief vram safe LZ77 decompression  */
+   HUFF,/** \brief vram safe huff decompression  */
+   RLE,/** \brief run length encoded decompression  */
+   RLEVram /** \brief vram safe run length encoded decompression  */
 }DecompressType;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/**! \fn decompress(const void* dst, const void* data, DecompressType type)
+/** \fn decompress(const void* dst, const void* data, DecompressType type)
 *    \brief decompresses data using the suported type
 *    \param dst the destination to decompress to
 *    \param data the data to decompress
@@ -61,7 +63,7 @@ extern "C" {
 */
 void decompress(const void* dst, const void* data, DecompressType type);
 
-/**! \fn decompressStream(const void* dst, const void* data, DecompressType type, getByteCallback callback)
+/** \fn decompressStream(const void* dst, const void* data, DecompressType type, getByteCallback callback)
 *    \brief decompresses data using the suported type
 *    \param dst the destination to decompress to
 *    \param data the data to decompress

@@ -82,7 +82,7 @@
 #define ATTR2_PALETTE(n)      ((n)<<12)
 #define ATTR2_ALPHA(n)		  ((n)<<12)
 
-
+/** \brief The blending mode of the sprite */
 typedef enum
 {
 	OBJMODE_NORMAL,		/**< No special mode is on - Normal sprite state. */
@@ -92,7 +92,7 @@ typedef enum
  
 } ObjBlendMode;
  
-
+/** \brief The shape of the sprite */
 typedef enum {
 	OBJSHAPE_SQUARE,	/**< Sprite shape is NxN (Height == Width). */
 	OBJSHAPE_WIDE,		/**< Sprite shape is NxM with N > M (Height < Width). */
@@ -100,7 +100,7 @@ typedef enum {
 	OBJSHAPE_FORBIDDEN,	/**< Sprite shape is undefined. */
 } ObjShape;
  
-
+/** \brief The size of the sprite */
 typedef enum {
 	OBJSIZE_8,		/**< Major sprite size is 8px. */
 	OBJSIZE_16,		/**< Major sprite size is 16px. */
@@ -108,13 +108,13 @@ typedef enum {
 	OBJSIZE_64,		/**< Major sprite size is 64px. */
 } ObjSize;
 
-
+/** \brief The color mode of the sprite */
 typedef enum {
 	OBJCOLOR_16,		/**< sprite has 16 colors. */
 	OBJCOLOR_256,		/**< sprite has 256 colors. */
 } ObjColMode;
 
-
+/** \brief The priority of the sprite */
 typedef enum {
 	OBJPRIORITY_0,		/**< sprite priority level 0 - highest. */
 	OBJPRIORITY_1,		/**< sprite priority level 1. */
@@ -218,7 +218,7 @@ typedef union {
 	SpriteRotation matrixBuffer[MATRIX_COUNT];
 } OAMTable;
  
-/**! \enum SpriteSize
+/** \enum SpriteSize
 *    Enumerates all sizes supported by the 2D engine
 */
 typedef enum {
@@ -239,7 +239,7 @@ typedef enum {
 
 }SpriteSize;
 
-/**! \enum SpriteMapping
+/** \enum SpriteMapping
 *    Graphics memory layout options
 */
 typedef enum{
@@ -254,7 +254,7 @@ typedef enum{
    SpriteMapping_Bmp_2D_256 = DISPLAY_SPR_2D | DISPLAY_SPR_2D_BMP_256 | (8 << 28) | 3/**< 2D bitmap mapping 256 pixels wide bitmap */
 }SpriteMapping;
 
-/**! \enum SpriteColorFormat
+/** \enum SpriteColorFormat
 *    Color formats for sprite graphics
 */
 typedef enum{
@@ -270,7 +270,7 @@ typedef struct
    u16 size;
 }AllocHeader;
 
-/**! \struct OamState
+/** \struct OamState
 *   Holds the state for a 2D sprite engine, there are two of these objects
 *   oamMain and oamSub and these must be passed in to all oam functions
 */

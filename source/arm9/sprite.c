@@ -36,9 +36,7 @@ void oamInit(OamState *oam, SpriteMapping mapping, bool extPalette)
    int extPaletteFlag = extPalette ? 1 : 0;
 
    oam->gfxOffsetStep = (mapping & 3) + 5;
-   
-   int zero = 0;
-
+  
    memset(oam->oamMemory, 0, sizeof(OamMemory));
    
    for(i = 0; i < 128; i++)
@@ -68,7 +66,7 @@ void oamInit(OamState *oam, SpriteMapping mapping, bool extPalette)
    }
 }
 
-/**! void spritesDisable(void)
+/** void spritesDisable(void)
 *    \brief Disables sprite rendering
 */
 void oamDisable(OamState *oam)
