@@ -333,8 +333,8 @@ void keyboardInit(Keyboard* keyboard)
 
    memset(bgGetMapPtr(keyboard->background), 0, 64);
 
-//   decompress(bgGetGfxPtr(keyboard->background), keyboard->tiles, LZ77Vram);
-   dmaCopy(keyboard->tiles, bgGetGfxPtr(keyboard->background) + keyboard->tileOffset / 2, keyboard->tileLen);
+   decompress(bgGetGfxPtr(keyboard->background), keyboard->tiles, LZ77Vram);
+//   dmaCopy(keyboard->tiles, bgGetGfxPtr(keyboard->background) + keyboard->tileOffset / 2, keyboard->tileLen);
    dmaCopy(keyboard->palette, BG_PALETTE_SUB, keyboard->paletteLen);
    dmaCopy(keyboard->lower->mapDataPressed, bgGetMapPtr(keyboard->background), 
      keyboard->lower->width * keyboard->lower->height * keyboard->grid_height * keyboard->grid_width / 64 * 2);
