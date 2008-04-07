@@ -26,6 +26,11 @@
 
 ---------------------------------------------------------------------------------*/
 
+/*!	\file video.h
+
+	\brief DS video functions
+*/
+
 #ifndef VIDEO_ARM9_INCLUDE
 #define VIDEO_ARM9_INCLUDE
 
