@@ -5,4 +5,5 @@
 -m
 
 -gzl decompress not working for some reason
-#-Z!
+
+-pe15

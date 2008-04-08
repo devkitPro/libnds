@@ -72,6 +72,7 @@ extern "C" {
 #include "nds/arm9/video.h"
 #include "nds/arm9/videoGL.h"
 #include "nds/arm9/sprite.h"
+#include "nds/arm9/decompress.h"
 
 //---------------------------------------------------------------------------------
 #endif // #ifdef ARM9

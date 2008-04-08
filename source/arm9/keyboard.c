@@ -32,7 +32,7 @@
 #include <nds/bios.h>
 #include <nds/arm9/keyboard.h>
 #include <nds/arm9/input.h>
-#include <nds/decompress.h>
+#include <nds/arm9/decompress.h>
 #include <nds/arm9/background.h>
 #include <string.h>
 #include <stdio.h>
@@ -144,6 +144,7 @@ Keyboard defaultKeyboard =
    30, //map base
    1, //tile base
    0, //tile offset
+   3, //scroll speed
    0, //keypress callback
    0, //key release callback
 };
@@ -317,24 +318,24 @@ Keyboard* keyboardGetDefault(void)
 }
 
 
-
-
 void keyboardInit(Keyboard* keyboard)
 {     
    if(keyboard->keyboardOnSub)
-      keyboard->background = bgInitSub(keyboard->background, BgType_Text4bpp, BgSize_T_256x256, keyboard->mapBase, keyboard->tileBase);
+      keyboard->background = bgInitSub(keyboard->background, BgType_Text4bpp, BgSize_T_256x512, keyboard->mapBase, keyboard->tileBase);
    else
-      keyboard->background = bgInit(keyboard->background, BgType_Text4bpp, BgSize_T_256x256, keyboard->mapBase, keyboard->tileBase);
+      keyboard->background = bgInit(keyboard->background, BgType_Text4bpp, BgSize_T_256x512, keyboard->mapBase, keyboard->tileBase);
 
    if(keyboard->visible)
       bgShow(keyboard->background);   
    else
       bgHide(keyboard->background);
 
-   memset(bgGetMapPtr(keyboard->background), 0, 64);
+   bgSetControlBits(keyboard->background, BIT(13));
 
-   decompress(bgGetGfxPtr(keyboard->background), keyboard->tiles, LZ77Vram);
-//   dmaCopy(keyboard->tiles, bgGetGfxPtr(keyboard->background) + keyboard->tileOffset / 2, keyboard->tileLen);
+   memset(bgGetMapPtr(keyboard->background), 0, 2048 * 2);
+
+   decompress(keyboard->tiles, bgGetGfxPtr(keyboard->background),  LZ77Vram);
+   
    dmaCopy(keyboard->palette, BG_PALETTE_SUB, keyboard->paletteLen);
    dmaCopy(keyboard->lower->mapDataPressed, bgGetMapPtr(keyboard->background), 
      keyboard->lower->width * keyboard->lower->height * keyboard->grid_height * keyboard->grid_width / 64 * 2);
@@ -358,13 +359,16 @@ void keyboardShow(void)
    bgSetScroll(curKeyboard->background, 0, -192);
  
    bgShow(curKeyboard->background);
-
-   for(i = -192; i < curKeyboard->offset_y; i += 3)
+   
+   if(curKeyboard->scrollSpeed)
    {
-      bgSetScroll(curKeyboard->background, 0, i);
-      swiWaitForVBlank();
+      for(i = -192; i < curKeyboard->offset_y; i += curKeyboard->scrollSpeed)
+      {
+         swiWaitForVBlank();
+         bgSetScroll(curKeyboard->background, 0, i); 
+      }
    }
-
+   
    bgSetScroll(curKeyboard->background, 0, curKeyboard->offset_y);
 }
 
@@ -374,13 +378,14 @@ void keyboardHide(void)
 
    curKeyboard->visible = 0;
 
-   for(i = curKeyboard->offset_y; i < -192; i--)
+   if(curKeyboard->scrollSpeed)
    {
-      bgSetScroll(curKeyboard->background, 0, i);
-
-      swiWaitForVBlank();
+      for(i = curKeyboard->offset_y; i > -192; i-= curKeyboard->scrollSpeed)
+      {
+         swiWaitForVBlank();
+         bgSetScroll(curKeyboard->background, 0, i);
+      }
    }
-
    bgHide(curKeyboard->background);
 }
 

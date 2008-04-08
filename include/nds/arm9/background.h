@@ -191,14 +191,24 @@ bool bgIsText(int id);
 int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase);
 int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBase);
 
+
+void bgUpdate(int id);
+
+static inline
 /*! \fn bgSetRotate(int id, int angle)
-	\brief Sets the rotation angle of the specified background
+	\brief Sets the rotation angle of the specified background and updates the transform matrix
 	\param id 
 		background id returned from bgInit or bgInitSub
 	\param angle 
 		the angle of counter clockwise rotation (0 to 511)
 */
-void bgSetRotate(int id, int angle);
+void bgSetRotate(int id, int angle)
+{
+   bgState[id].angle = angle & 0x1ff;
+
+   bgUpdate(id);
+}
+
 
 
 static inline 
@@ -217,14 +227,68 @@ void bgRotate(int id, int angle)
 }
 
 static inline 
+/*! \fn void bgSet(int id, int angle, s32 sx, s32 sy, s32 scrollX, s32 scrollY, s32 rotCenterX, s32 rotCenterY)
+	\brief Sets the rotation and scale of the background and update background control registers
+	\param id 
+		background id returned from bgInit or bgInitSub
+	\param angle 
+		the angle of counter clockwise rotation (0 to 511)
+	\param sx
+		the 24.8 bit fractional fixed point inverse horizontal scaling to apply
+	\param sy
+		the 24.8 bit fractional fixed point inverse vertical scaling to apply
+   \param scrollX
+		the 24.8 bit fractional fixed point horizontal scroll to apply
+	\param scrollY
+		the 24.8 bit fractional fixed point vertical scroll to apply
+   \param rotCenterX
+		the 24.8 bit fractional fixed point center of rotation x componant
+	\param rotCenterY
+		the 24.8 bit fractional fixed point center of rotation y componant
+
+*/
+void bgSet(int id, int angle, s32 sx, s32 sy, s32 scrollX, s32 scrollY, s32 rotCenterX, s32 rotCenterY)
+{
+   bgState[id].scaleX = sx;
+	bgState[id].scaleY = sy;
+
+   bgState[id].scrollX = scrollX;
+	bgState[id].scrollY = scrollX;
+   
+  	bgState[id].centerX = rotCenterX;
+	bgState[id].centerY = rotCenterY;
+
+   bgSetRotate(id, angle);
+}
+
+static inline 
+/*! \fn void bgSetRotateScale(int id, int angle, s32 sx, s32 sy)
+	\brief Sets the rotation and scale of the background and update background control registers
+	\param id 
+		background id returned from bgInit or bgInitSub
+	\param angle 
+		the angle of counter clockwise rotation (0 to 511)
+	\param sx
+		the 24.8 bit fractional fixed point horizontal scaling to apply
+	\param sy
+		the 24.8 bit fractional fixed point vertical scaling to apply
+*/
+void bgSetRotateScale(int id, int angle, s32 sx, s32 sy)
+{
+   bgState[id].scaleX = sx;
+	bgState[id].scaleY = sy;
+
+   bgSetRotate(id, angle);
+}
+static inline 
 /*! \fn bgSetScale(int id, s32 sx, s32 sy)
 	\brief Sets the scale of the specified background
 	\param id 
 		background id returned from bgInit or bgInitSub
 	\param sx
-		the 8 bit fractional fixed point horizontal scaling to apply
+		the 24.8 bit fractional fixed point horizontal scaling to apply
 	\param sy
-		the 8 bit fractional fixed point vertical scaling to apply
+		the 24.8 bit fractional fixed point vertical scaling to apply
 */
 void bgSetScale(int id, s32 sx, s32 sy)
 {
@@ -232,8 +296,8 @@ void bgSetScale(int id, s32 sx, s32 sy)
 	
 	bgState[id].scaleX = sx;
 	bgState[id].scaleY = sy;
+   bgUpdate(id);
 	
-	bgRotate(id, 0);
 }
 
 static inline 
@@ -336,6 +400,19 @@ void  bgClearControlBits(int id, u16 bits)
 	*bgControl[id] &= ~bits;
 }
 
+static inline
+
+void bgWrapOn(int id)
+{
+   bgSetControlBits(id, BIT(13));
+}
+
+static inline
+
+void bgWrapOff(int id)
+{
+   bgClearControlBits(id, BIT(13));
+}
 static inline 
 /*! \fn bgSetPriority(int id, unsigned int priority)
 	\brief Sets the background priority
@@ -407,18 +484,7 @@ void bgSetScrollf(int id, s32 x, s32 y)
 	
 	bgState[id].scrollX = x;
 	bgState[id].scrollY = y;
-
-	if(bgIsText(id))
-	{
-		bgScrollTable[id]->x = x >> 8;
-		bgScrollTable[id]->y = y >> 8;
-	}
-	else
-	{
-		bgRotate(id, 0);
-	}
-	
-
+   bgUpdate(id);
 }
 
 static inline 
@@ -646,8 +712,8 @@ void bgSetCenterf(int id, s32 x, s32 y)
 		 
  	bgState[id].centerX = x;
 	bgState[id].centerY = y;
-	
-	bgRotate(id, 0);
+
+   bgUpdate(id);
 }
 
 static inline 

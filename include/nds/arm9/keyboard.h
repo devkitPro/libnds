@@ -91,7 +91,8 @@ typedef struct
     int mapBase; /*!< map base to be used by the keyboard>*/
 	int tileBase; /*!< tile base to be used by keyboard graphics>*/
 	int tileOffset; /*!< tile offset (in bytes) to load graphics (map must be pre adjusted) >*/
-	KeyChangeCallback OnKeyPressed; /*!< will be called on key press>*/
+	u32 scrollSpeed; /*!<keyboard scroll speed on hide and show in pixels per fram (must be possitive and 0 == instant on) */
+   KeyChangeCallback OnKeyPressed; /*!< will be called on key press>*/
 	KeyChangeCallback OnKeyReleased; /*!< will be called on key release >*/
 }Keyboard;
 

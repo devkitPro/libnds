@@ -84,56 +84,63 @@ bg_transform* bgTransform[8] =
 
 BgState bgState[8];
 
-
+bool bgIsTextLut[8];
 
 bool bgIsText(int id)
 {
-	if(id < 2 || (id > 3 && id < 6)) return true;
+   return bgIsTextLut[id];
+}
+
+bool checkIfText(int id)
+{
+   if(id < 2 || (id > 3 && id < 6)) return true;
 	
 	u8 mode = (id < 4) ? (videoGetMode() & 7) : (videoGetModeSub() & 7);
 	
-	switch (mode)
-	{
-		case 0:
-			return true;
-		case 1:
-		case 3:
-			return id == 3 || id == 7 ? true : false;	
-	}
-	
+   if(!mode) return true;
+
+	if(mode == 1 || mode == 3)
+   {
+      return id == 3 || id == 7 ? false : true;
+   }
+   
 	return false;
 }
-
-
-//rotates the background to the supplied angle
-void bgSetRotate(int id, int angle)
+void bgUpdate(int id)
 {
-	s16 angleSin;
-	s16 angleCos;
- 
-	s32 pa, pb, pc, pd; 
-	
-	// wrap angle
-	bgState[id].angle = angle & 0x1ff;
+   if(bgIsTextLut[id])
+	{
+		bgScrollTable[id]->x = bgState[id].scrollX >> 8;
+		bgScrollTable[id]->y = bgState[id].scrollY >> 8;
+	}
+	else
+	{
+			s16 angleSin;
+	      s16 angleCos;
+       
+	      s32 pa, pb, pc, pd; 
+         	
+	      // Compute sin and cos
+	      angleSin = sinFixed(bgState[id].angle);
+	      angleCos = cosFixed(bgState[id].angle);
+       
+	      // Set the background registers
+	      pa = ( angleCos * bgState[id].scaleX ) >> 12;
+	      pb = (-angleSin * bgState[id].scaleX ) >> 12;
+	      pc = ( angleSin * bgState[id].scaleY ) >> 12;
+	      pd = ( angleCos * bgState[id].scaleY ) >> 12;
 
-	// Compute sin and cos
-	angleSin = sinFixed(angle);
-	angleCos = cosFixed(angle);
- 
-	// Set the background registers
-	pa = ( angleCos * bgState[id].centerX ) >> 12;
-	pb = (-angleSin * bgState[id].centerX ) >> 12;
-	pc = ( angleSin * bgState[id].centerY ) >> 12;
-	pd = ( angleCos * bgState[id].centerY ) >> 12;
+	      bgTransform[id]->xdx = pa;
+	      bgTransform[id]->xdy = pb;
+	      bgTransform[id]->ydx = pc;
+	      bgTransform[id]->ydy = pd;
 
-	bgTransform[id]->xdx = pa;
-	bgTransform[id]->xdy = pb;
-	bgTransform[id]->ydx = pc;
-	bgTransform[id]->ydy = pd;
-
-	bgTransform[id]->dx  = (bgState[id].scrollX) - ((pa * bgState[id].centerX + pb * bgState[id].centerY) >> 8);
-	bgTransform[id]->dy  = (bgState[id].scrollY) - ((pc * bgState[id].centerX + pd * bgState[id].centerY) >> 8);
+	      bgTransform[id]->dx  = (bgState[id].scrollX) - ((pa * bgState[id].centerX + pb * bgState[id].centerY) >> 8);
+	      bgTransform[id]->dy  = (bgState[id].scrollY) - ((pc * bgState[id].centerX + pd * bgState[id].centerY) >> 8);
+	}
 }
+
+
 
 //initializes and enables the appropriate background with the supplied attributes
 //returns an id which must be supplied to the remainder of the background functions
@@ -147,9 +154,8 @@ int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase)
 
 	if(type != BgType_Text8bpp && type != BgType_Text4bpp)
 	{		
-		bgState[layer].scaleX = 1 << 8;
-		bgState[layer].scaleY = 1 << 8;
-		bgRotate(layer, 0);
+		bgSetScale(layer, 1 << 8, 1 << 8);
+      bgRotate(layer, 0);
 	}
 
 	bgState[layer].type = type;
@@ -157,6 +163,7 @@ int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase)
 	
 	videoBgEnable(layer);
 	
+   bgIsTextLut[layer] = checkIfText(layer);
 	return layer;
 }
 
@@ -171,13 +178,14 @@ int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBas
 	if(type != BgType_Text8bpp && type != BgType_Text4bpp)
 	{		
 		bgSetScale(layer + 4, 1 << 8, 1 << 8);
+      bgRotate(layer, 0);
 	}
 	
 	bgState[layer + 4].type = type;
 	bgState[layer + 4].size = size;
 	
 	videoBgEnableSub(layer);
-
+   bgIsTextLut[layer + 4] = checkIfText(layer + 4);
 	return layer + 4;
 } 
 
