@@ -40,6 +40,7 @@
 #include <nds/ndstypes.h>
 
 typedef u8 (*getByteCallback)(u8 *source);
+typedef int (*getHeaderCallback)(u8 *source, u16 *dest, u32 arg);
 
 /** \brief the types of decompression available */
 typedef enum
@@ -61,16 +62,17 @@ extern "C" {
 *    \param data the data to decompress
 *    \param type the type of data to decompress
 */
-void decompress(const void* dst, const void* data, DecompressType type);
+void decompress(const void* data, const void* dst, DecompressType type);
 
 /** \fn decompressStream(const void* dst, const void* data, DecompressType type, getByteCallback callback)
 *    \brief decompresses data using the suported type
 *    \param dst the destination to decompress to
 *    \param data the data to decompress
 *    \param type the type of data to decompress
-*    \param callback a callback to read the next byte of data
+*    \param readCB a callback to read the next byte of data
+*    \param getHeaderCB a callback to read the 32 byte header
 */
-void decompressStream(const void* dst, const void* data, DecompressType type, getByteCallback callback);
+void decompressStream(const void* data, const void* dst, DecompressType type, getByteCallback readCB, getHeaderCallback getHeaderCB);
 
 #ifdef __cplusplus
 }

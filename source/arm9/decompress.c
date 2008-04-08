@@ -25,14 +25,14 @@ distribution.
 
 ---------------------------------------------------------------------------------*/
 
-#include <nds/decompress.h>
+#include <nds/arm9/decompress.h>
 #include <nds/bios.h>
 
 #ifdef ARM9
 #include <nds/arm9/sassert.h>   
 #endif
 
-int getSize(uint8 *source, uint16 *dest, uint32 arg) {
+int getHeader(uint8 *source, uint16 *dest, uint32 arg) {
    return *(uint32*)source;
 }
 
@@ -40,12 +40,12 @@ uint8 readByte(uint8 *source) {
    return *source;
 }
 TDecompressionStream decomStream = {
-   getSize,
+   getHeader,
    0,
    readByte
 };
 
-void decompress(const void* dst, const void* data, DecompressType type)
+void decompress(const void* data, const void* dst, DecompressType type)
 {
 
    switch(type)
@@ -69,13 +69,14 @@ void decompress(const void* dst, const void* data, DecompressType type)
       break;
    }
 }
-void decompressStream(const void* dst, const void* data, DecompressType type, getByteCallback callback)
+void decompressStream(const void* data, const void* dst, DecompressType type, getByteCallback readCB, getHeaderCallback getHeaderCB)
 {
 #ifdef ARM9
    sassert(type != LZ77 && type != RLE, "Only LZ77 and RLE do not support streaming, use Vram versions");
 #endif
 
-   decomStream.readByte= callback;
+   decomStream.readByte= readCB;
+   decomStream.getSize = getHeaderCB;
 
    switch(type)
    {
