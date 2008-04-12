@@ -3,6 +3,8 @@
 #include <nds/arm9/input.h>
 #include <nds/arm9/console.h>
 #include <nds/arm9/trig_lut.h>
+#include <nds/arm9/cache.h>
+#include <nds/dma.h>
 #include <nds/bios.h>
 
 #include <stdlib.h>
@@ -388,13 +390,15 @@ void oamSet(OamState* oam, int id,  int x, int y, int palette_alpha, SpriteSize 
 
 void oamUpdate(OamState* oam)
 {
+   DC_FlushRange(oam->oamMemory, sizeof(OamMemory));
+
    if(oam == &oamMain)
    {
-      memcpy(OAM, oam->oamMemory, (sizeof(OamMemory)));
+      dmaCopy(oam->oamMemory, OAM, sizeof(OamMemory));
    }
    else
    {
-       memcpy(OAM_SUB, oam->oamMemory, (sizeof(OamMemory)));
+      dmaCopy(oam->oamMemory, OAM_SUB, sizeof(OamMemory));
    }
 }
 

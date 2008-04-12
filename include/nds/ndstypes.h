@@ -26,6 +26,10 @@
 		distribution.
 
 ---------------------------------------------------------------------------------*/
+/*! \file ndstypes.h
+\brief Custom types employed by libnds
+*/
+
 #ifndef _NDSTYPES_INCLUDE
 #define _NDSTYPES_INCLUDE
 //---------------------------------------------------------------------------------

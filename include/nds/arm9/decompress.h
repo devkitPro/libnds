@@ -29,7 +29,7 @@
 */
 
 /*! 
-	\example Graphics/2D/16bit_color_bmp/source/main.cpp
+	\example Graphics/2D/16bit_color_bmp/source/template.cpp
 	Decompressing graphics to vram using lz77 
 */		
 
@@ -56,7 +56,7 @@ typedef enum
 extern "C" {
 #endif
 
-/** \fn decompress(const void* dst, const void* data, DecompressType type)
+/** \fn decompress(const void* data, const void* dst, DecompressType type)
 *    \brief decompresses data using the suported type
 *    \param dst the destination to decompress to
 *    \param data the data to decompress
@@ -64,7 +64,7 @@ extern "C" {
 */
 void decompress(const void* data, const void* dst, DecompressType type);
 
-/** \fn decompressStream(const void* dst, const void* data, DecompressType type, getByteCallback callback)
+/** \fn decompressStream(const void* data, const void* dst, DecompressType type,  getByteCallback readCB, getHeaderCallback getHeaderCB)
 *    \brief decompresses data using the suported type
 *    \param dst the destination to decompress to
 *    \param data the data to decompress

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: image.c,v 1.10 2008-02-12 02:10:13 wntrmute Exp $
+	$Id: image.c,v 1.11 2008-04-12 03:34:03 dovoto Exp $
 
 
 	Copyright (C) 2005
@@ -24,34 +24,7 @@
 	3.	This notice may not be removed or altered from any source
 		distribution.
 
-	$Log: not supported by cvs2svn $
-	Revision 1.9  2008/02/09 14:46:50  dovoto
-	Fixed warning on cast
 	
-	Revision 1.8  2008/02/09 12:27:38  dovoto
-	Added a cast to remove a warning
-	
-	Revision 1.7  2007/01/19 14:46:00  wntrmute
-	name anonymous structs and unions for -std=c99
-	
-	Revision 1.6  2005/10/11 05:05:26  dovoto
-	Added imageTileData(sImage* img) to allow loading of pcx as sprite data.
-	Updated pcx.c to set image bit per pixel field
-	
-	Revision 1.5  2005/08/30 17:54:45  wntrmute
-	only include required headers
-	
-	Revision 1.4  2005/08/22 08:10:35  wntrmute
-	reformatted for consistency
-
-	Revision 1.3  2005/08/11 14:53:00  desktopman
-	Added image24to16(sImage* img)
-
-	Revision 1.2  2005/08/01 23:18:22  wntrmute
-	adjusted headers for logging
-
-	Revision 1.1  2005/07/27 02:20:52  wntrmute
-	add image functions
 
 
 ---------------------------------------------------------------------------------*/

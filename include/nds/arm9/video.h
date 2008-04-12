@@ -47,19 +47,47 @@
 extern "C" {
 #endif
 
+#define BG_PALETTE       ((uint16*)0x05000000)/** \brief background palette memory*/
+#define BG_PALETTE_SUB   ((uint16*)0x05000400)/** \brief background palette memory (sub engine)*/
+
+#define SPRITE_PALETTE ((uint16*)0x05000200) /** \brief sprite palette memory*/
+#define SPRITE_PALETTE_SUB ((uint16*)0x05000600)/** \brief sprite palette memory (sub engine)*/
+
+#define BG_GFX			((uint16*)0x6000000) /** \brief background graphics memory*/
+#define BG_GFX_SUB		((uint16*)0x6200000)/** \brief background graphics memory (sub engine)*/
+#define SPRITE_GFX			((uint16*)0x6400000)/** \brief sprite graphics memory*/
+#define SPRITE_GFX_SUB		((uint16*)0x6600000)/** \brief sprite graphics memory (sub engine)*/
+
+#define VRAM_0        ((uint16*)0x6000000)
+#define VRAM          ((uint16*)0x6800000)
+
+
+#define VRAM_A        ((uint16*)0x6800000)/*!< \brief  pointer to vram bank A mapped as LCD*/
+#define VRAM_B        ((uint16*)0x6820000)/*!< \brief pointer to vram bank B mapped as LCD*/
+#define VRAM_C        ((uint16*)0x6840000)/*!< \brief pointer to vram bank C mapped as LCD*/
+#define VRAM_D        ((uint16*)0x6860000)/*!< \brief pointer to vram bank D mapped as LCD*/
+#define VRAM_E        ((uint16*)0x6880000)/*!< \brief pointer to vram bank E mapped as LCD*/
+#define VRAM_F        ((uint16*)0x6890000)/*!< \brief pointer to vram bank F mapped as LCD*/
+#define VRAM_G        ((uint16*)0x6894000)/*!< \brief pointer to vram bank G mapped as LCD*/
+#define VRAM_H        ((uint16*)0x6898000)/*!< \brief pointer to vram bank H mapped as LCD*/
+#define VRAM_I        ((uint16*)0x68A0000)/*!< \brief pointer to vram bank I mapped as LCD*/
+
+#define OAM           ((uint16*)0x07000000)/*!< \brief pointer to Object Attribute Memory*/
+#define OAM_SUB       ((uint16*)0x07000400)/*!< \brief pointer to Object Attribute Memory (Sub engine)*/
 
 // macro creates a 15 bit color from 3x5 bit components
-/** \brief Macro to convert 5 bit r g b components into a single 15 bit RGB tripplet */
+/** \brief  Macro to convert 5 bit r g b components into a single 15 bit RGB triplet */
 #define RGB15(r,g,b)  ((r)|((g)<<5)|((b)<<10))
 #define RGB5(r,g,b)  ((r)|((g)<<5)|((b)<<10))
 #define RGB8(r,g,b)  (((r)>>3)|(((g)>>3)<<5)|(((b)>>3)<<10))
-/** \brief Macro to convert 5 bit r g b components plus 1 bit alpha into a single 16 bit ARGB tripplet */
+/** \brief  Macro to convert 5 bit r g b components plus 1 bit alpha into a single 16 bit ARGB triplet */
 #define ARGB16(a, r, g, b) ( ((a) << 15) | (r)|((g)<<5)|((b)<<10))
 
-/** \brief Screen height in pixels */
+/** \brief  Screen height in pixels */
 #define SCREEN_HEIGHT 192 
-/** \brief Screen width in pixels */
+/** \brief  Screen width in pixels */
 #define SCREEN_WIDTH  256
+
 //	Vram Control
 #define VRAM_CR			(*(vuint32*)0x04000240)
 #define VRAM_A_CR		(*(vuint8*)0x04000240)
@@ -77,7 +105,7 @@ extern "C" {
 
 #define VRAM_OFFSET(n)	((n)<<3)
 
-/** \brief Allowed VRAM bank A modes */
+/** \brief  Allowed VRAM bank A modes */
 typedef enum {
 	VRAM_A_LCD	=	0,
 	VRAM_A_MAIN_BG  = 1,
@@ -95,7 +123,7 @@ typedef enum {
 	VRAM_A_TEXTURE_SLOT3	= 3 | VRAM_OFFSET(3)
 } VRAM_A_TYPE;
 
-/** \brief Allowed VRAM bank B modes */
+/** \brief  Allowed VRAM bank B modes */
 typedef enum {
 	VRAM_B_LCD = 0,
 	VRAM_B_MAIN_BG	= 1 | VRAM_OFFSET(1),
@@ -113,7 +141,7 @@ typedef enum {
 	VRAM_B_TEXTURE_SLOT3	= 3 | VRAM_OFFSET(3)
 } VRAM_B_TYPE;
 
-/** \brief Allowed VRAM bank C modes */
+/** \brief  Allowed VRAM bank C modes */
 typedef enum {
 	VRAM_C_LCD = 0,
 	VRAM_C_MAIN_BG  = 1 | VRAM_OFFSET(2),
@@ -136,7 +164,7 @@ typedef enum {
 	VRAM_C_TEXTURE_SLOT3	= 3 | VRAM_OFFSET(3)
 } VRAM_C_TYPE;
 
-/** \brief Allowed VRAM bank D modes */
+/** \brief  Allowed VRAM bank D modes */
 typedef enum {
 	VRAM_D_LCD = 0,
 	VRAM_D_MAIN_BG  = 1 | VRAM_OFFSET(3),
@@ -155,7 +183,7 @@ typedef enum {
 	VRAM_D_TEXTURE_SLOT3 = 3 | VRAM_OFFSET(3)
 } VRAM_D_TYPE;
 
-/** \brief Allowed VRAM bank E modes */
+/** \brief  Allowed VRAM bank E modes */
 typedef enum {
 	VRAM_E_LCD             = 0,
 	VRAM_E_MAIN_BG         = 1,
@@ -165,7 +193,7 @@ typedef enum {
 	VRAM_E_OBJ_EXT_PALETTE = 5,
 } VRAM_E_TYPE;
 
-/** \brief Allowed VRAM bank F modes */
+/** \brief  Allowed VRAM bank F modes */
 typedef enum {
 	VRAM_F_LCD             = 0,
 	VRAM_F_MAIN_BG         = 1,
@@ -181,7 +209,7 @@ typedef enum {
 	VRAM_F_OBJ_EXT_PALETTE = 5,
 } VRAM_F_TYPE;
 
-/** \brief Allowed VRAM bank G modes */
+/** \brief  Allowed VRAM bank G modes */
 typedef enum {
 	VRAM_G_LCD             = 0,
 	VRAM_G_MAIN_BG         = 1,
@@ -197,14 +225,14 @@ typedef enum {
 	VRAM_G_OBJ_EXT_PALETTE = 5,
 } VRAM_G_TYPE;
 
-/** \brief Allowed VRAM bank H modes */
+/** \brief  Allowed VRAM bank H modes */
 typedef enum {
 	VRAM_H_LCD                = 0,
 	VRAM_H_SUB_BG             = 1,
 	VRAM_H_SUB_BG_EXT_PALETTE = 2,
 } VRAM_H_TYPE;
 
-/** \brief Allowed VRAM bank I modes */
+/** \brief  Allowed VRAM bank I modes */
 typedef enum {
 	VRAM_I_LCD                    = 0,
 	VRAM_I_SUB_BG                 = 1,
@@ -213,25 +241,25 @@ typedef enum {
 }VRAM_I_TYPE;
 
 
-/** \brief an array of 256 15-bit RGB values*/
+/** \brief  an array of 256 15-bit RGB values*/
 typedef u16 _palette[256];
 
-/** \brief An array of 16 256-color palettes */
+/** \brief  An array of 16 256-color palettes */
 typedef _palette _ext_palette[16];
 
-/** \brief Used for accessing vram E as an external palette */
+/** \brief  Used for accessing vram E as an external palette */
 #define VRAM_E_EXT_PALETTE ((_ext_palette *)VRAM_E)
 
-/** \brief Used for accessing vram F as an external palette */
+/** \brief  Used for accessing vram F as an external palette */
 #define VRAM_F_EXT_PALETTE ((_ext_palette *)VRAM_F)
 
-/** \brief Used for accessing vram G as an external palette */
+/** \brief  Used for accessing vram G as an external palette */
 #define VRAM_G_EXT_PALETTE ((_ext_palette *)VRAM_G)
 
-/** \brief Used for accessing vram H as an external palette */
+/** \brief  Used for accessing vram H as an external palette */
 #define VRAM_H_EXT_PALETTE ((_ext_palette *)VRAM_H)
 
-/** \brief Set the main 4 bank modes. 
+/** \brief  Set the main 4 bank modes. 
 *    \param a mapping mode of VRAM_A
 *    \param b mapping mode of VRAM_B
 *    \param c mapping mode of VRAM_C
@@ -240,52 +268,52 @@ typedef _palette _ext_palette[16];
 */
 uint32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d);
 
-/** \brief Set the main 4 bank modes. 
+/** \brief  Set the main 4 bank modes. 
 *    \param vramTemp restores the main 4 banks to the value encoded in vramTemp (returned from vramSetMainBanks)
 */
 void vramRestoreMainBanks(uint32 vramTemp);
 
-/** \brief Set bank A to the indicated mapping. 
+/** \brief  Set bank A to the indicated mapping. 
 *    \param a the mapping of the bank
 */
 void vramSetBankA(VRAM_A_TYPE a);
 
-/** \brief Set bank B to the indicated mapping. 
+/** \brief  Set bank B to the indicated mapping. 
 *    \param b the mapping of the bank
 */
 void vramSetBankB(VRAM_B_TYPE b);
 
-/** \brief Set bank C to the indicated mapping. 
+/** \brief  Set bank C to the indicated mapping. 
 *    \param c the mapping of the bank
 */
 void vramSetBankC(VRAM_C_TYPE c);
 
-/** \brief Set bank D to the indicated mapping. 
+/** \brief  Set bank D to the indicated mapping. 
 *    \param d the mapping of the bank
 */
 void vramSetBankD(VRAM_D_TYPE d);
 
-/** \brief Set bank E to the indicated mapping. 
+/** \brief  Set bank E to the indicated mapping. 
 *    \param e the mapping of the bank
 */
 void vramSetBankE(VRAM_E_TYPE e);
 
-/** \brief Set bank F to the indicated mapping. 
+/** \brief  Set bank F to the indicated mapping. 
 *    \param f the mapping of the bank
 */
 void vramSetBankF(VRAM_F_TYPE f);
 
-/** \brief Set bank G to the indicated mapping. 
+/** \brief  Set bank G to the indicated mapping. 
 *    \param g the mapping of the bank
 */
 void vramSetBankG(VRAM_G_TYPE g);
 
-/** \brief Set bank H to the indicated mapping. 
+/** \brief  Set bank H to the indicated mapping. 
 *    \param h the mapping of the bank
 */
 void vramSetBankH(VRAM_H_TYPE h);
 
-/** \brief Set bank I to the indicated mapping. 
+/** \brief  Set bank I to the indicated mapping. 
 *    \param i the mapping of the bank
 */
 void vramSetBankI(VRAM_I_TYPE i);
@@ -307,47 +335,57 @@ void vramSetBankI(VRAM_I_TYPE i);
 #define DISPLAY_SPR_WIN_ON    (1 << 15)
 
 /** \enum  VideoMode
-* \brief The allowed video modes of the 2D procesors <br>
+* \brief The allowed video modes of the 2D processors <br>
 * 
-*______________________________<br>
-*|Mode | BG0 | BG1 | BG2 |BG3 |<br>
-*|  0  |  T  |  T  |  T  |  T |<br>
-*|  1  |  T  |  T  |  T  |  R |<br>
-*|  2  |  T  |  T  |  R  |  R |<br>
-*|  3  |  T  |  T  |  T  |  E |<br>
-*|  4  |  T  |  T  |  R  |  E |<br>
-*|  5  |  T  |  T  |  E  |  E |<br>
-*|  6  |     |     |  L  |    |<br>
-*-----------------------------<br>
-*T = Text<br>
-*R = Rotation<br>
-*E = Extended Rotation (Bitmap or tiled)<br>
-*L = Large Bitmap Mode <br>
-*BG 0 can be used as a 3D surface on the main engine<br>
+<div class="fixedFont"><pre>
+Main 2D engine
+______________________________
+|Mode | BG0 | BG1 | BG2 |BG3 |           T = Text
+|  0  |  T  |  T  |  T  |  T |           R = Rotation
+|  1  |  T  |  T  |  T  |  R |           E = Extended Rotation
+|  2  |  T  |  T  |  R  |  R |           L = Large Bitmap background
+|  3  |  T  |  T  |  T  |  E |
+|  4  |  T  |  T  |  R  |  E |
+|  5  |  T  |  T  |  E  |  E |
+|  6  |     |  L  |     |    |
+-----------------------------
+
+Sub 2D engine
+______________________________
+|Mode | BG0 | BG1 | BG2 |BG3 |
+|  0  |  T  |  T  |  T  |  T |
+|  1  |  T  |  T  |  T  |  R |
+|  2  |  T  |  T  |  R  |  R |
+|  3  |  T  |  T  |  T  |  E |
+|  4  |  T  |  T  |  R  |  E |
+|  5  |  T  |  T  |  E  |  E |
+-----------------------------
+
+</pre></div>
 */
 typedef enum
 {
- MODE_0_2D    =  0x10000, /** \brief 4 2D backgrounds */
- MODE_1_2D    =  0x10001, /** \brief 4 2D backgrounds */
- MODE_2_2D    =  0x10002, /** \brief 4 2D backgrounds*/
- MODE_3_2D    =  0x10003, /** \brief 4 2D backgrounds */
- MODE_4_2D    =  0x10004, /** \brief 4 2D backgrounds */
- MODE_5_2D    =  0x10005, /** \brief 4 2D backgrounds */
- MODE_6_2D    =  0x10006, /** \brief 4 2D backgrounds */
- MODE_0_3D    = (0x10000 | DISPLAY_BG0_ACTIVE | ENABLE_3D), /** \brief 3 2D backgrounds 1 3D background (Main engine only)*/
- MODE_1_3D    = (0x10001 | DISPLAY_BG0_ACTIVE | ENABLE_3D), /** \brief 3 2D backgrounds 1 3D background (Main engine only)*/
- MODE_2_3D    = (0x10002 | DISPLAY_BG0_ACTIVE | ENABLE_3D), /** \brief 3 2D backgrounds 1 3D background (Main engine only)*/
- MODE_3_3D    = (0x10003 | DISPLAY_BG0_ACTIVE | ENABLE_3D), /** \brief 3 2D backgrounds 1 3D background (Main engine only)*/
- MODE_4_3D    = (0x10004 | DISPLAY_BG0_ACTIVE | ENABLE_3D), /** \brief 3 2D backgrounds 1 3D background (Main engine only)*/
- MODE_5_3D    = (0x10005 | DISPLAY_BG0_ACTIVE | ENABLE_3D), /** \brief 3 2D backgrounds 1 3D background (Main engine only)*/
- MODE_6_3D    = (0x10006 | DISPLAY_BG0_ACTIVE | ENABLE_3D), /** \brief 3 2D backgrounds 1 3D background (Main engine only)*/
+ MODE_0_2D    =  0x10000, /** \brief  4 2D backgrounds */
+ MODE_1_2D    =  0x10001, /** \brief  4 2D backgrounds */
+ MODE_2_2D    =  0x10002, /** \brief  4 2D backgrounds*/
+ MODE_3_2D    =  0x10003, /** \brief  4 2D backgrounds */
+ MODE_4_2D    =  0x10004, /** \brief  4 2D backgrounds */
+ MODE_5_2D    =  0x10005, /** \brief  4 2D backgrounds */
+ MODE_6_2D    =  0x10006, /** \brief  4 2D backgrounds */
+ MODE_0_3D    = (0x10000 | DISPLAY_BG0_ACTIVE | ENABLE_3D), /** \brief  3 2D backgrounds 1 3D background (Main engine only)*/
+ MODE_1_3D    = (0x10001 | DISPLAY_BG0_ACTIVE | ENABLE_3D), /** \brief  3 2D backgrounds 1 3D background (Main engine only)*/
+ MODE_2_3D    = (0x10002 | DISPLAY_BG0_ACTIVE | ENABLE_3D), /** \brief  3 2D backgrounds 1 3D background (Main engine only)*/
+ MODE_3_3D    = (0x10003 | DISPLAY_BG0_ACTIVE | ENABLE_3D), /** \brief  3 2D backgrounds 1 3D background (Main engine only)*/
+ MODE_4_3D    = (0x10004 | DISPLAY_BG0_ACTIVE | ENABLE_3D), /** \brief  3 2D backgrounds 1 3D background (Main engine only)*/
+ MODE_5_3D    = (0x10005 | DISPLAY_BG0_ACTIVE | ENABLE_3D), /** \brief  3 2D backgrounds 1 3D background (Main engine only)*/
+ MODE_6_3D    = (0x10006 | DISPLAY_BG0_ACTIVE | ENABLE_3D), /** \brief  3 2D backgrounds 1 3D background (Main engine only)*/
 
- MODE_FIFO    =  (3<<16),/** \brief video display from main memory */
+ MODE_FIFO    =  (3<<16),/** \brief  video display from main memory */
 
- MODE_FB0     = (0x00020000), /** \brief video display directly from VRAM_A in LCD mode */
- MODE_FB1     = (0x00060000), /** \brief video display directly from VRAM_B in LCD mode */
- MODE_FB2	  = (0x000A0000), /** \brief video display directly from VRAM_C in LCD mode */
- MODE_FB3	  = (0x000E0000)  /** \brief video display directly from VRAM_D in LCD mode */
+ MODE_FB0     = (0x00020000), /** \brief  video display directly from VRAM_A in LCD mode */
+ MODE_FB1     = (0x00060000), /** \brief  video display directly from VRAM_B in LCD mode */
+ MODE_FB2	  = (0x000A0000), /** \brief  video display directly from VRAM_C in LCD mode */
+ MODE_FB3	  = (0x000E0000)  /** \brief  video display directly from VRAM_D in LCD mode */
 
 }VideoMode;
 
@@ -399,55 +437,55 @@ typedef enum
 #define DISPLAY_SCREEN_BASE(n) (((n)&7)<<27)
 
 static inline
-/** \brief the main 2D engine video mode 
+/** \brief  the main 2D engine video mode 
 *    \param mode the video mode to set
 */
 void videoSetMode( uint32 mode)  { DISPLAY_CR = mode; }
 
 static inline
-/** \brief the sub 2D engine video mode 
+/** \brief  the sub 2D engine video mode 
 *    \param mode the video mode to set
 */
 void videoSetModeSub( uint32 mode)  { SUB_DISPLAY_CR = mode; }
 
 static inline
-/** \brief return the main 2D engine video mode 
+/** \brief  return the main 2D engine video mode 
 *    \return the video mode
 */
 int videoGetMode() {return (DISPLAY_CR & 0x30007);}
 
 static inline
-/** \brief return the main 2D engine video mode 
+/** \brief  return the main 2D engine video mode 
 *    \return the video mode
 */
 int videoGetModeSub() {return (SUB_DISPLAY_CR & 0x30007);}
 
 static inline 
-/** \brief determine if 3D is enabled
+/** \brief  determine if 3D is enabled
 *    \return true if 3D is enabled
 */
 bool video3DEnabled() {return (DISPLAY_CR & ENABLE_3D) ? true : false;}
 
 static inline 
-/** \brief enables the specified background on the main engine
+/** \brief  enables the specified background on the main engine
 *    \param number the background number (0-3)
 */
 void videoBgEnable(int number) {DISPLAY_CR |= 1 << (DISPLAY_ENABLE_SHIFT + number);}
 
 static inline 
-/** \brief enables the specified background on the sub engine
+/** \brief  enables the specified background on the sub engine
 *    \param number the background number (0-3)
 */
 void videoBgEnableSub(int number) {SUB_DISPLAY_CR |= 1 << (DISPLAY_ENABLE_SHIFT + number);}
 
 static inline 
-/** \brief disables the specified background on the main engine
+/** \brief  disables the specified background on the main engine
 *    \param number the background number (0-3)
 */
 void videoBgDisable(int number) {DISPLAY_CR &= ~(1 << (DISPLAY_ENABLE_SHIFT + number));}
 
 static inline 
-/** \brief disables the specified background on the sub engine
+/** \brief  disables the specified background on the sub engine
 *    \param number the background number (0-3)
 */
 void videoBgDisableSub(int number) {SUB_DISPLAY_CR &= ~(1 << (DISPLAY_ENABLE_SHIFT + number));}

@@ -25,7 +25,9 @@
 		distribution.
 
 ---------------------------------------------------------------------------------*/
-
+/*! \file memory.h
+\brief Defines for many of the regions of memory on the DS as well as a few control functions for memory bus access
+*/
 #ifndef NDS_MEMORY_INCLUDE
 #define NDS_MEMORY_INCLUDE
 
@@ -65,42 +67,15 @@
 #define SRAM          ((uint8*)0x0A000000)
 
 
-#ifdef ARM9
-#define PALETTE       ((uint16*)0x05000000)
-#define PALETTE_SUB   ((uint16*)0x05000400)
 
-#define BG_PALETTE       ((uint16*)0x05000000)
-#define BG_PALETTE_SUB   ((uint16*)0x05000400)
-
-#define SPRITE_PALETTE ((uint16*)0x05000200)
-#define SPRITE_PALETTE_SUB ((uint16*)0x05000600)
-
-#define BG_GFX			((uint16*)0x6000000)
-#define BG_GFX_SUB		((uint16*)0x6200000)
-#define SPRITE_GFX			((uint16*)0x6400000)
-#define SPRITE_GFX_SUB		((uint16*)0x6600000)
-
-#define VRAM_0        ((uint16*)0x6000000)
-#define VRAM          ((uint16*)0x6800000)
-#define VRAM_A        ((uint16*)0x6800000)
-#define VRAM_B        ((uint16*)0x6820000)
-#define VRAM_C        ((uint16*)0x6840000)
-#define VRAM_D        ((uint16*)0x6860000)
-#define VRAM_E        ((uint16*)0x6880000)
-#define VRAM_F        ((uint16*)0x6890000)
-#define VRAM_G        ((uint16*)0x6894000)
-#define VRAM_H        ((uint16*)0x6898000)
-#define VRAM_I        ((uint16*)0x68A0000)
-
-#define OAM           ((uint16*)0x07000000)
-#define OAM_SUB       ((uint16*)0x07000400)
-#endif
 
 #ifdef ARM7
 #define VRAM          ((uint16*)0x06000000)
 #endif
 
-
+/*!
+* \brief the GBA file header format
+*/
 typedef struct sGBAHeader {
 	uint32 entryPoint;
 	uint8 logo[156];
@@ -118,7 +93,9 @@ typedef struct sGBAHeader {
 
 #define GBA_HEADER (*(tGBAHeader *)0x08000000)
 
-
+/*!
+* \brief the NDS file header format
+*/
 typedef struct sNDSHeader {
   char gameTitle[12];
   char gameCode[4];
@@ -181,7 +158,9 @@ typedef struct sNDSHeader {
 
 #define NDSHeader (*(tNDSHeader *)0x027FFE00)
 
-
+/*!
+* \brief the NDS banner format
+*/
 typedef struct sNDSBanner {
   uint16 version;
   uint16 crc;
@@ -200,17 +179,32 @@ extern "C" {
 #define BUS_OWNER_ARM9 true
 #define BUS_OWNER_ARM7 false
 
-// Changes only the gba rom bus ownership
-static inline void sysSetCartOwner(bool arm9) {
+
+static inline 
+/*! \fn void sysSetCartOwner(bool arm9)
+    \brief Sets the owner of the GBA cart.  Both CPUs cannot have access to the gba cart (slot 2).
+    \param arm9 if true the arm9 is the owner, otherwise the arm7
+*/
+void sysSetCartOwner(bool arm9) {
   REG_EXMEMCNT = (REG_EXMEMCNT & ~ARM7_OWNS_ROM) | (arm9 ? 0 :  ARM7_OWNS_ROM);
 }
-// Changes only the nds card bus ownership
-static inline void sysSetCardOwner(bool arm9) {
+
+static inline 
+/*! \fn void sysSetCardOwner(bool arm9)
+    \brief Sets the owner of the DS card bus.  Both CPUs cannot have access to the DS card bus (slot 1).
+*   \param arm9 if true the arm9 is the owner, otherwise the arm7
+*/
+void sysSetCardOwner(bool arm9) {
   REG_EXMEMCNT = (REG_EXMEMCNT & ~ARM7_OWNS_CARD) | (arm9 ? 0 : ARM7_OWNS_CARD);
 }
 
-// Changes all bus ownerships
-static inline void sysSetBusOwners(bool arm9rom, bool arm9card) {
+static inline 
+/*! \fn void sysSetBusOwners(bool arm9rom, bool arm9card)
+    \brief Sets the owner of the DS card bus (slot 1) and gba cart bus (slot 2).  Only one cpu may access the device at a time.
+*   \param arm9rom if true the arm9 is the owner of slot 2, otherwise the arm7
+*   \param arm9card if true the arm9 is the owner of slot 1, otherwise the arm7
+*/
+void sysSetBusOwners(bool arm9rom, bool arm9card) {
   uint16 pattern = REG_EXMEMCNT & ~(ARM7_OWNS_CARD|ARM7_OWNS_ROM);
   pattern = pattern | (arm9card ?  0: ARM7_OWNS_CARD ) |
                       (arm9rom ?  0: ARM7_OWNS_ROM );

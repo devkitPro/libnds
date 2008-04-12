@@ -62,8 +62,8 @@ void initSystem(void) {
 	VRAM_I_CR = 0x80;
 
 	//(*(vu32*)0x027FFE04) = 0;  // temporary variable
-	PALETTE[0] = 0xFFFF;
-	dmaFillWords(0, PALETTE+1, (2*1024)-2);
+	BG_PALETTE[0] = 0xFFFF;
+	dmaFillWords(0, BG_PALETTE+1, (2*1024)-2);
 	dmaFillWords(0, OAM,    2*1024);
 	dmaFillWords(0, (void*)0x04000000, 0x56);  //clear main display registers
 	dmaFillWords(0, (void*)0x04001008, 0x56);  //clear sub  display registers

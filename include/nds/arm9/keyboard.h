@@ -27,8 +27,24 @@
 ---------------------------------------------------------------------------------*/
 /*! \file keyboard.h
     \brief nds stdio keyboard integration.
+
+<div class="fileHeader">The keyboard component allows the use of a default keyboard via stdin as well as 
+direct via the functions exposed below.  The default behavior is a hidden keyboard 
+that shows on a call to scanf(stdin, ...).
+
+By default the keyboard uses background 3 of the sub display, consumes approximatly 40KiB
+of background vram begining at tile base 1 and 2KB of map stored at map base 30.  The default 
+is designed to function along side a default instance of the console print functionality.
+
+To customize keyboard behavior and resource usage modify the keyboard structure returned by
+keyboardGetDefault() or create your own keyboard.
+</div>
 */
 
+/*! 
+\example input/keyboard/source/keymain.c
+A simple example of using the keyboard via scanf and stdin
+*/	
 	
 
 
@@ -47,7 +63,7 @@ typedef void (*KeyChangeCallback)(int key);
 typedef enum
 {
 	Lower, /*!< Normal keyboard display (lowercase letters) >*/
-	Upper, /*!< Capslock Held >*/
+	Upper, /*!< Caps lock Held >*/
 	Numeric, /*!< Numeric only keypad (not provided by the default keyboard) >*/
 	Reduced /*!< Reduced footprint keyboard (not provided by the default keyboard) >*/
 }KeyboardState;
@@ -90,8 +106,8 @@ typedef struct
     u32 paletteLen; /*!< length in bytes of the palette data>*/
     int mapBase; /*!< map base to be used by the keyboard>*/
 	int tileBase; /*!< tile base to be used by keyboard graphics>*/
-	int tileOffset; /*!< tile offset (in bytes) to load graphics (map must be pre adjusted) >*/
-	u32 scrollSpeed; /*!<keyboard scroll speed on hide and show in pixels per fram (must be possitive and 0 == instant on) */
+	int tileOffset; /*!< tile offset (in bytes) to load graphics (map must be preadjusted) >*/
+	u32 scrollSpeed; /*!<keyboard scroll speed on hide and show in pixels per frame (must be positive and 0 == instant on) */
    KeyChangeCallback OnKeyPressed; /*!< will be called on key press>*/
 	KeyChangeCallback OnKeyReleased; /*!< will be called on key release >*/
 }Keyboard;

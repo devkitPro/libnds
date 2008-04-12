@@ -28,6 +28,45 @@
 ---------------------------------------------------------------------------------*/
 /*! \file background.h
     \brief nds background defines and functionality.
+
+<div class="fileHeader">
+    The DS contains two separate hardware 2D cores responsible for rendering 2D backgrounds.  The definitions
+    below outline the libnds api for utilizing these backgrounds.
+
+    The background engine provides basic initialization and management of the 8 2D backgrounds available on the DS.  
+    Other than initialization and hardware limitations background control is identical on both main and sub screens.  
+
+    The following modes of operation are allowed: 
+<div class="fixedFont"><pre>
+Main 2D engine
+______________________________
+|Mode | BG0 | BG1 | BG2 |BG3 |           T = Text
+|  0  |  T  |  T  |  T  |  T |           R = Rotation
+|  1  |  T  |  T  |  T  |  R |           E = Extended Rotation
+|  2  |  T  |  T  |  R  |  R |           L = Large Bitmap background
+|  3  |  T  |  T  |  T  |  E |
+|  4  |  T  |  T  |  R  |  E |
+|  5  |  T  |  T  |  E  |  E |
+|  6  |     |  L  |     |    |
+-----------------------------
+
+Sub 2D engine
+______________________________
+|Mode | BG0 | BG1 | BG2 |BG3 |
+|  0  |  T  |  T  |  T  |  T |
+|  1  |  T  |  T  |  T  |  R |
+|  2  |  T  |  T  |  R  |  R |
+|  3  |  T  |  T  |  T  |  E |
+|  4  |  T  |  T  |  R  |  E |
+|  5  |  T  |  T  |  E  |  E |
+-----------------------------
+
+</pre></div>
+
+On the main engine BG0 can be uses as a 3D rendering surface.
+
+</div> 
+    
 */
 
 /*! 
@@ -49,6 +88,7 @@
 	\example Graphics/2D/BackgroundAllInOne/source/handmade.cpp
 	This example loads a map created in code
 */
+
 
 
 
@@ -130,7 +170,8 @@ extern BgState bgState[8];
 
 /**
  * \enum BgType
- * \brief Allowed background types, used in bgInitMain and bgInitSub
+ * 
+ *  Allowed background types, used in bgInitMain and bgInitSub
  */
 typedef enum
 {
@@ -140,7 +181,7 @@ typedef enum
 	BgType_ExRotation, /*!< Tiled background with 16 bit tile indexes Can be scaled and rotated >*/
 	BgType_Bmp8, /*!< Bitmap background with 8 bit color values which index into a 256 color palette >*/
 	BgType_Bmp16 /*!< Bitmap background with 16 bit color values of the form aBBBBBGGGGGRRRRR
-					(if 'a' is set the pixel will be rendered...if not the pixel will be transperant >*/
+					(if 'a' is set the pixel will be rendered...if not the pixel will be transparent >*/
 	
 }BgType;
 
@@ -186,7 +227,7 @@ typedef enum
 extern "C" {
 #endif
 
-//interally used for debug assertions
+   //internally used for debug assertions
 bool bgIsText(int id);
 int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase);
 int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBase);
@@ -242,9 +283,9 @@ static inline
 	\param scrollY
 		the 24.8 bit fractional fixed point vertical scroll to apply
    \param rotCenterX
-		the 24.8 bit fractional fixed point center of rotation x componant
+   the 24.8 bit fractional fixed point center of rotation x component
 	\param rotCenterY
-		the 24.8 bit fractional fixed point center of rotation y componant
+   the 24.8 bit fractional fixed point center of rotation y component
 
 */
 void bgSet(int id, int angle, s32 sx, s32 sy, s32 scrollX, s32 scrollY, s32 rotCenterX, s32 rotCenterY)
@@ -309,7 +350,7 @@ static inline
 	\param layer 
 		background hardware layer to init.  Must be 0 - 3
 	\param type 
-		the the type of background to init 
+		the type of background to init 
 	\param size
 		the size of the background
 	\param mapBase
@@ -328,8 +369,8 @@ int bgInit(int layer, BgType type, BgSize size, int mapBase, int tileBase)
     sassert(tileBase >= 0 && tileBase <= 15, "Background tile base is out of range");
     sassert(mapBase >=0 && mapBase <= 31, "Background Map Base is out of range");
 	sassert(layer != 0 || !video3DEnabled(), "Background 0 is currently being used for 3D display");
-	sassert(layer > 1 || type == BgType_Text8bpp || type == BgType_Text4bpp, "Incorect background type for mode");
-	//sassert((size != BgSize_B8_512x1024 && size != BgSize_B8_1024x512) || videoGetMode() == 6, "Incorect background type for mode"); 
+   sassert(layer > 1 || type == BgType_Text8bpp || type == BgType_Text4bpp, "Incorrect background type for mode");
+   //sassert((size != BgSize_B8_512x1024 && size != BgSize_B8_1024x512) || videoGetMode() == 6, "Incorrect background type for mode"); 
 	sassert(tileBase == 0 || type < BgType_Bmp8, "Tile base is unused for bitmaps.  Can be offset using mapBase * 16KB");
 	sassert((mapBase == 0 || type != BgType_Bmp8) || (size != BgSize_B8_512x1024 && size != BgSize_B8_1024x512), "Large Bitmaps cannot be offset");
 
@@ -345,7 +386,7 @@ static inline
 	\param layer 
 		background hardware layer to init.  Must be 0 - 3
 	\param type 
-		the the type of background to init 
+		the type of background to init 
 	\param size
 		the size of the background
 	\param mapBase
@@ -363,7 +404,7 @@ int bgInitSub(int layer, BgType type, BgSize size, int mapBase, int tileBase)
     sassert(layer >= 0 && layer <= 3, "Only layers 0 - 3 are supported");
     sassert(tileBase >= 0 && tileBase <= 15, "Background tile base is out of range");
     sassert(mapBase >=0 && mapBase <= 31, "Background Map Base is out of range");
-	sassert(layer > 1 || type == BgType_Text8bpp|| type == BgType_Text4bpp , "Incorect background type for mode");
+    sassert(layer > 1 || type == BgType_Text8bpp|| type == BgType_Text4bpp , "Incorrect background type for mode");
 	sassert(tileBase == 0 || type < BgType_Bmp8, "Tile base is unused for bitmaps.  Can be offset using mapBase * 16KB");
 	sassert((size != BgSize_B8_512x1024 && size != BgSize_B8_1024x512), "Sub Display has no large Bitmaps");
 
@@ -529,13 +570,13 @@ static inline
 /*! \fn bgSetMosaic(unsigned int dx, unsigned int dy)
 	\brief Sets the horizontal and vertical mosaic values for all backgrounds
 	\param dx
-		horizontal mozaic value (between 0 and 15)
+   horizontal mosaic value (between 0 and 15)
 	\param dy
-		vertical mozaic value (between 0 and 15)
+   vertical mosaic value (between 0 and 15)
 */
 void bgSetMosaic(unsigned int dx, unsigned int dy)
 {
-	sassert(dx < 16 && dy < 16, "Mosiac range is 0 to 15");
+   sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
 	
 	MOSAIC_CR &= ~0xFF;
 	MOSAIC_CR |= dx | (dy << 4);
@@ -545,13 +586,13 @@ static inline
 /*! \fn bgSetMosaicSub(unsigned int dx, unsigned int dy)
 	\brief Sets the horizontal and vertical mosaic values for all backgrounds (Sub Display)
 	\param dx
-		horizontal mozaic value (between 0 and 15)
+   horizontal mosaic value (between 0 and 15)
 	\param dy
-		vertical mozaic value (between 0 and 15)
+   vertical mosaic value (between 0 and 15)
 */
 void bgSetMosaicSub(unsigned int dx, unsigned int dy)
 {
-	sassert(dx < 16 && dy < 16, "Mosiac range is 0 to 15");
+   sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
 	
 	SUB_MOSAIC_CR &= ~0xFF;
 	SUB_MOSAIC_CR |= dx | (dy << 4);
