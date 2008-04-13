@@ -38,20 +38,25 @@
 #define STATIC_INL static inline
 #endif
 
-#define DIV_CR				(*(vuint16*)(0x04000280))
-#define DIV_NUMERATOR64		(*(vint64*) (0x04000290))
-#define DIV_NUMERATOR32		(*(vint32*) (0x04000290))
-#define DIV_DENOMINATOR64	(*(vint64*) (0x04000298))
-#define DIV_DENOMINATOR32	(*(vint32*) (0x04000298))
-#define DIV_RESULT64		(*(vint64*) (0x040002A0))
-#define DIV_RESULT32		(*(vint32*) (0x040002A0))
-#define DIV_REMAINDER64		(*(vint64*) (0x040002A8))
-#define DIV_REMAINDER32		(*(vint32*) (0x040002A8))
+#define REG_DIVCNT			(*(vuint16*)(0x04000280))
+#define REG_DIV_NUMER		(*(vint64*) (0x04000290))
+#define REG_DIV_NUMER_L		(*(vint32*) (0x04000290))
+#define REG_DIV_NUMER_H		(*(vint32*) (0x04000294))
+#define REG_DIV_DENOM		(*(vint64*) (0x04000298))
+#define REG_DIV_DENOM_L		(*(vint32*) (0x04000298))
+#define REG_DIV_DENOM_H		(*(vint32*) (0x0400029C))
+#define REG_DIV_RESULT		(*(vint64*) (0x040002A0))
+#define REG_DIV_RESULT_L	(*(vint32*) (0x040002A0))
+#define REG_DIV_RESULT_H	(*(vint32*) (0x040002A4))
+#define REG_DIVREM_RESULT	(*(vint64*) (0x040002A8))
+#define REG_DIVREM_RESULT_L	(*(vint32*) (0x040002A8))
+#define REG_DIVREM_RESULT_H	(*(vint32*) (0x040002AC))
 
-#define SQRT_CR				(*(vuint16*)(0x040002B0))
-#define SQRT_PARAM64		(*(vint64*) (0x040002B8))
-#define SQRT_RESULT32		(*(vint32*) (0x040002B4))
-#define SQRT_PARAM32		(*(vint32*) (0x040002B8))
+#define REG_SQRTCNT			(*(vuint16*)(0x040002B0))
+#define REG_SQRT_PARAM		(*(vint64*) (0x040002B8))
+#define REG_SQRT_PARAM_L	(*(vint32*) (0x040002B8))
+#define REG_SQRT_PARAM_H	(*(vint32*) (0x040002BC))
+#define REG_SQRT_RESULT		(*(vint32*) (0x040002B4))
 
 //  Math coprocessor modes
 
@@ -75,16 +80,16 @@ STATIC_INL
 */
 int32 divf32(int32 num, int32 den)
 {
-	DIV_CR = DIV_64_32;
+	REG_DIVCNT = DIV_64_32;
 
-	while(DIV_CR & DIV_BUSY);
+	while(REG_DIVCNT & DIV_BUSY);
 
-	DIV_NUMERATOR64 = ((int64)num) << 12;
-	DIV_DENOMINATOR32 = den;
+	REG_DIV_NUMER = ((int64)num) << 12;
+	REG_DIV_DENOM_L = den;
 
-	while(DIV_CR & DIV_BUSY);
+	while(REG_DIVCNT & DIV_BUSY);
 
-	return (DIV_RESULT32);
+	return (REG_DIV_RESULT_L);
 }
 
 STATIC_INL 
@@ -108,15 +113,15 @@ STATIC_INL
 */
 int32 sqrtf32(int32 a)
 {
-	SQRT_CR = SQRT_64;
+	REG_SQRTCNT = SQRT_64;
 
-	while(SQRT_CR & SQRT_BUSY);
+	while(REG_SQRTCNT & SQRT_BUSY);
 
-	SQRT_PARAM64 = ((int64)a) << 12;
+	REG_SQRT_PARAM = ((int64)a) << 12;
 
-	while(SQRT_CR & SQRT_BUSY);
+	while(REG_SQRTCNT & SQRT_BUSY);
 
-	return SQRT_RESULT32;
+	return REG_SQRT_RESULT;
 }
 
 //  Integer versions
@@ -130,16 +135,16 @@ STATIC_INL
 */
 int32 div32(int32 num, int32 den)
 {
-	DIV_CR = DIV_32_32;
+	REG_DIVCNT = DIV_32_32;
 
-	while(DIV_CR & DIV_BUSY);
+	while(REG_DIVCNT & DIV_BUSY);
 
-	DIV_NUMERATOR32 = num;
-	DIV_DENOMINATOR32 = den;
+	REG_DIV_NUMER_L = num;
+	REG_DIV_DENOM_L = den;
 
-	while(DIV_CR & DIV_BUSY);
+	while(REG_DIVCNT & DIV_BUSY);
 
-	return (DIV_RESULT32);
+	return (REG_DIV_RESULT_L);
 }
 
 STATIC_INL 
@@ -151,16 +156,16 @@ STATIC_INL
 */
 int32 mod32(int32 num, int32 den)
 {
-	DIV_CR = DIV_32_32;
+	REG_DIVCNT = DIV_32_32;
 
-	while(DIV_CR & DIV_BUSY);
+	while(REG_DIVCNT & DIV_BUSY);
 
-	DIV_NUMERATOR32 = num;
-	DIV_DENOMINATOR32 = den;
+	REG_DIV_NUMER_L = num;
+	REG_DIV_DENOM_L = den;
 
-	while(DIV_CR & DIV_BUSY);
+	while(REG_DIVCNT & DIV_BUSY);
 
-	return (DIV_REMAINDER32);
+	return (REG_DIVREM_RESULT_L);
 }
 
 STATIC_INL 
@@ -172,16 +177,16 @@ STATIC_INL
 */
 int32 div64(int64 num, int32 den)
 {
-	DIV_CR = DIV_64_32;
-
-	while(DIV_CR & DIV_BUSY);
-
-	DIV_NUMERATOR64 = num;
-	DIV_DENOMINATOR32 = den;
-
-	while(DIV_CR & DIV_BUSY);
-
-	return (DIV_RESULT32);
+	REG_DIVCNT = DIV_64_32;
+	
+	while(REG_DIVCNT & DIV_BUSY);
+	
+	REG_DIV_NUMER = num;
+	REG_DIV_DENOM_L = den;
+	
+	while(REG_DIVCNT & DIV_BUSY);
+	
+	return (REG_DIV_RESULT_L);
 }
 
 STATIC_INL 
@@ -193,16 +198,16 @@ STATIC_INL
 */
 int32 mod64(int64 num, int32 den)
 {
-	DIV_CR = DIV_64_32;
+	REG_DIVCNT = DIV_64_32;
 
-	while(DIV_CR & DIV_BUSY);
+	while(REG_DIVCNT & DIV_BUSY);
 
-	DIV_NUMERATOR64 = num;
-	DIV_DENOMINATOR32 = den;
+	REG_DIV_NUMER = num;
+	REG_DIV_DENOM_L = den;
 
-	while(DIV_CR & DIV_BUSY);
+	while(REG_DIVCNT & DIV_BUSY);
 
-	return (DIV_REMAINDER32);
+	return (REG_DIVREM_RESULT_L);
 }
 
 STATIC_INL 
@@ -213,15 +218,15 @@ STATIC_INL
 */
 int32 sqrt32(int a)
 {
-	SQRT_CR = SQRT_32;
+	REG_SQRTCNT = SQRT_32;
 
-	while(SQRT_CR & SQRT_BUSY);
+	while(REG_SQRTCNT & SQRT_BUSY);
 
-	SQRT_PARAM32 = a;
+	REG_SQRT_PARAM_L = a;
 
-	while(SQRT_CR & SQRT_BUSY);
+	while(REG_SQRTCNT & SQRT_BUSY);
 
-	return SQRT_RESULT32;
+	return REG_SQRT_RESULT;
 }
 
 

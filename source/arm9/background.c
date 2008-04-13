@@ -46,14 +46,14 @@ const char* BgUsage =
 //displays
 vuint16* bgControl[8] = 
 {
-	&BG0_CR,
-	&BG1_CR,
-	&BG2_CR,
-	&BG3_CR,
-	&SUB_BG0_CR,
-	&SUB_BG1_CR,
-	&SUB_BG2_CR,
-	&SUB_BG3_CR,
+	&REG_BG0CNT,
+	&REG_BG1CNT,
+	&REG_BG2CNT,
+	&REG_BG3CNT,
+	&REG_BG0CNT_SUB,
+	&REG_BG1CNT_SUB,
+	&REG_BG2CNT_SUB,
+	&REG_BG3CNT_SUB,
 };
 
 bg_scroll* bgScrollTable[8] = 

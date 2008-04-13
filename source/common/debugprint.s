@@ -43,15 +43,14 @@ nocashMessage:  // params = { string }
 //---------------------------------------------------------------------------------
 // copy string into buffer
 //---------------------------------------------------------------------------------
-        adr     r1,buffer   // get buffer address
-        mov     r2, #120    // max length = 120
-3:      ldrb    r3, [r0]    // load character
-        strb    r3, [r1]    // store character
-        add     r0, #1      // increment read position
-        add     r1, #1      // increment write position
+        ldr     r1,=buffer  // get buffer address
+        mov     r2, #0      // r2 = read/write position
+3:      ldrb    r3, [r0,r2] // load character
+        strb    r3, [r1,r2] // store character
         cmp     r3, #0      // character == NULL?
         beq     3f          // yes, send message
-        sub     r2, #1      // decrement byte counter
+        add     r2, #1      // increment read/write position
+        cmp     r2, #120    // max length == 120
         bne     3b          // loop if < 120 characters
  
 //---------------------------------------------------------------------------------

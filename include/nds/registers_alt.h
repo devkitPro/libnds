@@ -51,46 +51,33 @@
 #define DISP_SR			REG_DISPSTAT
 #define DISP_Y			REG_VCOUNT
 
-#define	REG_BGCTRL		( (vu16*)0x4000008)
-#define	REG_BG0CNT		(*(vu16*)0x4000008)
-#define	REG_BG1CNT		(*(vu16*)0x400000A)
-#define	REG_BG2CNT		(*(vu16*)0x400000C)
-#define	REG_BG3CNT		(*(vu16*)0x400000E)
+#define BG0_CR			REG_BG0CNT
+#define BG1_CR			REG_BG1CNT
+#define BG2_CR			REG_BG2CNT
+#define BG3_CR			REG_BG3CNT
 
-#define	REG_BGOFFSETS	( (vu16*)0x4000010)
-#define	REG_BG0HOFS		(*(vu16*)0x4000010)
-#define	REG_BG0VOFS		(*(vu16*)0x4000012)
-#define	REG_BG1HOFS		(*(vu16*)0x4000014)
-#define	REG_BG1VOFS		(*(vu16*)0x4000016)
-#define	REG_BG2HOFS		(*(vu16*)0x4000018)
-#define	REG_BG2VOFS		(*(vu16*)0x400001A)
-#define	REG_BG3HOFS		(*(vu16*)0x400001C)
-#define	REG_BG3VOFS		(*(vu16*)0x400001E)
+#define BG0_X0			REG_BG0HOFS
+#define BG0_Y0			REG_BG0VOFS
+#define BG1_X0			REG_BG1HOFS
+#define BG1_Y0			REG_BG1VOFS
+#define BG2_X0			REG_BG2HOFS
+#define BG2_Y0			REG_BG2VOFS
+#define BG3_X0			REG_BG3HOFS
+#define BG3_Y0			REG_BG3VOFS
 
-#define	REG_BG2PA		(*(vu16*)0x4000020)
-#define	REG_BG2PB		(*(vu16*)0x4000022)
-#define	REG_BG2PC		(*(vu16*)0x4000024)
-#define	REG_BG2PD		(*(vu16*)0x4000026)
+#define BG2_XDX			REG_BG2PA
+#define BG2_XDY			REG_BG2PB
+#define BG2_YDX			REG_BG2PC
+#define BG2_YDY			REG_BG2PD
+#define BG2_CX			REG_BG2X
+#define BG2_CY			REG_BG2Y
 
-#define	REG_BG2X		(*(vu32*)0x4000028)
-#define	REG_BG2X_L		(*(vu16*)0x4000028)
-#define	REG_BG2X_H		(*(vu16*)0x400002A)
-
-#define	REG_BG2Y		(*(vu32*)0x400002C)
-#define	REG_BG2Y_L		(*(vu16*)0x400002C)
-#define	REG_BG2Y_H		(*(vu16*)0x400002E)
-
-#define	REG_BG3PA		(*(vu16*)0x4000030)
-#define	REG_BG3PB		(*(vu16*)0x4000032)
-#define	REG_BG3PC		(*(vu16*)0x4000034)
-#define	REG_BG3PD		(*(vu16*)0x4000036)
-
-#define	REG_BG3X		(*(vu32*)0x4000038)
-#define	REG_BG3X_L		(*(vu16*)0x4000038)
-#define	REG_BG3X_H		(*(vu16*)0x400003A)
-#define	REG_BG3Y		(*(vu32*)0x400003C)
-#define	REG_BG3Y_L		(*(vu16*)0x400003C)
-#define	REG_BG3Y_H		(*(vu16*)0x400003E)
+#define BG3_XDX			REG_BG3PA
+#define BG3_XDY			REG_BG3PB
+#define BG3_YDX			REG_BG3PC
+#define BG3_YDY			REG_BG3PD
+#define BG3_CX			REG_BG3X
+#define BG3_CY			REG_BG3Y
 
 #define	REG_WIN0H		(*(vu16*)0x4000040)
 #define	REG_WIN1H		(*(vu16*)0x4000042)
@@ -117,41 +104,34 @@
 
 /*	secondary screen */
 #define	REG_DISPCNT_SUB		(*(vu32*)0x4001000)
-#define	REG_BGCTRL_SUB		( (vu16*)0x4001008)
-#define	REG_BG0CNT_SUB		(*(vu16*)0x4001008)
-#define	REG_BG1CNT_SUB		(*(vu16*)0x400100A)
-#define	REG_BG2CNT_SUB		(*(vu16*)0x400100C)
-#define	REG_BG3CNT_SUB		(*(vu16*)0x400100E)
 
-#define	REG_BGOFFSETS_SUB	( (vu16*)0x4001010)
-#define	REG_BG0HOFS_SUB		(*(vu16*)0x4001010)
-#define	REG_BG0VOFS_SUB		(*(vu16*)0x4001012)
-#define	REG_BG1HOFS_SUB		(*(vu16*)0x4001014)
-#define	REG_BG1VOFS_SUB		(*(vu16*)0x4001016)
-#define	REG_BG2HOFS_SUB		(*(vu16*)0x4001018)
-#define	REG_BG2VOFS_SUB		(*(vu16*)0x400101A)
-#define	REG_BG3HOFS_SUB		(*(vu16*)0x400101C)
-#define	REG_BG3VOFS_SUB		(*(vu16*)0x400101E)
+#define SUB_BG0_CR		REG_BG0CNT_SUB
+#define SUB_BG1_CR		REG_BG1CNT_SUB
+#define SUB_BG2_CR		REG_BG2CNT_SUB
+#define SUB_BG3_CR		REG_BG3CNT_SUB
 
-#define	REG_BG2PA_SUB		(*(vu16*)0x4001020)
-#define	REG_BG2PB_SUB		(*(vu16*)0x4001022)
-#define	REG_BG2PC_SUB		(*(vu16*)0x4001024)
-#define	REG_BG2PD_SUB		(*(vu16*)0x4001026)
+#define SUB_BG0_X0		REG_BG0HOFS_SUB
+#define SUB_BG0_Y0		REG_BG0VOFS_SUB
+#define SUB_BG1_X0		REG_BG1HOFS_SUB
+#define SUB_BG1_Y0		REG_BG1VOFS_SUB
+#define SUB_BG2_X0		REG_BG2HOFS_SUB
+#define SUB_BG2_Y0		REG_BG2VOFS_SUB
+#define SUB_BG3_X0		REG_BG3HOFS_SUB
+#define SUB_BG3_Y0		REG_BG3VOFS_SUB
 
-#define	REG_BG2X_SUB		(*(vu32*)0x4001028)
-#define	REG_BG2Y_SUB		(*(vu32*)0x400102C)
+#define SUB_BG2_XDX		REG_BG2PA_SUB
+#define SUB_BG2_XDY		REG_BG2PB_SUB
+#define SUB_BG2_YDX		REG_BG2PC_SUB
+#define SUB_BG2_YDY		REG_BG2PD_SUB
+#define SUB_BG2_CX		REG_BG2X_SUB
+#define SUB_BG2_CY		REG_BG2Y_SUB
 
-#define	REG_BG3PA_SUB		(*(vu16*)0x4001030)
-#define	REG_BG3PB_SUB		(*(vu16*)0x4001032)
-#define	REG_BG3PC_SUB		(*(vu16*)0x4001034)
-#define	REG_BG3PD_SUB		(*(vu16*)0x4001036)
-
-#define	REG_BG3X_SUB		(*(vu32*)0x4001038)
-#define	REG_BG3X_L_SUB		(*(vu16*)0x4001038)
-#define	REG_BG3X_H_SUB		(*(vu16*)0x400103A)
-#define	REG_BG3Y_SUB		(*(vu32*)0x400103C)
-#define	REG_BG3Y_L_SUB		(*(vu16*)0x400103C)
-#define	REG_BG3Y_H_SUB		(*(vu16*)0x400103E)
+#define SUB_BG3_XDX		REG_BG3PA_SUB
+#define SUB_BG3_XDY		REG_BG3PB_SUB
+#define SUB_BG3_YDX		REG_BG3PC_SUB
+#define SUB_BG3_YDY		REG_BG3PD_SUB
+#define SUB_BG3_CX		REG_BG3X_SUB
+#define SUB_BG3_CY		REG_BG3Y_SUB
 
 #define	REG_WIN0H_SUB		(*(vu16*)0x4001040)
 #define	REG_WIN1H_SUB		(*(vu16*)0x4001042)
@@ -226,7 +206,7 @@
 
 #define	KEYS		REG_KEYINPUT
 #define	KEYS_CR		REG_KEYCNT
-//???
+//??? (sio defines, no link port though)
 #define	REG_RCNT		(*(vu16*)0x4000134)
 #define	REG_HS_CTRL		(*(vu16*)0x4000140)
 
