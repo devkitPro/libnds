@@ -100,7 +100,7 @@ __attribute__ ((deprecated)) touchPosition touchReadXY() ;
 
 
 /*!	\fn touchRead(touchPosition *data)
-	\brief touchRObtains the current keypad state.
+	\brief Obtains the current touchpad state.
 	\param data a touchPosition ptr which will be filled by the function
 */
 void touchRead(touchPosition *data);

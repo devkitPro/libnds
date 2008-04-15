@@ -22,24 +22,43 @@
      distribution.
 
 ---------------------------------------------------------------------------------*/
+/*! \file image.h
+\brief An image abstraction for working with image data.
+
+<div class="fileHeader">
+Image data pointers must be allocated using malloc as the conversion
+rutiens will free the pointers and allocate new data.  As such any loader
+implemented utilizing this structure must use malloc() to allocate the image
+pointer data.
+</div>
+*/
+
 #ifndef IMAGE_H
 #define IMAGE_H
 
 #include <nds/arm9/video.h>
 
-//holds a rgb triplet
+/*! \struct RGB_24
+\brief holds a red green blue triplet
+*/
  typedef struct
  {
     unsigned char r,g,b;
  }__attribute__ ((packed)) RGB_24;
 
- //holds a basic image type for loading image files
+ /*! \struct sImage
+ \brief A generic image structure
+ */
  typedef struct
  {
-    short height,width;
-    int bpp;
-    unsigned short* palette;
-
+    short height; /*!< \brief The height of the image in pixels */
+    short width; /*!< \brief The width of the image in pixels */
+    int bpp;/*!< \brief Bits per pixel (should be 4 8 16 or 24) */
+    unsigned short* palette /*!< \brief A pointer to the palette data */;
+    
+    /*! \union image
+    \brief A union of data pointers to the pixel data 
+    */
     union
     {
        u8* data8;
@@ -53,10 +72,28 @@
 extern "C" {
 #endif
 
+/*! \brief Converts a 24 bit image to 16 bit 
+\param img a pointer to image to manipulate
+*/
 void image24to16(sImage* img);
+/*! \brief Converts an 8 bit image to 16 bit setting the alpha bit
+\param img a pointer to image to manipulate
+*/
 void image8to16(sImage* img);
-void image8to16trans(sImage* img, u8 transperentColor);
+/*! \brief Converts an 8 bit image to 16 bit with 
+alpha bit cleared for the supplied palette index 
+\param img a pointer to image to manipulate
+\param transparentColor Color indexes equal to this value will have the alpha bit clear
+*/
+void image8to16trans(sImage* img, u8 transparentColor);
+/*! \brief frees the image data. Only call if the image data 
+was returned from an image loader
+\param img a pointer to image to manipulate (the image data will be free() )
+*/
 void imageDestroy(sImage* img);
+/*! \brief Tiles 8 bit image data into a sequence of 8x8 tiles 
+\param img a pointer to image to manipulate
+*/
 void imageTileData(sImage* img);
 
 #ifdef __cplusplus

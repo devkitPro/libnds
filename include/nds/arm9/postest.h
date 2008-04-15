@@ -39,7 +39,10 @@ GL_STATIC_INL bool PosTestBusy() {
 
 /*! \file postest.h
 \brief Position Test Functions.<BR>
+
+<div class="fileHeader">
 The position test multiplies a given vector by the position matrix and returns the coords(x,y,z,w). The position test is really quick, about 10x faster than a box test.
+</div>
 */ 
 
 /*! \brief Starts a position test asynchronously

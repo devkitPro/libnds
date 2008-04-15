@@ -54,16 +54,21 @@
 
 #define ALLRAM        ((uint8*)0x00000000)
 
+/*! \brief 8 bit pointer to main ram */
 #define MAINRAM8      ((uint8*)0x02000000)
+/*! \brief 16 bit pointer to main ram */
 #define MAINRAM16     ((uint16*)0x02000000)
+/*! \brief 32 bit pointer to main ram */
 #define MAINRAM32     ((uint32*)0x02000000)
 
 // fixme: shared RAM
 
 // GBA_BUS is volatile, while GBAROM is not
+/*! \brief 16 bit pointer to the GBA slot bus */
 #define GBA_BUS       ((vuint16 *)(0x08000000))
 #define GBAROM        ((uint16*)0x08000000)
 
+/*! \brief 8 bit pointer to GBA slot Save ram */
 #define SRAM          ((uint8*)0x0A000000)
 
 

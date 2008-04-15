@@ -32,7 +32,7 @@
 
 /*!	\file trig_lut.h
 
-	\brief fixed point trig functions
+	\brief fixed point trig functions.  Angle is computed useing a 512 degree circle
 */
 
 

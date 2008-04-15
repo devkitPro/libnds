@@ -72,7 +72,7 @@ void decompress(const void* data, const void* dst, DecompressType type)
 void decompressStream(const void* data, const void* dst, DecompressType type, getByteCallback readCB, getHeaderCallback getHeaderCB)
 {
 #ifdef ARM9
-   sassert(type != LZ77 && type != RLE, "Only LZ77 and RLE do not support streaming, use Vram versions");
+   sassert(type != LZ77 && type != RLE, "LZ77 and RLE do not support streaming, use Vram versions");
 #endif
 
    decomStream.readByte= readCB;

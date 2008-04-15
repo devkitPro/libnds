@@ -65,7 +65,7 @@ extern "C" {
 void decompress(const void* data, const void* dst, DecompressType type);
 
 /** \fn decompressStream(const void* data, const void* dst, DecompressType type,  getByteCallback readCB, getHeaderCallback getHeaderCB)
-*    \brief decompresses data using the suported type
+*    \brief decompresses data using the suported type (only LZ77Vram, HUFF, and RLEVram support streaming)
 *    \param dst the destination to decompress to
 *    \param data the data to decompress
 *    \param type the type of data to decompress

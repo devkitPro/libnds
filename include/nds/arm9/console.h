@@ -29,6 +29,35 @@
 
 /*! \file console.h
     \brief nds stdio support.
+
+<div class="fileHeader">
+Provides studio integration for printing to the DS screen as well as debug print
+functionality provided by stderr.
+
+General usage is to initialize the console by:
+consoleDemoInit()
+or to customize the console usage by:
+consoleInit()
+
+The default instance utilizes the sub display, approximatly 15KiB of vram C starting
+at tile base 0 and 2KiB of map at map base 30. 
+
+Debug printing is performed by initializing the debug console via consoleDebugInit() as 
+follows:
+
+<pre>
+consoleDebugInit(DB_NOCASH);
+fprintf(stderr, "debug message in no$gba window %i", stuff);
+
+OR
+
+consoleDebugInit(DB_CONSOLE);
+fprintf(stderr, "debug message on DS console screen");
+</pre>
+
+The print console must be initialized to use DB_CONSOL
+
+</div>
 */
 
 #ifndef CONSOLE_H

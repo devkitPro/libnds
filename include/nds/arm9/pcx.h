@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: pcx.h,v 1.3 2005-08-23 17:06:10 wntrmute Exp $
+	$Id: pcx.h,v 1.4 2008-04-15 02:18:41 dovoto Exp $
 
 
 	Copyright (C) 2005
@@ -23,15 +23,15 @@
 	3.	This notice may not be removed or altered from any source
 		distribution.
 
-	$Log: not supported by cvs2svn $
-	Revision 1.2  2005/08/01 23:18:22  wntrmute
-	adjusted headers for logging
-	
-	Revision 1.1  2005/07/27 02:20:52  wntrmute
-	add image functions
+
 	
 
 ---------------------------------------------------------------------------------*/
+/*! \file pcx.h
+\brief A simple 256 color pcx file loader.
+
+*/
+
 #ifndef PCX_H
 #define PCX_H
  
@@ -57,6 +57,10 @@ typedef struct
 extern "C" {
 #endif
 
+/*! \brief Loads an image structure with data from PCX formatted data
+\param pcx a pointer to the pcx file loaded into memory
+\param image the image structure to fill in (the loader will allocate room for the palette and pixel data)
+*/
 int loadPCX(unsigned char* pcx, sImage* image);
 
 #ifdef __cplusplus

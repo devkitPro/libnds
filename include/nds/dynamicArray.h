@@ -24,6 +24,9 @@
 
 
 ---------------------------------------------------------------------------------*/
+/*! \file dynamicArray.h
+\brief A dynamically resizing array for general use
+*/
 
 #ifndef __DYNAMICARRAY_H__
 #define __DYNAMICARRAY_H__
@@ -31,15 +34,24 @@
 #include <stdlib.h>
 #include <string.h>
 
+/*! \struct DynamicArray
+\brief A resizable array
+*/
 typedef struct
 {
-	void** data;
-	int cur_size;
-	
+	void** data; /*!< \brief pointer to array of void pointers */
+	int cur_size; /*!< \brief currently allocated size of the array */
 }DynamicArray;
 
 
-static inline void* DynamicArrayInit(DynamicArray* v, int initialSize)
+static inline 
+/*! \fn void* DynamicArrayInit(DynamicArray* v, int initialSize)
+\brief Initializes an array with the supplied initial size
+\param v the array to initialize
+\param initialSize the initial size to allocate
+\return a pointer to the data (0 on error)
+*/
+void* DynamicArrayInit(DynamicArray* v, int initialSize)
 {
 	v->cur_size = initialSize;
 	v->data = (void**)malloc(sizeof(void*) * initialSize);
@@ -47,7 +59,14 @@ static inline void* DynamicArrayInit(DynamicArray* v, int initialSize)
 	return v->data;
 }
 
-static inline void* DynamicArrayGet(DynamicArray* v, int index)
+static inline 
+/*! \fn void* DynamicArrayGet(DynamicArray* v, int index)
+\brief Gets the entry at the supplied index
+\param v The array to get from.
+\param index The index of the data to get.
+\return a The data or NULL if out of range.
+*/
+void* DynamicArrayGet(DynamicArray* v, int index)
 {
 	if(index >= v->cur_size)
 	{
@@ -57,7 +76,14 @@ static inline void* DynamicArrayGet(DynamicArray* v, int index)
 	return v->data[index];
 }
 
-static inline void DynamicArraySet(DynamicArray *v, int index, void* item)
+static inline 
+/*! \fn void DynamicArraySet(DynamicArray *v, int index, void* item)
+\brief Sets the entry to the supplied value
+\param v The array to set
+\param index The index of the data to set (array will be resized to fit the index).
+\param item The data to set.
+*/
+void DynamicArraySet(DynamicArray *v, int index, void* item)
 {
 	if(index >= v->cur_size)
 	{

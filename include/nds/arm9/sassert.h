@@ -26,6 +26,10 @@
 	distribution.
 
 ---------------------------------------------------------------------------------*/
+/*! \file sassert.h
+\brief Simple assertion with a message conplies to nop if NDEBUG is defined
+*/
+
 #ifndef _sassert_h_
 #define _sassert_h_
 
@@ -40,7 +44,7 @@ extern "C" {
 #ifdef NDEBUG           /* required by ANSI standard */
 #define sassert(e,s)  	((void)0)
 #else
-
+/*! \brief Causes a blue screen of death if e is not true with the msg "msg" displayed*/
 #define sassert(e,msg)       ((e) ? (void)0 : __sassert(__FILE__, __LINE__, #e, msg))
 
 #endif /* NDEBUG */
