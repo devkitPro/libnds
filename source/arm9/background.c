@@ -148,7 +148,7 @@ int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase)
 {
 	
 	BGCTRL[layer] = BG_MAP_BASE(mapBase) | BG_TILE_BASE(tileBase) 
-					| size | ((type == BgType_Text8bpp) ? BG_256_COLOR : 0);
+					| size | ((type == BgType_Text8bpp) ? BG_COLOR_256 : 0);
 	
 	memset(&bgState[layer], sizeof(BgState), 0);
 
@@ -171,7 +171,7 @@ int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase)
 int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBase)
 {
  	BGCTRL_SUB[layer] = BG_MAP_BASE(mapBase) | BG_TILE_BASE(tileBase) 
-					| size | ((type == BgType_Text8bpp) ? BG_256_COLOR : 0) ;
+					| size | ((type == BgType_Text8bpp) ? BG_COLOR_256 : 0) ;
 
 	memset(&bgState[layer + 4], sizeof(BgState), 0);
 

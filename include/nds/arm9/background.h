@@ -30,6 +30,13 @@
     \brief nds background defines and functionality.
 
 <div class="fileHeader">
+    Background control is provided via an API or Direct register access.  Usually these methods can be mixed.  However, 
+    scrolling, scaling, and rotation will have unexpected results if API and Direct Register access is mixed.  Effort is 
+    being directed at ensuring the API can access all hardware features without limitation.
+
+    - \ref background_api_group "API Components"
+    - \ref background_register_group "Register Access Components"
+
     The DS contains two separate hardware 2D cores responsible for rendering 2D backgrounds.  The definitions
     below outline the libnds api for utilizing these backgrounds.
 
@@ -67,26 +74,14 @@ On the main engine BG0 can be uses as a 3D rendering surface.
 
 </div> 
     
-*/
 
-/*! 
-	\example Graphics/2D/BackgroundAllInOne/source/advanced.cpp
-	These examples cover rotation and scaling of backgrounds
-*/		
-
-/*!
+    
+   \example Graphics/2D/BackgroundAllInOne/source/advanced.cpp
 	\example Graphics/2D/BackgroundAllInOne/source/basic.cpp
-	These examples cover basic initialization and loading of various backgrounds
-*/
-
-/*!
 	\example Graphics/2D/BackgroundAllInOne/source/scrolling.cpp
-	These examples cover background scrolling
-*/
-
-/*!
 	\example Graphics/2D/BackgroundAllInOne/source/handmade.cpp
-	This example loads a map created in code
+
+
 */
 
 
@@ -105,43 +100,311 @@ On the main engine BG0 can be uses as a 3D rendering surface.
 #include <string.h>
 
 
-#define MAP_BASE_SHIFT 8
-#define TILE_BASE_SHIFT 2 
-
-#define BG_MAP_RAM(base)		(((base)*0x800) + 0x06000000)
-#define BG_MAP_RAM_SUB(base)	(((base)*0x800) + 0x06200000)
-
-#define BG_TILE_RAM(base)		(((base)*0x4000) + 0x06000000)
-#define BG_TILE_RAM_SUB(base)	(((base)*0x4000) + 0x06200000)
-
-#define BG_BMP_RAM(base)		(((base)*0x4000) + 0x06000000)
-#define BG_BMP_RAM_SUB(base)	(((base)*0x4000) + 0x06200000)
 
 
-//register overlays
+/*! \defgroup background_register_group "Background Register Access"
+\brief Background related register definitions and bit defines
+@{
+*/
+
+/*! \struct bg_scroll
+\brief register overlay for scroll registers
+*/
 typedef struct {
-	u16 x;
-	u16 y;
+	u16 x;/*!< x scroll*/
+	u16 y;/*!< y scroll*/
 } bg_scroll;
 
+/*! \struct bg_transform
+\brief register overlay for affine matrix registers
+*/
 typedef struct {
-    s16 xdx; /*!change in x per dx*/
-    s16 ydx; /*!change in y per dx*/
-    s16 xdy; /*!change in x per dy*/
-    s16 ydy; /*!change in y per dy*/
-    s32 dx;  /*!map x value which corresponds to the screen origin*/
-    s32 dy;  /*!map y value which corresponds to the screen origin*/  
+    s16 xdx; /*!< change in x per dx*/
+    s16 ydx; /*!< change in y per dx*/
+    s16 xdy; /*!< change in x per dy*/
+    s16 ydy; /*!< change in y per dy*/
+    s32 dx;  /*!< map x value which corresponds to the screen origin*/
+    s32 dy;  /*!< map y value which corresponds to the screen origin*/  
 } bg_transform;
 
+/*! \struct bg_attribute
+\brief register overlay for background attribute registers
+*/
 typedef struct {
-    u16 control[4];
-    bg_scroll scroll[4];
-    bg_transform bg2_rotation;
-    bg_transform bg3_rotation;
+    u16 control[4];/*!< Background control registers*/
+    bg_scroll scroll[4];/*!< Background scroll registers*/
+    bg_transform bg2_rotation;/*!< Background 2 affine matrix*/
+    bg_transform bg3_rotation;/*!< Background 3 affine matrix*/
 } bg_attribute;
 
+/*! \brief The shift to apply to map base when storing it in a background control register */
+#define MAP_BASE_SHIFT 8
+/*! \brief The shift to apply to tile base when storing it in a background control register */
+#define TILE_BASE_SHIFT 2 
+/*! \brief Macro to set the tile base in background control */
+#define BG_TILE_BASE(base) ((base) << TILE_BASE_SHIFT)
+/*! \brief Macro to set the map base in background control */
+#define BG_MAP_BASE(base)  ((base) << MAP_BASE_SHIFT)
+/*! \brief Macro to set the graphics base in background control */
+#define BG_BMP_BASE(base)  ((base) << MAP_BASE_SHIFT)
+/*! \brief Macro to set the priority in background control */
+#define BG_PRIORITY(n) (n)
+
+/*! \enum BackgroundControl
+\brief Bit defines for the background control registers
+*/
+typedef enum
+{
+   BG_32x32    =  (0 << 14), /*!< \brief 32 x 32 tile text background */
+   BG_64x32    =  (1 << 14), /*!< \brief 64 x 32 tile text background */
+   BG_32x64    =  (2 << 14), /*!< \brief 32 x 64 tile text background */
+   BG_64x64    =  (3 << 14), /*!< \brief 64 x 64 tile text background */
+
+   BG_RS_16x16   =  (0 << 14),  /*!< \brief 16 x 16 tile affine (rotation & scale) background */
+   BG_RS_32x32   =  (1 << 14),  /*!< \brief 32 x 32 tile affine (rotation & scale) background */
+   BG_RS_64x64   =  (2 << 14),  /*!< \brief 64 x 64 tile affine (rotation & scale) background */
+   BG_RS_128x128 =  (3 << 14),  /*!< \brief 128 x 128 tile affine (rotation & scale) background */
+
+   BG_BMP8_128x128  = ((0 << 14) | BIT(7)), /*!< \brief 128x128 pixel 8-bit bitmapped background */
+   BG_BMP8_256x256  = ((1 << 14) | BIT(7)),/*!< \brief 256x256 pixel 8-bit bitmapped background */
+   BG_BMP8_512x256  = ((2 << 14) | BIT(7)),/*!< \brief 512x256 pixel 8-bit bitmapped background */
+   BG_BMP8_512x512  = ((3 << 14) | BIT(7)),/*!< \brief 512 pixel 8-bit bitmapped background */
+   BG_BMP8_1024x512 = BIT(14),/*!< \brief 1024x512 pixel 8-bit Large bitmapped background (Mode 6 of main engine only)*/
+   BG_BMP8_512x1024 = 0,/*!< \brief 512x1024 pixel 8-bit Large bitmapped background (Mode 6 of main engine only)*/
+
+   BG_BMP16_128x128  = ((0 << 14) | BIT(7) | BIT(2)),/*!< \brief 128x128 pixel 16-bit bitmapped background */
+   BG_BMP16_256x256  = ((1 << 14) | BIT(7) | BIT(2)),/*!< \brief 256x256 pixel 16-bit bitmapped background */
+   BG_BMP16_512x256  = ((2 << 14) | BIT(7) | BIT(2)),/*!< \brief 512x256 pixel 16-bit bitmapped background */
+   BG_BMP16_512x512  = ((3 << 14) | BIT(7) | BIT(2)),/*!< \brief 512x512 pixel 16-bit bitmapped background */
+
+   BG_MOSAIC_ON   = (BIT(6)),/*!< \brief mosaic enable */
+   BG_MOSAIC_OFF  = (0),/*!< \brief mosaic disable*/
+
+   BG_PRIORITY_0  = (0),/*!< \brief Lower priority will be rendered on top */
+   BG_PRIORITY_1  = (1),/*!< \brief Lower priority will be rendered on top */
+   BG_PRIORITY_2  = (2),/*!< \brief Lower priority will be rendered on top */
+   BG_PRIORITY_3  = (3),/*!< \brief Lower priority will be rendered on top */
+
+   BG_WRAP_OFF    = (0),/*!< \brief Disable wrapping (no effect on text backgrounds...always wrapped) */
+   BG_WRAP_ON     = (1 << 13),/*!< \brief Enable wrapping (no effect on text backgrounds...always wrapped) */
+
+   BG_PALETTE_SLOT0 = 0, /*!< \brief Use slot 0 of extended palettes */
+   BG_PALETTE_SLOT1 = 0, /*!< \brief Use slot 1 of extended palettes */
+   BG_PALETTE_SLOT2 = BIT(13), /*!< \brief Use slot 2 of extended palettes */
+   BG_PALETTE_SLOT3 = BIT(13), /*!< \brief Use slot 3 of extended palettes */
+
+   BG_COLOR_256	=	0x80,/*!< \brief 256 color text background */
+   BG_COLOR_16		=	0x00/*!< \brief 16x16 color text background */
+
+}BackgroundControl;
+
+
+/*@}*/
+
+/*! \defgroup main_display_registers "Main Engine"
+\brief Main Engine Background registers
+\ingroup background_register_group*/
+/*@{*/
+/*! \brief Overlay for main screen background attributes.  Setting the properties of this 
+struct directly sets background registers.
+*/
 #define BACKGROUND           (*((bg_attribute *)0x04000008))
+/*! \brief Overlay for main screen background scroll registers.  Setting the properties of this 
+struct directly sets background registers.
+*/
+#define BG_OFFSET ((bg_scroll *)(0x04000010))
+/*! \brief A macro which returns a u16* pointer to background map ram (Main Engine) */
+#define BG_MAP_RAM(base)		((u16*)(((base)*0x800) + 0x06000000))
+/*! \brief A macro which returns a u16* pointer to background tile ram (Main Engine) */
+#define BG_TILE_RAM(base)		((u16*)(((base)*0x4000) + 0x06000000))
+/*! \brief A macro which returns a u16* pointer to background graphics memory ram (Main Engine) */
+#define BG_BMP_RAM(base)		((u16*)(((base)*0x4000) + 0x06000000))
+/*! \brief A macro which returns a u16* pointer to background tile ram (Main Engine) */
+#define CHAR_BASE_BLOCK(n)			(((n)*0x4000)+ 0x06000000)
+/*! \brief A macro which returns a u16* pointer to background Map ram (Main Engine) */
+#define SCREEN_BASE_BLOCK(n)		(((n)*0x800) + 0x06000000)
+
+/*! \brief Access to all Main screen background control registers via: BGCTRL[x] 
+<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+*/
+#define	BGCTRL			( (vu16*)0x4000008)
+/*! \brief Background 0 Control register (main engine)
+<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+*/
+#define	REG_BG0CNT		(*(vu16*)0x4000008)
+/*! \brief Background 1 Control register (main engine)
+<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+*/
+#define	REG_BG1CNT		(*(vu16*)0x400000A)
+/*! \brief Background 2 Control register (main engine)
+<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+*/
+#define	REG_BG2CNT		(*(vu16*)0x400000C)
+/*! \brief Background 3 Control register (main engine)
+<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+*/
+#define	REG_BG3CNT		(*(vu16*)0x400000E)
+
+
+#define	REG_BGOFFSETS	( (vu16*)0x4000010)
+/*! \brief Background 0 horizontal scroll register (main engine)*/
+#define	REG_BG0HOFS		(*(vu16*)0x4000010)
+/*! \brief Background 0 vertical scroll register (main engine)*/
+#define	REG_BG0VOFS		(*(vu16*)0x4000012)
+/*! \brief Background 1 horizontal scroll register (main engine)*/
+#define	REG_BG1HOFS		(*(vu16*)0x4000014)
+/*! \brief Background 1 vertical scroll register (main engine)*/
+#define	REG_BG1VOFS		(*(vu16*)0x4000016)
+/*! \brief Background 2 horizontal scroll register (main engine)*/
+#define	REG_BG2HOFS		(*(vu16*)0x4000018)
+/*! \brief Background 2 vertical scroll register (main engine)*/
+#define	REG_BG2VOFS		(*(vu16*)0x400001A)
+/*! \brief Background 3 horizontal scroll register (main engine)*/
+#define	REG_BG3HOFS		(*(vu16*)0x400001C)
+/*! \brief Background 3 vertical scroll register (main engine)*/
+#define	REG_BG3VOFS		(*(vu16*)0x400001E)
+/*! \brief Background 2 Affine transform (main engine)*/
+#define	REG_BG2PA		(*(vu16*)0x4000020)
+/*! \brief Background 2 Affine transform (main engine)*/
+#define	REG_BG2PB		(*(vu16*)0x4000022)
+/*! \brief Background 2 Affine transform (main engine)*/
+#define	REG_BG2PC		(*(vu16*)0x4000024)
+/*! \brief Background 2 Affine transform (main engine)*/
+#define	REG_BG2PD		(*(vu16*)0x4000026)
+
+/*! \brief Background 2 Screen Offset (main engine)*/
+#define	REG_BG2X		(*(vu32*)0x4000028)
+#define	REG_BG2X_L		(*(vu16*)0x4000028)
+#define	REG_BG2X_H		(*(vu16*)0x400002A)
+
+/*! \brief Background 2 Screen Offset (main engine)*/
+#define	REG_BG2Y		(*(vu32*)0x400002C)
+#define	REG_BG2Y_L		(*(vu16*)0x400002C)
+#define	REG_BG2Y_H		(*(vu16*)0x400002E)
+/*! \brief Background 3 Affine transform (main engine)*/
+#define	REG_BG3PA		(*(vu16*)0x4000030)
+/*! \brief Background 3 Affine transform (main engine)*/
+#define	REG_BG3PB		(*(vu16*)0x4000032)
+/*! \brief Background 3 Affine transform (main engine)*/
+#define	REG_BG3PC		(*(vu16*)0x4000034)
+/*! \brief Background 3 Affine transform (main engine)*/
+#define	REG_BG3PD		(*(vu16*)0x4000036)
+
+/*! \brief Background 3 Screen Offset (main engine)*/
+#define	REG_BG3X		(*(vu32*)0x4000038)
+#define	REG_BG3X_L		(*(vu16*)0x4000038)
+#define	REG_BG3X_H		(*(vu16*)0x400003A)
+
+/*! \brief Background 3 Screen Offset (main engine)*/
+#define	REG_BG3Y		(*(vu32*)0x400003C)
+#define	REG_BG3Y_L		(*(vu16*)0x400003C)
+#define	REG_BG3Y_H		(*(vu16*)0x400003E)
+/*@}*/
+
+/*! \defgroup sub_display_registers "Sub Engine"
+\brief Sub Engine Background registers
+\ingroup background_register_group */
+/*@{*/
+/*! \brief Overlay for sub screen background attributes.  Setting the properties of this 
+struct directly sets background registers.
+*/
 #define BACKGROUND_SUB       (*((bg_attribute *)0x04001008))
+/*! \brief Overlay for sub screen background scroll registers.  Setting the properties of this 
+struct directly sets background registers.
+*/
+#define BG_OFFSET_SUB ((bg_scroll *)(0x04001010))
+/*! \brief A macro which returns a u16* pointer to background map ram (Sub Engine) */
+#define BG_MAP_RAM_SUB(base)	((u16*)(((base)*0x800) + 0x06200000))
+/*! \brief A macro which returns a u16* pointer to background tile ram (Sub Engine) */
+#define BG_TILE_RAM_SUB(base)	((u16*)(((base)*0x4000) + 0x06200000))
+/*! \brief A macro which returns a u16* pointer to background graphics ram (Sub Engine) */
+#define BG_BMP_RAM_SUB(base)	((u16*)(((base)*0x4000) + 0x06200000))
+/*! \brief A macro which returns a u16* pointer to background Map ram (Sub Engine) */
+#define SCREEN_BASE_BLOCK_SUB(n)	(((n)*0x800) + 0x06200000)
+/*! \brief A macro which returns a u16* pointer to background tile ram (Sub Engine) */
+#define CHAR_BASE_BLOCK_SUB(n)		(((n)*0x4000)+ 0x06200000)
+
+/*! \brief Access to all Sub screen background control registers via: BGCTRL[x] 
+<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+*/
+#define	BGCTRL_SUB				( (vu16*)0x4001008)
+/*! \brief Background 0 Control register (sub engine)
+<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+*/
+#define	REG_BG0CNT_SUB		(*(vu16*)0x4001008)
+/*! \brief Background 1 Control register (sub engine)
+<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+*/
+#define	REG_BG1CNT_SUB		(*(vu16*)0x400100A)
+/*! \brief Background 2 Control register (sub engine)
+<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+*/
+#define	REG_BG2CNT_SUB		(*(vu16*)0x400100C)
+/*! \brief Background 3 Control register (sub engine)
+<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+*/
+#define	REG_BG3CNT_SUB		(*(vu16*)0x400100E)
+
+#define	REG_BGOFFSETS_SUB	( (vu16*)0x4001010)
+
+/*! \brief Background 0 horizontal scroll register (sub engine)*/
+#define	REG_BG0HOFS_SUB		(*(vu16*)0x4001010)
+/*! \brief Background 0 vertical scroll register (sub engine)*/
+#define	REG_BG0VOFS_SUB		(*(vu16*)0x4001012)
+/*! \brief Background 1 horizontal scroll register (sub engine)*/
+#define	REG_BG1HOFS_SUB		(*(vu16*)0x4001014)
+/*! \brief Background 1 vertical scroll register (sub engine)*/
+#define	REG_BG1VOFS_SUB		(*(vu16*)0x4001016)
+/*! \brief Background 2 horizontal scroll register (sub engine)*/
+#define	REG_BG2HOFS_SUB		(*(vu16*)0x4001018)
+/*! \brief Background 2 vertical scroll register (sub engine)*/
+#define	REG_BG2VOFS_SUB		(*(vu16*)0x400101A)
+/*! \brief Background 3 horizontal scroll register (sub engine)*/
+#define	REG_BG3HOFS_SUB		(*(vu16*)0x400101C)
+/*! \brief Background 3 vertical scroll register (sub engine)*/
+#define	REG_BG3VOFS_SUB		(*(vu16*)0x400101E)
+
+/*! \brief Background 2 Affine transform (sub engine)*/
+#define	REG_BG2PA_SUB		(*(vu16*)0x4001020)
+/*! \brief Background 2 Affine transform (sub engine)*/
+#define	REG_BG2PB_SUB		(*(vu16*)0x4001022)
+/*! \brief Background 2 Affine transform (sub engine)*/
+#define	REG_BG2PC_SUB		(*(vu16*)0x4001024)
+/*! \brief Background 2 Affine transform (sub engine)*/
+#define	REG_BG2PD_SUB		(*(vu16*)0x4001026)
+
+/*! \brief Background 2 Screen Offset (sub engine)*/
+#define	REG_BG2X_SUB		(*(vu32*)0x4001028)
+#define	REG_BG2X_SUB_L		(*(vu16*)0x4001028)
+#define	REG_BG2X_SUB_H		(*(vu16*)0x400102A)
+/*! \brief Background 2 Screen Offset (sub engine)*/
+#define	REG_BG2Y_SUB		(*(vu32*)0x400102C)
+#define	REG_BG2Y_SUB_L		(*(vu16*)0x400102C)
+#define	REG_BG2Y_SUB_H		(*(vu16*)0x400102E)
+
+/*! \brief Background 3 Affine transform (sub engine)*/
+#define	REG_BG3PA_SUB		(*(vu16*)0x4001030)
+/*! \brief Background 3 Affine transform (sub engine)*/
+#define	REG_BG3PB_SUB		(*(vu16*)0x4001032)
+/*! \brief Background 3 Affine transform (sub engine)*/
+#define	REG_BG3PC_SUB		(*(vu16*)0x4001034)
+/*! \brief Background 3 Affine transform (sub engine)*/
+#define	REG_BG3PD_SUB		(*(vu16*)0x4001036)
+
+/*! \brief Background 3 Screen Offset (main engine)*/
+#define	REG_BG3X_SUB		(*(vu32*)0x4001038)
+#define	REG_BG3X_L_SUB		(*(vu16*)0x4001038)
+#define	REG_BG3X_H_SUB		(*(vu16*)0x400103A)
+/*! \brief Background 3 Screen Offset (main engine)*/
+#define	REG_BG3Y_SUB		(*(vu32*)0x400103C)
+#define	REG_BG3Y_L_SUB		(*(vu16*)0x400103C)
+#define	REG_BG3Y_H_SUB		(*(vu16*)0x400103E)
+/*@}*/
+
+
+/*! \defgroup background_api_group "Background API Access"
+@{
+*/
 
 //background state	
 typedef struct
@@ -163,14 +426,11 @@ typedef struct
 extern vuint16* bgControl[8];
 extern bg_scroll* bgScrollTable[8];
 extern bg_transform* bgTransform[8];
-
-
 extern BgState bgState[8];
 
 /**
  * \enum BgType
- * 
- *  Allowed background types, used in bgInitMain and bgInitSub
+ * \brief Allowed background types, used in bgInitMain and bgInitSub
  */
 typedef enum
 {
@@ -189,6 +449,7 @@ typedef enum
  * \enum BgSize
  * \brief Allowed background Sizes
  * The lower 16 bits of these defines can be used directly to set the background control register bits
+ * \ingroup api_group
  */
 typedef enum
 {
@@ -776,157 +1037,11 @@ void bgSetCenter(int id, int x, int y)
 }
 #endif
 
+/*@}*/
 
 
-#define BG_TILE_BASE(base) ((base) << 2)
-#define BG_MAP_BASE(base)  ((base) << 8)
-#define BG_BMP_BASE(base)  ((base) << 8)
 
-#define BG_MOSAIC_ENABLE	0x40
-#define BG_COLOR_256		0x80
-#define BG_COLOR_16			0x00
 
-#define CHAR_BASE_BLOCK(n)			(((n)*0x4000)+ 0x06000000)
-#define CHAR_BASE_BLOCK_SUB(n)		(((n)*0x4000)+ 0x06200000)
-#define SCREEN_BASE_BLOCK(n)		(((n)*0x800) + 0x06000000)
-#define SCREEN_BASE_BLOCK_SUB(n)	(((n)*0x800) + 0x06200000)
 
-#define CHAR_SHIFT        2
-#define SCREEN_SHIFT      8
-#define TEXTBG_SIZE_256x256    0x0
-#define TEXTBG_SIZE_256x512    0x8000
-#define TEXTBG_SIZE_512x256    0x4000
-#define TEXTBG_SIZE_512x512    0xC000
-
-#define ROTBG_SIZE_128x128    0x0
-#define ROTBG_SIZE_256x256    0x4000
-#define ROTBG_SIZE_512x512    0x8000
-#define ROTBG_SIZE_1024x1024  0xC000
-
-#define	BGCTRL				( (vu16*)0x4000008)
-#define	REG_BG0CNT		(*(vu16*)0x4000008)
-#define	REG_BG1CNT		(*(vu16*)0x400000A)
-#define	REG_BG2CNT		(*(vu16*)0x400000C)
-#define	REG_BG3CNT		(*(vu16*)0x400000E)
-
-#define	BGCTRL_SUB				( (vu16*)0x4001008)
-#define	REG_BG0CNT_SUB		(*(vu16*)0x4001008)
-#define	REG_BG1CNT_SUB		(*(vu16*)0x400100A)
-#define	REG_BG2CNT_SUB		(*(vu16*)0x400100C)
-#define	REG_BG3CNT_SUB		(*(vu16*)0x400100E)
-
-#define BG_256_COLOR   (BIT(7))
-#define BG_16_COLOR    (0)
-
-#define BG_MOSAIC_ON   (BIT(6))
-#define BG_MOSAIC_OFF  (0)
-
-#define BG_PRIORITY(n) (n)
-#define BG_PRIORITY_0  (0)
-#define BG_PRIORITY_1  (1)
-#define BG_PRIORITY_2  (2)
-#define BG_PRIORITY_3  (3)
-
-#define BG_WRAP_OFF    (0)
-#define BG_WRAP_ON     (1 << 13)
-
-#define BG_PALETTE_SLOT0 0
-#define BG_PALETTE_SLOT1 0
-#define BG_PALETTE_SLOT2 BIT(13)
-#define BG_PALETTE_SLOT3 BIT(13)
-
-#define BG_OFFSET ((bg_scroll *)(0x04000010))
-#define BG_OFFSET_SUB ((bg_scroll *)(0x04001010))
-
-#define	REG_BGOFFSETS	( (vu16*)0x4000010)
-#define	REG_BG0HOFS		(*(vu16*)0x4000010)
-#define	REG_BG0VOFS		(*(vu16*)0x4000012)
-#define	REG_BG1HOFS		(*(vu16*)0x4000014)
-#define	REG_BG1VOFS		(*(vu16*)0x4000016)
-#define	REG_BG2HOFS		(*(vu16*)0x4000018)
-#define	REG_BG2VOFS		(*(vu16*)0x400001A)
-#define	REG_BG3HOFS		(*(vu16*)0x400001C)
-#define	REG_BG3VOFS		(*(vu16*)0x400001E)
-
-#define	REG_BG2PA		(*(vu16*)0x4000020)
-#define	REG_BG2PB		(*(vu16*)0x4000022)
-#define	REG_BG2PC		(*(vu16*)0x4000024)
-#define	REG_BG2PD		(*(vu16*)0x4000026)
-
-#define	REG_BG2X		(*(vu32*)0x4000028)
-#define	REG_BG2X_L		(*(vu16*)0x4000028)
-#define	REG_BG2X_H		(*(vu16*)0x400002A)
-
-#define	REG_BG2Y		(*(vu32*)0x400002C)
-#define	REG_BG2Y_L		(*(vu16*)0x400002C)
-#define	REG_BG2Y_H		(*(vu16*)0x400002E)
-
-#define	REG_BG3PA		(*(vu16*)0x4000030)
-#define	REG_BG3PB		(*(vu16*)0x4000032)
-#define	REG_BG3PC		(*(vu16*)0x4000034)
-#define	REG_BG3PD		(*(vu16*)0x4000036)
-
-#define	REG_BG3X		(*(vu32*)0x4000038)
-#define	REG_BG3X_L		(*(vu16*)0x4000038)
-#define	REG_BG3X_H		(*(vu16*)0x400003A)
-#define	REG_BG3Y		(*(vu32*)0x400003C)
-#define	REG_BG3Y_L		(*(vu16*)0x400003C)
-#define	REG_BG3Y_H		(*(vu16*)0x400003E)
-
-#define	REG_BGOFFSETS_SUB	( (vu16*)0x4001010)
-#define	REG_BG0HOFS_SUB		(*(vu16*)0x4001010)
-#define	REG_BG0VOFS_SUB		(*(vu16*)0x4001012)
-#define	REG_BG1HOFS_SUB		(*(vu16*)0x4001014)
-#define	REG_BG1VOFS_SUB		(*(vu16*)0x4001016)
-#define	REG_BG2HOFS_SUB		(*(vu16*)0x4001018)
-#define	REG_BG2VOFS_SUB		(*(vu16*)0x400101A)
-#define	REG_BG3HOFS_SUB		(*(vu16*)0x400101C)
-#define	REG_BG3VOFS_SUB		(*(vu16*)0x400101E)
-
-#define	REG_BG2PA_SUB		(*(vu16*)0x4001020)
-#define	REG_BG2PB_SUB		(*(vu16*)0x4001022)
-#define	REG_BG2PC_SUB		(*(vu16*)0x4001024)
-#define	REG_BG2PD_SUB		(*(vu16*)0x4001026)
-
-#define	REG_BG2X_SUB		(*(vu32*)0x4001028)
-#define	REG_BG2X_SUB_L		(*(vu16*)0x4001028)
-#define	REG_BG2X_SUB_H		(*(vu16*)0x400102A)
-#define	REG_BG2Y_SUB		(*(vu32*)0x400102C)
-#define	REG_BG2Y_SUB_L		(*(vu16*)0x400102C)
-#define	REG_BG2Y_SUB_H		(*(vu16*)0x400102E)
-
-#define	REG_BG3PA_SUB		(*(vu16*)0x4001030)
-#define	REG_BG3PB_SUB		(*(vu16*)0x4001032)
-#define	REG_BG3PC_SUB		(*(vu16*)0x4001034)
-#define	REG_BG3PD_SUB		(*(vu16*)0x4001036)
-
-#define	REG_BG3X_SUB		(*(vu32*)0x4001038)
-#define	REG_BG3X_L_SUB		(*(vu16*)0x4001038)
-#define	REG_BG3X_H_SUB		(*(vu16*)0x400103A)
-#define	REG_BG3Y_SUB		(*(vu32*)0x400103C)
-#define	REG_BG3Y_L_SUB		(*(vu16*)0x400103C)
-#define	REG_BG3Y_H_SUB		(*(vu16*)0x400103E)
-
-#define	BG_32x32       (0 << 14)
-#define	BG_64x32       (1 << 14)
-#define	BG_32x64       (2 << 14)
-#define	BG_64x64      (3 << 14)
-
-#define	BG_RS_16x16     (0 << 14)
-#define	BG_RS_32x32     (1 << 14)
-#define	BG_RS_64x64     (2 << 14)
-#define	BG_RS_128x128   (3 << 14)
-
-#define	BG_BMP8_128x128   ((0 << 14) | BG_256_COLOR)
-#define	BG_BMP8_256x256   ((1 << 14) | BG_256_COLOR)
-#define	BG_BMP8_512x256   ((2 << 14) | BG_256_COLOR)
-#define	BG_BMP8_512x512   ((3 << 14) | BG_256_COLOR)
-#define	BG_BMP8_1024x512  BIT(14)
-#define	BG_BMP8_512x1024  0
-
-#define	BG_BMP16_128x128  ((0 << 14) | BG_256_COLOR | BIT(2))
-#define	BG_BMP16_256x256  ((1 << 14) | BG_256_COLOR | BIT(2))
-#define	BG_BMP16_512x256  ((2 << 14) | BG_256_COLOR | BIT(2))
-#define	BG_BMP16_512x512  ((3 << 14) | BG_256_COLOR | BIT(2))
 
 #endif
