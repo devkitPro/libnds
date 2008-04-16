@@ -338,7 +338,7 @@ u16* oamAllocateGfx(OamState *oam, SpriteSize size, SpriteColorFormat colorForma
 */
 void oamFreeGfx(OamState *oam, const void* gfxOffset);
 
-/**  \fn void oamSet(OamState* oam, int id,  int x, int y, int palette_alpha, SpriteSize size,SpriteColorFormat format, const void* gfxOffset, bool hide)
+/** 
 *    \brief sets an oam entry to the supplied values
 *    \param oam must be: &oamMain or &oamSub
 *    \param id the oam number to be set [0 - 127]
@@ -348,9 +348,11 @@ void oamFreeGfx(OamState *oam, const void* gfxOffset);
 *    \param size the size of the sprite
 *    \param format the color format of the sprite
 *    \param gfxOffset the video memory address of the sprite graphics (not an offset)
+*    \param affineIndex affine index to use (if < 0 or > 31 the sprite will be unrotated)
+*    \param sizeDouble if affineIndex >= 0 this will be used to double the sprite size for rotation
 *    \param hide if non zero (true) the sprite will be hidden
 */
-void oamSet(OamState* oam, int id,  int x, int y, int palette_alpha, SpriteSize size,SpriteColorFormat format, const void* gfxOffset, bool hide);
+void oamSet(OamState* oam, int id,  int x, int y, int palette_alpha, SpriteSize size, SpriteColorFormat format, const void* gfxOffset, int affineIndex, bool sizeDouble, bool hide);
 
 /**  \fn void oamUpdate(OamState* oam);
 *    \brief causes oam memory to be updated...must be called during vblank if using oam api
@@ -358,7 +360,7 @@ void oamSet(OamState* oam, int id,  int x, int y, int palette_alpha, SpriteSize 
 */
 void oamUpdate(OamState* oam);
 
-/**  \fn void oamRotate(OamState* oam, int rotId, int angle, int sx, int sy)
+/**  \fn void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy)
 *    \brief sets the specified rotation scale entry
 *    \param oam must be: &oamMain or &oamSub
 *    \param rotId the rotation entry to set
@@ -366,7 +368,7 @@ void oamUpdate(OamState* oam);
 *    \param sx the inverse scale factor in the x direction 
 *    \param sy the inverse scale factor in the y direction
 */
-void oamRotate(OamState* oam, int rotId, int angle, int sx, int sy);
+void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy);
 
 /**  \fn void oamPrintAllocStatus(OamState *oam)
 *    \brief function for printing the allocation state
