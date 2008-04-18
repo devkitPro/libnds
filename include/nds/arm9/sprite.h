@@ -339,7 +339,7 @@ u16* oamAllocateGfx(OamState *oam, SpriteSize size, SpriteColorFormat colorForma
 void oamFreeGfx(OamState *oam, const void* gfxOffset);
 
 /** 
-*    \brief sets an oam entry to the supplied values
+*    \brief sets an oam entry to the supplied values 
 *    \param oam must be: &oamMain or &oamSub
 *    \param id the oam number to be set [0 - 127]
 *    \param x the x location of the sprite in pixels
@@ -353,6 +353,14 @@ void oamFreeGfx(OamState *oam, const void* gfxOffset);
 *    \param hide if non zero (true) the sprite will be hidden
 */
 void oamSet(OamState* oam, int id,  int x, int y, int palette_alpha, SpriteSize size, SpriteColorFormat format, const void* gfxOffset, int affineIndex, bool sizeDouble, bool hide);
+
+/**  \fn void oamClear(OamState *oam, int start, int count)
+*    \brief Hides the sprites in the supplied range: if count is zero all 128 sprites will be hidden
+*    \param oam must be: &oamMain or &oamSub
+*    \param start The first index to clear
+*    \param count The number of sprites to clear
+*/
+void oamClear(OamState *oam, int start, int count);
 
 /**  \fn void oamUpdate(OamState* oam);
 *    \brief causes oam memory to be updated...must be called during vblank if using oam api

@@ -367,10 +367,30 @@ int oamCountFragments(OamState *oam)
 
    return frags;
 }
+void oamClear(OamState *oam, int start, int count)
+{
+   int i = 0;
 
+   if(count == 0)
+   {
+      count = 128;
+      start = 0;
+   }
+
+   for(i = start; i < count + start; i++)
+   {
+      oam->oamMemory[i].attribute[0] = ATTR0_DISABLED;
+   }
+   
+}
 void oamSet(OamState* oam, int id,  int x, int y, int palette_alpha, SpriteSize size,SpriteColorFormat format, const void* gfxOffset, int affineIndex, bool sizeDouble, bool hide)
 {  
-   oam->oamMemory[id].isHidden = hide;
+   if(hide)
+   {
+      oam->oamMemory[i].attribute[0] = ATTR0_DISABLED;
+      return;
+   }
+
    oam->oamMemory[id].shape = (size >> 12) & 0x3;
    oam->oamMemory[id].size = (size >> 14) & 0x3;
    oam->oamMemory[id].gfxIndex = oamGfxPtrToOffset(oam, gfxOffset);
@@ -378,12 +398,12 @@ void oamSet(OamState* oam, int id,  int x, int y, int palette_alpha, SpriteSize 
    oam->oamMemory[id].y = y;
    oam->oamMemory[id].palette = palette_alpha; 
 
+
    if(affineIndex >= 0 && affineIndex < 32)
    {
       oam->oamMemory[id].rotationIndex = affineIndex;
       oam->oamMemory[id].isSizeDouble = sizeDouble;
       oam->oamMemory[id].isRotateScale = true;
-
    }
    if(format != SpriteColorFormat_Bmp)
    {
