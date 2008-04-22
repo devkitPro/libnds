@@ -387,7 +387,7 @@ void oamSet(OamState* oam, int id,  int x, int y, int palette_alpha, SpriteSize 
 {  
    if(hide)
    {
-      oam->oamMemory[i].attribute[0] = ATTR0_DISABLED;
+      oam->oamMemory[id].attribute[0] = ATTR0_DISABLED;
       return;
    }
 
