@@ -154,9 +154,6 @@ typedef enum {
 	VRAM_C_ARM7_0x06020000 = 2 | VRAM_OFFSET(1),
 	VRAM_C_SUB_BG	= 4,
 	VRAM_C_SUB_BG_0x06200000	= 4 | VRAM_OFFSET(0),
-	VRAM_C_SUB_BG_0x06220000	= 4 | VRAM_OFFSET(1),
-	VRAM_C_SUB_BG_0x06240000	= 4 | VRAM_OFFSET(2),
-	VRAM_C_SUB_BG_0x06260000	= 4 | VRAM_OFFSET(3),
 	VRAM_C_TEXTURE	= 3 | VRAM_OFFSET(2),
 	VRAM_C_TEXTURE_SLOT0	= 3 | VRAM_OFFSET(0),
 	VRAM_C_TEXTURE_SLOT1	= 3 | VRAM_OFFSET(1),
@@ -235,7 +232,7 @@ typedef enum {
 /** \brief  Allowed VRAM bank I modes */
 typedef enum {
 	VRAM_I_LCD                    = 0,
-	VRAM_I_SUB_BG                 = 1,
+	VRAM_I_SUB_BG_0x06208000       = 1,
 	VRAM_I_SUB_SPRITE             = 2,
 	VRAM_I_SUB_SPRITE_EXT_PALETTE = 3,
 }VRAM_I_TYPE;

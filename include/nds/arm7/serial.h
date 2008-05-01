@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: serial.h,v 1.15 2007-10-20 20:41:50 wntrmute Exp $
+  $Id: serial.h,v 1.16 2008-05-01 15:10:24 dovoto Exp $
 
   ARM7 serial control
 
@@ -102,22 +102,10 @@
 #define PM_AMPLIFIER_REG  2
 #define PM_READ_REGISTER (1<<7)
 
-// PM control register bits - power control
-#define PM_SOUND_AMP		BIT(0)    // Power the sound hardware (needed to hear stuff in GBA mode too)
-#define PM_SOUND_MUTE		BIT(1)    // Mute the main speakers, headphone output will still work.
-#define PM_BACKLIGHT_BOTTOM	BIT(2)    // Enable the top backlight if set
-#define PM_BACKLIGHT_TOP	BIT(3)    // Enable the bottom backlight if set
-#define PM_SYSTEM_PWR		BIT(6)    // Turn the power *off* if set
-#define PM_POWER_DOWN		BIT(6)    // Same thing, I like this name better tho
+
 
 // PM control register bits - LED control
 #define PM_LED_CONTROL(m)    ((m)<<4)  // ?
-
-
-#define PM_LED_ON		(0<<4)	// Steady on
-#define PM_LED_SLEEP	(1<<4)	// Blinking, mostly off
-#define PM_LED_BLINK	(3<<4)	// Blinking, mostly on
-
 
 #define PM_AMP_OFFSET  2
 #define PM_AMP_ON      1

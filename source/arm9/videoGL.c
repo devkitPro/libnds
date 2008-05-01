@@ -374,13 +374,20 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 			break;
 	}
 
-	addr = getNextTextureSlot(size);
+   addr = DynamicArrayGet(&glGlob->texturePtrs, glGlob->activeTexture);
+   
+  
+   if(!addr)
+   {
+	   addr = getNextTextureSlot(size);
 
-	if(!addr)
-	return 0;
+      if(!addr)
+         return 0;
 
-	DynamicArraySet(&glGlob->texturePtrs, glGlob->activeTexture, addr);
- 
+      DynamicArraySet(&glGlob->texturePtrs, glGlob->activeTexture, addr);
+   }
+	
+   
 	// unlock texture memory
 	vramTemp = vramSetMainBanks(VRAM_A_LCD,VRAM_B_LCD,VRAM_C_LCD,VRAM_D_LCD);
 

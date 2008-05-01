@@ -5,6 +5,78 @@
 \brief low level FIFO API. 
 */
 
+typedef enum
+{
+   FIFO_REQUEST = 0, /*< \brief A channel for making requests */
+   FIFO_DATA = 1,/*< \brief A channel for sending data (no handler installed on this channel) */
+   FIFO_DSWIFI = 2, 
+   FIFO_SOUND = 11,
+   FIFO_RESERVED_01 = 4,
+   FIFO_RESERVED_02 = 5,
+   FIFO_RESERVED_03 = 6,
+   FIFO_RESERVED_04 = 7,
+   FIFO_USER_01 = 8,
+   FIFO_USER_02 = 9,
+   FIFO_USER_03 = 10,
+   FIFO_USER_04 = 11,
+   FIFO_USER_05 = 12,
+   FIFO_USER_06 = 13,
+   FIFO_USER_07 = 14,
+   FIFO_USER_08 = 15,
+}FifoChannels;
+
+typedef enum
+{
+   FRQ_TOUCH = 0,
+   FRQ_RTC =   1 << 16,
+   FRQ_SLEEP = 2 << 16,
+   FRQ_POWER_ON = 3 << 16,
+   FRQ_POWER_OFF = 4 << 16,
+   FRQ_BLINK_LED = 5 << 16,
+   FRQ_WIFI_KILL = 6 << 16,
+   FRQ_WIFI_SYNC = 7 << 16,
+   FRQ_RESET = 8 << 16,
+   FRQ_SOUND_INIT = 9 << 16,
+   FRQ_SLEEP_DISABLE = 10 << 16,
+   FRQ_SLEEP_ENABLE = 11 << 16,
+   FRQ_PRINT_CHAR = 12 << 16,
+   
+   FRQ_START_MIC = 13 << 16,
+   FRQ_STOP_MIC = 14 << 17,
+
+   FRQ_WIFI_INIT = 1 << 31
+   
+}FifoRequestCommands;
+
+//not sure about how to formalize data message structure or if its even necessary
+typedef struct
+{ 
+   u32 command;
+   char data[0];
+}FifoDataMsg;
+
+/*! \enum PM_Bits
+\brief Power Management control bits 
+*/
+typedef enum
+{
+   PM_SOUND_AMP	=	BIT(0) ,   /*!< \brief Power the sound hardware (needed to hear stuff in GBA mode too) */
+   PM_SOUND_MUTE	=	BIT(1),    /*!< \brief   Mute the main speakers, headphone output will still work. */
+   PM_BACKLIGHT_BOTTOM	=BIT(2),    /*!< \brief   Enable the top backlight if set */
+   PM_BACKLIGHT_TOP	=BIT(3)  ,  /*!< \brief   Enable the bottom backlight if set */
+   PM_SYSTEM_PWR		=BIT(6) ,   /*!< \brief  Turn the power *off* if set */
+   PM_POWER_DOWN		=BIT(6),    /*!< \brief  Turn the power *off* if set */
+
+}PM_Bits;
+/*! \enum PM_LedBlinkMode
+\brief Power Management LED blink mode control bits 
+*/
+typedef enum
+{
+   PM_LED_ON		=(0<<4),	/*!< \brief  Steady on */
+   PM_LED_SLEEP	=(1<<4),	/*!< \brief Blinking, mostly off */
+   PM_LED_BLINK	=(3<<4),	/*!< \brief Blinking, mostly on */
+}PM_LedBlinkMode;
 // Some aspects of this configuration can be changed...
 
 // FIFO_CHANNEL_BITS - number of bits used to specify the channel in a packet - default=4

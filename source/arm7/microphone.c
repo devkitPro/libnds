@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: microphone.c,v 1.5 2007-06-25 20:23:35 wntrmute Exp $
+	$Id: microphone.c,v 1.6 2008-05-01 15:10:24 dovoto Exp $
 
 	Microphone control for the ARM7
 
@@ -33,7 +33,7 @@
 //---------------------------------------------------------------------------------
 // Turn on the Microphone Amp. Code based on neimod's example.
 //---------------------------------------------------------------------------------
-void PM_SetAmp(u8 control) {
+void micSetAmp(u8 control) {
 //---------------------------------------------------------------------------------
 	SerialWaitBusy();
 	REG_SPICNT = SPI_ENABLE | SPI_DEVICE_POWER | SPI_BAUD_1MHz | SPI_CONTINUOUS;
@@ -48,9 +48,9 @@ void PM_SetAmp(u8 control) {
 //---------------------------------------------------------------------------------
 // Read a byte from the microphone. Code based on neimod's example.
 //---------------------------------------------------------------------------------
-u8 MIC_ReadData() {
+u8 micReadData8() {
 //---------------------------------------------------------------------------------
-	u16 result, result2;
+	static u16 result, result2;
 
 	SerialWaitBusy();
 
@@ -74,42 +74,86 @@ u8 MIC_ReadData() {
 	return (((result & 0x7F) << 1) | ((result2>>7)&1));
 }
 
+//---------------------------------------------------------------------------------
+// Read a short from the microphone. Code based on neimod's example.
+//---------------------------------------------------------------------------------
+u16 micReadData12() {
+//---------------------------------------------------------------------------------
+	static u16 result, result2;
+
+	SerialWaitBusy();
+
+	REG_SPICNT = SPI_ENABLE | SPI_DEVICE_MICROPHONE | SPI_BAUD_2MHz | SPI_CONTINUOUS;
+	REG_SPIDATA = 0xE4;  // Touchscreen command format for AUX, 12bit
+
+	SerialWaitBusy();
+
+	REG_SPIDATA = 0x00;
+
+	SerialWaitBusy();
+
+	result = REG_SPIDATA;
+  	REG_SPICNT = SPI_ENABLE | SPI_DEVICE_TOUCH | SPI_BAUD_2MHz;
+	REG_SPIDATA = 0x00;
+
+	SerialWaitBusy();
+
+	result2 = REG_SPIDATA;
+
+	return (((result & 0x7F) << 5) | ((result2>>3)&0x1F));
+}
+
 static u8* microphone_buffer = 0;
 static int microphone_buffer_length = 0;
-static int current_length = 0;
-
+static int sampleCount = 0;
+static bool eightBit = true;
+static int micTimer = 0;
 
 //---------------------------------------------------------------------------------
-void StartRecording(u8* buffer, int length) {
+void micStartRecording(u8* buffer, int length, int freq, int timer, bool eightBitSample) {
 //---------------------------------------------------------------------------------
   microphone_buffer = buffer;
   microphone_buffer_length = length;
-  current_length = 0;
+  sampleCount = 0;
+  micTimer = timer;
+  eightBit = eightBitSample;
+  micOn();
 
-  MIC_On();
+  irqSet(BIT(3 + timer), micTimerHandler);
 
-  // Setup a 16kHz timer
-  TIMER0_DATA = 0xF7CF;
-  TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1 | TIMER_IRQ_REQ;
+  // Setup a timer
+  TIMER_DATA(timer) = TIMER_FREQ(freq); 
+  TIMER_CR(timer) = TIMER_ENABLE | TIMER_DIV_1 | TIMER_IRQ_REQ;
 }
 
 //---------------------------------------------------------------------------------
-int StopRecording() {
+int micStopRecording(void) {
 //---------------------------------------------------------------------------------
-  TIMER0_CR &= ~TIMER_ENABLE;
-  MIC_Off();
+  TIMER_CR(micTimer) &= ~TIMER_ENABLE;
+  micOff();
   microphone_buffer = 0;
-  return current_length;
+  return sampleCount;
 }
 
 //---------------------------------------------------------------------------------
-void  ProcessMicrophoneTimerIRQ() {
+void micTimerHandler(void) {
 //---------------------------------------------------------------------------------
-  if(microphone_buffer && microphone_buffer_length > 0) {
+  if(microphone_buffer && microphone_buffer_length > 0) 
+  {
     // Read data from the microphone. Data from the Mic is unsigned, flipping
     // the highest bit makes it signed.
-    *microphone_buffer++ = MIC_ReadData() ^ 0x80;
-    --microphone_buffer_length;
-    current_length++;
+    if(eightBit)
+    {
+       *microphone_buffer++ = micReadData8() ^ 0x80;
+        --microphone_buffer_length;
+    }
+    else
+    {
+       *(u16*)microphone_buffer = (micReadData12() - 2048) << 4; // ^ 0x8000;
+       microphone_buffer_length -= 2;
+    }
+
+    sampleCount++;
   }
+
 }

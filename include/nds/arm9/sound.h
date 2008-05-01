@@ -32,6 +32,15 @@ extern "C" {
 
 #include <nds/ipc.h>
 
+typedef struct
+{
+   void *buffer;
+   unsigned int length;
+   unsigned int freq;
+   fp halfFull;
+   fp full;
+}MicData;
+
 void playSound( pTransferSoundData sound);
 void setGenericSound( u32 rate, u8 vol, u8 pan, u8 format);
 void playGenericSound(const void* data, u32 length);

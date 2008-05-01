@@ -150,6 +150,13 @@ typedef struct {
 /*! \brief Macro to set the priority in background control */
 #define BG_PRIORITY(n) (n)
 
+/*! \brief Macro to set the palette entry of a 16 bit tile index */
+#define TILE_PALETTE(n) ((n)<<12)
+/*! \brief The horizontal flip bit for a 16 bit tile index */
+#define TILE_FLIP_H BIT(10)
+/*! \brief The vertical flip bit for a 16 bit tile index  */
+#define TILE_FLIP_V BIT(11)
+
 /*! \enum BackgroundControl
 \brief Bit defines for the background control registers
 */

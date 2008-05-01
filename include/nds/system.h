@@ -36,6 +36,7 @@
 
 #ifndef NDS_SYSTEM_INCLUDE
 #define NDS_SYSTEM_INCLUDE
+#include <nds/fifocommon.h>
 
 //!	LCD status register.
 #define	REG_DISPSTAT	(*(vu16*)0x04000004)
@@ -131,6 +132,22 @@ enum ARM9_power
 
 //!	Enables power to all hardware required for 3D video.
 #define POWER_ALL		 (POWER_ALL_2D | POWER_3D_CORE | POWER_MATRIX)
+
+////! puts the DS to sleep
+//static inline void sleep(void)
+//{
+//   u32 powerTemp = REG_POWERCNT;
+//   
+//   fifoSendValue32(FIFO_REQUEST, FRQ_SLEEP);
+//   
+//   powerOFF(POWER_ALL);
+//
+//   REG_IE = 0;
+//   REG_IE = IRQ_KEYS;
+//
+//   swiHalt();
+//   
+//}
 
 //!	Switches the screens.
 static inline void lcdSwap(void) { REG_POWERCNT ^= POWER_SWAP_LCDS; }

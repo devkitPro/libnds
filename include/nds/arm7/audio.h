@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: audio.h,v 1.14 2007-10-20 20:41:01 wntrmute Exp $
+	$Id: audio.h,v 1.15 2008-05-01 15:10:24 dovoto Exp $
 
 	ARM7 audio control
 
@@ -96,40 +96,41 @@ extern "C" {
 /*---------------------------------------------------------------------------------
 	Read a byte from the microphone
 ---------------------------------------------------------------------------------*/
-u8 MIC_ReadData();
+u8 micReadData8();
+u16 micReadData12();
 
 /*---------------------------------------------------------------------------------
 	Fill the buffer with data from the microphone. The buffer will be
 	signed sound data at 16kHz. Once the length of the buffer is
 	reached, no more data will be stored. Uses ARM7 timer 0.  
 ---------------------------------------------------------------------------------*/
-void StartRecording(u8* buffer, int length);
+void micStartRecording(u8* buffer, int length, int freq, int timer, bool eightBitSample);
 
 /*---------------------------------------------------------------------------------
 	Stop recording data, and return the length of data recorded.
 ---------------------------------------------------------------------------------*/
-int StopRecording();
+int micStopRecording();
 
 /* This must be called during IRQ_TIMER0 */
-void ProcessMicrophoneTimerIRQ();
+void micTimerHandler();
 
-void PM_SetAmp(u8 control);
+void micSetAmp(u8 control);
 
 //---------------------------------------------------------------------------------
 // Turn the microphone on 
 //---------------------------------------------------------------------------------
-static inline void MIC_On() {
+static inline void micOn() {
 //---------------------------------------------------------------------------------
-  PM_SetAmp(PM_AMP_ON);
+  micSetAmp(PM_AMP_ON);
 }
 
 
 //---------------------------------------------------------------------------------
 // Turn the microphone off 
 //---------------------------------------------------------------------------------
-static inline void MIC_Off() {
+static inline void micOff() {
 //---------------------------------------------------------------------------------
-  PM_SetAmp(PM_AMP_OFF);
+  micSetAmp(PM_AMP_OFF);
 }
 
 

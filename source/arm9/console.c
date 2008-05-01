@@ -481,12 +481,11 @@ void consoleDebugInit(DebugDevice device){
 // font and map..this is provided for rapid prototyping and nothing more
 void consoleDemoInit(void) {
 //---------------------------------------------------------------------------------
-	SUB_DISPLAY_CR |= DISPLAY_BG0_ACTIVE;
+   videoSetModeSub(DISPLAY_BG0_ACTIVE | MODE_0_2D);
 	vramSetBankC(VRAM_C_SUB_BG); 
 
 	REG_BG0CNT_SUB = BG_MAP_BASE(31);
 
-	
 	//consoleInit() is a lot more flexible but this gets you up and running quick
 	consoleInitDefault((u16*)SCREEN_BASE_BLOCK_SUB(31), (u16*)CHAR_BASE_BLOCK_SUB(0), 16);
 }
