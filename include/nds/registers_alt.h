@@ -40,7 +40,9 @@
 #include <nds/ndstypes.h>
 
 
-#define	REG_DISPCNT		(*(vu32*)0x4000000)
+#define DISPLAY_CR       REG_DISPCNT
+
+
 
 #ifdef ARM9
 #define WAIT_CR	REG_EXMEMCNT
@@ -103,7 +105,7 @@
 
 
 /*	secondary screen */
-#define	REG_DISPCNT_SUB		(*(vu32*)0x4001000)
+#define SUB_DISPLAY_CR   REG_DISPCNT_SUB
 
 #define SUB_BG0_CR		REG_BG0CNT_SUB
 #define SUB_BG1_CR		REG_BG1CNT_SUB

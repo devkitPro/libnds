@@ -317,8 +317,8 @@ void vramSetBankI(VRAM_I_TYPE i);
 
 
 // Display control registers
-#define DISPLAY_CR       (*(vuint32*)0x04000000)
-#define SUB_DISPLAY_CR   (*(vuint32*)0x04001000)
+#define	REG_DISPCNT		(*(vu32*)0x04000000)
+#define	REG_DISPCNT_SUB	(*(vu32*)0x04001000)
 
 #define ENABLE_3D    (1<<3)
 #define DISPLAY_ENABLE_SHIFT 8
@@ -388,15 +388,6 @@ typedef enum
 
 // main display only
 
-
-
-
-
-
-
-
-
-
 #define DISPLAY_SPR_HBLANK	   (1 << 23)
 
 #define DISPLAY_SPR_1D_LAYOUT	(1 << 4)
@@ -437,55 +428,55 @@ static inline
 /** \brief  the main 2D engine video mode 
 *    \param mode the video mode to set
 */
-void videoSetMode( uint32 mode)  { DISPLAY_CR = mode; }
+void videoSetMode( uint32 mode)  { REG_DISPCNT = mode; }
 
 static inline
 /** \brief  the sub 2D engine video mode 
 *    \param mode the video mode to set
 */
-void videoSetModeSub( uint32 mode)  { SUB_DISPLAY_CR = mode; }
+void videoSetModeSub( uint32 mode)  { REG_DISPCNT_SUB = mode; }
 
 static inline
 /** \brief  return the main 2D engine video mode 
 *    \return the video mode
 */
-int videoGetMode() {return (DISPLAY_CR & 0x30007);}
+int videoGetMode() {return (REG_DISPCNT & 0x30007);}
 
 static inline
 /** \brief  return the main 2D engine video mode 
 *    \return the video mode
 */
-int videoGetModeSub() {return (SUB_DISPLAY_CR & 0x30007);}
+int videoGetModeSub() {return (REG_DISPCNT_SUB & 0x30007);}
 
 static inline 
 /** \brief  determine if 3D is enabled
 *    \return true if 3D is enabled
 */
-bool video3DEnabled() {return (DISPLAY_CR & ENABLE_3D) ? true : false;}
+bool video3DEnabled() {return (REG_DISPCNT & ENABLE_3D) ? true : false;}
 
 static inline 
 /** \brief  enables the specified background on the main engine
 *    \param number the background number (0-3)
 */
-void videoBgEnable(int number) {DISPLAY_CR |= 1 << (DISPLAY_ENABLE_SHIFT + number);}
+void videoBgEnable(int number) {REG_DISPCNT |= 1 << (DISPLAY_ENABLE_SHIFT + number);}
 
 static inline 
 /** \brief  enables the specified background on the sub engine
 *    \param number the background number (0-3)
 */
-void videoBgEnableSub(int number) {SUB_DISPLAY_CR |= 1 << (DISPLAY_ENABLE_SHIFT + number);}
+void videoBgEnableSub(int number) {REG_DISPCNT_SUB |= 1 << (DISPLAY_ENABLE_SHIFT + number);}
 
 static inline 
 /** \brief  disables the specified background on the main engine
 *    \param number the background number (0-3)
 */
-void videoBgDisable(int number) {DISPLAY_CR &= ~(1 << (DISPLAY_ENABLE_SHIFT + number));}
+void videoBgDisable(int number) {REG_DISPCNT &= ~(1 << (DISPLAY_ENABLE_SHIFT + number));}
 
 static inline 
 /** \brief  disables the specified background on the sub engine
 *    \param number the background number (0-3)
 */
-void videoBgDisableSub(int number) {SUB_DISPLAY_CR &= ~(1 << (DISPLAY_ENABLE_SHIFT + number));}
+void videoBgDisableSub(int number) {REG_DISPCNT_SUB &= ~(1 << (DISPLAY_ENABLE_SHIFT + number));}
 
 
 #define BRIGHTNESS     (*(vuint16*)0x0400006C)

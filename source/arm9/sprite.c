@@ -57,14 +57,14 @@ void oamInit(OamState *oam, SpriteMapping mapping, bool extPalette)
    if(oam == &oamMain)
    {
       memcpy(OAM, oam->oamMemory, (sizeof(OamMemory)));
-      DISPLAY_CR &= ~DISPLAY_SPRITE_ATTR_MASK;
-      DISPLAY_CR |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;      
+      REG_DISPCNT &= ~DISPLAY_SPRITE_ATTR_MASK;
+      REG_DISPCNT |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;      
    }
    else
    {
       memcpy(OAM_SUB, oam->oamMemory, (sizeof(OamMemory)));
-      SUB_DISPLAY_CR &= ~DISPLAY_SPRITE_ATTR_MASK;
-      SUB_DISPLAY_CR |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;      
+      REG_DISPCNT_SUB &= ~DISPLAY_SPRITE_ATTR_MASK;
+      REG_DISPCNT_SUB |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;      
    }
 }
 
@@ -75,11 +75,11 @@ void oamDisable(OamState *oam)
 {
    if(oam == &oamMain)
    {
-      DISPLAY_CR &= ~DISPLAY_SPR_ACTIVE;
+      REG_DISPCNT &= ~DISPLAY_SPR_ACTIVE;
    }
    else
    {
-      SUB_DISPLAY_CR &= ~DISPLAY_SPR_ACTIVE;
+      REG_DISPCNT_SUB &= ~DISPLAY_SPR_ACTIVE;
    }
 }
 
@@ -87,11 +87,11 @@ void oamEnable(OamState *oam)
 {
 	if(oam == &oamMain)
    {
-      DISPLAY_CR |= DISPLAY_SPR_ACTIVE;
+      REG_DISPCNT |= DISPLAY_SPR_ACTIVE;
    }
    else
    {
-      SUB_DISPLAY_CR |= DISPLAY_SPR_ACTIVE;
+      REG_DISPCNT_SUB |= DISPLAY_SPR_ACTIVE;
    }
 }
 
