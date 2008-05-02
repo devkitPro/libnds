@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: microphone.c,v 1.6 2008-05-01 15:10:24 dovoto Exp $
+	$Id: microphone.c,v 1.7 2008-05-02 00:46:56 wntrmute Exp $
 
 	Microphone control for the ARM7
 
@@ -27,8 +27,10 @@
      distribution.
 
 ---------------------------------------------------------------------------------*/
-#include <nds/arm7/audio.h>
+#include <nds/interrupts.h>
 #include <nds/timers.h>
+#include <nds/arm7/audio.h>
+
 
 //---------------------------------------------------------------------------------
 // Turn on the Microphone Amp. Code based on neimod's example.
