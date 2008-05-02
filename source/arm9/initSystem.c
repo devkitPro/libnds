@@ -67,6 +67,7 @@ void initSystem(void) {
    //clear video display registers
    dmaFillWords(0, (void*)0x04000000, 0x56);  
    dmaFillWords(0, (void*)0x04001008, 0x56);  
+   videoSetModeSub(0);
 
    VRAM_CR  = 0x00000000;
    VRAM_E_CR = 0;
@@ -75,12 +76,7 @@ void initSystem(void) {
    VRAM_H_CR = 0;
    VRAM_I_CR = 0;
 
-   BG_PALETTE[0] = RGB15(0,0,0);
-   BG_PALETTE_SUB[0] = RGB15(0,0,0);
-
 //   fifoInit();
-
-   
 
    punixTime = (time_t*)&IPC->unixTime;
 }
