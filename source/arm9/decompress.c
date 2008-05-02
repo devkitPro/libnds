@@ -45,7 +45,7 @@ TDecompressionStream decomStream = {
    readByte
 };
 
-void decompress(const void* data, const void* dst, DecompressType type)
+void decompress(const void* data, void* dst, DecompressType type)
 {
 
    switch(type)
@@ -69,7 +69,7 @@ void decompress(const void* data, const void* dst, DecompressType type)
       break;
    }
 }
-void decompressStream(const void* data, const void* dst, DecompressType type, getByteCallback readCB, getHeaderCallback getHeaderCB)
+void decompressStream(const void* data, void* dst, DecompressType type, getByteCallback readCB, getHeaderCallback getHeaderCB)
 {
 #ifdef ARM9
    sassert(type != LZ77 && type != RLE, "LZ77 and RLE do not support streaming, use Vram versions");

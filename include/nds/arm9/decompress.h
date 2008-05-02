@@ -62,7 +62,7 @@ extern "C" {
 *    \param data the data to decompress
 *    \param type the type of data to decompress
 */
-void decompress(const void* data, const void* dst, DecompressType type);
+void decompress(const void* data, void* dst, DecompressType type);
 
 /** \fn decompressStream(const void* data, const void* dst, DecompressType type,  getByteCallback readCB, getHeaderCallback getHeaderCB)
 *    \brief decompresses data using the suported type (only LZ77Vram, HUFF, and RLEVram support streaming)
@@ -72,7 +72,7 @@ void decompress(const void* data, const void* dst, DecompressType type);
 *    \param readCB a callback to read the next byte of data
 *    \param getHeaderCB a callback to read the 32 byte header
 */
-void decompressStream(const void* data, const void* dst, DecompressType type, getByteCallback readCB, getHeaderCallback getHeaderCB);
+void decompressStream(const void* data, void* dst, DecompressType type, getByteCallback readCB, getHeaderCallback getHeaderCB);
 
 #ifdef __cplusplus
 }
