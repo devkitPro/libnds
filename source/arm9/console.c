@@ -481,7 +481,7 @@ void consoleDebugInit(DebugDevice device){
 // font and map..this is provided for rapid prototyping and nothing more
 void consoleDemoInit(void) {
 //---------------------------------------------------------------------------------
-   videoSetModeSub(DISPLAY_BG0_ACTIVE | MODE_0_2D);
+	videoSetModeSub(DISPLAY_BG0_ACTIVE | MODE_0_2D);
 	vramSetBankC(VRAM_C_SUB_BG); 
 
 	REG_BG0CNT_SUB = BG_MAP_BASE(31);

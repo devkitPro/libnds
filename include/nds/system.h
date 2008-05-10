@@ -254,11 +254,13 @@ typedef struct tPERSONAL_DATA {
 struct __argv {
 	int argvMagic;		//!< argv magic number, set to 0x5f617267 ('_arg') if valid 
 	char *commandLine;	//!< base address of command line, set of null terminated strings
-	int length;			//!< total length of command line
+	int length;//!< total length of command line
+	int argc;
+	char **argv;
 };
 
 //!	Default location for the libnds argv structure.
-#define libnds_argv		((struct __argv *)0x027FFF70)
+#define __system_argv		((struct __argv *)0x027FFF70)
 
 // argv struct magic number
 #define ARGV_MAGIC 0x5f617267

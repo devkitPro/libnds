@@ -32,7 +32,6 @@
 #define __DYNAMICARRAY_H__
 
 #include <stdlib.h>
-#include <string.h>
 
 /*! \struct DynamicArray
 \brief A resizable array

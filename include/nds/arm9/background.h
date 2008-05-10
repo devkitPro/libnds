@@ -97,7 +97,6 @@ On the main engine BG0 can be uses as a 3D rendering surface.
 #include <nds/memory.h>
 #include <nds/dma.h>
 #include <nds/arm9/trig_lut.h>
-#include <string.h>
 
 
 
