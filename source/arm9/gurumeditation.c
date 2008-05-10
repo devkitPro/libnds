@@ -250,8 +250,8 @@ static void defaultHandler() {
 	int i;
 	for ( i=0; i < 8; i++ ) {
 		iprintf(	"  %s: %08X   %s: %08X\n",
-					registerNames[i], exceptionRegisters[i],
-					registerNames[i+8],exceptionRegisters[i+8]);
+		registerNames[i], exceptionRegisters[i],
+		registerNames[i+8],exceptionRegisters[i+8]);
 	}
 	iprintf("\n");
 	u32 *stack = (u32 *)exceptionRegisters[13];
