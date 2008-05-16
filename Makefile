@@ -34,7 +34,7 @@ clean:
 #-------------------------------------------------------------------------------
 dist-src: clean
 #-------------------------------------------------------------------------------
-	@tar --exclude=*CVS* -cvjf libnds-src-$(VERSION).tar.bz2 arm7 arm9 common include Makefile libnds_license.txt 
+	@tar --exclude=*CVS* -cvjf libnds-src-$(VERSION).tar.bz2 arm7 arm9 source include Makefile libnds_license.txt 
 
 #-------------------------------------------------------------------------------
 dist-bin: all
