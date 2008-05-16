@@ -381,12 +381,12 @@ struct directly sets background registers.
 
 /*! \brief Background 2 Screen Offset (sub engine)*/
 #define	REG_BG2X_SUB		(*(vu32*)0x4001028)
-#define	REG_BG2X_SUB_L		(*(vu16*)0x4001028)
-#define	REG_BG2X_SUB_H		(*(vu16*)0x400102A)
+#define	REG_BG2X_L_SUB		(*(vu16*)0x4001028)
+#define	REG_BG2X_H_SUB		(*(vu16*)0x400102A)
 /*! \brief Background 2 Screen Offset (sub engine)*/
 #define	REG_BG2Y_SUB		(*(vu32*)0x400102C)
-#define	REG_BG2Y_SUB_L		(*(vu16*)0x400102C)
-#define	REG_BG2Y_SUB_H		(*(vu16*)0x400102E)
+#define	REG_BG2Y_L_SUB		(*(vu16*)0x400102C)
+#define	REG_BG2Y_H_SUB		(*(vu16*)0x400102E)
 
 /*! \brief Background 3 Affine transform (sub engine)*/
 #define	REG_BG3PA_SUB		(*(vu16*)0x4001030)
@@ -397,11 +397,11 @@ struct directly sets background registers.
 /*! \brief Background 3 Affine transform (sub engine)*/
 #define	REG_BG3PD_SUB		(*(vu16*)0x4001036)
 
-/*! \brief Background 3 Screen Offset (main engine)*/
+/*! \brief Background 3 Screen Offset (sub engine)*/
 #define	REG_BG3X_SUB		(*(vu32*)0x4001038)
 #define	REG_BG3X_L_SUB		(*(vu16*)0x4001038)
 #define	REG_BG3X_H_SUB		(*(vu16*)0x400103A)
-/*! \brief Background 3 Screen Offset (main engine)*/
+/*! \brief Background 3 Screen Offset (sub engine)*/
 #define	REG_BG3Y_SUB		(*(vu32*)0x400103C)
 #define	REG_BG3Y_L_SUB		(*(vu16*)0x400103C)
 #define	REG_BG3Y_H_SUB		(*(vu16*)0x400103E)
