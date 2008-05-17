@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-	$Id: keys.c,v 1.16 2008-04-06 06:31:13 dovoto Exp $
+	$Id: keys.c,v 1.17 2008-05-17 08:48:14 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -23,54 +23,6 @@
 		must not be misrepresented as being the original software.
 	3.	This notice may not be removed or altered from any source
 		distribution.
-
-	$Log: not supported by cvs2svn $
-	Revision 1.15  2006/07/04 01:45:31  wntrmute
-	remove unused variables
-	
-	Revision 1.14  2006/07/02 17:36:51  wntrmute
-	remove unnecessary IPC reads
-
-	Revision 1.13  2006/01/12 09:10:47  wntrmute
-	Added key repeat as suggested by pepsiman
-
-	Revision 1.12  2005/11/27 12:30:25  wntrmute
-	reverted to correct hardware REGisters
-
-	Revision 1.11  2005/11/27 07:48:45  joatski
-	Renamed REG_KEYINPUT and REG_KEYCNT back to KEYS and KEYS_CR, as the alternatives are defined in registers_alt.h.
-	Changed function returns to uint32
-
-	Revision 1.10  2005/11/03 23:38:49  wntrmute
-	don't use enum for key function returns
-
-	Revision 1.9  2005/10/13 16:30:11  dovoto
-	Changed KEYPAD_BITS to a typedef enum, this resolved some issues with multiple redefinition of KEYPAD_BITS (although this error did not allways occur).
-
-	Revision 1.8  2005/10/03 21:21:59  wntrmute
-	use enum types
-
-	Revision 1.7  2005/09/07 18:06:27  wntrmute
-	use new register names
-
-	Revision 1.6  2005/08/23 17:06:10  wntrmute
-	converted all endings to unix
-
-	Revision 1.5  2005/08/03 18:07:55  wntrmute
-	don't use nds.h
-
-	Revision 1.4  2005/07/25 02:31:07  wntrmute
-	made local variables static
-	added proper header to keys.h
-
-	Revision 1.3  2005/07/25 02:19:01  desktopman
-	Added support for KEY_LID in keys.c.
-	Moved KEYS_CUR from header to source file.
-	Changed from the custom abs() to stdlib.h's abs().
-
-	Revision 1.2  2005/07/14 08:00:57  wntrmute
-	resynchronise with ndslib
-
 
 ------------------------------------------------------------------------------*/
 
