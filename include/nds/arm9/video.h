@@ -490,8 +490,8 @@ void videoBgDisableSub(int number) {REG_DISPCNT_SUB &= ~(1 << (DISPLAY_ENABLE_SH
 #define WIN0_Y1        (*(vuint8*)0x04000044)
 
 // Window 1
-#define WIN1_X0        (*(vuint8*)0x04000042)
-#define WIN1_X1        (*(vuint8*)0x04000043)
+#define WIN1_X0        (*(vuint8*)0x04000043)
+#define WIN1_X1        (*(vuint8*)0x04000042)
 #define WIN1_Y0        (*(vuint8*)0x04000047)
 #define WIN1_Y1        (*(vuint8*)0x04000046)
 
@@ -505,8 +505,8 @@ void videoBgDisableSub(int number) {REG_DISPCNT_SUB &= ~(1 << (DISPLAY_ENABLE_SH
 #define SUB_WIN0_Y1    (*(vuint8*)0x04001044)
 
 // Window 1
-#define SUB_WIN1_X0    (*(vuint8*)0x04001042)
-#define SUB_WIN1_X1    (*(vuint8*)0x04001043)
+#define SUB_WIN1_X0    (*(vuint8*)0x04001043)
+#define SUB_WIN1_X1    (*(vuint8*)0x04001042)
 #define SUB_WIN1_Y0    (*(vuint8*)0x04001047)
 #define SUB_WIN1_Y1    (*(vuint8*)0x04001046)
 
