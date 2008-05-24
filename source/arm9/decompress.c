@@ -27,10 +27,7 @@ distribution.
 
 #include <nds/arm9/decompress.h>
 #include <nds/bios.h>
-
-#ifdef ARM9
 #include <nds/arm9/sassert.h>   
-#endif
 
 int getHeader(uint8 *source, uint16 *dest, uint32 arg) {
    return *(uint32*)source;
