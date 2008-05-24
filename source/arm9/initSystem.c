@@ -26,7 +26,6 @@ distribution.
 
 ---------------------------------------------------------------------------------*/
 #include <nds/ndstypes.h>
-#include <nds/system.h>
 #include <nds/memory.h>
 #include <nds/timers.h>
 #include <nds/dma.h>
@@ -36,6 +35,7 @@ distribution.
 #include <nds/interrupts.h>
 #include <nds/fifocommon.h>
 #include <time.h>
+#include <libnds_internal.h>
 
 
 extern time_t *punixTime;
@@ -69,7 +69,7 @@ void initSystem(void) {
    dmaFillWords(0, (void*)0x04001008, 0x56);  
    videoSetModeSub(0);
 
-   VRAM_CR  = 0x00000000;
+   VRAM_CR  = 0;
    VRAM_E_CR = 0;
    VRAM_F_CR = 0;
    VRAM_G_CR = 0;
@@ -78,5 +78,5 @@ void initSystem(void) {
 
 //   fifoInit();
 
-   punixTime = (time_t*)&IPC->unixTime;
+   punixTime = (time_t*)&__transferRegion()->unixTime;
 }

@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-	$Id: keys.c,v 1.17 2008-05-17 08:48:14 wntrmute Exp $
+	$Id: keys.c,v 1.18 2008-05-24 11:29:42 wntrmute Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -31,10 +31,11 @@
 #include <nds/ipc.h>
 #include <nds/system.h>
 #include <nds/arm9/input.h>
+#include <libnds_internal.h>
 
 //------------------------------------------------------------------------------
 
-#define KEYS_CUR (( ((~REG_KEYINPUT)&0x3ff) | (((~IPC->buttons)&3)<<10) | (((~IPC->buttons)<<6) & (KEY_TOUCH|KEY_LID) ))^KEY_LID)
+#define KEYS_CUR (( ((~REG_KEYINPUT)&0x3ff) | (((~__transferRegion()->buttons)&3)<<10) | (((~__transferRegion()->buttons)<<6) & (KEY_TOUCH|KEY_LID) ))^KEY_LID)
 
 static uint16 keys = 0;
 static uint16 keysold = 0;
