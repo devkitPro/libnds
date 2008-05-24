@@ -61,7 +61,7 @@
 
 static inline
 void SetYtrigger(int Yvalue) {
-	REG_DISPSTAT = (REG_DISPSTAT & 0x007F ) | (Yvalue << 8) | (( Yvalue & 0x100 ) >> 2) ;
+	REG_DISPSTAT = (REG_DISPSTAT & 0x007F ) | (Yvalue << 8) | (( Yvalue & 0x100 ) >> 1) ;
 }
 
 //!	Current display scanline.
@@ -72,7 +72,7 @@ void SetYtrigger(int Yvalue) {
 /*!	Writing 0x40 to HALT_CR activates GBA mode.
 	%HALT_CR can only be accessed via the BIOS.
 */
-#define HALT_CR       (*(vuint16*)0x04000300)
+#define HALT_CR       (*(vu16*)0x04000300)
 
 //!	Power control register.
 /*!	This register controls what hardware should
@@ -234,7 +234,7 @@ typedef struct tPERSONAL_DATA {
 } PACKED PERSONAL_DATA ;
 
 //!	Key input register.
-/*!	On the ARM9, the hinge "button," the touch status, and the
+/*!	On the ARM9, the hinge "button", the touch status, and the
 	X and Y buttons cannot be accessed directly.
 */
 #define	REG_KEYINPUT	(*(vuint16*)0x04000130)
@@ -254,9 +254,9 @@ typedef struct tPERSONAL_DATA {
 struct __argv {
 	int argvMagic;		//!< argv magic number, set to 0x5f617267 ('_arg') if valid 
 	char *commandLine;	//!< base address of command line, set of null terminated strings
-	int length;//!< total length of command line
-	int argc;
-	char **argv;
+	int length;			//!< total length of command line
+	int argc;			//!< internal use, number of arguments
+	char **argv;		//!< internal use, argv pointer
 };
 
 //!	Default location for the libnds argv structure.
@@ -264,5 +264,16 @@ struct __argv {
 
 // argv struct magic number
 #define ARGV_MAGIC 0x5f617267
+
+typedef	struct {
+	u8 year;	// add 2000 to get 4 digit year
+	u8 month;	// 1 to 12
+	u8 day;		// 1 to (days in month)
+
+	u8 weekday;	// day of week
+	u8 hours;	// 0 to 11 for AM, 52 to 63 for PM
+	u8 minutes;	// 0 to 59
+	u8 seconds;	// 0 to 59
+} RTCtime;
 
 #endif
