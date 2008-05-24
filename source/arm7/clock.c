@@ -28,6 +28,8 @@
 #include "nds/arm7/clock.h"
 #include "nds/interrupts.h"
 #include "nds/ipc.h"
+#include "nds/system.h"
+#include "libnds_internal.h"
 
 #include <time.h>
 
@@ -216,17 +218,47 @@ void rtcSetTime(uint8 * time) {
 //---------------------------------------------------------------------------------
 void syncRTC() {
 //---------------------------------------------------------------------------------
-	if (++IPC->time.rtc.seconds == 60 ) {
-		IPC->time.rtc.seconds = 0;
-		if (++IPC->time.rtc.minutes == 60) {
-			IPC->time.rtc.minutes  = 0;
-			if (++IPC->time.rtc.hours == 24) {
-				rtcGetTimeAndDate((uint8 *)&(IPC->time.rtc.year));
-			}
-		}
-	}
-	
-	IPC->unixTime++;
+	__transferRegion()->unixTime++;
+}
+
+/* Nonzero if `y' is a leap year, else zero. */
+#define leap(y) (((y) % 4 == 0 && (y) % 100 != 0) || (y) % 400 == 0)
+
+/* Number of leap years from 1970 to `y' (not including `y' itself). */
+#define nleap(y) (((y) - 1969) / 4 - ((y) - 1901) / 100 + ((y) - 1601) / 400)
+
+/* Additional leapday in February of leap years. */
+#define leapday(m, y) ((m) == 1 && leap (y))
+
+/* Accumulated number of days from 01-Jan up to start of current month. */
+static const short ydays[] = {
+  0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365
+};
+
+/* Length of month `m' (0 .. 11) */
+#define monthlen(m, y) (ydays[(m)+1] - ydays[m] + leapday (m, y))
+
+//---------------------------------------------------------------------------------
+static time_t __mktime( RTCtime *dstime ) {
+//---------------------------------------------------------------------------------
+	int years, months, days, hours, minutes, seconds;
+
+	years = dstime->year + 2000;	/* year - 2000 -> year */
+	months = dstime->month -1;		/* 0..11 */
+	days = dstime->day - 1;			/* 1..31 -> 0..30 */
+	hours = dstime->hours;			/* 0..23 */
+	minutes = dstime->minutes;		/* 0..59 */
+	seconds = dstime->seconds;		/* 0..61 in ANSI C. */
+
+	/* Set `days' to the number of days into the year. */
+	days += ydays[months] + (months > 1 && leap (years));
+
+	/* Now calculate `days' to the number of days since Jan 1, 1970. */
+	days = (unsigned)days + 365 * (unsigned)(years - 1970) + (unsigned)(nleap (years));
+
+	return (time_t)(86400L * (unsigned long)days +
+					3600L * (unsigned long)hours +
+					(unsigned long)(60 * minutes + seconds));
 }
 
 //---------------------------------------------------------------------------------
@@ -257,21 +289,9 @@ void initClockIRQ() {
 	rtcTransaction(command, 4, 0, 0);
 
 	// Read all time settings on first start
-	rtcGetTimeAndDate((uint8 *)&(IPC->time.rtc.year));
-
-
-	struct tm currentTime;
-
-	currentTime.tm_sec  = IPC->time.rtc.seconds;
-	currentTime.tm_min  = IPC->time.rtc.minutes;
-	currentTime.tm_hour = IPC->time.rtc.hours;
-
-	currentTime.tm_mday = IPC->time.rtc.day;
-	currentTime.tm_mon  = IPC->time.rtc.month - 1;
-	currentTime.tm_year = IPC->time.rtc.year + 100;
+	RTCtime dstime;
+	rtcGetTimeAndDate((uint8 *)&dstime);
 	
-	currentTime.tm_isdst = -1;
-	
-	IPC->unixTime = mktime(&currentTime);
+	__transferRegion()->unixTime = __mktime(&dstime);
 }
 
