@@ -4,7 +4,7 @@ endif
  
 export TOPDIR	:=	$(CURDIR)
 VERSION	:=	$(shell date +%Y%m%d)
-.PHONEY: release debug clean all
+.PHONY: release debug clean all docs
 
 all: release debug 
 
@@ -34,17 +34,24 @@ clean:
 #-------------------------------------------------------------------------------
 dist-src: clean
 #-------------------------------------------------------------------------------
-	@tar --exclude=*CVS* -cvjf libnds-src-$(VERSION).tar.bz2 arm7 arm9 source include Makefile libnds_license.txt 
+	@tar --exclude=*CVS* -cjf libnds-src-$(VERSION).tar.bz2 arm7 arm9 source include Makefile libnds_license.txt 
 
 #-------------------------------------------------------------------------------
 dist-bin: all
 #-------------------------------------------------------------------------------
-	@tar --exclude=*CVS* -cvjf libnds-$(VERSION).tar.bz2 include lib libnds_license.txt
+	@tar --exclude=*CVS* -cjf libnds-$(VERSION).tar.bz2 include lib libnds_license.txt
 
 dist: dist-bin dist-src
 
 #-------------------------------------------------------------------------------
 install: dist-bin
 #-------------------------------------------------------------------------------
-	bzip2 -cd libnds-$(VERSION).tar.bz2 | tar -xv -C $(DEVKITPRO)/libnds
+	bzip2 -cd libnds-$(VERSION).tar.bz2 | tar -x -C $(DEVKITPRO)/libnds
+
+#---------------------------------------------------------------------------------
+docs:
+#---------------------------------------------------------------------------------
+	doxygen libnds.dox
+	cat warn.log
+
 
