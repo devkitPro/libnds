@@ -143,8 +143,8 @@
 #define	REG_WINOUT_SUB		(*(vu16*)0x400104A)
 
 #define	REG_MOSAIC_SUB		(*(vu32*)0x400104C)
-#define	REG_MOSAIC_L_SUB	(*(vu32*)0x400104C)
-#define	REG_MOSAIC_H_SUB	(*(vu32*)0x400104E)
+#define	REG_MOSAIC_L_SUB	(*(vu16*)0x400104C)
+#define	REG_MOSAIC_H_SUB	(*(vu16*)0x400104E)
 
 #define	REG_BLDMOD_SUB	(*(vu16*)0x4001050)
 #define	REG_COLV_SUB	(*(vu16*)0x4001052)
