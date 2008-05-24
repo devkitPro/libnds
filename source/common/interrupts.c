@@ -105,7 +105,6 @@ void irqEnable(uint32 irq) {
 		REG_DISPSTAT |= DISP_YTRIGGER_IRQ;
 
 	REG_IE |= irq;
-	REG_IME = 1;
 }
 
 //---------------------------------------------------------------------------------
