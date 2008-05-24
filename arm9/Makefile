@@ -18,7 +18,7 @@ TOPDIR ?= $(CURDIR)/..
 #---------------------------------------------------------------------------------
 BUILD		?=	release
 SOURCES		:=	../source/arm9 ../source/common
-INCLUDES	:=	../include
+INCLUDES	:=	../include ../source/common
 GRAPHICS	:=	../source/arm9/gfx
 DATA			:=	../source/arm9
 

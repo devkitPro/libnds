@@ -18,7 +18,7 @@ TOPDIR ?= $(CURDIR)/..
 #---------------------------------------------------------------------------------
 BUILD		?=	release
 SOURCES		:=	../source/arm7 ../source/common
-INCLUDES	:=	../include
+INCLUDES	:=	../include ../source/common
 
 #---------------------------------------------------------------------------------
 # options for code generation
