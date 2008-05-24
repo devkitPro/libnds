@@ -88,12 +88,12 @@ uint32 keysUp(void);
 	\brief holds data related to the touch screen
 */
 typedef struct touchPosition {
-	int16	rawx; //!< Raw x value from the A2D
-	int16	rawy; //!< Raw x value from the A2D
-	int16	px;   //!< Processes pixel X value
-	int16	py;   //!< Processes pixel Y value
-	int16	z1;   //!< Raw cross panel resistance
-	int16	z2;   //!< Raw cross panel resistance
+	u16	rawx; //!< Raw x value from the A2D
+	u16	rawy; //!< Raw x value from the A2D
+	u16	px;   //!< Processes pixel X value
+	u16	py;   //!< Processes pixel Y value
+	u16	z1;   //!< Raw cross panel resistance
+	u16	z2;   //!< Raw cross panel resistance
 } touchPosition;
 
 __attribute__ ((deprecated)) touchPosition touchReadXY() ;
