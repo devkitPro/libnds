@@ -274,6 +274,7 @@ typedef	struct {
 	u8 hours;	// 0 to 11 for AM, 52 to 63 for PM
 	u8 minutes;	// 0 to 59
 	u8 seconds;	// 0 to 59
-} RTCtime;
+	u8 padding;
+} ALIGN(4) RTCtime;
 
 #endif
