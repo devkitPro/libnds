@@ -35,69 +35,30 @@
 //---------------------------------------------------------------------------------
 typedef struct sTransferSoundData {
 //---------------------------------------------------------------------------------
-  const void *data;
-  u32 len;
-  u32 rate;
-  u8 vol;
-  u8 pan;
-  u8 format;
-  u8 PADDING;
+	const void *data;
+	u32 len;
+	u32 rate;
+	u8 vol;
+	u8 pan;
+	u8 format;
+	u8 PADDING;
 } TransferSoundData, * pTransferSoundData;
-
-
-//---------------------------------------------------------------------------------
-typedef struct sTransferSound {
-//---------------------------------------------------------------------------------
-  TransferSoundData data[16];
-  u8 count;
-  u8 PADDING[3];
-} TransferSound, * pTransferSound;
 
 
 //---------------------------------------------------------------------------------
 typedef struct sTransferRegion {
 //---------------------------------------------------------------------------------
-	vint16 touchX,   touchY;	// TSC X, Y
-	vint16 touchXpx, touchYpx;	// TSC X, Y pixel values
-	vint16 touchZ1,  touchZ2;	// TSC x-panel measurements
-	vuint16 tdiode1,  tdiode2; 	// TSC temperature diodes
-	vuint32 temperature;		// TSC computed temperature
-
-	uint16 buttons;				// X, Y, /PENIRQ buttons
-
-	union {
-		vuint8 curtime[8];		// current time response from RTC
-
-		struct {
-			vu8 command;
-			vu8 year;		//add 2000 to get 4 digit year
-			vu8 month;		//1 to 12
-			vu8 day;		//1 to (days in month)
-
-			vu8 weekday;	// day of week
-			vu8 hours;		//0 to 11 for AM, 52 to 63 for PM
-			vu8 minutes;	//0 to 59
-			vu8 seconds;	//0 to 59
-		} rtc;
-	} time;
+	vs16 touchX,   touchY;		// TSC X, Y
+	vs16 touchXpx, touchYpx;	// TSC X, Y pixel values
+	vs16 touchZ1,  touchZ2;		// TSC x-panel measurements
+	vu16 buttons;				// X, Y, /PENIRQ buttons
 	time_t	unixTime;
 
-	uint16 battery;			// battery life ??  hopefully.  :)
-	uint16 aux;				// i have no idea...
-
-	// Don't rely on these below, will change or be removed in the future
-	pTransferSound soundData;
-
-	vuint32 mailAddr;
-	vuint32 mailData;
-	vuint8 mailRead;
-	vuint8 mailBusy;
-	vuint32 mailSize;
 } TransferRegion, * pTransferRegion;
 
 
 static inline
-TransferRegion volatile * getIPC(); // __attribute__ ((deprecated));
+TransferRegion volatile * getIPC() __attribute__ ((deprecated));
 
 static inline
 TransferRegion volatile * getIPC() {
@@ -105,11 +66,6 @@ TransferRegion volatile * getIPC() {
 }
 
 #define IPC getIPC()
-
-#define IPC_PEN_DOWN BIT(6)
-#define IPC_X BIT(0)
-#define IPC_Y BIT(1)
-#define IPC_LID_CLOSED BIT(7)
 
 //---------------------------------------------------------------------------------
 // Synchronization register

@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.h,v 1.10 2008-02-21 23:39:23 dovoto Exp $
 
 	Microphone control for the ARM7
 
@@ -64,9 +63,9 @@ typedef struct touchPosition {
 	int16	py;   //!< Processes pixel Y value
 	int16	z1;   //!< Raw cross panel resistance
 	int16	z2;   //!< Raw cross panel resistance
-} touchPosition;
+} ALIGN(4) touchPosition;
 
-touchPosition touchReadXY(void);
+void touchReadXY(touchPosition *touchPos);
 uint16 touchRead(uint32 command);
 uint32 touchReadTemperature(int * t1, int * t2);
 

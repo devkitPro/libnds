@@ -2,7 +2,7 @@
 
 	touch screen input code
 
- 	Copyright (C) 2005
+ 	Copyright (C) 2005 - 2008
 		Dave Murphy (WinterMute)
 
 	This software is provided 'as-is', without any express or implied
@@ -25,11 +25,26 @@
 
 
 ---------------------------------------------------------------------------------*/
-
-//#include <nds.h>
-
 #include <nds/ipc.h>
 #include <nds/arm9/input.h>
+#include <nds/fifocommon.h>
+#include <libnds_internal.h>
+
+//---------------------------------------------------------------------------------
+void touchRead(touchPosition *data) {
+//---------------------------------------------------------------------------------
+
+	if ( !data ) return;
+
+	data->rawx = __transferRegion()->touchX;
+	data->rawy = __transferRegion()->touchY;
+	data->px = __transferRegion()->touchXpx;
+	data->py = __transferRegion()->touchYpx;
+	data->z1 = __transferRegion()->touchZ1;
+	data->z2 = __transferRegion()->touchZ2;
+
+
+}
 
 //---------------------------------------------------------------------------------
 touchPosition touchReadXY() {
@@ -37,26 +52,7 @@ touchPosition touchReadXY() {
 	
 	touchPosition touchPos;
 
-	touchPos.rawx = IPC->touchX;
-	touchPos.rawy = IPC->touchY;
-
-	touchPos.px = IPC->touchXpx;
-	touchPos.py = IPC->touchYpx;
-
+	touchRead(&touchPos);
 	return touchPos;
-
-}
-
-//---------------------------------------------------------------------------------
-void touchRead(touchPosition *data) {
-//---------------------------------------------------------------------------------
-	data->rawx = IPC->touchX;
-	data->rawy = IPC->touchY;
-
-	data->px = IPC->touchXpx;
-	data->py = IPC->touchYpx;
-	
-	data->z1 = IPC->touchZ1;
-	data->z2 = IPC->touchZ2;
 
 }

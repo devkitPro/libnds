@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: touch.c,v 1.22 2008-02-21 23:39:23 dovoto Exp $
 
 	Touch screen control for the ARM7
 
@@ -274,13 +273,11 @@ void UpdateRange(uint8 *this_range, int16 last_dist_max, u8 data_error, u8 tsc_t
 //---------------------------------------------------------------------------------
 // reading pixel position:
 //---------------------------------------------------------------------------------
-touchPosition touchReadXY(void) {
+void touchReadXY(touchPosition *touchPos) {
 //---------------------------------------------------------------------------------
 
 	int16 dist_max_y, dist_max_x, dist_max;
 	u8 error, error_where, first_check, i;
-
-	touchPosition touchPos = { 0, 0, 0, 0, 0, 0 };
 
 	if ( !touchInit ) {
 
@@ -300,13 +297,13 @@ touchPosition touchReadXY(void) {
 	if(first_check != 0){
 		error_where = 0;
 
-		touchPos.z1 =  readTouchValue(TSC_MEASURE_Z1 | 1, &dist_max, &error);
-		touchPos.z2 =  readTouchValue(TSC_MEASURE_Z2 | 1, &dist_max, &error);
+		touchPos->z1 =  readTouchValue(TSC_MEASURE_Z1 | 1, &dist_max, &error);
+		touchPos->z2 =  readTouchValue(TSC_MEASURE_Z2 | 1, &dist_max, &error);
 
-		touchPos.x = readTouchValue(TSC_MEASURE_X | 1, &dist_max_x, &error);
+		touchPos->x = readTouchValue(TSC_MEASURE_X | 1, &dist_max_x, &error);
 		if(error==1) error_where += 1;
 
-		touchPos.y = readTouchValue(TSC_MEASURE_Y | 1, &dist_max_y, &error);
+		touchPos->y = readTouchValue(TSC_MEASURE_Y | 1, &dist_max_y, &error);
 		if(error==1) error_where += 2;
 
 		REG_SPICNT = SPI_ENABLE | SPI_BAUD_2MHz | SPI_DEVICE_TOUCH | SPI_CONTINUOUS;
@@ -343,31 +340,28 @@ touchPosition touchReadXY(void) {
 			break;
 		}
 
-		s16 px = ( touchPos.x * xscale - xoffset + xscale/2 ) >>19;
-		s16 py = ( touchPos.y * yscale - yoffset + yscale/2 ) >>19;
+		s16 px = ( touchPos->x * xscale - xoffset + xscale/2 ) >>19;
+		s16 py = ( touchPos->y * yscale - yoffset + yscale/2 ) >>19;
 
 		if ( px < 0) px = 0;
 		if ( py < 0) py = 0;
 		if ( px > (SCREEN_WIDTH -1)) px = SCREEN_WIDTH -1;
 		if ( py > (SCREEN_HEIGHT -1)) py = SCREEN_HEIGHT -1;
 
-		touchPos.px = px;
-		touchPos.py = py;
+		touchPos->px = px;
+		touchPos->py = py;
 
 
 	}else{
 		error_where = 3;
-		touchPos.x = 0;
-		touchPos.y = 0;
+		touchPos->x = 0;
+		touchPos->y = 0;
 		last_time_touched = 0;
 	}
 
 	UpdateRange(&range, dist_max, error_where, last_time_touched);
 
 	REG_IME = oldIME;
-
-
-	return touchPos;
 
 }
 
