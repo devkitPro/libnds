@@ -29,46 +29,21 @@
 #include <string.h>
 
 //---------------------------------------------------------------------------------
-static void playSoundBlock(TransferSound *snd) {
-//---------------------------------------------------------------------------------
-	DC_FlushRange( snd, sizeof(TransferSound) );
-
-	IPC->soundData = snd;
-}
-
-//---------------------------------------------------------------------------------
-static TransferSound Snd;
-static TransferSoundData SndDat =		{ (void *)0 , 0, 11025, 64, 64, 1 };
 
 //---------------------------------------------------------------------------------
 void setGenericSound( u32 rate, u8 vol, u8 pan, u8 format) {
 //---------------------------------------------------------------------------------
 
-	SndDat.rate		= rate;
-	SndDat.vol		= vol;
-	SndDat.pan		= pan;
-	SndDat.format	= format;
 }
 
 //---------------------------------------------------------------------------------
-void playSound( pTransferSoundData sound) {
+int playSound( pTransferSoundData sound) {
 //---------------------------------------------------------------------------------
-	Snd.count = 1;
-
-	memcpy( &Snd.data[0], sound, sizeof(TransferSoundData) );
-
-	playSoundBlock(&Snd);
-
+	return 0;
 }
 
 //---------------------------------------------------------------------------------
-void playGenericSound(const void* data, u32 length) {
+int playGenericSound(const void* data, u32 length) {
 //---------------------------------------------------------------------------------
-	Snd.count = 1;
-
-	memcpy( &Snd.data[0], &SndDat, sizeof(TransferSoundData) );
-	Snd.data[0].data = data;
-	Snd.data[0].len = length;
-
-	playSoundBlock(&Snd);
+	return 0;
 }
