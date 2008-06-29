@@ -28,6 +28,10 @@
 ---------------------------------------------------------------------------------*/
 /*! \file sprite.h
     \brief nds sprite functionality.
+   
+   \example Graphics/2D/SimpleSprite/source/template.c
+	\example Graphics/2D/SpriteAllocationTest/source/main.c
+	\example Graphics/2D/Sprite_Bitmap/source/main.cpp
 */
 
 #ifndef _libnds_sprite_h_
