@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: audio.h,v 1.15 2008-05-01 15:10:24 dovoto Exp $
+	$Id: audio.h,v 1.16 2008-07-14 21:18:46 wntrmute Exp $
 
 	ARM7 audio control
 
@@ -74,15 +74,18 @@ extern "C" {
 #define SOUND_CR          (*(vuint16*)0x04000500)
 #define SOUND_MASTER_VOL  (*(vuint8*)0x04000500)
 
+#define SOUND_BIAS		(*(vuint16*)0x04000504)
+
 //---------------------------------------------------------------------------------
-// not sure on the following
+// Sound Capture Registers
 //---------------------------------------------------------------------------------
-#define SOUND_BIAS        (*(vuint16*)0x04000504)
-#define SOUND508          (*(vuint16*)0x04000508)
-#define SOUND510          (*(vuint16*)0x04000510)
-#define SOUND514		  (*(vuint16*)0x04000514)
-#define SOUND518          (*(vuint16*)0x04000518)
-#define SOUND51C          (*(vuint16*)0x0400051C)
+#define REG_SNDCAP0CNT	(*(vu8*)0x04000508)
+#define REG_SNDCAP1CNT	(*(vu8*)0x04000509)
+
+#define REG_SNDCAP0DAD	(*(vu32*)0x04000510)
+#define REG_SNDCAP0LEN  (*(vu16*)0x04000514)
+#define REG_SNDCAP1DAD	(*(vu32*)0x04000518)
+#define REG_SNDCAP1LEN	(*(vu16*)0x0400051C)
 
 
 /*---------------------------------------------------------------------------------
@@ -133,6 +136,7 @@ static inline void micOff() {
   micSetAmp(PM_AMP_OFF);
 }
 
+void installSoundFIFO();
 
 #ifdef __cplusplus
 }
