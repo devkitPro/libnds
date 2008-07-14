@@ -1,59 +1,57 @@
 #ifndef FIFOCOMMON_H
 #define FIFOCOMMON_H
 
+#include "ndstypes.h"
+
 /*! \file fifocommon.h 
 \brief low level FIFO API. 
 */
 
-typedef enum
-{
-   FIFO_REQUEST = 0, /*< \brief A channel for making requests */
-   FIFO_DATA = 1,/*< \brief A channel for sending data (no handler installed on this channel) */
-   FIFO_DSWIFI = 2, 
-   FIFO_SOUND = 11,
-   FIFO_RESERVED_01 = 4,
-   FIFO_RESERVED_02 = 5,
-   FIFO_RESERVED_03 = 6,
-   FIFO_RESERVED_04 = 7,
-   FIFO_USER_01 = 8,
-   FIFO_USER_02 = 9,
-   FIFO_USER_03 = 10,
-   FIFO_USER_04 = 11,
-   FIFO_USER_05 = 12,
-   FIFO_USER_06 = 13,
-   FIFO_USER_07 = 14,
-   FIFO_USER_08 = 15,
-}FifoChannels;
+typedef enum {
+   FIFO_PM		= 0,
+   FIFO_SOUND	= 1,
+   FIFO_SYSTEM	= 2, 
+   FIFO_RSDV_01	= 3,
+   FIFO_RSVD_02 = 4,
+   FIFO_RSVD_03 = 5,
+   FIFO_DSWIFI	= 6,
+   FIFO_MAXMOD	= 7,
+   FIFO_USER_01	= 8,
+   FIFO_USER_02	= 9,
+   FIFO_USER_03	= 10,
+   FIFO_USER_04	= 11,
+   FIFO_USER_05	= 12,
+   FIFO_USER_06	= 13,
+   FIFO_USER_07	= 14,
+   FIFO_USER_08	= 15,
+} FifoChannels;
 
-typedef enum
-{
-   FRQ_TOUCH = 0,
-   FRQ_RTC =   1 << 16,
-   FRQ_SLEEP = 2 << 16,
-   FRQ_POWER_ON = 3 << 16,
-   FRQ_POWER_OFF = 4 << 16,
-   FRQ_BLINK_LED = 5 << 16,
-   FRQ_WIFI_KILL = 6 << 16,
-   FRQ_WIFI_SYNC = 7 << 16,
-   FRQ_RESET = 8 << 16,
-   FRQ_SOUND_INIT = 9 << 16,
-   FRQ_SLEEP_DISABLE = 10 << 16,
-   FRQ_SLEEP_ENABLE = 11 << 16,
-   FRQ_PRINT_CHAR = 12 << 16,
+typedef enum {
    
    FRQ_START_MIC = 13 << 16,
    FRQ_STOP_MIC = 14 << 17,
 
-   FRQ_WIFI_INIT = 1 << 31
    
-}FifoRequestCommands;
 
-//not sure about how to formalize data message structure or if its even necessary
-typedef struct
-{ 
-   u32 command;
-   char data[0];
-}FifoDataMsg;
+	SOUND_SETPAN		= 0,
+	SOUND_SETVOLUME		= 1 << 24,
+	SOUND_SETGENERIC	= 2 << 24,
+	
+
+} FifoSoundCommands;
+
+typedef enum {
+	SYS_REQ_TOUCH,
+	SYS_REQ_TIME,
+	SYS_REQ_SLEEP
+} FifoSystemCommands;
+
+typedef enum {
+	WIFI_ENABLE,
+	WIFI_DISABLE,
+	WIFI_SYNC
+} FifoWifiCommands;
+
 
 /*! \enum PM_Bits
 \brief Power Management control bits 
@@ -71,11 +69,10 @@ typedef enum
 /*! \enum PM_LedBlinkMode
 \brief Power Management LED blink mode control bits 
 */
-typedef enum
-{
-   PM_LED_ON		=(0<<4),	/*!< \brief  Steady on */
-   PM_LED_SLEEP	=(1<<4),	/*!< \brief Blinking, mostly off */
-   PM_LED_BLINK	=(3<<4),	/*!< \brief Blinking, mostly on */
+typedef enum {
+	PM_LED_ON		=(0<<4),	/*!< \brief  Steady on */
+	PM_LED_SLEEP	=(1<<4),	/*!< \brief Blinking, mostly off */
+	PM_LED_BLINK	=(3<<4),	/*!< \brief Blinking, mostly on */
 }PM_LedBlinkMode;
 // Some aspects of this configuration can be changed...
 
