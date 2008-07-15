@@ -45,6 +45,7 @@ dmaCopy(source, destination, sizeof(dataToCopy));
 #ifndef NDS_DMA_INCLUDE
 #define NDS_DMA_INCLUDE
 
+#include "nds/ndstypes.h"
 
 #define DMA0_SRC       (*(vuint32*)0x040000B0)
 #define DMA0_DEST      (*(vuint32*)0x040000B4)

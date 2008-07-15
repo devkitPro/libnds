@@ -53,6 +53,8 @@
 //---------------------------------------------------------------------------------
 
 #include "nds/dma.h"
+#include "nds/ndstypes.h"
+#include "nds/arm9/video.h"
 #include "nds/arm9/cache.h"
 #include "nds/arm9/trig_lut.h"
 #include "nds/arm9/math.h"
@@ -307,7 +309,10 @@ typedef struct {
 } gl_hidden_globals;
 
 // Pointer to global data for videoGL
-static gl_hidden_globals* glGlob = 0;
+extern gl_hidden_globals glGlobalData;
+
+// Pointer to global data for videoGL
+static gl_hidden_globals* glGlob = &glGlobalData;
 
 //---------------------------------------------------------------------------------
 //Fifo commands
@@ -1128,7 +1133,6 @@ GL_STATIC_INL
 /*! \fn void glInit() 
 \brief Initializes the gl state machine (must be called once before using gl calls) */
 void glInit() {
-	glGlob = glGetGlobals(); // make sure globals are synced between compilation units
 	glInit_C(); // actually does the initialization
 }
 

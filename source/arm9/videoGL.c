@@ -37,7 +37,9 @@
 
 // this is the actual data of the globals for videoGL
 //   Please use the glGlob pointer to access this data since that makes it easier to move stuff in/out of the header.
-static gl_hidden_globals glGlobalData;
+gl_hidden_globals glGlobalData;
+
+
 
 // This returns the pointer to the globals for videoGL
 gl_hidden_globals* glGetGlobals() {
