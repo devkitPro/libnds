@@ -280,13 +280,9 @@ struct directly sets background registers.
 
 /*! \brief Background 2 Screen Offset (main engine)*/
 #define	REG_BG2X		(*(vu32*)0x4000028)
-#define	REG_BG2X_L		(*(vu16*)0x4000028)
-#define	REG_BG2X_H		(*(vu16*)0x400002A)
 
 /*! \brief Background 2 Screen Offset (main engine)*/
 #define	REG_BG2Y		(*(vu32*)0x400002C)
-#define	REG_BG2Y_L		(*(vu16*)0x400002C)
-#define	REG_BG2Y_H		(*(vu16*)0x400002E)
 /*! \brief Background 3 Affine transform (main engine)*/
 #define	REG_BG3PA		(*(vu16*)0x4000030)
 /*! \brief Background 3 Affine transform (main engine)*/
@@ -298,13 +294,9 @@ struct directly sets background registers.
 
 /*! \brief Background 3 Screen Offset (main engine)*/
 #define	REG_BG3X		(*(vu32*)0x4000038)
-#define	REG_BG3X_L		(*(vu16*)0x4000038)
-#define	REG_BG3X_H		(*(vu16*)0x400003A)
 
 /*! \brief Background 3 Screen Offset (main engine)*/
 #define	REG_BG3Y		(*(vu32*)0x400003C)
-#define	REG_BG3Y_L		(*(vu16*)0x400003C)
-#define	REG_BG3Y_H		(*(vu16*)0x400003E)
 /*@}*/
 
 /*! \defgroup sub_display_registers "Sub Engine"
@@ -381,12 +373,8 @@ struct directly sets background registers.
 
 /*! \brief Background 2 Screen Offset (sub engine)*/
 #define	REG_BG2X_SUB		(*(vu32*)0x4001028)
-#define	REG_BG2X_L_SUB		(*(vu16*)0x4001028)
-#define	REG_BG2X_H_SUB		(*(vu16*)0x400102A)
 /*! \brief Background 2 Screen Offset (sub engine)*/
 #define	REG_BG2Y_SUB		(*(vu32*)0x400102C)
-#define	REG_BG2Y_L_SUB		(*(vu16*)0x400102C)
-#define	REG_BG2Y_H_SUB		(*(vu16*)0x400102E)
 
 /*! \brief Background 3 Affine transform (sub engine)*/
 #define	REG_BG3PA_SUB		(*(vu16*)0x4001030)
@@ -399,12 +387,8 @@ struct directly sets background registers.
 
 /*! \brief Background 3 Screen Offset (sub engine)*/
 #define	REG_BG3X_SUB		(*(vu32*)0x4001038)
-#define	REG_BG3X_L_SUB		(*(vu16*)0x4001038)
-#define	REG_BG3X_H_SUB		(*(vu16*)0x400103A)
 /*! \brief Background 3 Screen Offset (sub engine)*/
 #define	REG_BG3Y_SUB		(*(vu32*)0x400103C)
-#define	REG_BG3Y_L_SUB		(*(vu16*)0x400103C)
-#define	REG_BG3Y_H_SUB		(*(vu16*)0x400103E)
 /*@}*/
 
 
@@ -513,7 +497,7 @@ void bgSetRotate(int id, int angle)
 {
    bgState[id].angle = angle & 0x1ff;
 
-   bgUpdate(id);
+   //bgUpdate(id);
 }
 
 
@@ -603,7 +587,7 @@ void bgSetScale(int id, s32 sx, s32 sy)
 	
 	bgState[id].scaleX = sx;
 	bgState[id].scaleY = sy;
-   bgUpdate(id);
+   //bgUpdate(id);
 	
 }
 
@@ -791,7 +775,7 @@ void bgSetScrollf(int id, s32 x, s32 y)
 	
 	bgState[id].scrollX = x;
 	bgState[id].scrollY = y;
-   bgUpdate(id);
+   //bgUpdate(id);
 }
 
 static inline 
@@ -1020,7 +1004,7 @@ void bgSetCenterf(int id, s32 x, s32 y)
  	bgState[id].centerX = x;
 	bgState[id].centerY = y;
 
-   bgUpdate(id);
+  // bgUpdate(id);
 }
 
 static inline 

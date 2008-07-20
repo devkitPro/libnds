@@ -356,7 +356,7 @@ void oamFreeGfx(OamState *oam, const void* gfxOffset);
 *    \param sizeDouble if affineIndex >= 0 this will be used to double the sprite size for rotation
 *    \param hide if non zero (true) the sprite will be hidden
 */
-void oamSet(OamState* oam, int id,  int x, int y, int palette_alpha, SpriteSize size, SpriteColorFormat format, const void* gfxOffset, int affineIndex, bool sizeDouble, bool hide);
+void oamSet(OamState* oam, int id,  int x, int y, int priority, int palette_alpha, SpriteSize size, SpriteColorFormat format, const void* gfxOffset, int affineIndex, bool sizeDouble, bool hide);
 
 /**  \fn void oamClear(OamState *oam, int start, int count)
 *    \brief Hides the sprites in the supplied range: if count is zero all 128 sprites will be hidden
@@ -382,11 +382,6 @@ void oamUpdate(OamState* oam);
 */
 void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy);
 
-/**  \fn void oamPrintAllocStatus(OamState *oam)
-*    \brief function for printing the allocation state
-*    \param oam must be: &oamMain or &oamSub
-*/
-void oamPrintAllocStatus(OamState *oam);
 
 /**  \fn void oamCountFragments(OamState *oam)
 *    \brief determines the number of fragments in the allocation engine

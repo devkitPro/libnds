@@ -61,9 +61,6 @@ void initSystem(void) {
    irqInit();
    irqEnable(IRQ_VBLANK);
 
-   oamInit(&oamMain,SpriteMapping_Bmp_1D_128, false);
-   oamInit(&oamSub,SpriteMapping_Bmp_1D_128, false);
-
    //clear video display registers
    dmaFillWords(0, (void*)0x04000000, 0x56);  
    dmaFillWords(0, (void*)0x04001008, 0x56);  
