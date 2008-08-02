@@ -612,6 +612,8 @@ void videoBgDisableSub(int number) {REG_DISPCNT_SUB &= ~(1 << (DISPLAY_ENABLE_SH
 #define GFX_BOX_TEST		(*(vint32*)  0x040005C0)
 #define GFX_POS_TEST		(*(vuint32*) 0x040005C4)
 #define GFX_POS_RESULT		((vint32*)   0x04000620)
+#define GFX_VEC_TEST		(*(vuint32*) 0x040005C8)
+#define GFX_VEC_RESULT      ((vint32*)   0x04000630)
 
 #define GFX_BUSY (GFX_STATUS & BIT(27))
 
