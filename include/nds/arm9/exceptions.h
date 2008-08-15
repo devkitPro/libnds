@@ -29,8 +29,8 @@
 
 
 extern VoidFunctionPointer exceptionC[] ;
-extern unsigned long exceptionStack ;
-extern signed long exceptionRegisters[];
+extern u32 exceptionStack ;
+extern s32 exceptionRegisters[];
 
 void enterException(void);
 void setExceptionHandler(VoidFunctionPointer handler);
