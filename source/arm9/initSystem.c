@@ -58,8 +58,6 @@ void initSystem(void) {
       TIMER_DATA(i) = 0;
    }
 
-   irqInit();
-   irqEnable(IRQ_VBLANK);
 
    //clear video display registers
    dmaFillWords(0, (void*)0x04000000, 0x56);  
@@ -73,7 +71,9 @@ void initSystem(void) {
    VRAM_H_CR = 0;
    VRAM_I_CR = 0;
 
-//   fifoInit();
+   irqInit();
+   irqEnable(IRQ_VBLANK);
+   fifoInit();
 
    punixTime = (time_t*)&__transferRegion()->unixTime;
 }
