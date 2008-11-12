@@ -25,14 +25,163 @@
 #include <nds/arm7/audio.h>
 #include <nds/ipc.h>
 #include <nds/fifocommon.h>
+#include <nds/fifomessages.h>
 
-static TransferSoundData SndDat =		{ (void *)0 , 0, 11025, 64, 64, 1 };
+int getFreeChannel(void)
+{
+	int i;
 
-void soundDataHandler(int words, void *data) {
+	for(i = 0; i < 16; i++)
+		if(!(SCHANNEL_CR(i) & SCHANNEL_ENABLE))
+			return i;
 
+	return -1;
 }
 
-void installSoundFIFO() {
+int getFreePSGChannel(void)
+{
+	int i;
+
+	for(i = 8; i < 14; i++)
+		if(!(SCHANNEL_CR(i) & SCHANNEL_ENABLE))
+			return i;
+
+	return -1;
+}
+
+int getFreeNoiseChannel(void)
+{
+	int i;
+
+	for(i = 14; i < 16; i++)
+		if(!(SCHANNEL_CR(i) & SCHANNEL_ENABLE))
+			return i;
+
+	return -1;
+}
+
+
+void micSwapHandler(u8* buffer, int length){
+	
+	MicBufferFullMsg msg;
+	msg.type = MIC_BUFFER_FULL_MESSAGE;
+	msg.buffer = (void*)buffer;
+	msg.length = (u32)length;
+
+	fifoSendDatamsg(FIFO_SOUND, sizeof(msg) >> 2, (u32*)&msg);
+}
+
+void soundDataHandler(int words, void *user_data) {
+	int channel = -1;
+
+	FifoMessage data;
+
+	fifoGetDatamsg(FIFO_SOUND, words, (u32*)&data);
+
+	if(data.type == SOUND_PLAY_MESSAGE)
+	{
+		SoundPlayMsg *msg = (SoundPlayMsg*)&data;
+
+		channel = getFreeChannel(); 
+
+		if(channel >= 0)
+		{
+			SCHANNEL_SOURCE(channel) = (u32)msg->data;
+			SCHANNEL_REPEAT_POINT(channel) = msg->loopPoint;
+			SCHANNEL_LENGTH(channel) = msg->dataSize;
+			SCHANNEL_TIMER(channel) = SOUND_FREQ(msg->freq);
+			SCHANNEL_CR(channel) = SCHANNEL_ENABLE | SOUND_VOL(msg->volume) | SOUND_PAN(msg->pan) | (msg->format << 29) | (msg->loop ? SOUND_REPEAT : SOUND_ONE_SHOT);
+		}
+		
+	}
+	else if(data.type == SOUND_PSG_MESSAGE)
+	{
+		SoundPsgMsg *msg = (SoundPsgMsg*)&data;
+
+		channel = getFreePSGChannel(); 
+
+		if(channel >= 0)
+		{
+			SCHANNEL_CR(channel) = SCHANNEL_ENABLE | msg->volume | SOUND_PAN(msg->pan) | (3 << 29) | (msg->dutyCycle << 24);
+			SCHANNEL_TIMER(channel) = SOUND_FREQ(msg->freq);
+		}
+	}
+	else if(data.type == SOUND_NOISE_MESSAGE)
+	{
+		SoundPsgMsg *msg = (SoundPsgMsg*)&data;
+
+		channel = getFreeNoiseChannel(); 
+
+		if(channel >= 0)
+		{	
+			SCHANNEL_CR(channel) = SCHANNEL_ENABLE | msg->volume | SOUND_PAN(msg->pan);
+			SCHANNEL_TIMER(channel) = SOUND_FREQ(msg->freq);
+		}
+	}
+	else if(data.type == MIC_RECORD_MESSAGE)
+	{
+		MicRecordMsg *msg = (MicRecordMsg*)&data;
+
+		micStartRecording(msg->buffer, msg->bufferLength, msg->freq, 1, msg->format, micSwapHandler); 
+	
+		channel = 17;
+	}
+
+	fifoSendValue32(FIFO_SOUND, (u32)channel);
+}
+
+void soundCommandHandler(u32 command, void* userdata)
+{
+	int cmd = (command ) & 0x00F00000;
+	int data = command & 0xFFFF;
+	int channel = (command >> 16) & 0xF;
+	
+	switch(cmd)
+	{
+	case SOUND_MASTER_ENABLE:
+		SOUND_CR = SOUND_ENABLE;
+		SOUND_MASTER_VOL = 127;
+		break;
+
+	case SOUND_MASTER_DISABLE:
+		SOUND_CR &= ~SOUND_ENABLE;
+		break;
+
+	case SOUND_SET_VOLUME:
+		SCHANNEL_CR(channel) &= ~0xFF;
+		SCHANNEL_CR(channel) |= data;
+		break;
+
+	case SOUND_SET_PAN:
+		SCHANNEL_CR(channel) &= ~SOUND_PAN(0xFF);
+		SCHANNEL_CR(channel) |= SOUND_PAN(data);
+		break;
+
+	case SOUND_SET_FREQ:
+		SCHANNEL_TIMER(channel) = SOUND_FREQ(data);
+		break;
+
+	case SOUND_KILL:
+		SCHANNEL_CR(channel) &= ~SCHANNEL_ENABLE;
+		break;
+	case SOUND_PAUSE:
+		SCHANNEL_CR(channel) &= ~SCHANNEL_ENABLE;
+		break;
+
+	case SOUND_RESUME:
+		SCHANNEL_CR(channel) |= SCHANNEL_ENABLE;
+		break;
+
+	case MIC_STOP:
+		micStopRecording();
+		break;
+
+	default: break;
+	}
+}
+
+void soundInitFifo(void) {
 
 	fifoSetDatamsgHandler(FIFO_SOUND, soundDataHandler, 0);
+	fifoSetValue32Handler(FIFO_SOUND, soundCommandHandler, 0);
 }

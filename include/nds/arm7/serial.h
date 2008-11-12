@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: serial.h,v 1.16 2008-05-01 15:10:24 dovoto Exp $
+  $Id: serial.h,v 1.17 2008-11-12 17:47:12 dovoto Exp $
 
   ARM7 serial control
 
@@ -108,6 +108,13 @@
 #define PM_LED_CONTROL(m)    ((m)<<4)  // ?
 
 #define PM_AMP_OFFSET  2
+#define PM_GAIN_OFFSET 3
+
+#define PM_GAIN_20 0
+#define PM_GAIN_40 1
+#define PM_GAIN_80 2
+#define PM_GAIN_160 3
+
 #define PM_AMP_ON      1
 #define PM_AMP_OFF     0
 

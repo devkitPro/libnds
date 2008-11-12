@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: audio.h,v 1.16 2008-07-14 21:18:46 wntrmute Exp $
+	$Id: audio.h,v 1.17 2008-11-12 17:47:12 dovoto Exp $
 
 	ARM7 audio control
 
@@ -47,14 +47,14 @@ extern "C" {
 #define SOUND_VOL(n)	(n)
 #define SOUND_FREQ(n)	((-0x1000000 / (n)))
 #define SOUND_ENABLE	BIT(15)
+
 #define SOUND_REPEAT    BIT(27)
 #define SOUND_ONE_SHOT  BIT(28)
+
 #define SOUND_FORMAT_16BIT (1<<29)
 #define SOUND_FORMAT_8BIT	(0<<29)
 #define SOUND_FORMAT_PSG    (3<<29)
 #define SOUND_FORMAT_ADPCM  (2<<29)
-#define SOUND_16BIT      (1<<29)
-#define SOUND_8BIT       (0)
 
 #define SOUND_PAN(n)	((n) << 16)
 
@@ -87,6 +87,10 @@ extern "C" {
 #define REG_SNDCAP1DAD	(*(vu32*)0x04000518)
 #define REG_SNDCAP1LEN	(*(vu16*)0x0400051C)
 
+typedef void (*MIC_BUF_SWAP_CB)(u8* completedBuffer, int length);
+
+
+
 
 /*---------------------------------------------------------------------------------
 	microphone code based on neimod's microphone example.
@@ -107,36 +111,36 @@ u16 micReadData12();
 	signed sound data at 16kHz. Once the length of the buffer is
 	reached, no more data will be stored. Uses ARM7 timer 0.  
 ---------------------------------------------------------------------------------*/
-void micStartRecording(u8* buffer, int length, int freq, int timer, bool eightBitSample);
+void micStartRecording(u8* buffer, int length, int freq, int timer, bool eightBitSample, MIC_BUF_SWAP_CB bufferSwapCallback);
 
 /*---------------------------------------------------------------------------------
 	Stop recording data, and return the length of data recorded.
 ---------------------------------------------------------------------------------*/
-int micStopRecording();
+int micStopRecording(void);
 
 /* This must be called during IRQ_TIMER0 */
-void micTimerHandler();
+void micTimerHandler(void);
 
-void micSetAmp(u8 control);
+void micSetAmp(u8 control, u8 gain);
 
 //---------------------------------------------------------------------------------
 // Turn the microphone on 
 //---------------------------------------------------------------------------------
-static inline void micOn() {
+static inline void micOn(void) {
 //---------------------------------------------------------------------------------
-  micSetAmp(PM_AMP_ON);
+  micSetAmp(PM_AMP_ON, PM_GAIN_160);
 }
 
 
 //---------------------------------------------------------------------------------
 // Turn the microphone off 
 //---------------------------------------------------------------------------------
-static inline void micOff() {
+static inline void micOff(void) {
 //---------------------------------------------------------------------------------
-  micSetAmp(PM_AMP_OFF);
+  micSetAmp(PM_AMP_OFF, 0);
 }
 
-void installSoundFIFO();
+void soundInitFifo(void);
 
 #ifdef __cplusplus
 }

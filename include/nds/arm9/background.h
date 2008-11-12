@@ -916,7 +916,7 @@ void* bgGetGfxPtr(int id)
 	if(bgState[id].type < BgType_Bmp8)
 		return (id < 4) ? (void*)(BG_TILE_RAM(bgGetTileBase(id))) : ((void*)BG_TILE_RAM_SUB(bgGetTileBase(id)));
 	else
-		return (id < 4) ? (void*)(BG_GFX + 0x800 * (bgGetMapBase(id))) : (void*)(BG_GFX_SUB + 0x800 * (bgGetMapBase(id)));
+		return (id < 4) ? (void*)(BG_GFX + 0x2000 * (bgGetMapBase(id))) : (void*)(BG_GFX_SUB + 0x2000 * (bgGetMapBase(id)));
 }
 
 

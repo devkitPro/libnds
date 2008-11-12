@@ -327,7 +327,7 @@ void oamEnable(OamState* oam );
 u16* oamGetGfxPtr(OamState* oam, int gfxOffsetIndex);
 
 /**  \fn u16* oamAllocateGfx(OamState *oam, SpriteSize size, SpriteColorFormat colorFormat)
-*    \brief translates an oam offset into a video ram address
+*    \brief Allocates graphics memory for the supplied sprite attributes
 *    \param oam must be: &oamMain or &oamSub
 *    \param size the size of the sprite to allocate
 *    \param colorFormat the color format of the sprite
@@ -348,6 +348,7 @@ void oamFreeGfx(OamState *oam, const void* gfxOffset);
 *    \param id the oam number to be set [0 - 127]
 *    \param x the x location of the sprite in pixels
 *    \param y the y location of the sprite in pixels
+*	 \param priority The sprite priority (0 to 3)
 *    \param palette_alpha the palette number for 4bpp and 8bpp (extended palette mode), or the alpha value for bitmap sprites (bitmap sprites must specify a value > 0 to display) [0-15]
 *    \param size the size of the sprite
 *    \param format the color format of the sprite

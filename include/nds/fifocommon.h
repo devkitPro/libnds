@@ -26,24 +26,27 @@ typedef enum {
    FIFO_USER_08	= 15,
 } FifoChannels;
 
+
 typedef enum {
-   
-   FRQ_START_MIC = 13 << 16,
-   FRQ_STOP_MIC = 14 << 17,
+   	SOUND_SET_PAN		= 0 << 20,
+	SOUND_SET_VOLUME	= 1 << 20,
+	SOUND_SET_FREQ		= 2 << 20,
+	SOUND_MASTER_ENABLE		= 3 << 20,
+	SOUND_MASTER_DISABLE       = 4 << 20 ,
+	SOUND_PAUSE			= 5 << 20 ,
+	SOUND_RESUME		= 6 << 20 ,
+	SOUND_KILL			= 7 << 20 ,
+	SOUND_SET_MASTER_VOL	= 8 << 20 ,
+	MIC_STOP		 = 9 << 20
 
-   
-
-	SOUND_SETPAN		= 0,
-	SOUND_SETVOLUME		= 1 << 24,
-	SOUND_SETGENERIC	= 2 << 24,
-	
-
-} FifoSoundCommands;
+} FifoSoundCommand;
 
 typedef enum {
 	SYS_REQ_TOUCH,
 	SYS_REQ_TIME,
-	SYS_REQ_SLEEP
+	SYS_REQ_SLEEP,
+	SYS_REQ_SLEEP_DISABLE,
+	SYS_REQ_SLEEP_ENABLE
 } FifoSystemCommands;
 
 typedef enum {
@@ -74,6 +77,14 @@ typedef enum {
 	PM_LED_SLEEP	=(1<<4),	/*!< \brief Blinking, mostly off */
 	PM_LED_BLINK	=(3<<4),	/*!< \brief Blinking, mostly on */
 }PM_LedBlinkMode;
+
+
+
+
+
+
+
+
 // Some aspects of this configuration can be changed...
 
 // FIFO_CHANNEL_BITS - number of bits used to specify the channel in a packet - default=4

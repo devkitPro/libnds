@@ -166,6 +166,9 @@ int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase)
 	videoBgEnable(layer);
 
 	bgIsTextLut[layer] = checkIfText(layer);
+
+	bgUpdate(layer);
+
 	return layer;
 }
 
@@ -188,6 +191,9 @@ int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBas
 
 	videoBgEnableSub(layer);
 	bgIsTextLut[layer + 4] = checkIfText(layer + 4);
+
+	bgUpdate(layer + 4);
+
 	return layer + 4;
 } 
 

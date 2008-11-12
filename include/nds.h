@@ -46,6 +46,9 @@
   - \ref videoGL.h "OpenGL (ish)"
   - \ref boxtest.h "Box Test"
   - \ref postest.h "Position test"
+ 
+ \section audio_api Audio API
+ - \ref sound.h "Simple Sound Engine"
 
  \section math_api Math
   - \ref math.h "Hardware Assisted Math"

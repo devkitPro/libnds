@@ -70,6 +70,8 @@ enum IRQ_MASKS {
 	IRQ_ALL				=	(~0)
 };
 
+#define IRQ_TIMER(n) (1 << ((n) + 3))
+
 #define MAX_INTERRUPTS  25
 
 typedef enum IRQ_MASKS IRQ_MASK;

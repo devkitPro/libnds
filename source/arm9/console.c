@@ -463,13 +463,13 @@ void consoleInit(	u16* font, u16* charBase,
 void consoleDebugInit(DebugDevice device){
 //---------------------------------------------------------------------------------
 
-	if(device & DB_NOCASH)
+	if(device & DebugDevice_NOCASH)
 	{
 		devoptab_list[STD_ERR] = &dotab_stderr;
 		setvbuf(stderr, NULL , _IONBF, 0);
 	}
 	
-	if(device & DB_CONSOLE)
+	if(device & DebugDevice_CONSOLE)
 	{
 		devoptab_list[STD_ERR] = &dotab_stdout;
 		setvbuf(stderr, NULL , _IONBF, 0);

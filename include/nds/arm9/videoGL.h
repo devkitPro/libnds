@@ -219,7 +219,7 @@ enum GL_TEXTURE_SIZE_ENUM {
 /*! \brief Enums for texture parameters, such as texture wrapping and texture coord stuff<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A><BR>
 related functions: glTexImage2d(), glTexParameter() */
-enum GL_TEXTURE_PARAM_ENUM {
+typedef enum  {
 	GL_TEXTURE_WRAP_S = (1 << 16), /*!< wrap(repeat) texture on S axis */
 	GL_TEXTURE_WRAP_T = (1 << 17), /*!< wrap(repeat) texture on T axis */
 	GL_TEXTURE_FLIP_S = (1 << 18), /*!< flip texture on S axis when wrapping */
@@ -229,7 +229,7 @@ enum GL_TEXTURE_PARAM_ENUM {
 	TEXGEN_TEXCOORD = (1<<30), /*!< multiply texcoords by the texture-matrix */
 	TEXGEN_NORMAL   = (2<<30), /*!< set texcoords equal to normal * texture-matrix, used for spherical reflection mapping */
 	TEXGEN_POSITION = (3<<30)  /*!< set texcoords equal to vertex * texture-matrix */
-};
+}GL_TEXTURE_PARAM_ENUM;
 
 /*! \brief Enums for texture formats<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureformats">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureformats</A><BR>
@@ -393,10 +393,10 @@ int gluTexLoadPal(const u16* pal, u16 count, uint8 format);
 void glTexParameter(	uint8 sizeX, uint8 sizeY,
 						const uint32* addr,
 						GL_TEXTURE_TYPE_ENUM mode,
-						uint32 param) ;
+						GL_TEXTURE_PARAM_ENUM param) ;
 
 /*! \brief Returns the active texture parameter (constructed from internal call to glTexParameter) */
-u32 glGetTexParameter();
+u32 glGetTexParameter(void);
 
 /*! \brief returns the address alocated to the texure named by name 
 \param name the name of the texture to get a pointer to */
