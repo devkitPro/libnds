@@ -17,7 +17,7 @@ TOPDIR ?= $(CURDIR)/..
 # all directories are relative to this makefile
 #---------------------------------------------------------------------------------
 BUILD		?=	release
-SOURCES		:=	../source/arm9 ../source/common
+SOURCES		:=	../source/arm9 ../source/arm9/dldi ../source/common
 INCLUDES	:=	../include ../source/common
 GRAPHICS	:=	../source/arm9/gfx
 DATA			:=	../source/arm9
