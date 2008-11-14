@@ -41,7 +41,7 @@ dldi_start:
 	.word   0x00000000		@ bss end
 
 @---------------------------------------------------------------------------------
-@ IO_INTERFACE data -- 32 bytes
+@ DISC_INTERFACE data -- 32 bytes
 	.ascii	"DLDI"					@ ioType
 	.word	0x00000000				@ Features
 	.word	_DLDI_startup			@ 

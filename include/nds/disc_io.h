@@ -46,7 +46,7 @@ typedef bool (* FN_MEDIUM_WRITESECTORS)(sec_t sector, sec_t numSectors, const vo
 typedef bool (* FN_MEDIUM_CLEARSTATUS)(void) ;
 typedef bool (* FN_MEDIUM_SHUTDOWN)(void) ;
 
-struct IO_INTERFACE_STRUCT {
+struct DISC_INTERFACE_STRUCT {
 	unsigned long			ioType ;
 	unsigned long			features ;
 	FN_MEDIUM_STARTUP		startup ;
@@ -57,6 +57,6 @@ struct IO_INTERFACE_STRUCT {
 	FN_MEDIUM_SHUTDOWN		shutdown ;
 } ;
 
-typedef struct IO_INTERFACE_STRUCT IO_INTERFACE ;
+typedef struct DISC_INTERFACE_STRUCT DISC_INTERFACE ;
 
 #endif	// define NDS_DISC_IO_INCLUDE

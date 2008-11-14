@@ -47,7 +47,7 @@ extern DLDI_INTERFACE _io_dldi_stub;
 
 const DLDI_INTERFACE* io_dldi_data = &_io_dldi_stub;
 
-const IO_INTERFACE* dldiGetInternal (void) {
+const DISC_INTERFACE* dldiGetInternal (void) {
 	if (_io_dldi_stub.ioInterface.features & FEATURE_SLOT_GBA) {
 		sysSetCartOwner(BUS_OWNER_ARM9);
 	}

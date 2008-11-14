@@ -63,7 +63,7 @@ typedef struct {
 	void*	bssEnd;
 	
 	// Original I/O interface data
-	IO_INTERFACE ioInterface;
+	DISC_INTERFACE ioInterface;
 } DLDI_INTERFACE;
 
 
@@ -77,7 +77,7 @@ extern const DLDI_INTERFACE* io_dldi_data;
 Return a pointer to the internal IO interface, 
 setting up bus permissions in the process.
 */
-extern const IO_INTERFACE* dldiGetInternal (void);
+extern const DISC_INTERFACE* dldiGetInternal (void);
 
 /*
 Determines if an IO driver is a valid DLDI driver
