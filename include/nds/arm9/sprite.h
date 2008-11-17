@@ -390,7 +390,7 @@ void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy);
 */
 int oamCountFragments(OamState *oam);
 
-
+unsigned int oamGfxPtrToOffset(OamState *oam, const void* offset);
 
 
 #endif // _libnds_sprite_h_
