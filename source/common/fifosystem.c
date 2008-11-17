@@ -239,21 +239,30 @@ bool fifoSendValue32(int channel, u32 value32)
 		return fifoInternalSend(send_first, 0, 0);
 	}
 }
-// fifoSendDatamsg - Send a sequence of 32bit words to the other CPU (on a specific channel)
-//  num_words can be between 0 and FIFO_MAX_DATA_WORDS (see above) - sending 0 words can be useful sometimes....
-bool fifoSendDatamsg(int channel, int num_words, u32 * data_array)
+// fifoSendDatamsg - Send a sequence of 32bit bytes to the other CPU (on a specific channel)
+//  num_bytes can be between 0 and FIFO_MAX_DATA_BYTES (see above) - sending 0 words can be useful sometimes....
+bool fifoSendDatamsg(int channel, int num_bytes, u8 * data_array)
 {
 	u32 send_first;
 	// check channel
 	if(channel<0 || channel>=FIFO_NUM_CHANNELS) return false;
 	// check length
-	if(num_words<0 || num_words>=FIFO_MAX_DATA_WORDS) return false;
+	if(num_bytes<0 || num_bytes>=FIFO_MAX_DATA_BYTES) return false;
 	// check pointer (just for null)
-	if(num_words>0 && !data_array) return false;
+	if(num_bytes>0 && !data_array) return false;
 	// construct header
-	send_first = FIFO_PACK_DATAMSG_HEADER(channel, num_words);
+	send_first = FIFO_PACK_DATAMSG_HEADER(channel, num_bytes);
+	// copy data into temporary buffer.
+	u32 buffer_array[(FIFO_MAX_DATA_BYTES+3)/4];
+	int num_words = (num_bytes+3)>>2;
+	int i;
+	buffer_array[num_bytes>>2]=0; // zero out last few bytes
+	for(i=0;i<num_bytes;i++)
+	{ // yes this is slow. but it's probably not that bad; Consider changing this to use memcpy.
+		((u8*)buffer_array)[i] = data_array[i];
+	}
 	// send message
-	return fifoInternalSend(send_first, num_words, data_array);
+	return fifoInternalSend(send_first, num_words, buffer_array);
 }
 
 // Check functions see if there are any of a specific type of data in queue.
@@ -323,7 +332,7 @@ bool fifoCheckDatamsg(int channel)
 	return false;
 }
 
-// fifoCheckDatamsgLength - gets the number of words in the queue for the first data entry. (or -1 if there are no entries)
+// fifoCheckDatamsgLength - gets the number of bytes in the queue for the first data entry. (or -1 if there are no entries)
 int fifoCheckDatamsgLength(int channel)
 {
 	if(channel<0 || channel>=FIFO_NUM_CHANNELS) return false;
@@ -336,9 +345,9 @@ int fifoCheckDatamsgLength(int channel)
 		{
 			if(FIFO_BUFFER_GETCONTROL(block)==FIFO_BUFFERCONTROL_DATASTART)
 			{
-				int n_words = FIFO_BUFFER_GETEXTRA(block);
+				int n_bytes = FIFO_BUFFER_GETEXTRA(block);
 				fifoInternalUnprotect();
-				return n_words;
+				return n_bytes;
 			}
 			block = FIFO_BUFFER_GETNEXT(block);
 		}
@@ -452,9 +461,9 @@ u32 fifoGetValue32(int channel)
 	fifoInternalUnprotect();
 	return 0; // no value32 in queue
 }
-// fifoGetDatamsg - Read a data message - returns the number of words written (or -1 if there is no message)
+// fifoGetDatamsg - Read a data message - returns the number of bytes written (or -1 if there is no message)
 //  Warning: If your buffer is not big enough, you may lose data! Check the data length first if you're not sure what the size is.
-int fifoGetDatamsg(int channel, int buffersize, u32 * destbuffer)
+int fifoGetDatamsg(int channel, int buffersize, u8 * destbuffer)
 {
 	if(channel<0 || channel>=FIFO_NUM_CHANNELS) return -1;
 	if(buffersize>0 && destbuffer==0) return -1; // can't have null pointer if you expect to receive anything
@@ -469,10 +478,11 @@ int fifoGetDatamsg(int channel, int buffersize, u32 * destbuffer)
 			if(FIFO_BUFFER_GETCONTROL(block)==FIFO_BUFFERCONTROL_DATASTART)
 			{
 				// unlink block, and return data
-				int n_words, blockend, i;
+				int n_bytes, n_words, blockend, i;
 				int n_copy, blocktmp;
-				n_words = FIFO_BUFFER_GETEXTRA(block);
-				n_copy=n_words;
+				n_bytes = FIFO_BUFFER_GETEXTRA(block);
+				n_words = (n_bytes+3)>>2;
+				n_copy=n_bytes;
 				if(n_copy>buffersize) n_copy=buffersize;
 				blockend=block;
 				for(i=1;i<n_words;i++) // figure out related blocks
@@ -503,8 +513,11 @@ int fifoGetDatamsg(int channel, int buffersize, u32 * destbuffer)
 				blocktmp = block;
 				for(i=0;i<n_copy;i++)
 				{
-					destbuffer[i] = FIFO_BUFFER_DATA(blocktmp);
-					blocktmp = FIFO_BUFFER_GETNEXT(blocktmp);
+					destbuffer[i] = FIFO_BUFFER_DATA_BYTE(blocktmp, i&3);
+					if((i&3)==3) 
+					{
+						blocktmp = FIFO_BUFFER_GETNEXT(blocktmp);
+					}
 				}
 
 				// free related blocks
@@ -718,12 +731,13 @@ void fifoInternalRecvInterrupt() // this is the complicated one!
 			{ // is a value - unpack it and either send it to a handler or add it to a queue.
 				int blockend; // last block in set
 				int blocktmp, i;
-				int n_words;
+				int n_bytes, n_words;
 				// determine end of block list and if we're incomplete
 				blockend = block;
 				channel = FIFO_UNPACK_CHANNEL( data );
-				n_words = FIFO_UNPACK_DATALENGTH( data );
-				if(n_words>FIFO_MAX_DATA_WORDS)
+				n_bytes = FIFO_UNPACK_DATALENGTH( data );
+				n_words = (n_bytes+3)>>2;
+				if(n_bytes>FIFO_MAX_DATA_BYTES)
 				{ // invalid! how could this happen!?
 					// unlink and pretend it didn't happen
 					fifo_rcvdwords_start = FIFO_BUFFER_GETNEXT( block );
@@ -772,7 +786,7 @@ void fifoInternalRecvInterrupt() // this is the complicated one!
 					block = FIFO_BUFFER_GETNEXT( block );
 					fifoInternalFreeBlock(blocktmp);
 					// reformat blocks in list
-					FIFO_BUFFER_SETCONTROL( block, FIFO_BUFFER_GETNEXT( block ), FIFO_BUFFERCONTROL_DATASTART, n_words);
+					FIFO_BUFFER_SETCONTROL( block, FIFO_BUFFER_GETNEXT( block ), FIFO_BUFFERCONTROL_DATASTART, n_bytes);
 					blocktmp = FIFO_BUFFER_GETNEXT( block );
 					for(i=1;i<n_words;i++)
 					{
@@ -797,7 +811,7 @@ void fifoInternalRecvInterrupt() // this is the complicated one!
 				if( fifo_datamsg_func[channel] )
 				{ // has a handler. call it.
 					fifoInternalUnprotect(); // allow interrupts to occur during callback.
-					fifo_datamsg_func[channel]( n_words, fifo_datamsg_data[channel] );
+					fifo_datamsg_func[channel]( n_bytes, fifo_datamsg_data[channel] );
 					fifoInternalProtect();
 
 					// unlink message if the handler didn't.
@@ -821,18 +835,14 @@ void fifoInternalRecvInterrupt() // this is the complicated one!
 		fifo_recv_status = 0;
 	}
 }
+
+// On second thought, always use IME to protect/unprotect. Other interrupts using fifo functions are bad otherwise.
+// plus these things are typically only protected for a handful of cycles, it won't affect anything but the most timing sensitive systems.
 void fifoInternalProtect()
 {
 	if(fifo_protect_levels==0)
 	{
-		if(fifo_recv_status==1)
-		{
-			REG_IME = 0;
-		}
-		else
-		{
-			irqDisable( IRQ_FIFO_EMPTY | IRQ_FIFO_NOT_EMPTY );
-		}
+		REG_IME = 0;
 	}
 	fifo_protect_levels++;
 }
@@ -843,21 +853,14 @@ void fifoInternalUnprotect()
 		fifo_protect_levels--;
 		if(!fifo_protect_levels)
 		{
-			if(fifo_recv_status==1)
-			{
-				REG_IME = 1;
-			}
-			else
-			{
-				irqEnable( IRQ_FIFO_EMPTY | IRQ_FIFO_NOT_EMPTY );			
-			}
+			REG_IME = 1;
 		}
 	}
 }
 bool fifoInternalSend(u32 firstword, int extrawordcount, u32 * wordlist)
 {
 	if(extrawordcount>0 && !wordlist) return false;
-	if(extrawordcount<0 || extrawordcount>FIFO_MAX_DATA_WORDS) return false;
+	if(extrawordcount<0 || extrawordcount>((FIFO_MAX_DATA_BYTES+3)/4)) return false;
 	fifoInternalProtect();
 	if(!fifoInternalFreeCheck( extrawordcount+1 ) ) { fifoInternalUnprotect(); return false; }
 	fifoInternalSendEnqueue( firstword );

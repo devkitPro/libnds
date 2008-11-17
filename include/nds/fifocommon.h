@@ -90,8 +90,8 @@ typedef enum {
 // FIFO_CHANNEL_BITS - number of bits used to specify the channel in a packet - default=4
 #define FIFO_CHANNEL_BITS				4
 
-// FIFO_MAX_DATA_WORDS - maximum number of words that can be sent in a fifo message
-#define FIFO_MAX_DATA_WORDS				32
+// FIFO_MAX_DATA_WORDS - maximum number of bytes that can be sent in a fifo message
+#define FIFO_MAX_DATA_BYTES				128
 
 // FIFO_RIGOROUS_ERROR_CHECKING - Verify all internal buffer transactions, mostly for debugging this library. Unless there's memory corruption this shouldn't be enabled normally.
 // If there is an error, the lib will call int fifoError(char *, ...) - which isn't defined by the fifo lib. So it's best to handle it if you want to debug. :)
@@ -129,9 +129,9 @@ typedef void (*FifoAddressHandlerFunc)(void * address, void * userdata);
 
 // FifoValue32HandlerFunc - Provides callback with the sent value and the callback's user data
 typedef void (*FifoValue32HandlerFunc)(u32 value32, void * userdata);
-// FifoDatamsgHandlerFunc - Provides callback with the number of words sent and the callback's user data
+// FifoDatamsgHandlerFunc - Provides callback with the number of bytes sent and the callback's user data
 // This callback must call fifoGetData to actually retrieve the data. If it doesn't, the data will be destroyed on return.
-typedef void (*FifoDatamsgHandlerFunc)(int num_words, void * userdata);
+typedef void (*FifoDatamsgHandlerFunc)(int num_bytes, void * userdata);
 
 /*! \fn  fifoInit()
 	\brief Initializes the fifo system.
@@ -163,17 +163,17 @@ bool fifoSendAddress(int channel, void *address);
 */
 bool fifoSendValue32(int channel, u32 value32);
 
-/*! \fn fifoSendDatamsg(int channel, int num_words, u32 * data_array)
+/*! \fn fifoSendDatamsg(int channel, int num_bytes, u8 * data_array)
 	\param channel channel number to send to
-	\param num_words number of 32bit words to send
+	\param num_bytes number of bytes to send
 	\param data_array pointer to data array
 	
-	\brief Send a sequence of 32bit words to the other CPU
+	\brief Send a sequence of bytes to the other CPU
 	
-	num_words can be between 0 and FIFO_MAX_DATA_WORDS (see above) - sending 0 words can be useful sometimes ...
+	num_bytes can be between 0 and FIFO_MAX_DATA_BYTES (see above) - sending 0 bytes can be useful sometimes ...
 
 */
-bool fifoSendDatamsg(int channel, int num_words, u32 * data_array);
+bool fifoSendDatamsg(int channel, int num_bytes, u8 * data_array);
 
 // Note about setting handlers: if a handler is already set, the function will FAIL and return false unless you're trying to unset the handler.
 //  Alternately, use the FifoForce*Handler functions, to set regardless - these are specificly designed to try to prevent misuse.
@@ -226,7 +226,7 @@ void fifoForceDatamsgHandler(int channel, FifoDatamsgHandlerFunc newhandler, voi
 bool fifoCheckAddress(int channel);
 bool fifoCheckValue32(int channel);
 bool fifoCheckDatamsg(int channel);
-// fifoCheckDatamsgLength - gets the number of words in the queue for the first data entry. (or -1 if there are no entries)
+// fifoCheckDatamsgLength - gets the number of bytes in the queue for the first data entry. (or -1 if there are no entries)
 int fifoCheckDatamsgLength(int channel);
 // fifoCountDatamsg - returns the number of data messages in queue for a specific channel
 int fifoCountDatamsg(int channel);
@@ -235,9 +235,9 @@ int fifoCountDatamsg(int channel);
 void * fifoGetAddress(int channel);
 // fifoGetValue32 - Get the first value32 in queue for a specific channel (will return 0 if there is no message)
 u32 fifoGetValue32(int channel);
-// fifoGetDatamsg - Read a data message - returns the number of words written (or -1 if there is no message)
+// fifoGetDatamsg - Read a data message - returns the number of bytess written (or -1 if there is no message)
 //  Warning: If your buffer is not big enough, you may lose data! Check the data length first if you're not sure what the size is.
-int fifoGetDatamsg(int channel, int buffersize, u32 * destbuffer);
+int fifoGetDatamsg(int channel, int buffersize, u8 * destbuffer);
 
 
 // fifoGetBufferUsage - get the number of words in the buffer used, out of FIFO_BUFFER_ENTRIES
@@ -327,9 +327,8 @@ bool fifoInternalFreeCheck(int num_words);
 #define FIFO_IS_ADDRESS_COMPATIBLE(address) \
 	( ((u32)(address)&FIFO_ADDRESSCOMPATIBLE) == FIFO_ADDRESSBASE )
 
-#define FIFO_PACK_DATAMSG_HEADER(channel, numwords) \
-	( ((channel)<<FIFO_CHANNEL_SHIFT) | ((numwords)&FIFO_VALUE32_MASK) )
-
+#define FIFO_PACK_DATAMSG_HEADER(channel, numbytes) \
+	( ((channel)<<FIFO_CHANNEL_SHIFT) | ((numbytes)&FIFO_VALUE32_MASK) )
 
 
 #define FIFO_IS_ADDRESS(dataword) (((dataword)&FIFO_ADDRESSBIT)!=0)
@@ -367,6 +366,7 @@ bool fifoInternalFreeCheck(int num_words);
 #define FIFO_BUFFERCONTROL_DATA			6
 
 #define FIFO_BUFFER_DATA(index) fifo_buffer[(index)*2+1]
+#define FIFO_BUFFER_DATA_BYTE(index, byteindex) ((u8*)(&fifo_buffer[(index)*2+1]))[(byteindex)]
 #define FIFO_BUFFER_GETNEXT(index) (fifo_buffer[(index)*2]&FIFO_BUFFER_NEXTMASK)
 #define FIFO_BUFFER_GETCONTROL(index) (fifo_buffer[(index)*2]>>28)
 #define FIFO_BUFFER_GETEXTRA(index) ((fifo_buffer[(index)*2]>>16)&0xFFF)
