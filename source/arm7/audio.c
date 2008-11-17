@@ -68,15 +68,15 @@ void micSwapHandler(u8* buffer, int length){
 	msg.buffer = (void*)buffer;
 	msg.length = (u32)length;
 
-	fifoSendDatamsg(FIFO_SOUND, sizeof(msg) >> 2, (u32*)&msg);
+	fifoSendDatamsg(FIFO_SOUND, sizeof(msg) , (u8*)&msg);
 }
 
-void soundDataHandler(int words, void *user_data) {
+void soundDataHandler(int bytes, void *user_data) {
 	int channel = -1;
 
 	FifoMessage data;
 
-	fifoGetDatamsg(FIFO_SOUND, words, (u32*)&data);
+	fifoGetDatamsg(FIFO_SOUND, bytes, (u8*)&data);
 
 	if(data.type == SOUND_PLAY_MESSAGE)
 	{

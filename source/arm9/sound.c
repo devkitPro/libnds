@@ -47,7 +47,7 @@ int soundPlayPSG(DutyCycle cycle, u16 freq, u8 volume, u8 pan){
 	msg.volume = volume;
 	msg.pan = pan;
 
-	fifoSendDatamsg(FIFO_SOUND, sizeof(msg) >> 2, (u32*)&msg);
+	fifoSendDatamsg(FIFO_SOUND, sizeof(msg), (u8*)&msg);
 
 	while(!fifoCheckValue32(FIFO_SOUND));
 
@@ -61,7 +61,7 @@ int soundPlayNoise(u16 freq, u8 volume, u8 pan){
 	msg.volume = volume;
 	msg.pan = pan;
 
-	fifoSendDatamsg(FIFO_SOUND, sizeof(msg) >> 2, (u32*)&msg);
+	fifoSendDatamsg(FIFO_SOUND, sizeof(msg), (u8*)&msg);
 
 	while(!fifoCheckValue32(FIFO_SOUND));
 
@@ -82,7 +82,7 @@ int soundPlaySample(const void* data, SoundFormat format, u32 dataSize, u16 freq
 	msg.loopPoint = loopPoint;
 	msg.dataSize = dataSize >> 2;
 
-	fifoSendDatamsg(FIFO_SOUND, sizeof(msg) >> 2, (u32*)&msg);
+	fifoSendDatamsg(FIFO_SOUND, sizeof(msg), (u8*)&msg);
 
 	while(!fifoCheckValue32(FIFO_SOUND));
 
@@ -109,10 +109,10 @@ void soundSetFreq(int soundId, u16 freq){
 
 MicCallback micCallback = 0;
 
-void micBufferHandler(int words, void* user_data){
+void micBufferHandler(int bytes, void* user_data){
 	FifoMessage data;
 
-	fifoGetDatamsg(FIFO_SOUND, words, (u32*)&data);
+	fifoGetDatamsg(FIFO_SOUND, bytes, (u8*)&data);
 	
 	if(data.type == MIC_BUFFER_FULL_MESSAGE)
 	{
@@ -136,7 +136,7 @@ int soundMicRecord(void *buffer, u32 bufferLength, MicFormat format, int freq, M
 
 	fifoSetDatamsgHandler(FIFO_SOUND, micBufferHandler, 0);
 
-	fifoSendDatamsg(FIFO_SOUND, sizeof(msg) >> 2, (u32*)&msg);
+	fifoSendDatamsg(FIFO_SOUND, sizeof(msg), (u8*)&msg);
 
 	while(!fifoCheckValue32(FIFO_SOUND));
 
