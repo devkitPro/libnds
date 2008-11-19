@@ -32,6 +32,8 @@ distribution.
 #include <nds/ipc.h>
 #include <nds/arm9/video.h>
 #include <nds/arm9/sprite.h>
+#include <nds/arm9/input.h>
+#include <nds/arm9/system.h>
 #include <nds/interrupts.h>
 #include <nds/fifocommon.h>
 #include <time.h>
@@ -41,39 +43,42 @@ distribution.
 extern time_t *punixTime;
 time_t theTime;
 
+
 //---------------------------------------------------------------------------------
 // Reset the DS registers to sensible defaults
 //---------------------------------------------------------------------------------
 void initSystem(void) {
-//---------------------------------------------------------------------------------
-   register int i;
+	//---------------------------------------------------------------------------------
+	register int i;
+	//stop timers and dma
+	for (i=0; i<4; i++) 
+	{
+		DMA_CR(i) = 0;
+		DMA_SRC(i) = 0;
+		DMA_DEST(i) = 0;
+		TIMER_CR(i) = 0;
+		TIMER_DATA(i) = 0;
+	}
 
-   //stop timers and dma
-   for (i=0; i<4; i++) 
-   {
-      DMA_CR(i) = 0;
-      DMA_SRC(i) = 0;
-      DMA_DEST(i) = 0;
-      TIMER_CR(i) = 0;
-      TIMER_DATA(i) = 0;
-   }
 
+	//clear video display registers
+	dmaFillWords(0, (void*)0x04000000, 0x56);  
+	dmaFillWords(0, (void*)0x04001008, 0x56);  
+	videoSetModeSub(0);
 
-   //clear video display registers
-   dmaFillWords(0, (void*)0x04000000, 0x56);  
-   dmaFillWords(0, (void*)0x04001008, 0x56);  
-   videoSetModeSub(0);
+	VRAM_CR  = 0;
+	VRAM_E_CR = 0;
+	VRAM_F_CR = 0;
+	VRAM_G_CR = 0;
+	VRAM_H_CR = 0;
+	VRAM_I_CR = 0;
 
-   VRAM_CR  = 0;
-   VRAM_E_CR = 0;
-   VRAM_F_CR = 0;
-   VRAM_G_CR = 0;
-   VRAM_H_CR = 0;
-   VRAM_I_CR = 0;
+	irqInit();
+	irqEnable(IRQ_VBLANK);
+	fifoInit();
 
-   irqInit();
-   irqEnable(IRQ_VBLANK);
-   fifoInit();
+	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
+	fifoSetDatamsgHandler(FIFO_SYSTEM, systemMsgHandler, 0);
 
-   punixTime = (time_t*)&__transferRegion()->unixTime;
+	punixTime = (time_t*)&__transferRegion()->unixTime;
 }

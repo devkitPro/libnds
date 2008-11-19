@@ -28,6 +28,7 @@
 #define FIFOMESSAGE_H
 
 #include "ndstypes.h"
+#include <nds/touch.h>
 
 /*! \file fifomessages.h 
 \brief standard fifo messages utilized by libnds. 
@@ -38,7 +39,8 @@ typedef enum {
 	SOUND_PSG_MESSAGE = 0x1235,
 	SOUND_NOISE_MESSAGE = 0x1236,
 	MIC_RECORD_MESSAGE = 0x1237,
-	MIC_BUFFER_FULL_MESSAGE = 0x1238
+	MIC_BUFFER_FULL_MESSAGE = 0x1238,
+	SYS_INPUT_MESSAGE = 0x1239
 }FifoMessageType;
 
 typedef struct{
@@ -80,5 +82,11 @@ typedef struct{
 	void* buffer;
 	u32 length;
 }ALIGN(4) MicBufferFullMsg;
+
+typedef struct{
+	u16 type;
+	touchPosition touch;
+	u16 keys;
+}ALIGN(4) SystemInputMsg;
 
 #endif

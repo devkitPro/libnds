@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: audio.h,v 1.17 2008-11-12 17:47:12 dovoto Exp $
+	$Id: audio.h,v 1.18 2008-11-19 18:44:50 dovoto Exp $
 
 	ARM7 audio control
 
@@ -42,7 +42,7 @@ extern "C" {
 #endif
 
 #include <nds/arm7/serial.h>
-
+#include <nds/arm7/system.h>
 
 #define SOUND_VOL(n)	(n)
 #define SOUND_FREQ(n)	((-0x1000000 / (n)))
@@ -140,7 +140,7 @@ static inline void micOff(void) {
   micSetAmp(PM_AMP_OFF, 0);
 }
 
-void soundInitFifo(void);
+void installSoundFIFO(void);
 
 #ifdef __cplusplus
 }

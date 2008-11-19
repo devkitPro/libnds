@@ -1,4 +1,5 @@
 #include <nds/arm9/sprite.h>
+
 #include <nds/arm9/input.h>
 #include <nds/arm9/console.h>
 #include <nds/arm9/trig_lut.h>

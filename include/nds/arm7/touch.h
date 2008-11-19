@@ -39,7 +39,7 @@ extern "C" {
 #endif
 
 #include <nds/arm7/serial.h>
-
+#include <nds/touch.h>
 
 #define SCREEN_WIDTH	256
 #define SCREEN_HEIGHT	192
@@ -56,14 +56,7 @@ extern "C" {
 
 
 
-typedef struct touchPosition {
-	int16	x;    //!< Raw x value from the A2D
-	int16	y;    //!< Raw x value from the A2D
-	int16	px;   //!< Processes pixel X value
-	int16	py;   //!< Processes pixel Y value
-	int16	z1;   //!< Raw cross panel resistance
-	int16	z2;   //!< Raw cross panel resistance
-} ALIGN(4) touchPosition;
+
 
 void touchReadXY(touchPosition *touchPos);
 uint16 touchRead(uint32 command);

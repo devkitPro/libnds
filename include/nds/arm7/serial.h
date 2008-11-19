@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-  $Id: serial.h,v 1.17 2008-11-12 17:47:12 dovoto Exp $
+  $Id: serial.h,v 1.18 2008-11-19 18:44:50 dovoto Exp $
 
   ARM7 serial control
 
@@ -96,27 +96,6 @@
 
 // Fixme: does this stuff really belong in serial.h?
 
-// Power management registers
-#define PM_CONTROL_REG    0
-#define PM_BATTERY_REG    1
-#define PM_AMPLIFIER_REG  2
-#define PM_READ_REGISTER (1<<7)
-
-
-
-// PM control register bits - LED control
-#define PM_LED_CONTROL(m)    ((m)<<4)  // ?
-
-#define PM_AMP_OFFSET  2
-#define PM_GAIN_OFFSET 3
-
-#define PM_GAIN_20 0
-#define PM_GAIN_40 1
-#define PM_GAIN_80 2
-#define PM_GAIN_160 3
-
-#define PM_AMP_ON      1
-#define PM_AMP_OFF     0
 
 // Fixme: does this stuff really belong in serial.h?
 
@@ -142,17 +121,7 @@ void SerialWaitBusy() {
 }
 
 
-// Warning: These functions use the SPI chain, and are thus 'critical'
-// sections, make sure to disable interrupts during the call if you've
-// got a VBlank IRQ polling the touch screen, etc...
 
-// Read/write a power management register
-int writePowerManagement(int reg, int command);
-
-static inline
-int readPowerManagement(int reg) {
-	return writePowerManagement((reg)|PM_READ_REGISTER, 0);
-}
 
 // Read the firmware
 void readFirmware(uint32 address, void * destination, uint32 size);

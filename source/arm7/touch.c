@@ -300,10 +300,10 @@ void touchReadXY(touchPosition *touchPos) {
 		touchPos->z1 =  readTouchValue(TSC_MEASURE_Z1 | 1, &dist_max, &error);
 		touchPos->z2 =  readTouchValue(TSC_MEASURE_Z2 | 1, &dist_max, &error);
 
-		touchPos->x = readTouchValue(TSC_MEASURE_X | 1, &dist_max_x, &error);
+		touchPos->rawx = readTouchValue(TSC_MEASURE_X | 1, &dist_max_x, &error);
 		if(error==1) error_where += 1;
 
-		touchPos->y = readTouchValue(TSC_MEASURE_Y | 1, &dist_max_y, &error);
+		touchPos->rawy = readTouchValue(TSC_MEASURE_Y | 1, &dist_max_y, &error);
 		if(error==1) error_where += 2;
 
 		REG_SPICNT = SPI_ENABLE | SPI_BAUD_2MHz | SPI_DEVICE_TOUCH | SPI_CONTINUOUS;
@@ -340,8 +340,8 @@ void touchReadXY(touchPosition *touchPos) {
 			break;
 		}
 
-		s16 px = ( touchPos->x * xscale - xoffset + xscale/2 ) >>19;
-		s16 py = ( touchPos->y * yscale - yoffset + yscale/2 ) >>19;
+		s16 px = ( touchPos->rawx * xscale - xoffset + xscale/2 ) >>19;
+		s16 py = ( touchPos->rawy * yscale - yoffset + yscale/2 ) >>19;
 
 		if ( px < 0) px = 0;
 		if ( py < 0) py = 0;
@@ -354,8 +354,8 @@ void touchReadXY(touchPosition *touchPos) {
 
 	}else{
 		error_where = 3;
-		touchPos->x = 0;
-		touchPos->y = 0;
+		touchPos->rawx = 0;
+		touchPos->rawy = 0;
 		last_time_touched = 0;
 	}
 

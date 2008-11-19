@@ -28,6 +28,7 @@
 #define _libnds_internal_h_
 //---------------------------------------------------------------------------------
 #include <time.h>
+#include <nds/arm9/input.h>
 
 //---------------------------------------------------------------------------------
 typedef struct {
@@ -40,9 +41,21 @@ typedef struct {
 
 } __TransferRegion, * __pTransferRegion;
 
+#define transfer (*(__TransferRegion volatile *)(0x027FF000))
 
+static inline void setTransferInputData(touchPosition *touch, u16 buttons)
+{
+	transfer.buttons = buttons;
+	transfer.touchX = touch->rawx;
+	transfer.touchY = touch->rawy;
+	transfer.touchXpx = touch->px;
+	transfer.touchYpx = touch->py;
+	transfer.touchZ1 = touch->z1;
+	transfer.touchZ2 = touch->z2;
+}
 static inline
 __TransferRegion volatile * __transferRegion() {
+	//return &transfer;
 	return (__TransferRegion volatile *)(0x027FF000);
 }
 

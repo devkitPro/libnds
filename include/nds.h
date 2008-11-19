@@ -113,7 +113,7 @@ extern "C" {
 #include "nds/system.h"
 #include "nds/timers.h"
 #include "nds/fifocommon.h"
-
+#include "nds/touch.h"
 //---------------------------------------------------------------------------------
 #ifdef ARM9
 //---------------------------------------------------------------------------------
@@ -147,6 +147,7 @@ extern "C" {
 #include "nds/arm7/audio.h"
 #include "nds/arm7/clock.h"
 #include "nds/arm7/serial.h"
+#include "nds/arm7/system.h"
 #include "nds/arm7/touch.h"
 
 //---------------------------------------------------------------------------------

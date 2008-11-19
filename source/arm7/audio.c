@@ -180,7 +180,7 @@ void soundCommandHandler(u32 command, void* userdata)
 	}
 }
 
-void soundInitFifo(void) {
+void installSoundFIFO(void) {
 
 	fifoSetDatamsgHandler(FIFO_SOUND, soundDataHandler, 0);
 	fifoSetValue32Handler(FIFO_SOUND, soundCommandHandler, 0);

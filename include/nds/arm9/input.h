@@ -35,7 +35,7 @@
 #ifndef	INPUT_HEADER_INCLUDE
 #define	INPUT_HEADER_INCLUDE
 //---------------------------------------------------------------------------------
-
+#include <nds/touch.h>
 
 // Keyboard
 
@@ -84,17 +84,7 @@ void keysSetRepeat( u8 setDelay, u8 setRepeat );
 //! Obtains the current keypad released state.
 uint32 keysUp(void);
 
-/*! \struct touchPosition
-	\brief holds data related to the touch screen
-*/
-typedef struct touchPosition {
-	u16	rawx; //!< Raw x value from the A2D
-	u16	rawy; //!< Raw x value from the A2D
-	u16	px;   //!< Processes pixel X value
-	u16	py;   //!< Processes pixel Y value
-	u16	z1;   //!< Raw cross panel resistance
-	u16	z2;   //!< Raw cross panel resistance
-} touchPosition;
+
 
 __attribute__ ((deprecated)) touchPosition touchReadXY() ;
 
@@ -104,7 +94,6 @@ __attribute__ ((deprecated)) touchPosition touchReadXY() ;
 	\param data a touchPosition ptr which will be filled by the function
 */
 void touchRead(touchPosition *data);
-
 
 #ifdef __cplusplus
 }

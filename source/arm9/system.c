@@ -30,6 +30,80 @@ distribution.
 ---------------------------------------------------------------------------------*/
 
 #include <nds/memory.h>
+#include <nds/bios.h>
+#include <nds/arm9/system.h>
+#include <nds/fifocommon.h>
+#include <nds/interrupts.h>
+#include <nds/fifomessages.h>
+#include <libnds_internal.h>
+
+//todo document
+//
 
 
+//---------------------------------------------------------------------------------
+// Handle system requests from the arm7
+//---------------------------------------------------------------------------------
+void powerValueHandler(u32 value, void* data){
+	switch(value)
+	{
+	case PM_REQ_SLEEP:
+		sleep();
+		break;
+	case 777:
+		iprintf("worked sort of\n");
+		break;
+	}
+}
 
+void systemMsgHandler(int bytes, void* user_data){
+	
+	FifoMessage message;
+
+	SystemInputMsg *input;
+
+	fifoGetDatamsg(FIFO_SYSTEM, bytes, (u8*)&message);
+
+	switch (message.type)
+	{
+	case SYS_INPUT_MESSAGE:
+		input = (SystemInputMsg*)&message;
+		setTransferInputData(&(input->touch), input->keys);
+		break;
+	}
+}
+
+void sleep(void)
+{
+   unsigned long oldIE = REG_IE ;
+ 
+   iprintf("good night\n");
+
+ 
+   fifoSendValue32(FIFO_PM, PM_REQ_SLEEP);
+  
+   REG_IE = IRQ_VBLANK ;
+  
+   swiWaitForVBlank();
+
+   swiIntrWait(1, IRQ_VBLANK); 
+   
+   iprintf("good morning\n");
+   
+   REG_IE = oldIE ; 
+}
+
+void powerOn(PM_Bits bits)
+{
+   fifoSendValue32(FIFO_PM, PM_REQ_ON | bits);
+}
+
+void powerOff(PM_Bits bits)
+{
+   fifoSendValue32(FIFO_PM, PM_REQ_OFF | bits);
+}
+
+void ledBlink(PM_LedBlinkMode bm)
+{
+   fifoSendValue32(FIFO_PM, PM_REQ_LED | bm);
+}
