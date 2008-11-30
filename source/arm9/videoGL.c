@@ -30,6 +30,7 @@
 #include <nds/ndstypes.h>
 #include <nds/memory.h>
 #include <nds/bios.h>
+#include <nds/system.h>
 #include <nds/arm9/math.h>
 #include <nds/arm9/video.h>
 #include <nds/arm9/videoGL.h>
@@ -109,6 +110,8 @@ void glMaterialf(GL_MATERIALS_ENUM mode, rgb color) {
 //---------------------------------------------------------------------------------
 void glInit_C(void) {
 //---------------------------------------------------------------------------------
+	powerON(POWER_3D_CORE | POWER_MATRIX);	// enable 3D core & geometry engine
+
 	glGlob = glGetGlobals();
 
 	glGlob->clearColor = 0;
