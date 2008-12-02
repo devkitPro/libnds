@@ -46,12 +46,12 @@ Debug printing is performed by initializing the debug console via consoleDebugIn
 follows:
 
 <pre>
-consoleDebugInit(DB_NOCASH);
+consoleDebugInit(DebugDevice_NOCASH);
 fprintf(stderr, "debug message in no$gba window %i", stuff);
 
 OR
 
-consoleDebugInit(DB_CONSOLE);
+consoleDebugInit(DebugDevice_CONSOLE);
 fprintf(stderr, "debug message on DS console screen");
 </pre>
 

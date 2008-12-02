@@ -50,9 +50,6 @@ void powerValueHandler(u32 value, void* data){
 	case PM_REQ_SLEEP:
 		sleep();
 		break;
-	case 777:
-		iprintf("worked sort of\n");
-		break;
 	}
 }
 
@@ -77,19 +74,14 @@ void sleep(void)
 {
    unsigned long oldIE = REG_IE ;
  
-   iprintf("good night\n");
-
- 
    fifoSendValue32(FIFO_PM, PM_REQ_SLEEP);
   
    REG_IE = IRQ_VBLANK ;
-  
+	
+   //wait two frames to give arm7 a chance
    swiWaitForVBlank();
-
-   swiIntrWait(1, IRQ_VBLANK); 
-   
-   iprintf("good morning\n");
-   
+   swiWaitForVBlank();
+      
    REG_IE = oldIE ; 
 }
 

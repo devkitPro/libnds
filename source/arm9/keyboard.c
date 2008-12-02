@@ -353,7 +353,9 @@ void keyboardInit(Keyboard* keyboard)
 void keyboardShow(void)
 {
    int i;
-
+   
+   swiWaitForVBlank();
+   
    curKeyboard->visible = 1;
 
    bgSetScroll(curKeyboard->background, 0, -192);
@@ -366,10 +368,12 @@ void keyboardShow(void)
       {
          swiWaitForVBlank();
          bgSetScroll(curKeyboard->background, 0, i); 
+		 bgUpdate(curKeyboard->background);
       }
    }
    
    bgSetScroll(curKeyboard->background, 0, curKeyboard->offset_y);
+   bgUpdate(curKeyboard->background);
 }
 
 void keyboardHide(void)
@@ -384,9 +388,11 @@ void keyboardHide(void)
       {
          swiWaitForVBlank();
          bgSetScroll(curKeyboard->background, 0, i);
+		 bgUpdate(curKeyboard->background);
       }
    }
    bgHide(curKeyboard->background);
+   bgUpdate(curKeyboard->background);
 }
 
 int keyboardGetChar(void)

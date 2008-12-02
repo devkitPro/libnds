@@ -495,7 +495,7 @@ static inline
 */
 void bgSetRotate(int id, int angle)
 {
-   bgState[id].angle = angle & 0x1ff;
+   bgState[id].angle = angle;
 
    //bgUpdate(id);
 }
@@ -508,7 +508,7 @@ static inline
 	\param id 
 		background id returned from bgInit or bgInitSub
 	\param angle 
-		the angle of counter clockwise rotation (0 to 511)
+		the angle of counter clockwise rotation (-32768 to 32767)
 */
 void bgRotate(int id, int angle)
 {
@@ -523,7 +523,7 @@ static inline
 	\param id 
 		background id returned from bgInit or bgInitSub
 	\param angle 
-		the angle of counter clockwise rotation (0 to 511)
+		the angle of counter clockwise rotation (-32768 to 32767)
 	\param sx
 		the 24.8 bit fractional fixed point inverse horizontal scaling to apply
 	\param sy
@@ -558,7 +558,7 @@ static inline
 	\param id 
 		background id returned from bgInit or bgInitSub
 	\param angle 
-		the angle of counter clockwise rotation (0 to 511)
+		the angle of counter clockwise rotation (-32768 to 32767)
 	\param sx
 		the 24.8 bit fractional fixed point horizontal scaling to apply
 	\param sy

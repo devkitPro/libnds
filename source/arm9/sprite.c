@@ -192,8 +192,8 @@ void oamUpdate(OamState* oam)
 
 void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy)
 {
-	int ss = sinFixed(angle);
-	int cc = cosFixed(angle);
+	int ss = sinLerp(angle);
+	int cc = cosLerp(angle);
 
 	oam->oamRotationMemory[rotId].hdx = cc*sx>>12; 
 	oam->oamRotationMemory[rotId].hdy =-ss*sx>>12;

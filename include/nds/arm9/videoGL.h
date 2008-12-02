@@ -74,8 +74,8 @@
 	(must be power of two and must be the same as LUT resolution)
 	in other words dont change unless you also change your LUTs
 ---------------------------------------------------------------------------------*/
-#define LUT_SIZE (512)
-#define LUT_MASK (0x1FF)
+#define LUT_SIZE (1<<15)
+#define LUT_MASK ((1<<15) - 1)
 
 ////////////////////////////////////////////////////////////
 // Misc. constants
@@ -90,6 +90,7 @@
 
 typedef uint16 fixed12d3; /*!< \brief Used for depth (glClearDepth, glCutoffDepth) */
 
+
 #define int_to_12d3(n)    ((n) << 3) /*!< \brief convert int to fixed12d3 */
 #define float_to_12d3(n)  ((fixed12d3)((n) * (1 << 3))) /*!< \brief convert float to fixed12d3 */
 #define GL_MAX_DEPTH      0x7FFF /*!< \brief the maximum value for type fixed12d3 */
@@ -101,7 +102,7 @@ typedef uint16 fixed12d3; /*!< \brief Used for depth (glClearDepth, glCutoffDept
 #define floattof32(n)        ((int32)((n) * (1 << 12))) /*!< \brief convert float to f32 */
 #define f32tofloat(n)        (((float)(n)) / (float)(1<<12)) /*!< \brief convert f32 to float */
 
-typedef short int t16;        /*!< \brief text coordinate 12.4 fixed point */
+typedef short t16;        /*!< \brief text coordinate 12.4 fixed point */
 #define f32tot16(n)          ((t16)(n >> 8)) /*!< \brief convert f32 to t16 */
 #define inttot16(n)          ((n) << 4) /*!< \brief convert int to t16 */
 #define t16toint(n)          ((n) >> 4) /*!< \brief convert t16 to int */
@@ -804,8 +805,8 @@ GL_STATIC_INL
 \brief Rotates the current modelview matrix by angle about the x axis 
 \param angle The angle to rotate by (angle is 0-511) */
 void glRotateXi(int angle) {
-	int32 sine = sinFixed(angle);//SIN[angle &  LUT_MASK];
-	int32 cosine = cosFixed(angle);//COS[angle & LUT_MASK];
+	int32 sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
+	int32 cosine = cosLerp(angle);//COS[angle & LUT_MASK];
 	
 	MATRIX_MULT3x3 = inttof32(1);
 	MATRIX_MULT3x3 = 0;
@@ -825,8 +826,8 @@ GL_STATIC_INL
 \brief Rotates the current modelview matrix by angle about the y axis 
 \param angle The angle to rotate by (angle is 0-511) */
  void glRotateYi(int angle) {
-	int32 sine = sinFixed(angle);//SIN[angle &  LUT_MASK];
-	int32 cosine = cosFixed(angle);//COS[angle & LUT_MASK];
+	int32 sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
+	int32 cosine = cosLerp(angle);//COS[angle & LUT_MASK];
 	
 	MATRIX_MULT3x3 = cosine;
 	MATRIX_MULT3x3 = 0;
@@ -846,8 +847,8 @@ GL_STATIC_INL
 \brief Rotates the current modelview matrix by angle about the z axis 
 \param angle The angle to rotate by (angle is 0-511) */
 void glRotateZi(int angle) {
-	int32 sine = sinFixed(angle);//SIN[angle &  LUT_MASK];
-	int32 cosine = cosFixed(angle);//COS[angle & LUT_MASK];
+	int32 sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
+	int32 cosine = cosLerp(angle);//COS[angle & LUT_MASK];
 	
 	MATRIX_MULT3x3 = cosine;
 	MATRIX_MULT3x3 = sine;
@@ -991,8 +992,7 @@ GL_STATIC_INL
 void gluPerspectivef32(int fovy, int32 aspect, int32 zNear, int32 zFar) {
 	int32 xmin, xmax, ymin, ymax;
 	
-	//ymax = mulf32(zNear, TAN[(fovy>>1) & LUT_MASK]);
-	ymax = mulf32(zNear, tanFixed(fovy>>1));
+	ymax = mulf32(zNear, tanLerp(fovy>>1));
 	
 	ymin = -ymax;
 	xmin = mulf32(ymin, aspect);
@@ -1202,7 +1202,7 @@ GL_STATIC_INL
 \param y the y component of the axis to rotate on
 \param z the z component of the axis to rotate on */
 void glRotatef32(float angle, int32 x, int32 y, int32 z) {
-    glRotatef32i((int)(angle * LUT_SIZE / 360.0), x, y, z);
+    glRotatef32i((int)(angle * DEGREES_IN_CIRCLE / 360.0), x, y, z);
 }
 GL_STATIC_INL
 /*! \fn void glRotatef(float angle, float x, float y, float z)
@@ -1269,7 +1269,7 @@ GL_STATIC_INL
 \warning FLOAT VERSION!!!! please use glRotateXi()
 \param angle The angle to rotate by */
 void glRotateX(float angle) {
-	glRotateXi((int)(angle * LUT_SIZE / 360.0));
+	glRotateXi((int)(angle * DEGREES_IN_CIRCLE / 360.0));
 }
 GL_STATIC_INL
 /*! \fn void glRotateY(float angle)
@@ -1277,7 +1277,7 @@ GL_STATIC_INL
 \warning FLOAT VERSION!!!! please use glRotateYi()
 \param angle The angle to rotate by */
 void glRotateY(float angle) {
-	glRotateYi((int)(angle * LUT_SIZE / 360.0));
+	glRotateYi((int)(angle * DEGREES_IN_CIRCLE / 360.0));
 }
 GL_STATIC_INL
 /*! \fn void glRotateZ(float angle) 
@@ -1285,7 +1285,7 @@ GL_STATIC_INL
 \warning FLOAT VERSION!!!! please use glRotateZi()
 \param angle The angle to rotate by */
 void glRotateZ(float angle) {
-	glRotateZi((int)(angle * LUT_SIZE / 360.0));
+	glRotateZi((int)(angle * DEGREES_IN_CIRCLE / 360.0));
 }
 GL_STATIC_INL
 /*! \fn void glOrtho(float left, float right, float bottom, float top, float zNear, float zFar) 
@@ -1344,7 +1344,7 @@ GL_STATIC_INL
 \param zNear Specifies the near clipping plane
 \param zFar Specifies the far clipping plane */
  void gluPerspective(float fovy, float aspect, float zNear, float zFar) {
-	gluPerspectivef32((int)(fovy * LUT_SIZE / 360.0), floattof32(aspect), floattof32(zNear), floattof32(zFar));    
+	gluPerspectivef32((int)(fovy * DEGREES_IN_CIRCLE / 360.0), floattof32(aspect), floattof32(zNear), floattof32(zFar));    
 }
 GL_STATIC_INL
 /*! \fn void glTexCoord2f(float s, float t)

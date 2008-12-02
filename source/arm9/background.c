@@ -32,14 +32,14 @@ distribution.
 
 const char* BgUsage = 
 "______________________________\n"
-"|Mode | BG0 | BG1 | BG2 |BG3 |\n"
-"|  0  |  T  |  T  |  T  |  T |\n"
-"|  1  |  T  |  T  |  T  |  R |\n"
-"|  2  |  T  |  T  |  R  |  R |\n"
-"|  3  |  T  |  T  |  T  |  E |\n"
-"|  4  |  T  |  T  |  R  |  E |\n"
-"|  5  |  T  |  T  |  E  |  E |\n"
-"-----------------------------\n"
+"|Mode | BG0 | BG1 | BG2 | BG3 |\n"
+"|  0  |  T  |  T  |  T  |  T  |\n"
+"|  1  |  T  |  T  |  T  |  R  |\n"
+"|  2  |  T  |  T  |  R  |  R  |\n"
+"|  3  |  T  |  T  |  T  |  E  |\n"
+"|  4  |  T  |  T  |  R  |  E  |\n"
+"|  5  |  T  |  T  |  E  |  E  |\n"
+"|_____|_____|_____|_____|_____|\n"
 "T = Text\n"
 "R = Rotation\n"
 "E = Extended Rotation (Bitmap or tiled)\n";
@@ -123,8 +123,8 @@ void bgUpdate(int id)
 		s32 pa, pb, pc, pd; 
 
 		// Compute sin and cos
-		angleSin = sinFixed(bgState[id].angle);
-		angleCos = cosFixed(bgState[id].angle);
+		angleSin = sinLerp(bgState[id].angle);
+		angleCos = cosLerp(bgState[id].angle);
 
 		// Set the background registers
 		pa = ( angleCos * bgState[id].scaleX ) >> 12;
