@@ -245,6 +245,9 @@ typedef struct tPERSONAL_DATA {
 //!	Default location for the user's personal data (see %PERSONAL_DATA).
 #define PersonalData ((PERSONAL_DATA*)0x27FFC80)
 
+// argv struct magic number
+#define ARGV_MAGIC 0x5f617267
+
 //!	argv structure
 /*!	\struct __argv
 
@@ -262,8 +265,6 @@ struct __argv {
 //!	Default location for the libnds argv structure.
 #define __system_argv		((struct __argv *)0x027FFF70)
 
-// argv struct magic number
-#define ARGV_MAGIC 0x5f617267
 
 typedef	struct {
 	u8 year;	// add 2000 to get 4 digit year
@@ -274,7 +275,6 @@ typedef	struct {
 	u8 hours;	// 0 to 11 for AM, 52 to 63 for PM
 	u8 minutes;	// 0 to 59
 	u8 seconds;	// 0 to 59
-	u8 padding;
 } ALIGN(4) RTCtime;
 
 #endif

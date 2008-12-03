@@ -36,9 +36,9 @@
 
 
 #ifdef ARM9
-#define REG_EXMEMCNT (*(vuint16*)0x04000204)
+#define REG_EXMEMCNT (*(vu16*)0x04000204)
 #else
-#define REG_EXMEMSTAT (*(vuint16*)0x04000204)
+#define REG_EXMEMSTAT (*(vu16*)0x04000204)
 #endif
 
 #define ARM7_MAIN_RAM_PRIORITY BIT(15)
@@ -48,52 +48,52 @@
 
 // Protection register (write-once sadly)
 #ifdef ARM7
-#define PROTECTION    (*(vuint32*)0x04000308)
+#define PROTECTION    (*(vu32*)0x04000308)
 #endif
 
 
-#define ALLRAM        ((uint8*)0x00000000)
+#define ALLRAM        ((u8*)0x00000000)
 
 /*! \brief 8 bit pointer to main ram */
-#define MAINRAM8      ((uint8*)0x02000000)
+#define MAINRAM8      ((u8*)0x02000000)
 /*! \brief 16 bit pointer to main ram */
-#define MAINRAM16     ((uint16*)0x02000000)
+#define MAINRAM16     ((u16*)0x02000000)
 /*! \brief 32 bit pointer to main ram */
-#define MAINRAM32     ((uint32*)0x02000000)
+#define MAINRAM32     ((u32*)0x02000000)
 
 // fixme: shared RAM
 
 // GBA_BUS is volatile, while GBAROM is not
 /*! \brief 16 bit pointer to the GBA slot bus */
-#define GBA_BUS       ((vuint16 *)(0x08000000))
-#define GBAROM        ((uint16*)0x08000000)
+#define GBA_BUS       ((vu16 *)(0x08000000))
+#define GBAROM        ((u16*)0x08000000)
 
 /*! \brief 8 bit pointer to GBA slot Save ram */
-#define SRAM          ((uint8*)0x0A000000)
+#define SRAM          ((u8*)0x0A000000)
 
 
 
 
 #ifdef ARM7
-#define VRAM          ((uint16*)0x06000000)
+#define VRAM          ((u16*)0x06000000)
 #endif
 
 /*!
 * \brief the GBA file header format
 */
 typedef struct sGBAHeader {
-	uint32 entryPoint;
-	uint8 logo[156];
+	u32 entryPoint;
+	u8 logo[156];
 	char title[0xC];
 	char gamecode[0x4];
-	uint16 makercode;
-	uint8 is96h;
-	uint8 unitcode;
-	uint8 devicecode;
-	uint8 unused[7];
-	uint8 version;
-	uint8 complement;
-	uint16 checksum;
+	u16 makercode;
+	u8 is96h;
+	u8 unitcode;
+	u8 devicecode;
+	u8 unused[7];
+	u8 version;
+	u8 complement;
+	u16 checksum;
 } __attribute__ ((__packed__)) tGBAHeader;
 
 #define GBA_HEADER (*(tGBAHeader *)0x08000000)
@@ -105,74 +105,74 @@ typedef struct sNDSHeader {
   char gameTitle[12];
   char gameCode[4];
   char makercode[2];
-  uint8 unitCode;
-  uint8 deviceType;           // type of device in the game card
-  uint8 deviceSize;           // device capacity (1<<n Mbit)
-  uint8 reserved1[9];
-  uint8 romversion;
-  uint8 flags;                // auto-boot flag
+  u8 unitCode;
+  u8 deviceType;           // type of device in the game card
+  u8 deviceSize;           // device capacity (1<<n Mbit)
+  u8 reserved1[9];
+  u8 romversion;
+  u8 flags;                // auto-boot flag
 
-  uint32 arm9romSource;
-  uint32 arm9executeAddress;
-  uint32 arm9destination;
-  uint32 arm9binarySize;
+  u32 arm9romOffset;
+  u32 arm9executeAddress;
+  u32 arm9destination;
+  u32 arm9binarySize;
 
-  uint32 arm7romSource;
-  uint32 arm7executeAddress;
-  uint32 arm7destination;
-  uint32 arm7binarySize;
+  u32 arm7romOffset;
+  u32 arm7executeAddress;
+  u32 arm7destination;
+  u32 arm7binarySize;
 
-  uint32 filenameSource;
-  uint32 filenameSize;
-  uint32 fatSource;
-  uint32 fatSize;
+  u32 filenameOffset;
+  u32 filenameSize;
+  u32 fatOffset;
+  u32 fatSize;
 
-  uint32 arm9overlaySource;
-  uint32 arm9overlaySize;
-  uint32 arm7overlaySource;
-  uint32 arm7overlaySize;
+  u32 arm9overlaySource;
+  u32 arm9overlaySize;
+  u32 arm7overlaySource;
+  u32 arm7overlaySize;
 
-  uint32 cardControl13;  // used in modes 1 and 3
-  uint32 cardControlBF;  // used in mode 2
-  uint32 bannerOffset;
+  u32 cardControl13;  // used in modes 1 and 3
+  u32 cardControlBF;  // used in mode 2
+  u32 bannerOffset;
 
-  uint16 secureCRC16;
+  u16 secureCRC16;
 
-  uint16 readTimeout;
+  u16 readTimeout;
 
-  uint32 unknownRAM1;
-  uint32 unknownRAM2;
+  u32 unknownRAM1;
+  u32 unknownRAM2;
 
-  uint32 bfPrime1;
-  uint32 bfPrime2;
-  uint32 romSize;
+  u32 bfPrime1;
+  u32 bfPrime2;
+  u32 romSize;
 
-  uint32 headerSize;
-  uint32 zeros88[14];
-  uint8 gbaLogo[156];
-  uint16 logoCRC16;
-  uint16 headerCRC16;
+  u32 headerSize;
+  u32 zeros88[14];
+  u8 gbaLogo[156];
+  u16 logoCRC16;
+  u16 headerCRC16;
 
-  uint32 debugRomSource;
-  uint32 debugRomSize;
-  uint32 debugRomDestination;
-  uint32 offset_0x16C;
+  u32 debugRomSource;
+  u32 debugRomSize;
+  u32 debugRomDestination;
+  u32 offset_0x16C;
 
-  uint8 zero[0x90];
+  u8 zero[0x90];
 } __attribute__ ((__packed__)) tNDSHeader;
 
-#define NDSHeader (*(tNDSHeader *)0x027FFE00)
+#define __NDSHeader ((tNDSHeader *)0x027FFE00)
 
 /*!
 * \brief the NDS banner format
 */
 typedef struct sNDSBanner {
-  uint16 version;
-  uint16 crc;
-  uint8 reserved[28];
-  uint8 icon[512];
-  uint16 palette[16];
-  uint16 titles[6][128];
+  u16 version;
+  u16 crc;
+  u8 reserved[28];
+  u8 icon[512];
+  u16 palette[16];
+  u16 titles[6][128];
 } __attribute__ ((__packed__)) tNDSBanner;
 
 
@@ -210,7 +210,7 @@ static inline
 *   \param arm9card if true the arm9 is the owner of slot 1, otherwise the arm7
 */
 void sysSetBusOwners(bool arm9rom, bool arm9card) {
-  uint16 pattern = REG_EXMEMCNT & ~(ARM7_OWNS_CARD|ARM7_OWNS_ROM);
+  u16 pattern = REG_EXMEMCNT & ~(ARM7_OWNS_CARD|ARM7_OWNS_ROM);
   pattern = pattern | (arm9card ?  0: ARM7_OWNS_CARD ) |
                       (arm9rom ?  0: ARM7_OWNS_ROM );
   REG_EXMEMCNT = pattern;
