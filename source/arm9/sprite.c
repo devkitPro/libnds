@@ -166,6 +166,12 @@ void oamSet(OamState* oam, int id,  int x, int y, int priority, int palette_alph
 		oam->oamMemory[id].isSizeDouble = sizeDouble;
 		oam->oamMemory[id].isRotateScale = true;
 	}
+	else
+	{
+		oam->oamMemory[id].rotationIndex = 0;
+		oam->oamMemory[id].isSizeDouble = false;
+		oam->oamMemory[id].isRotateScale = false;
+	}
 	if(format != SpriteColorFormat_Bmp)
 	{
 		oam->oamMemory[id].colorMode = format;
