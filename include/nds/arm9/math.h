@@ -229,7 +229,24 @@ int32 sqrt32(int a)
 	return REG_SQRT_RESULT;
 }
 
+STATIC_INL 
+/** \fn int32 sqrt64(long long a)
+*   \brief integer sqrt
+*   \param a 64 bit integer argument
+*   \return returns 32 bit integer result
+*/
+int32 sqrt64(long long a)
+{
+	REG_SQRTCNT = SQRT_64;
 
+	while(REG_SQRTCNT & SQRT_BUSY);
+
+	REG_SQRT_PARAM = a;
+
+	while(REG_SQRTCNT & SQRT_BUSY);
+
+	return REG_SQRT_RESULT;
+}
 STATIC_INL 
 /** \fn void crossf32(int32 *a, int32 *b, int32 *result)
 *   \brief 1.19.12 fixed point cross product function result = AxB
