@@ -63,7 +63,7 @@ The print console must be initialized to use DB_CONSOL
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
-#define CONSOLE_USE_COLOR255 16
+
 
 
 #include <nds/ndstypes.h>
@@ -71,6 +71,102 @@ The print console must be initialized to use DB_CONSOL
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef bool(* ConsolePrint)(void* con, char c);
+
+
+typedef struct
+{
+	u16* gfx;  /*!< A pointer to the font graphics (will be loaded by consoleInit() if loadGraphics is true >*/
+	u16* pal;  /*!< A pointer to the font palette (will be loaded by consoleInit() if loadGraphics is true >*/
+	u16  numColors; 	/*!< Number of colors in the font palette >*/
+	  
+	u8 bpp;				/*!< Bits per pixel in the font graphics >*/
+
+	u16 asciiOffset; /*!<  Offset to the first valid character in the font table >*/
+	u16 numChars; /*!< Number of characters in the font graphics >*/
+	bool convertSingleColor; /*!< If true font is treated as a single color font where all non zero pixels are set to a value of 15 or 255 (4bpp / 8bpp respectivly). This ensures only one palette entry is utilized for font rendering >*/
+}ConsoleFont;
+
+/**
+ * \struct PrintConsole
+ * \brief console structure used to store the state of a console render context
+ 
+ Default values from consolNew():
+<div class="fixedFont"><pre>
+ PrintConsole defaultConsole = 
+{
+	//Font:
+	{
+		(u16*)default_font_bin, //font gfx
+		0, //font palette
+		0, //font color count
+		4, //bpp
+		0, //first ascii character in the set
+		128, //number of characters in the font set
+		true, //convert to single color
+	},
+	0, //font background map 
+	0, //font background gfx
+	31, //map base
+	0, //char base
+	0, //bg layer in use
+	-1, //bg id
+	0,0, //cursorX cursorY
+	0,0, //prevcursorX prevcursorY
+	32, //console width
+	24, //console height
+	32, //window width
+	24, //window height
+	3, //tab size
+	0, //font character offset
+	0, //selected palette
+	0,  //print callback
+	false, //console initialized
+	true, //load graphics
+};
+ </pre></div>
+
+ */
+typedef struct 
+{
+	ConsoleFont font;
+
+	u16* fontBgMap;		/*!< Pointer to the bg layer map if used.  Is set by bgInit if bgId is valid>*/
+	u16* fontBgGfx;		/*!< Pointer to the bg layer graphics if used.  Is set by bgInit if bgId is valid>*/
+	
+	u8 mapBase;		/*!< Prints debug statements to no$gba debug window >*/
+	u8 gfxBase;		/*!< Prints debug statements to no$gba debug window >*/
+
+	u8 bgLayer;	/*!< Bg layer used by the background >*/
+	int bgId;	/*!< bgId, should be set with a call to bgInit() or bgInitSub()>*/
+
+	int cursorX;/*!< Current X location of the cursor (as a tile offset by default) >*/
+	int cursorY;/*!< Current Y location of the cursor (as a tile offset by default) >*/
+
+	int prevCursorX; /*!< Internal state  >*/
+	int prevCursorY; /*!< Internal state >*/
+
+	int consoleWidth;/*!< Width of the console hardware layer in tiles >*/
+	int consoleHeight;/*!< Height of the console hardware layer in tiles  >*/
+
+	int windowWidth;/*!< Window width in tiles (not implemented) >*/
+	int windowHeight;/*!< Window height in tiles (not implemented) >*/
+
+	int tabSize;/*!< Size of a tab  >*/
+
+	u16 fontCharOffset;/*!< Offset to the first graphics tile in background memory (in case your font is not loaded at a graphics base boundary)>*/
+
+
+	u16 fontCurPal; /*!< The current palette used by the engine (only applies to 4bpp text backgrounds) >*/
+
+	ConsolePrint PrintChar; /*!< callback for printing a character.  Should return true if it has handled rendering the graphics (else the print engine will attempt to render via tiles) >*/
+
+	bool consoleInitialised; /*!< True if the console is initialized >*/
+	bool loadGraphics; /*!< True if consoleInit should attempt to load font graphics into background memory >*/
+	
+	
+}PrintConsole;
 
 /**
  * \enum DebugDevice
@@ -82,32 +178,51 @@ typedef enum
 	DebugDevice_CONSOLE = 0x02 /*!< Prints debug statements to DS console window >*/
 }DebugDevice;
 
-/*! \fn void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16* map, u8 pal, u8 bitDepth)
-	\brief Initialise the console.
-	\param font	base address of the 16 color font to use
-	\param charBase	VRAM address to load the font
-	\param numCharacters number of characters in the font
-	\param charStart ascii code of the first character in the font
-	\param map base address of the map to use for printing
-	\param pal 16 color palette index to use
-	\param bitDepth 256/16 color tile flag. 
-	
-	Initializes the console with the given parameters. When pal is greater than 15 and
-	bitDepth is 16 then	all non zero entries in the font are set to index 255. When bitDepth
-	is not 16 then the font tiles are created as 8bit (256 color).
- 
-*/
-void consoleInit(u16* font, u16* charBase, u16 numCharacters, u8 charStart, u16* map, u8 pal, u8 bitDepth);
-/*! \fn void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth)
-	\brief Initialize the console with some default parameters.
-	\param charBase	VRAM address to load the font
-	\param map base address of the map to use for printing
-	\param bitDepth 256/16 color tile flag
+/*! \fn void consoleNewFont(ConsoleFont* font, const void* gfx, const void* pal, u16 numChars, u16 numColors, u8 bpp, u16 asciiOffset);
 
-	This function calls consoleInit() with the default built in font and character ranges, the parameters given
-	are as for that function. 
+	\brief Fills the supplied font struct with supplied parameters.  
+	\param font pointer to the font struct to fill
+	\param gfx pointer to the font graphics
+	\param pal pointer to the font palette
+	\param numChars the number of characters in the font
+	\param numColors the number of colors in the palette
+	\param asciiOffset the offset to the first ascii character in the font
+	\param singleColor if true all pixel values in the font will be translated to pixle value 15 or 255 (depending on color mode)
 */
-void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth);
+void consoleNewFont(ConsoleFont* font, const void* gfx, const void* pal, u16 numChars, u16 numColors, u8 bpp, u16 asciiOffset, bool singleColor);
+
+/*! \fn PrintConsole* consoleNew(PrintConsole* console)
+	\brief Fills the supplied console struct with default parameters.  Use this if you want to implement multiple consoles
+	\param console A pointer to the console struct 
+	\return A pointer to the default console	
+*/
+PrintConsole* consoleNew(PrintConsole* console);
+
+/*! \fn PrintConsole* consoleGetDefault(void)
+	\brief Gets a pointer to the default console (this should only be used when using a single console, other wise use consoleNew(PrintsConsole* console)
+	\param console A pointer to the console struct 
+	\return A pointer to the default console	
+*/
+PrintConsole* consoleGetDefault(void);
+
+/*! \fn void consoleSelect(PrintConsole* console)
+	\brief Make the specified console the render target
+	\param console A pointer to the console struct (must have been initialized with consoleInit(PrintConsole* console)
+*/
+void consoleSelect(PrintConsole* console);
+
+/*! \fn void consoleInit(PrintConsole* console)
+	\brief Initialise the console.
+	\param console A pointer to the console initialze data
+*/
+void consoleInit(PrintConsole* console);
+
+/*! \fn void consoleInitDefault(int bgId);
+	\brief Initialise the console using an id generated from bgInit().  Allows you 
+	to use the default console on any tiled background fairly easily.
+	\param bgId an id generated by bgInit() or bgInitSub()
+*/
+void consoleInitDefault(int bgId);
 
 /*! \fn void consoleDemoInit(void)
 \brief Initialize the console to a default state for prototyping.

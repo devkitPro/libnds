@@ -207,16 +207,12 @@ extern const char __itcm_start[];
 //---------------------------------------------------------------------------------
 static void defaultHandler() {
 //---------------------------------------------------------------------------------
-	videoSetMode(MODE_0_2D | DISPLAY_BG0_ACTIVE);
-	vramSetBankA(VRAM_A_MAIN_BG);
-
-	REG_BG0CNT = BG_MAP_BASE(31);
+	consoleDemoInit();
 
 	BG_PALETTE[0] = RGB15(31,0,0);
 	BG_PALETTE[255] = RGB15(31,31,31);
 
-	consoleInitDefault((u16*)SCREEN_BASE_BLOCK(31), (u16*)CHAR_BASE_BLOCK(0), 16);
-
+	
 	iprintf("\x1b[5CGuru Meditation Error!\n");
 	u32	currentMode = getCPSR() & 0x1f;
 	u32 thumbState = ((*(u32*)0x027FFD90) & 0x20);

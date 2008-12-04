@@ -1,26 +1,26 @@
 /*---------------------------------------------------------------------------------
 
-	Copyright (C) 2005
-		Michael Noland (joat)
-		Jason Rogers (dovoto)
-		Dave Murphy (WinterMute)
+Copyright (C) 2005
+Michael Noland (joat)
+Jason Rogers (dovoto)
+Dave Murphy (WinterMute)
 
-	This software is provided 'as-is', without any express or implied
-	warranty.  In no event will the authors be held liable for any
-	damages arising from the use of this software.
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any
+damages arising from the use of this software.
 
-	Permission is granted to anyone to use this software for any
-	purpose, including commercial applications, and to alter it and
-	redistribute it freely, subject to the following restrictions:
+Permission is granted to anyone to use this software for any
+purpose, including commercial applications, and to alter it and
+redistribute it freely, subject to the following restrictions:
 
-	1.	The origin of this software must not be misrepresented; you
-		must not claim that you wrote the original software. If you use
-		this software in a product, an acknowledgment in the product
-		documentation would be appreciated but is not required.
-	2.	Altered source versions must be plainly marked as such, and
-		must not be misrepresented as being the original software.
-	3.	This notice may not be removed or altered from any source
-		distribution.
+1.	The origin of this software must not be misrepresented; you
+must not claim that you wrote the original software. If you use
+this software in a product, an acknowledgment in the product
+documentation would be appreciated but is not required.
+2.	Altered source versions must be plainly marked as such, and
+must not be misrepresented as being the original software.
+3.	This notice may not be removed or altered from any source
+distribution.
 
 ---------------------------------------------------------------------------------*/
 
@@ -36,139 +36,151 @@
 #include <stdarg.h>
 #include <sys/iosupport.h>
 
-//	global console variables
 
-#define CONSOLE_WIDTH 32
-#define CONSOLE_HEIGHT 24
-#define TAB_SIZE 3
+PrintConsole defaultConsole = 
+{
+	//Font:
+	{
+		(u16*)default_font_bin, //font gfx
+		0, //font palette
+		0, //font color count
+		4, //bpp
+		0, //first ascii character in the set
+		128, //number of characters in the font set
+		true //convert single color
+	},
+	0, //font background map 
+	0, //font background gfx
+	31, //map base
+	0, //char base
+	0, //bg layer in use
+	-1, //bg id
+	0,0, //cursorX cursorY
+	0,0, //prevcursorX prevcursorY
+	32, //console width
+	24, //console height
+	32, //window width
+	24, //window height
+	3, //tab size
+	0, //font character offset
+	0, //selected palette
+	0,  //print callback
+	false, //console initialized
+	true, //load graphics
+};
 
-//	map to print to
-static u16* fontMap;
+PrintConsole* currentConsole = &defaultConsole;
 
-//	location of cursor
-static int row, col;
-static int savedX, savedY;
-
-//	font may not start on a character base boundry
-static u16 fontOffset;
-
-//	the first character in the set (0 if you have a full set)
-static u16 fontStart;
-
-//	the 16-color palette to use
-bool fontBold = false;
-static u16 fontPal;
-
-static int consoleInitialised = 0;
+PrintConsole* consoleGetDefault(void){return &defaultConsole;}
 
 void consolePrintChar(char c);
 
 
 //---------------------------------------------------------------------------------
 static void consoleCls(char mode) {
-//---------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------
 
 	int i = 0;
 	int colTemp,rowTemp;
 
 	switch (mode)
 	{
-		case '0':
+	case '0':
 		{
-			colTemp = col;
-			rowTemp = row;
+			colTemp = currentConsole->cursorX ;
+			rowTemp = currentConsole->cursorY ;
 
-			while(i++ < ((CONSOLE_HEIGHT * CONSOLE_WIDTH) - (rowTemp * CONSOLE_WIDTH + colTemp))) consolePrintChar(' ');
+			while(i++ < ((currentConsole->consoleHeight * currentConsole->consoleWidth) - (rowTemp * currentConsole->consoleWidth + colTemp))) consolePrintChar(' ');
 
-			col = colTemp;
-			row = rowTemp;
+			currentConsole->cursorX  = colTemp;
+			currentConsole->cursorY  = rowTemp;
 			break;
 		}	
-		case '1':
+	case '1':
 		{
-			colTemp = col;
-			rowTemp = row;
+			colTemp = currentConsole->cursorX ;
+			rowTemp = currentConsole->cursorY ;
 
-			row = 0;
-			col = 0;
+			currentConsole->cursorY  = 0;
+			currentConsole->cursorX  = 0;
 
-			while (i++ < (rowTemp * CONSOLE_WIDTH + colTemp)) consolePrintChar(' ');
+			while (i++ < (rowTemp * currentConsole->consoleWidth + colTemp)) consolePrintChar(' ');
 
-			col = colTemp;
-			row = rowTemp;
+			currentConsole->cursorX  = colTemp;
+			currentConsole->cursorY  = rowTemp;
 			break;
 		}	
-		case '2':
+	case '2':
 		{
-			row = 0;
-			col = 0;
+			currentConsole->cursorY  = 0;
+			currentConsole->cursorX  = 0;
 
-			while(i++ < CONSOLE_HEIGHT * CONSOLE_WIDTH) consolePrintChar(' ');
+			while(i++ < currentConsole->consoleHeight * currentConsole->consoleWidth) consolePrintChar(' ');
 
-			row = 0;
-			col = 0;
+			currentConsole->cursorY  = 0;
+			currentConsole->cursorX  = 0;
 			break;
 		}	
 	}
 }
 //---------------------------------------------------------------------------------
 static void consoleClearLine(char mode) {
-//---------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------
 
 	int i = 0;
 	int colTemp;
 
 	switch (mode)
 	{
-		case '0':
+	case '0':
 		{
-			colTemp = col;
+			colTemp = currentConsole->cursorX ;
 
-			while(i++ < (CONSOLE_WIDTH - colTemp)) {
+			while(i++ < (currentConsole->consoleWidth - colTemp)) {
 				consolePrintChar(' ');
 			}
 
-			col = colTemp;
+			currentConsole->cursorX  = colTemp;
 
 			break;
 		}	
-		case '1':
+	case '1':
 		{
-			colTemp = col;
+			colTemp = currentConsole->cursorX ;
 
-			col = 0;
+			currentConsole->cursorX  = 0;
 
-			while(i++ < ((CONSOLE_WIDTH - colTemp)-2)) {
+			while(i++ < ((currentConsole->consoleWidth - colTemp)-2)) {
 				consolePrintChar(' ');
 			}
 
-			col = colTemp;
+			currentConsole->cursorX  = colTemp;
 
 			break;
 		}	
-		case '2':
+	case '2':
 		{
-			colTemp = col;
+			colTemp = currentConsole->cursorX ;
 
-			col = 0;
+			currentConsole->cursorX  = 0;
 
-			while(i++ < CONSOLE_WIDTH) {
+			while(i++ < currentConsole->consoleWidth) {
 				consolePrintChar(' ');
 			}
 
-			col = colTemp;
+			currentConsole->cursorX  = colTemp;
 
 			break;
 		}
-		default:
+	default:
 		{
-			colTemp = col;
+			colTemp = currentConsole->cursorX ;
 
-			while(i++ < (CONSOLE_WIDTH - colTemp)) {
+			while(i++ < (currentConsole->consoleWidth - colTemp)) {
 				consolePrintChar(' ');
 			}
 
-			col = colTemp;
+			currentConsole->cursorX  = colTemp;
 
 			break;
 		}
@@ -177,40 +189,38 @@ static void consoleClearLine(char mode) {
 
 //---------------------------------------------------------------------------------
 ssize_t nocash_write(struct _reent *r, int fd, const char *ptr, size_t len) {
-//---------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------
 	int count = 0;
-	
+
 	if(!ptr || len <= 0) return -1;
 
 	while(count < len)
 	{
-		
+
 		nocashMessage(ptr + count);
-		
+
 		count += (len - count) > 80 ? 80 : len - count;
 
 	}
-	
+
 	return len;
 }
 
 
 //---------------------------------------------------------------------------------
 ssize_t con_write(struct _reent *r,int fd,const char *ptr, size_t len) {
-//---------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------
 
 	char chr;
 
 	int i, count = 0;
 	char *tmp = (char*)ptr;
 	int intensity = 0;
-	
+
 	if(!tmp || len<=0) return -1;
-	
-	if (!consoleInitialised) return -1;
-	
+
 	i = 0;
-	
+
 	while(*tmp!='\0' && i<len) {
 
 		chr = *(tmp++);
@@ -225,81 +235,81 @@ ssize_t con_write(struct _reent *r,int fd,const char *ptr, size_t len) {
 				chr = *(tmp++);
 				i++; count++; escapelen++;
 				int parameter;
-				
+
 				switch (chr) {
 					/////////////////////////////////////////
 					// Cursor directional movement
 					/////////////////////////////////////////
 					case 'A':
 						siscanf(escapeseq,"[%dA", &parameter);
-						row =  (row - parameter) < 0 ? 0 : row - parameter;
+						currentConsole->cursorY  =  (currentConsole->cursorY  - parameter) < 0 ? 0 : currentConsole->cursorY  - parameter;
 						escaping = false;
 						break;
 					case 'B':
 						siscanf(escapeseq,"[%dB", &parameter);
-						row =  (row + parameter) > CONSOLE_HEIGHT - 1 ? CONSOLE_HEIGHT - 1 : row + parameter;
+						currentConsole->cursorY  =  (currentConsole->cursorY  + parameter) > currentConsole->consoleHeight - 1 ? currentConsole->consoleHeight - 1 : currentConsole->cursorY  + parameter;
 						escaping = false;
 						break;
 					case 'C':
 						siscanf(escapeseq,"[%dC", &parameter);
-						col =  (col + parameter) > CONSOLE_WIDTH - 1 ? CONSOLE_WIDTH - 1 : col + parameter;
+						currentConsole->cursorX  =  (currentConsole->cursorX  + parameter) > currentConsole->consoleWidth - 1 ? currentConsole->consoleWidth - 1 : currentConsole->cursorX  + parameter;
 						escaping = false;
 						break;
 					case 'D':
 						siscanf(escapeseq,"[%dD", &parameter);
-						col =  (col - parameter) < 0 ? 0 : col - parameter;
+						currentConsole->cursorX  =  (currentConsole->cursorX  - parameter) < 0 ? 0 : currentConsole->cursorX  - parameter;
 						escaping = false;
 						break;
-					/////////////////////////////////////////
-					// Cursor position movement
-					/////////////////////////////////////////
+						/////////////////////////////////////////
+						// Cursor position movement
+						/////////////////////////////////////////
 					case 'H':
 					case 'f':
-						siscanf(escapeseq,"[%d;%df", &row, &col);
+						siscanf(escapeseq,"[%d;%df", &currentConsole->cursorY , &currentConsole->cursorX );
 						escaping = false;
 						break;
-					/////////////////////////////////////////
-					// Screen clear
-					/////////////////////////////////////////
+						/////////////////////////////////////////
+						// Screen clear
+						/////////////////////////////////////////
 					case 'J':
 						consoleCls(escapeseq[escapelen-2]);
 						escaping = false;
 						break;
-					/////////////////////////////////////////
-					// Line clear
-					/////////////////////////////////////////
+						/////////////////////////////////////////
+						// Line clear
+						/////////////////////////////////////////
 					case 'K':
 						consoleClearLine(escapeseq[escapelen-2]);
 						escaping = false;
 						break;
-					/////////////////////////////////////////
-					// Save cursor position
-					/////////////////////////////////////////
+						/////////////////////////////////////////
+						// Save cursor position
+						/////////////////////////////////////////
 					case 's':
-						savedX = col;
-						savedY = row;
+						currentConsole->prevCursorX  = currentConsole->cursorX ;
+						currentConsole->prevCursorY  = currentConsole->cursorY ;
 						escaping = false;
 						break;
-					/////////////////////////////////////////
-					// Load cursor position
-					/////////////////////////////////////////
+						/////////////////////////////////////////
+						// Load cursor position
+						/////////////////////////////////////////
 					case 'u':
-						col = savedX;
-						row = savedY;
+						currentConsole->cursorX  = currentConsole->prevCursorX ;
+						currentConsole->cursorY  = currentConsole->prevCursorY ;
 						escaping = false;
 						break;
-					/////////////////////////////////////////
-					// Color scan codes
-					/////////////////////////////////////////
+						/////////////////////////////////////////
+						// Color scan codes
+						/////////////////////////////////////////
 					case 'm':
 						siscanf(escapeseq,"[%d;%dm", &parameter, &intensity);
-						
+
 						//only handle 30-37,39 and intensity for the color changes
 						parameter -= 30; 
-						
+
 						//39 is the reset code
 						if(parameter == 9){
-						    parameter = 15;
+							parameter = 15;
 						}
 						else if(parameter > 8){ 
 							parameter -= 2;
@@ -308,14 +318,14 @@ ssize_t con_write(struct _reent *r,int fd,const char *ptr, size_t len) {
 							parameter += 8;
 						}
 						if(parameter < 16 && parameter >= 0){
-							fontPal = parameter << 12;
+							currentConsole->fontCurPal = parameter << 12;
 						}
-						
+
 						escaping = false;
-					    break;
+						break;
 				}
 			} while (escaping);
-		continue;
+			continue;
 		}
 
 		consolePrintChar(chr);
@@ -346,119 +356,151 @@ static const devoptab_t dotab_stderr = {
 	NULL,
 	NULL
 };
-/*---------------------------------------------------------------------------------
-	consoleInit
-	param:
-		font: 16 color font
-		charBase: the location the font data will be loaded to
-		numCharacters: count of characters in the font
-		charStart: The ascii number of the first character in the font set
-					if you have a full set this will be zero
-		map: pointer to the map you will be printing to.
-		pal: specifies the 16 color palette to use, if > 15 it will change all non-zero
-			entries in the font to use palette index 255
----------------------------------------------------------------------------------*/
-void consoleInit(	u16* font, u16* charBase,
-					u16 numCharacters, u8 charStart,
-					u16* map, u8 pal, u8 bitDepth) {
-//---------------------------------------------------------------------------------
+
+void consoleInit(PrintConsole* console)
+{
 	int i;
 
-	u16* palette = BG_PALETTE_SUB;
+	currentConsole = console;
+
+	devoptab_list[STD_OUT] = &dotab_stdout;
 	
-	//check which display is being utilized
-	if(charBase < BG_GFX_SUB){
-		palette = BG_PALETTE;
+	setvbuf(stdout, NULL , _IONBF, 0);
+	
+	console->consoleInitialised = 1;
+	
+	if(console->bgId >= 0)
+	{
+		console->fontBgGfx = (u16*)bgGetGfxPtr(console->bgId);
+		console->fontBgMap = (u16*)bgGetMapPtr(console->bgId);
 	}
 	
-	//set up the palette for color printing
-	palette[1 * 16 - 1] = RGB15(0,0,0); //30 normal black
-	palette[2 * 16 - 1] = RGB15(15,0,0); //31 normal red	 
-	palette[3 * 16 - 1] = RGB15(0,15,0); //32 normal green	
-	palette[4 * 16 - 1] = RGB15(15,15,0); //33 normal yellow	
+	consoleCls('2');
+
+	if(!console->loadGraphics) return;
+
+	u16* palette = BG_PALETTE_SUB;
+
+	//check which display is being utilized
+	if(console->fontBgGfx < BG_GFX_SUB){
+			palette = BG_PALETTE;
+	}
 	
-	palette[5 * 16 - 1] = RGB15(0,0,15); //34 normal blue
-	palette[6 * 16 - 1] = RGB15(15,0,15); //35 normal magenta
-	palette[7 * 16 - 1] = RGB15(0,15,15); //36 normal cyan
-	palette[8 * 16 - 1] = RGB15(24,24,24); //37 normal white
-	
-	palette[9 * 16 - 1 ] = RGB15(15,15,15); //40 bright black
-	palette[10 * 16 - 1] = RGB15(31,0,0); //41 bright red
-	palette[11 * 16 - 1] = RGB15(0,31,0); //42 bright green
-	palette[12 * 16 - 1] = RGB15(31,31,0);	//43 bright yellow
-	
-	palette[13 * 16 - 1] = RGB15(0,0,31); //44 bright blue
-	palette[14 * 16 - 1] = RGB15(31,0,31);	//45 bright magenta
-	palette[15 * 16 - 1] = RGB15(0,31,31);	//46 bright cyan
-	palette[16 * 16 - 1] = RGB15(31,31,31); //47 & 39 bright white
-
-	row = col = 0;
-
-	fontStart = charStart;
-
-	fontOffset = 0;
-
-	fontMap = map;
-
-	if(bitDepth == 16)
+	if(console->font.bpp == 4)
 	{
-		if(pal < 16)
+		if(!console->font.convertSingleColor)
 		{
-			fontPal = pal << 12;
-
-			for (i = 0; i < numCharacters * 16; i++)
-				charBase[i] = font[i];
+			if(console->font.gfx)
+				dmaCopy(console->font.gfx, console->fontBgGfx, console->font.numChars * 64 / 2);
+			if(console->font.pal)
+				dmaCopy(console->font.pal, palette + console->fontCurPal * 16, currentConsole->font.numColors*2);
+			
+			console->fontCurPal <<= 12;
 		}
+
 		else
 		{
-			fontPal = 15 << 12;
+			console->fontCurPal = 15 << 12;
 
-			for (i = 0; i < numCharacters * 16; i++)
+			for (i = 0; i < currentConsole->font.numChars * 16; i++)
 			{
 				u16 temp = 0;
 
-				if(font[i] & 0xF)
+				if(currentConsole->font.gfx[i] & 0xF)
 					temp |= 0xF;
-				if(font[i] & 0xF0)
+				if(currentConsole->font.gfx[i] & 0xF0)
 					temp |= 0xF0;
-				if(font[i] & 0xF00)
+				if(currentConsole->font.gfx[i] & 0xF00)
 					temp |= 0xF00;
-				if(font[i] & 0xF000)
+				if(currentConsole->font.gfx[i] & 0xF000)
 					temp |= 0xF000;
 
-				charBase[i] = temp;
+				console->fontBgGfx[i] = temp;
+			}
+
+		
+
+		//set up the palette for color printing
+		palette[1 * 16 - 1] = RGB15(0,0,0); //30 normal black
+		palette[2 * 16 - 1] = RGB15(15,0,0); //31 normal red	 
+		palette[3 * 16 - 1] = RGB15(0,15,0); //32 normal green	
+		palette[4 * 16 - 1] = RGB15(15,15,0); //33 normal yellow	
+
+		palette[5 * 16 - 1] = RGB15(0,0,15); //34 normal blue
+		palette[6 * 16 - 1] = RGB15(15,0,15); //35 normal magenta
+		palette[7 * 16 - 1] = RGB15(0,15,15); //36 normal cyan
+		palette[8 * 16 - 1] = RGB15(24,24,24); //37 normal white
+
+		palette[9 * 16 - 1 ] = RGB15(15,15,15); //40 bright black
+		palette[10 * 16 - 1] = RGB15(31,0,0); //41 bright red
+		palette[11 * 16 - 1] = RGB15(0,31,0); //42 bright green
+		palette[12 * 16 - 1] = RGB15(31,31,0);	//43 bright yellow
+
+		palette[13 * 16 - 1] = RGB15(0,0,31); //44 bright blue
+		palette[14 * 16 - 1] = RGB15(31,0,31);	//45 bright magenta
+		palette[15 * 16 - 1] = RGB15(0,31,31);	//46 bright cyan
+		palette[16 * 16 - 1] = RGB15(31,31,31); //47 & 39 bright white
+		}
+
+	}
+	else if(console->font.bpp == 8)
+	{
+		console->fontCurPal = 0;
+
+		if(!console->font.convertSingleColor)
+		{
+			if(currentConsole->font.gfx)
+				dmaCopy(currentConsole->font.gfx, console->fontBgGfx, currentConsole->font.numChars * 64);
+			if(currentConsole->font.pal)
+				dmaCopy(currentConsole->font.pal, palette, currentConsole->font.numColors*2);
+		}
+		else
+		{
+			for(i = 0; i < currentConsole->font.numChars * 16; i++)
+			{
+				u32 temp = 0;
+
+				if(currentConsole->font.gfx[i] & 0xF)
+					temp = 255;
+				if(currentConsole->font.gfx[i] & 0xF0)
+					temp |= 255 << 8;
+				if(currentConsole->font.gfx[i] & 0xF00)
+					temp |= 255 << 16;
+				if(currentConsole->font.gfx[i] & 0xF000)
+					temp |= 255 << 24;
+
+				((u32*)console->fontBgGfx)[i] = temp;
+
 			}
 		}
-	}//end if bitdepth
-	else
-	{
-		fontPal = 0;
-		for(i = 0; i < numCharacters * 16; i++)
-		{
-			u32 temp = 0;
 
-			if(font[i] & 0xF)
-				temp = 255;
-			if(font[i] & 0xF0)
-				temp |= 255 << 8;
-			if(font[i] & 0xF00)
-				temp |= 255 << 16;
-			if(font[i] & 0xF000)
-				temp |= 255 << 24;
-
-			((u32*)charBase)[i] = temp;
-
-		}
 	}
 
-	devoptab_list[STD_OUT] = &dotab_stdout;
-	setvbuf(stdout, NULL , _IONBF, 0);
-
-	consoleCls('2');
-	consoleInitialised = 1;
-
 }
+//---------------------------------------------------------------------------------
+void consoleSelect(PrintConsole* console){
+//---------------------------------------------------------------------------------
 
+	currentConsole = console;
+}
+//---------------------------------------------------------------------------------
+PrintConsole* consoleNew(PrintConsole* console){
+//---------------------------------------------------------------------------------
+	*console = defaultConsole;
+	return console;
+}
+//---------------------------------------------------------------------------------
+void consoleNewFont(ConsoleFont* font, const void* gfx, const void* pal, u16 numChars, u16 numColors, u8 bpp, u16 asciiOffset, bool singleColor){
+//---------------------------------------------------------------------------------
+
+	font->bpp = bpp;
+	font->pal = (u16*)pal;
+	font->numChars = numChars;
+	font->numColors = numColors;
+	font->gfx = (u16*)gfx;
+	font->asciiOffset = asciiOffset;
+	font->convertSingleColor = singleColor;
+}
 //---------------------------------------------------------------------------------
 void consoleDebugInit(DebugDevice device){
 //---------------------------------------------------------------------------------
@@ -468,7 +510,7 @@ void consoleDebugInit(DebugDevice device){
 		devoptab_list[STD_ERR] = &dotab_stderr;
 		setvbuf(stderr, NULL , _IONBF, 0);
 	}
-	
+
 	if(device & DebugDevice_CONSOLE)
 	{
 		devoptab_list[STD_ERR] = &dotab_stdout;
@@ -476,37 +518,37 @@ void consoleDebugInit(DebugDevice device){
 	}
 }
 
-//---------------------------------------------------------------------------------
-// Places the console in a default mode using bg0 of the sub display, and vram c for 
-// font and map..this is provided for rapid prototyping and nothing more
+////---------------------------------------------------------------------------------
+//// Places the console in a default mode using bg0 of the sub display, and vram c for 
+//// font and map..this is provided for rapid prototyping and nothing more
 void consoleDemoInit(void) {
 //---------------------------------------------------------------------------------
-	videoSetModeSub(DISPLAY_BG0_ACTIVE | MODE_0_2D);
+	videoSetModeSub(MODE_0_2D);
 	vramSetBankC(VRAM_C_SUB_BG); 
 
-	REG_BG0CNT_SUB = BG_MAP_BASE(31);
+	currentConsole->bgId = bgInitSub(currentConsole->bgLayer, BgType_Text4bpp, BgSize_T_256x256, currentConsole->mapBase, currentConsole->gfxBase);
 
-	//consoleInit() is a lot more flexible but this gets you up and running quick
-	consoleInitDefault((u16*)SCREEN_BASE_BLOCK_SUB(31), (u16*)CHAR_BASE_BLOCK_SUB(0), 16);
+	consoleInit(currentConsole);
 }
+//---------------------------------------------------------------------------------
+void consoleInitDefault(int bgId){
+//---------------------------------------------------------------------------------
+	currentConsole->bgId = bgId;
 
-//---------------------------------------------------------------------------------
-void consoleInitDefault(u16* map, u16* charBase, u8 bitDepth) {
-//---------------------------------------------------------------------------------
-	consoleInit((u16*)default_font_bin, charBase, 256, 0, map, CONSOLE_USE_COLOR255, bitDepth);
+	consoleInit(currentConsole);
 }
 
 //---------------------------------------------------------------------------------
 static void newRow() {
-//---------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------
 	int i;
-	row++;
-	if(row >= CONSOLE_HEIGHT) {
-		row--;
+	currentConsole->cursorY ++;
+	if(currentConsole->cursorY  >= currentConsole->consoleHeight) {
+		currentConsole->cursorY --;
 
-		for(i = CONSOLE_WIDTH; i < CONSOLE_HEIGHT * CONSOLE_WIDTH; i++) fontMap[i - CONSOLE_WIDTH] = fontMap[i];
+		for(i = currentConsole->consoleWidth; i < currentConsole->consoleHeight * currentConsole->consoleWidth; i++) currentConsole->fontBgMap[i - currentConsole->consoleWidth] = currentConsole->fontBgMap[i];
 
-		for(i = 0; i < CONSOLE_WIDTH; i++) fontMap[i + (CONSOLE_HEIGHT-1)*CONSOLE_WIDTH] = fontPal | (u16)(' ' + fontOffset - fontStart);
+		for(i = 0; i < currentConsole->consoleWidth; i++) currentConsole->fontBgMap[i + (currentConsole->consoleHeight-1)*currentConsole->consoleWidth] = currentConsole->fontCurPal | (u16)(' ' + currentConsole->fontCharOffset - currentConsole->font.asciiOffset);
 
 	}
 }
@@ -514,41 +556,45 @@ static void newRow() {
 
 //---------------------------------------------------------------------------------
 void consolePrintChar(char c) {
-//---------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------
 
-	if(col >= CONSOLE_WIDTH) {
-		col = 0;
+	if(currentConsole->PrintChar) 
+		if(currentConsole->PrintChar(currentConsole, c))
+			return;
+
+	if(currentConsole->cursorX  >= currentConsole->consoleWidth) {
+		currentConsole->cursorX  = 0;
 
 		newRow();
 	}
 
 	switch(c) {
 		/*
-			The only special characters we will handle are tab (\t), carriage return (\r) & line feed (\n).
-			Carriage return & line feed will function the same: go to next line and put cursor at the beginning.
-			For everything else, use VT sequences.
-			
-			Reason: VT sequences are more specific to the task of cursor placement.
-			The special escape sequences \b \f & \v are archaic and non-portable.
+		The only special characters we will handle are tab (\t), carriage return (\r) & line feed (\n).
+		Carriage return & line feed will function the same: go to next line and put cursor at the beginning.
+		For everything else, use VT sequences.
+
+		Reason: VT sequences are more specific to the task of cursor placement.
+		The special escape sequences \b \f & \v are archaic and non-portable.
 		*/
 		case 9:
-			col += TAB_SIZE;
+			currentConsole->cursorX  += currentConsole->tabSize;
 			break;
 		case 10:
 		case 13:
 			newRow();
-			col = 0;
+			currentConsole->cursorX  = 0;
 			break;
 		default:
-			fontMap[col + row * CONSOLE_WIDTH] = fontPal | (u16)(c + fontOffset - fontStart);
-			++col;
+			currentConsole->fontBgMap[currentConsole->cursorX  + currentConsole->cursorY  * currentConsole->consoleWidth] = currentConsole->fontCurPal | (u16)(c + currentConsole->fontCharOffset - currentConsole->font.asciiOffset);
+			++currentConsole->cursorX ;
 			break;
 	}
 }
 
 //---------------------------------------------------------------------------------
 void consoleClear(void) {
-//---------------------------------------------------------------------------------
+	//---------------------------------------------------------------------------------
 	iprintf("\x1b[2J");
 }
 
