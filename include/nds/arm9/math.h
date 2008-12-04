@@ -56,7 +56,7 @@
 #define REG_SQRT_PARAM		(*(vint64*) (0x040002B8))
 #define REG_SQRT_PARAM_L	(*(vint32*) (0x040002B8))
 #define REG_SQRT_PARAM_H	(*(vint32*) (0x040002BC))
-#define REG_SQRT_RESULT		(*(vint32*) (0x040002B4))
+#define REG_SQRT_RESULT		(*(vuint32*) (0x040002B4))
 
 //  Math coprocessor modes
 
@@ -216,7 +216,7 @@ STATIC_INL
 *   \param a 32 bit integer argument
 *   \return returns 32 bit integer result
 */
-int32 sqrt32(int a)
+u32 sqrt32(int a)
 {
 	REG_SQRTCNT = SQRT_32;
 
@@ -235,7 +235,7 @@ STATIC_INL
 *   \param a 64 bit integer argument
 *   \return returns 32 bit integer result
 */
-int32 sqrt64(long long a)
+u32 sqrt64(long long a)
 {
 	REG_SQRTCNT = SQRT_64;
 
