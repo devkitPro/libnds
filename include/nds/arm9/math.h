@@ -38,25 +38,25 @@
 #define STATIC_INL static inline
 #endif
 
-#define REG_DIVCNT			(*(vuint16*)(0x04000280))
-#define REG_DIV_NUMER		(*(vint64*) (0x04000290))
-#define REG_DIV_NUMER_L		(*(vint32*) (0x04000290))
-#define REG_DIV_NUMER_H		(*(vint32*) (0x04000294))
-#define REG_DIV_DENOM		(*(vint64*) (0x04000298))
-#define REG_DIV_DENOM_L		(*(vint32*) (0x04000298))
-#define REG_DIV_DENOM_H		(*(vint32*) (0x0400029C))
-#define REG_DIV_RESULT		(*(vint64*) (0x040002A0))
-#define REG_DIV_RESULT_L	(*(vint32*) (0x040002A0))
-#define REG_DIV_RESULT_H	(*(vint32*) (0x040002A4))
-#define REG_DIVREM_RESULT	(*(vint64*) (0x040002A8))
-#define REG_DIVREM_RESULT_L	(*(vint32*) (0x040002A8))
-#define REG_DIVREM_RESULT_H	(*(vint32*) (0x040002AC))
+#define REG_DIVCNT			(*(vu16*)(0x04000280))
+#define REG_DIV_NUMER		(*(vs64*) (0x04000290))
+#define REG_DIV_NUMER_L		(*(vs32*) (0x04000290))
+#define REG_DIV_NUMER_H		(*(vs32*) (0x04000294))
+#define REG_DIV_DENOM		(*(vs64*) (0x04000298))
+#define REG_DIV_DENOM_L		(*(vs32*) (0x04000298))
+#define REG_DIV_DENOM_H		(*(vs32*) (0x0400029C))
+#define REG_DIV_RESULT		(*(vs64*) (0x040002A0))
+#define REG_DIV_RESULT_L	(*(vs32*) (0x040002A0))
+#define REG_DIV_RESULT_H	(*(vs32*) (0x040002A4))
+#define REG_DIVREM_RESULT	(*(vs64*) (0x040002A8))
+#define REG_DIVREM_RESULT_L	(*(vs32*) (0x040002A8))
+#define REG_DIVREM_RESULT_H	(*(vs32*) (0x040002AC))
 
-#define REG_SQRTCNT			(*(vuint16*)(0x040002B0))
-#define REG_SQRT_PARAM		(*(vint64*) (0x040002B8))
-#define REG_SQRT_PARAM_L	(*(vint32*) (0x040002B8))
-#define REG_SQRT_PARAM_H	(*(vint32*) (0x040002BC))
-#define REG_SQRT_RESULT		(*(vuint32*) (0x040002B4))
+#define REG_SQRTCNT			(*(vu16*)(0x040002B0))
+#define REG_SQRT_PARAM		(*(vs64*) (0x040002B8))
+#define REG_SQRT_PARAM_L	(*(vs32*) (0x040002B8))
+#define REG_SQRT_PARAM_H	(*(vs32*) (0x040002BC))
+#define REG_SQRT_RESULT		(*(vu32*) (0x040002B4))
 
 //  Math coprocessor modes
 
