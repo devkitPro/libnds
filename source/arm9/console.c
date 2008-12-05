@@ -357,27 +357,9 @@ static const devoptab_t dotab_stderr = {
 	NULL
 };
 
-void consoleInit(PrintConsole* console)
+void consoleLoadFont(PrintConsole* console)
 {
 	int i;
-
-	currentConsole = console;
-
-	devoptab_list[STD_OUT] = &dotab_stdout;
-	
-	setvbuf(stdout, NULL , _IONBF, 0);
-	
-	console->consoleInitialised = 1;
-	
-	if(console->bgId >= 0)
-	{
-		console->fontBgGfx = (u16*)bgGetGfxPtr(console->bgId);
-		console->fontBgMap = (u16*)bgGetMapPtr(console->bgId);
-	}
-	
-	consoleCls('2');
-
-	if(!console->loadGraphics) return;
 
 	u16* palette = BG_PALETTE_SUB;
 
@@ -393,7 +375,7 @@ void consoleInit(PrintConsole* console)
 			if(console->font.gfx)
 				dmaCopy(console->font.gfx, console->fontBgGfx, console->font.numChars * 64 / 2);
 			if(console->font.pal)
-				dmaCopy(console->font.pal, palette + console->fontCurPal * 16, currentConsole->font.numColors*2);
+				dmaCopy(console->font.pal, palette + console->fontCurPal * 16, console->font.numColors*2);
 			
 			console->fontCurPal <<= 12;
 		}
@@ -402,17 +384,17 @@ void consoleInit(PrintConsole* console)
 		{
 			console->fontCurPal = 15 << 12;
 
-			for (i = 0; i < currentConsole->font.numChars * 16; i++)
+			for (i = 0; i < console->font.numChars * 16; i++)
 			{
 				u16 temp = 0;
 
-				if(currentConsole->font.gfx[i] & 0xF)
+				if(console->font.gfx[i] & 0xF)
 					temp |= 0xF;
-				if(currentConsole->font.gfx[i] & 0xF0)
+				if(console->font.gfx[i] & 0xF0)
 					temp |= 0xF0;
-				if(currentConsole->font.gfx[i] & 0xF00)
+				if(console->font.gfx[i] & 0xF00)
 					temp |= 0xF00;
-				if(currentConsole->font.gfx[i] & 0xF000)
+				if(console->font.gfx[i] & 0xF000)
 					temp |= 0xF000;
 
 				console->fontBgGfx[i] = temp;
@@ -449,24 +431,24 @@ void consoleInit(PrintConsole* console)
 
 		if(!console->font.convertSingleColor)
 		{
-			if(currentConsole->font.gfx)
-				dmaCopy(currentConsole->font.gfx, console->fontBgGfx, currentConsole->font.numChars * 64);
-			if(currentConsole->font.pal)
-				dmaCopy(currentConsole->font.pal, palette, currentConsole->font.numColors*2);
+			if(console->font.gfx)
+				dmaCopy(console->font.gfx, console->fontBgGfx, console->font.numChars * 64);
+			if(console->font.pal)
+				dmaCopy(console->font.pal, palette, console->font.numColors*2);
 		}
 		else
 		{
-			for(i = 0; i < currentConsole->font.numChars * 16; i++)
+			for(i = 0; i < console->font.numChars * 16; i++)
 			{
 				u32 temp = 0;
 
-				if(currentConsole->font.gfx[i] & 0xF)
+				if(console->font.gfx[i] & 0xF)
 					temp = 255;
-				if(currentConsole->font.gfx[i] & 0xF0)
+				if(console->font.gfx[i] & 0xF0)
 					temp |= 255 << 8;
-				if(currentConsole->font.gfx[i] & 0xF00)
+				if(console->font.gfx[i] & 0xF00)
 					temp |= 255 << 16;
-				if(currentConsole->font.gfx[i] & 0xF000)
+				if(console->font.gfx[i] & 0xF000)
 					temp |= 255 << 24;
 
 				((u32*)console->fontBgGfx)[i] = temp;
@@ -476,6 +458,40 @@ void consoleInit(PrintConsole* console)
 
 	}
 
+	consoleCls('2');
+
+}
+PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize size, int mapBase, int tileBase, bool main){
+
+	if(console)
+		currentConsole = console;
+	else
+		console = currentConsole;
+
+	if(main)
+		console->bgId = bgInit(layer, type, size, mapBase, tileBase);
+	else
+		console->bgId = bgInitSub(layer, type, size, mapBase, tileBase);
+	
+	devoptab_list[STD_OUT] = &dotab_stdout;
+	
+	setvbuf(stdout, NULL , _IONBF, 0);
+	
+	console->consoleInitialised = 1;
+	
+	if(console->bgId >= 0)
+	{
+		console->fontBgGfx = (u16*)bgGetGfxPtr(console->bgId);
+		console->fontBgMap = (u16*)bgGetMapPtr(console->bgId);
+	}
+	
+	consoleCls('2');
+
+	if(console->loadGraphics) 
+		consoleLoadFont(console);
+
+	return currentConsole;
+
 }
 //---------------------------------------------------------------------------------
 void consoleSelect(PrintConsole* console){
@@ -483,24 +499,18 @@ void consoleSelect(PrintConsole* console){
 
 	currentConsole = console;
 }
+
 //---------------------------------------------------------------------------------
-PrintConsole* consoleNew(PrintConsole* console){
-//---------------------------------------------------------------------------------
-	*console = defaultConsole;
-	return console;
-}
-//---------------------------------------------------------------------------------
-void consoleNewFont(ConsoleFont* font, const void* gfx, const void* pal, u16 numChars, u16 numColors, u8 bpp, u16 asciiOffset, bool singleColor){
+void consoleSetFont(PrintConsole* console, ConsoleFont* font){
 //---------------------------------------------------------------------------------
 
-	font->bpp = bpp;
-	font->pal = (u16*)pal;
-	font->numChars = numChars;
-	font->numColors = numColors;
-	font->gfx = (u16*)gfx;
-	font->asciiOffset = asciiOffset;
-	font->convertSingleColor = singleColor;
+	console->font = *font;
+
+	consoleLoadFont(console);
+
+	consoleSelect(console);
 }
+
 //---------------------------------------------------------------------------------
 void consoleDebugInit(DebugDevice device){
 //---------------------------------------------------------------------------------
@@ -521,21 +531,12 @@ void consoleDebugInit(DebugDevice device){
 ////---------------------------------------------------------------------------------
 //// Places the console in a default mode using bg0 of the sub display, and vram c for 
 //// font and map..this is provided for rapid prototyping and nothing more
-void consoleDemoInit(void) {
+PrintConsole* consoleDemoInit(void) {
 //---------------------------------------------------------------------------------
 	videoSetModeSub(MODE_0_2D);
 	vramSetBankC(VRAM_C_SUB_BG); 
 
-	currentConsole->bgId = bgInitSub(currentConsole->bgLayer, BgType_Text4bpp, BgSize_T_256x256, currentConsole->mapBase, currentConsole->gfxBase);
-
-	consoleInit(currentConsole);
-}
-//---------------------------------------------------------------------------------
-void consoleInitDefault(int bgId){
-//---------------------------------------------------------------------------------
-	currentConsole->bgId = bgId;
-
-	consoleInit(currentConsole);
+	return consoleInit(currentConsole, currentConsole->bgLayer, BgType_Text4bpp, BgSize_T_256x256, currentConsole->mapBase, currentConsole->gfxBase, false);
 }
 
 //---------------------------------------------------------------------------------
