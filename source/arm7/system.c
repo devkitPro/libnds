@@ -44,6 +44,9 @@ void powerValueHandler(u32 value, void* user_data)
 		// Power down till we get our interrupt.
 		swiSleep(); //waits for PM (lid open) interrupt
 
+		//100ms
+		swiDelay(838000);
+		
 		// Restore the interrupt state.
 		REG_IE = ie_save;
 

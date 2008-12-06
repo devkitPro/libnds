@@ -81,7 +81,10 @@ void sleep(void)
    //wait two frames to give arm7 a chance
    swiWaitForVBlank();
    swiWaitForVBlank();
-      
+   
+   //100ms
+   swiDelay(419000);
+		    
    REG_IE = oldIE ; 
 }
 
