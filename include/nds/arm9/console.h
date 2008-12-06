@@ -117,6 +117,8 @@ typedef struct
 	0,0, //prevcursorX prevcursorY
 	32, //console width
 	24, //console height
+	0,  //window x
+	0,  //window y
 	32, //window width
 	24, //window height
 	3, //tab size
@@ -151,6 +153,8 @@ typedef struct
 	int consoleWidth;/*!< Width of the console hardware layer in tiles >*/
 	int consoleHeight;/*!< Height of the console hardware layer in tiles  >*/
 
+	int windowX;/*!< Window X location in tiles (not implemented) >*/
+	int windowY;/*!< Window Y location in tiles (not implemented) >*/
 	int windowWidth;/*!< Window width in tiles (not implemented) >*/
 	int windowHeight;/*!< Window height in tiles (not implemented) >*/
 
@@ -187,6 +191,17 @@ typedef enum
 	*/
 void consoleSetFont(PrintConsole* console, ConsoleFont* font);
 
+/*! \fn void consoleSetWindow(PrintConsole* console, int x, int y, int width, int height)
+
+	\brief Sets the print window
+	\param console console to set, if NULL will set current console window
+	\param x x location of the window
+	\param y y location of the window
+	\param width width of the window
+	\param height height of the window
+
+	*/
+void consoleSetWindow(PrintConsole* console, int x, int y, int width, int height);
 
 /*! \fn PrintConsole* consoleGetDefault(void)
 	\brief Gets a pointer to the default console (this should only be used when using a single console, other wise use consoleNew(PrintsConsole* console)

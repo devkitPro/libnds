@@ -59,6 +59,8 @@ PrintConsole defaultConsole =
 	0,0, //prevcursorX prevcursorY
 	32, //console width
 	24, //console height
+	0,  //window x
+	0,  //window y
 	32, //window width
 	24, //window height
 	3, //tab size
@@ -90,7 +92,8 @@ static void consoleCls(char mode) {
 			colTemp = currentConsole->cursorX ;
 			rowTemp = currentConsole->cursorY ;
 
-			while(i++ < ((currentConsole->consoleHeight * currentConsole->consoleWidth) - (rowTemp * currentConsole->consoleWidth + colTemp))) consolePrintChar(' ');
+			while(i++ < ((currentConsole->windowHeight * currentConsole->windowWidth) - (rowTemp * currentConsole->consoleWidth + colTemp))) 
+				consolePrintChar(' ');
 
 			currentConsole->cursorX  = colTemp;
 			currentConsole->cursorY  = rowTemp;
@@ -104,7 +107,8 @@ static void consoleCls(char mode) {
 			currentConsole->cursorY  = 0;
 			currentConsole->cursorX  = 0;
 
-			while (i++ < (rowTemp * currentConsole->consoleWidth + colTemp)) consolePrintChar(' ');
+			while (i++ < (rowTemp * currentConsole->windowWidth + colTemp)) 
+				consolePrintChar(' ');
 
 			currentConsole->cursorX  = colTemp;
 			currentConsole->cursorY  = rowTemp;
@@ -115,7 +119,8 @@ static void consoleCls(char mode) {
 			currentConsole->cursorY  = 0;
 			currentConsole->cursorX  = 0;
 
-			while(i++ < currentConsole->consoleHeight * currentConsole->consoleWidth) consolePrintChar(' ');
+			while(i++ < currentConsole->windowHeight * currentConsole->windowWidth) 
+				consolePrintChar(' ');
 
 			currentConsole->cursorY  = 0;
 			currentConsole->cursorX  = 0;
@@ -136,7 +141,7 @@ static void consoleClearLine(char mode) {
 		{
 			colTemp = currentConsole->cursorX ;
 
-			while(i++ < (currentConsole->consoleWidth - colTemp)) {
+			while(i++ < (currentConsole->windowWidth - colTemp)) {
 				consolePrintChar(' ');
 			}
 
@@ -150,7 +155,7 @@ static void consoleClearLine(char mode) {
 
 			currentConsole->cursorX  = 0;
 
-			while(i++ < ((currentConsole->consoleWidth - colTemp)-2)) {
+			while(i++ < ((currentConsole->windowWidth - colTemp)-2)) {
 				consolePrintChar(' ');
 			}
 
@@ -164,7 +169,7 @@ static void consoleClearLine(char mode) {
 
 			currentConsole->cursorX  = 0;
 
-			while(i++ < currentConsole->consoleWidth) {
+			while(i++ < currentConsole->windowWidth) {
 				consolePrintChar(' ');
 			}
 
@@ -176,7 +181,7 @@ static void consoleClearLine(char mode) {
 		{
 			colTemp = currentConsole->cursorX ;
 
-			while(i++ < (currentConsole->consoleWidth - colTemp)) {
+			while(i++ < (currentConsole->windowWidth - colTemp)) {
 				consolePrintChar(' ');
 			}
 
@@ -247,12 +252,12 @@ ssize_t con_write(struct _reent *r,int fd,const char *ptr, size_t len) {
 						break;
 					case 'B':
 						siscanf(escapeseq,"[%dB", &parameter);
-						currentConsole->cursorY  =  (currentConsole->cursorY  + parameter) > currentConsole->consoleHeight - 1 ? currentConsole->consoleHeight - 1 : currentConsole->cursorY  + parameter;
+						currentConsole->cursorY  =  (currentConsole->cursorY  + parameter) > currentConsole->windowHeight - 1 ? currentConsole->windowHeight - 1 : currentConsole->cursorY  + parameter;
 						escaping = false;
 						break;
 					case 'C':
 						siscanf(escapeseq,"[%dC", &parameter);
-						currentConsole->cursorX  =  (currentConsole->cursorX  + parameter) > currentConsole->consoleWidth - 1 ? currentConsole->consoleWidth - 1 : currentConsole->cursorX  + parameter;
+						currentConsole->cursorX  =  (currentConsole->cursorX  + parameter) > currentConsole->windowWidth - 1 ? currentConsole->windowWidth - 1 : currentConsole->cursorX  + parameter;
 						escaping = false;
 						break;
 					case 'D':
@@ -542,15 +547,26 @@ PrintConsole* consoleDemoInit(void) {
 //---------------------------------------------------------------------------------
 static void newRow() {
 	//---------------------------------------------------------------------------------
-	int i;
+	
+	
 	currentConsole->cursorY ++;
-	if(currentConsole->cursorY  >= currentConsole->consoleHeight) {
+	
+	if(currentConsole->cursorY  >= currentConsole->windowHeight) 
+	{
+		int rowCount;
+		int colCount;
+		
 		currentConsole->cursorY --;
 
-		for(i = currentConsole->consoleWidth; i < currentConsole->consoleHeight * currentConsole->consoleWidth; i++) currentConsole->fontBgMap[i - currentConsole->consoleWidth] = currentConsole->fontBgMap[i];
-
-		for(i = 0; i < currentConsole->consoleWidth; i++) currentConsole->fontBgMap[i + (currentConsole->consoleHeight-1)*currentConsole->consoleWidth] = currentConsole->fontCurPal | (u16)(' ' + currentConsole->fontCharOffset - currentConsole->font.asciiOffset);
-
+		for(rowCount = 0; rowCount < currentConsole->windowHeight - 1; rowCount++)
+			for(colCount = 0; colCount < currentConsole->windowWidth; colCount++)
+				currentConsole->fontBgMap[(colCount + currentConsole->windowX) + (rowCount + currentConsole->windowY) * currentConsole->consoleWidth] =
+					currentConsole->fontBgMap[(colCount + currentConsole->windowX) + (rowCount + currentConsole->windowY + 1) * currentConsole->consoleWidth];
+		
+		for(colCount = 0; colCount < currentConsole->windowWidth; colCount++)
+			currentConsole->fontBgMap[(colCount + currentConsole->windowX) + (rowCount + currentConsole->windowY) * currentConsole->consoleWidth] =
+				' ';
+	
 	}
 }
 
@@ -563,7 +579,7 @@ void consolePrintChar(char c) {
 		if(currentConsole->PrintChar(currentConsole, c))
 			return;
 
-	if(currentConsole->cursorX  >= currentConsole->consoleWidth) {
+	if(currentConsole->cursorX  >= currentConsole->windowWidth) {
 		currentConsole->cursorX  = 0;
 
 		newRow();
@@ -587,7 +603,7 @@ void consolePrintChar(char c) {
 			currentConsole->cursorX  = 0;
 			break;
 		default:
-			currentConsole->fontBgMap[currentConsole->cursorX  + currentConsole->cursorY  * currentConsole->consoleWidth] = currentConsole->fontCurPal | (u16)(c + currentConsole->fontCharOffset - currentConsole->font.asciiOffset);
+			currentConsole->fontBgMap[currentConsole->cursorX + currentConsole->windowX + (currentConsole->cursorY + currentConsole->windowY) * currentConsole->consoleWidth] = currentConsole->fontCurPal | (u16)(c + currentConsole->fontCharOffset - currentConsole->font.asciiOffset);
 			++currentConsole->cursorX ;
 			break;
 	}
@@ -597,6 +613,20 @@ void consolePrintChar(char c) {
 void consoleClear(void) {
 	//---------------------------------------------------------------------------------
 	iprintf("\x1b[2J");
+}
+
+//---------------------------------------------------------------------------------
+void consoleSetWindow(PrintConsole* console, int x, int y, int width, int height){
+//---------------------------------------------------------------------------------
+	
+	if(!console) console = currentConsole;
+
+	console->windowWidth = width;
+	console->windowHeight = height;
+	console->windowX = x;
+	console->windowY = y;
+	
+
 }
 
 
