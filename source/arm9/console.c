@@ -71,7 +71,9 @@ PrintConsole defaultConsole =
 	true, //load graphics
 };
 
-PrintConsole* currentConsole = &defaultConsole;
+PrintConsole currentCopy;
+
+PrintConsole* currentConsole = &currentCopy;
 
 PrintConsole* consoleGetDefault(void){return &defaultConsole;}
 
@@ -471,8 +473,12 @@ PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize 
 	if(console)
 		currentConsole = console;
 	else
+	{
+		*currentConsole = defaultConsole;
 		console = currentConsole;
-
+	
+	}
+	
 	if(main)
 		console->bgId = bgInit(layer, type, size, mapBase, tileBase);
 	else
@@ -541,7 +547,7 @@ PrintConsole* consoleDemoInit(void) {
 	videoSetModeSub(MODE_0_2D);
 	vramSetBankC(VRAM_C_SUB_BG); 
 
-	return consoleInit(currentConsole, currentConsole->bgLayer, BgType_Text4bpp, BgSize_T_256x256, currentConsole->mapBase, currentConsole->gfxBase, false);
+	return consoleInit(NULL, currentConsole->bgLayer, BgType_Text4bpp, BgSize_T_256x256, currentConsole->mapBase, currentConsole->gfxBase, false);
 }
 
 //---------------------------------------------------------------------------------
