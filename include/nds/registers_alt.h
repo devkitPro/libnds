@@ -36,6 +36,8 @@
 #ifndef	NDS_REGISTERS_H
 #define	NDS_REGISTERS_H
 
+#warning "header provided for assistance in porting to new register names, do not use for release code"
+
 
 #include <nds/ndstypes.h>
 
@@ -67,9 +69,9 @@
 #define DISPLAY_CR       REG_DISPCNT
 
 #ifdef ARM9
-#define WAIT_CR	REG_EXMEMCNT
+#define WAIT_CR			REG_EXMEMCNT
 #else
-#define WAIT_CR	REG_EXMEMSTAT
+#define WAIT_CR			REG_EXMEMSTAT
 #endif
 
 #define DISP_SR			REG_DISPSTAT
