@@ -30,7 +30,7 @@
 
 
 //---------------------------------------------------------------------------------
-void cardWriteCommand(const uint8 * command) {
+void cardWriteCommand(const uint8 *command) {
 //---------------------------------------------------------------------------------
 	int index;
 
@@ -43,9 +43,9 @@ void cardWriteCommand(const uint8 * command) {
 
 
 //---------------------------------------------------------------------------------
-void cardPolledTransfer(uint32 flags, uint32 * destination, uint32 length, const uint8 * command) {
+void cardPolledTransfer(uint32 flags, uint32 *destination, uint32 length, const uint8 *command) {
 //---------------------------------------------------------------------------------
-	u32 data;;
+	u32 data;
 	cardWriteCommand(command);
 	CARD_CR2 = flags;
 	uint32 * target = destination + length;
@@ -62,14 +62,14 @@ void cardPolledTransfer(uint32 flags, uint32 * destination, uint32 length, const
 
 
 //---------------------------------------------------------------------------------
-void cardStartTransfer(const uint8 * command, uint32 * destination, int channel, uint32 flags) {
+void cardStartTransfer(const uint8 *command, uint32 *destination, int channel, uint32 flags) {
 //---------------------------------------------------------------------------------
 	cardWriteCommand(command);
 
 	// Set up a DMA channel to transfer a word every time the card makes one
 	DMA_SRC(channel) = (uint32)&CARD_DATA_RD;
 	DMA_DEST(channel) = (uint32)destination;
-	DMA_CR(channel) = DMA_ENABLE | DMA_START_CARD | DMA_32_BIT | DMA_REPEAT | DMA_SRC_FIX | 0x0001;;
+	DMA_CR(channel) = DMA_ENABLE | DMA_START_CARD | DMA_32_BIT | DMA_REPEAT | DMA_SRC_FIX | 0x0001;
 
 	CARD_CR2 = flags;
 }
@@ -79,39 +79,41 @@ void cardStartTransfer(const uint8 * command, uint32 * destination, int channel,
 uint32 cardWriteAndRead(const uint8 * command, uint32 flags) {
 //---------------------------------------------------------------------------------
 	cardWriteCommand(command);
-	CARD_CR2 = flags | CARD_ACTIVATE | CARD_nRESET | 0x07000000;
+	CARD_CR2 = flags | CARD_ACTIVATE | CARD_nRESET | CARD_BLK_SIZE(7);
 	while (!(CARD_CR2 & CARD_DATA_READY)) ;
 	return CARD_DATA_RD;
 }
 
+//---------------------------------------------------------------------------------
+void cardParamCommand (uint8 command, uint32 parameter, uint32 flags, uint32 *destination, uint32 length) {
+//---------------------------------------------------------------------------------
+	u8 cmdData[8];
+	
+	cmdData[7] = (u8) command;
+	cmdData[6] = (u8) (parameter >> 24);
+	cmdData[5] = (u8) (parameter >> 16);
+	cmdData[4] = (u8) (parameter >>  8);
+	cmdData[3] = (u8) (parameter >>  0);
+	cmdData[2] = 0;
+	cmdData[1] = 0;
+	cmdData[0] = 0;
+
+	cardPolledTransfer(flags, destination, length, cmdData);
+}
 
 //---------------------------------------------------------------------------------
-void cardRead00(uint32 address, uint32 * destination, uint32 length, uint32 flags) {
-//---------------------------------------------------------------------------------f
-	uint8 command[8];
-	command[7] = 0;
-	command[6] = (address >> 24) & 0xff;
-	command[5] = (address >> 16) & 0xff;
-	command[4] = (address >> 8) & 0xff;
-	command[3] = address & 0xff;
-	command[2] = 0;
-	command[1] = 0;
-	command[0] = 0;
-	cardPolledTransfer(flags, destination, length, command);
+void cardReadHeader(uint8 *header) {
+//---------------------------------------------------------------------------------
+	cardParamCommand(CARD_CMD_HEADER_READ, 0,
+		CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(1) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
+		(uint32 *)header, 512);
 }
 
 
 //---------------------------------------------------------------------------------
-void cardReadHeader(uint8 * header) {
+uint32 cardReadID(uint32 flags) {
 //---------------------------------------------------------------------------------
-	cardRead00(0, (uint32 *)header, 512, 0xA93F1FFF);
-}
-
-
-//---------------------------------------------------------------------------------
-int cardReadID(uint32 flags) {
-//---------------------------------------------------------------------------------
-	uint8 command[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x90};
+	const uint8 command[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, CARD_CMD_HEADER_CHIPID};
 	return cardWriteAndRead(command, flags);
 }
 

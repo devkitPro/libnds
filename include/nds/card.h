@@ -51,22 +51,36 @@
 
 // CARD_CR2 register:
 
-#define CARD_ACTIVATE   (1<<31)  // when writing, get the ball rolling
-// 1<<30
-#define CARD_nRESET     (1<<29)  // value on the /reset pin (1 = high out, not a reset state, 0 = low out = in reset)
-#define CARD_28         (1<<28)  // when writing
-#define CARD_27         (1<<27)  // when writing
-#define CARD_26         (1<<26)
-#define CARD_22         (1<<22)
-#define CARD_19         (1<<19)
-#define CARD_ENCRYPTED  (1<<14)  // when writing, this command should be encrypted
-#define CARD_13         (1<<13)  // when writing
-#define CARD_4          (1<<4)   // when writing
+#define CARD_ACTIVATE     (1<<31)           // when writing, get the ball rolling
+#define CARD_WR           (1<<30)           // Card write enable
+#define CARD_nRESET       (1<<29)           // value on the /reset pin (1 = high out, not a reset state, 0 = low out = in reset)
+#define CARD_SEC_LARGE    (1<<28)           // Use "other" secure area mode, which tranfers blocks of 0x1000 bytes at a time
+#define CARD_CLK_SLOW     (1<<27)           // Transfer clock rate (0 = 6.7MHz, 1 = 4.2MHz)
+#define CARD_BLK_SIZE(n)  (((n)&0x7)<<24)   // Transfer block size, (0 = None, 1..6 = (0x100 << n) bytes, 7 = 4 bytes)
+#define CARD_SEC_CMD      (1<<22)           // The command transfer will be hardware encrypted (KEY2)
+#define CARD_DELAY2(n)    (((n)&0x3F)<<16)  // Transfer delay length part 2
+#define CARD_SEC_SEED     (1<<15)           // Apply encryption (KEY2) seed to hardware registers
+#define CARD_SEC_EN       (1<<14)           // Security enable
+#define CARD_SEC_DAT      (1<<13)           // The data transfer will be hardware encrypted (KEY2)
+#define CARD_DELAY1(n)    ((n)&0x1FFF)      // Transfer delay length part 1
 
 // 3 bits in b10..b8 indicate something
 // read bits
-#define CARD_BUSY       (1<<31)  // when reading, still expecting incomming data?
-#define CARD_DATA_READY (1<<23)  // when reading, CARD_DATA_RD or CARD_DATA has another word of data and is good to go
+#define CARD_BUSY         (1<<31)           // when reading, still expecting incomming data?
+#define CARD_DATA_READY   (1<<23)           // when reading, CARD_DATA_RD or CARD_DATA has another word of data and is good to go
+
+// Card commands
+#define CARD_CMD_DUMMY          0x9F
+#define CARD_CMD_HEADER_READ    0x00
+#define CARD_CMD_HEADER_CHIPID  0x90
+#define CARD_CMD_ACTIVATE_BF    0x3C  // Go into blowfish (KEY1) encryption mode
+#define CARD_CMD_ACTIVATE_SEC   0x40  // Go into hardware (KEY2) encryption mode
+#define CARD_CMD_SECURE_CHIPID  0x10
+#define CARD_CMD_SECURE_READ    0x20
+#define CARD_CMD_DISABLE_SEC    0x60  // Leave hardware (KEY2) encryption mode
+#define CARD_CMD_DATA_MODE      0xA0
+#define CARD_CMD_DATA_READ      0xB7
+#define CARD_CMD_DATA_CHIPID    0xB8
 
 
 #ifdef __cplusplus
@@ -74,17 +88,16 @@ extern "C" {
 #endif
 
 
-void cardWriteCommand(const uint8 * command);
-
-void cardPolledTransfer(uint32 flags, uint32 * destination, uint32 length, const uint8 * command);
-void cardStartTransfer(const uint8 * command, uint32 * destination, int channel, uint32 flags);
-uint32 cardWriteAndRead(const uint8 * command, uint32 flags);
+void cardWriteCommand(const uint8 *command);
+void cardPolledTransfer(uint32 flags, uint32 *destination, uint32 length, const uint8 *command);
+void cardStartTransfer(const uint8 *command, uint32 *destination, int channel, uint32 flags);
+uint32 cardWriteAndRead(const uint8 *command, uint32 flags);
+void cardParamCommand (uint8 command, uint32 parameter, uint32 flags, uint32 *destination, uint32 length);
 
 // These commands require the cart to not be initialized yet, which may mean the user
 // needs to eject and reinsert the cart or they will return random data.
-void cardRead00(uint32 address, uint32 * destination, uint32 length, uint32 flags);
-void cardReadHeader(uint8 * header);
-int cardReadID(uint32 flags);
+void cardReadHeader(uint8 *header);
+uint32 cardReadID(uint32 flags);
 
 // Reads from the EEPROM
 void cardReadEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype);
