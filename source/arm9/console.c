@@ -641,6 +641,8 @@ void consoleSetWindow(PrintConsole* console, int x, int y, int width, int height
 	console->windowX = x;
 	console->windowY = y;
 	
+	console->cursorX = 0;
+	console->cursorY = 0;
 
 }
 

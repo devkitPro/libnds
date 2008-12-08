@@ -138,8 +138,8 @@ typedef struct
 	u16* fontBgMap;		/*!< Pointer to the bg layer map if used.  Is set by bgInit if bgId is valid>*/
 	u16* fontBgGfx;		/*!< Pointer to the bg layer graphics if used.  Is set by bgInit if bgId is valid>*/
 	
-	u8 mapBase;		/*!< Prints debug statements to no$gba debug window >*/
-	u8 gfxBase;		/*!< Prints debug statements to no$gba debug window >*/
+	u8 mapBase;		/*!< Map base set by console init based on background setup >*/
+	u8 gfxBase;		/*!< Tile graphics base set by console init based on background setup >*/
 
 	u8 bgLayer;	/*!< Bg layer used by the background >*/
 	int bgId;	/*!< bgId, should be set with a call to bgInit() or bgInitSub()>*/
