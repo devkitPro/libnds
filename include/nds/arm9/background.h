@@ -270,33 +270,33 @@ struct directly sets background registers.
 /*! \brief Background 3 vertical scroll register (main engine)*/
 #define	REG_BG3VOFS		(*(vu16*)0x400001E)
 /*! \brief Background 2 Affine transform (main engine)*/
-#define	REG_BG2PA		(*(vu16*)0x4000020)
+#define	REG_BG2PA		(*(vs16*)0x4000020)
 /*! \brief Background 2 Affine transform (main engine)*/
-#define	REG_BG2PB		(*(vu16*)0x4000022)
+#define	REG_BG2PB		(*(vs16*)0x4000022)
 /*! \brief Background 2 Affine transform (main engine)*/
-#define	REG_BG2PC		(*(vu16*)0x4000024)
+#define	REG_BG2PC		(*(vs16*)0x4000024)
 /*! \brief Background 2 Affine transform (main engine)*/
-#define	REG_BG2PD		(*(vu16*)0x4000026)
+#define	REG_BG2PD		(*(vs16*)0x4000026)
 
 /*! \brief Background 2 Screen Offset (main engine)*/
-#define	REG_BG2X		(*(vu32*)0x4000028)
+#define	REG_BG2X		(*(vs32*)0x4000028)
 
 /*! \brief Background 2 Screen Offset (main engine)*/
-#define	REG_BG2Y		(*(vu32*)0x400002C)
+#define	REG_BG2Y		(*(vs32*)0x400002C)
 /*! \brief Background 3 Affine transform (main engine)*/
-#define	REG_BG3PA		(*(vu16*)0x4000030)
+#define	REG_BG3PA		(*(vs16*)0x4000030)
 /*! \brief Background 3 Affine transform (main engine)*/
-#define	REG_BG3PB		(*(vu16*)0x4000032)
+#define	REG_BG3PB		(*(vs16*)0x4000032)
 /*! \brief Background 3 Affine transform (main engine)*/
-#define	REG_BG3PC		(*(vu16*)0x4000034)
+#define	REG_BG3PC		(*(vs16*)0x4000034)
 /*! \brief Background 3 Affine transform (main engine)*/
-#define	REG_BG3PD		(*(vu16*)0x4000036)
+#define	REG_BG3PD		(*(vs16*)0x4000036)
 
 /*! \brief Background 3 Screen Offset (main engine)*/
-#define	REG_BG3X		(*(vu32*)0x4000038)
+#define	REG_BG3X		(*(vs32*)0x4000038)
 
 /*! \brief Background 3 Screen Offset (main engine)*/
-#define	REG_BG3Y		(*(vu32*)0x400003C)
+#define	REG_BG3Y		(*(vs32*)0x400003C)
 /*@}*/
 
 /*! \defgroup sub_display_registers "Sub Engine"
@@ -363,32 +363,32 @@ struct directly sets background registers.
 #define	REG_BG3VOFS_SUB		(*(vu16*)0x400101E)
 
 /*! \brief Background 2 Affine transform (sub engine)*/
-#define	REG_BG2PA_SUB		(*(vu16*)0x4001020)
+#define	REG_BG2PA_SUB		(*(vs16*)0x4001020)
 /*! \brief Background 2 Affine transform (sub engine)*/
-#define	REG_BG2PB_SUB		(*(vu16*)0x4001022)
+#define	REG_BG2PB_SUB		(*(vs16*)0x4001022)
 /*! \brief Background 2 Affine transform (sub engine)*/
-#define	REG_BG2PC_SUB		(*(vu16*)0x4001024)
+#define	REG_BG2PC_SUB		(*(vs16*)0x4001024)
 /*! \brief Background 2 Affine transform (sub engine)*/
-#define	REG_BG2PD_SUB		(*(vu16*)0x4001026)
+#define	REG_BG2PD_SUB		(*(vs16*)0x4001026)
 
 /*! \brief Background 2 Screen Offset (sub engine)*/
-#define	REG_BG2X_SUB		(*(vu32*)0x4001028)
+#define	REG_BG2X_SUB		(*(vs32*)0x4001028)
 /*! \brief Background 2 Screen Offset (sub engine)*/
-#define	REG_BG2Y_SUB		(*(vu32*)0x400102C)
+#define	REG_BG2Y_SUB		(*(vs32*)0x400102C)
 
 /*! \brief Background 3 Affine transform (sub engine)*/
-#define	REG_BG3PA_SUB		(*(vu16*)0x4001030)
+#define	REG_BG3PA_SUB		(*(vs16*)0x4001030)
 /*! \brief Background 3 Affine transform (sub engine)*/
-#define	REG_BG3PB_SUB		(*(vu16*)0x4001032)
+#define	REG_BG3PB_SUB		(*(vs16*)0x4001032)
 /*! \brief Background 3 Affine transform (sub engine)*/
-#define	REG_BG3PC_SUB		(*(vu16*)0x4001034)
+#define	REG_BG3PC_SUB		(*(vs16*)0x4001034)
 /*! \brief Background 3 Affine transform (sub engine)*/
-#define	REG_BG3PD_SUB		(*(vu16*)0x4001036)
+#define	REG_BG3PD_SUB		(*(vs16*)0x4001036)
 
 /*! \brief Background 3 Screen Offset (sub engine)*/
-#define	REG_BG3X_SUB		(*(vu32*)0x4001038)
+#define	REG_BG3X_SUB		(*(vs32*)0x4001038)
 /*! \brief Background 3 Screen Offset (sub engine)*/
-#define	REG_BG3Y_SUB		(*(vu32*)0x400103C)
+#define	REG_BG3Y_SUB		(*(vs32*)0x400103C)
 /*@}*/
 
 
@@ -898,9 +898,9 @@ static inline
 	\return
 		a pointer to the map 
 */
-void* bgGetMapPtr(int id) 
+u16** bgGetMapPtr(int id) 
 {
-	return (id < 4) ? ((void*)BG_MAP_RAM(bgGetMapBase(id))) : ((void*)BG_MAP_RAM_SUB(bgGetMapBase(id)));
+	return (id < 4) ? ((u16**)BG_MAP_RAM(bgGetMapBase(id))) : ((u16**)BG_MAP_RAM_SUB(bgGetMapBase(id)));
 }
 
 static inline 
@@ -911,12 +911,12 @@ static inline
 	\return
 		a pointer to the tile graphics or bitmap graphics
 */
-void* bgGetGfxPtr(int id) 
+u16** bgGetGfxPtr(int id) 
 {
 	if(bgState[id].type < BgType_Bmp8)
-		return (id < 4) ? (void*)(BG_TILE_RAM(bgGetTileBase(id))) : ((void*)BG_TILE_RAM_SUB(bgGetTileBase(id)));
+		return (id < 4) ? (u16**)(BG_TILE_RAM(bgGetTileBase(id))) : ((u16**)BG_TILE_RAM_SUB(bgGetTileBase(id)));
 	else
-		return (id < 4) ? (void*)(BG_GFX + 0x2000 * (bgGetMapBase(id))) : (void*)(BG_GFX_SUB + 0x2000 * (bgGetMapBase(id)));
+		return (id < 4) ? (u16**)(BG_GFX + 0x2000 * (bgGetMapBase(id))) : (u16**)(BG_GFX_SUB + 0x2000 * (bgGetMapBase(id)));
 }
 
 

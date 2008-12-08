@@ -58,6 +58,12 @@ fprintf(stderr, "debug message on DS console screen");
 The print console must be initialized to use DB_CONSOL
 
 </div>
+
+\example Graphics/2D/ansi_console/source/main.c
+\example Graphics/2D/console_windows/source/main.c
+\example Graphics/2D/custom_font/source/main.c
+\example Graphics/2D/printBothScreens/source/template.c
+\example Graphics/2D/rotscale_text/source/main.c
 */
 
 #ifndef CONSOLE_H
@@ -205,7 +211,6 @@ void consoleSetWindow(PrintConsole* console, int x, int y, int width, int height
 
 /*! \fn PrintConsole* consoleGetDefault(void)
 	\brief Gets a pointer to the default console (this should only be used when using a single console, other wise use consoleNew(PrintsConsole* console)
-	\param console A pointer to the console struct 
 	\return A pointer to the default console	
 */
 PrintConsole* consoleGetDefault(void);
@@ -216,7 +221,7 @@ PrintConsole* consoleGetDefault(void);
 */
 void consoleSelect(PrintConsole* console);
 
-/*! \fn void consoleInit(PrintConsole* console)
+/*! \fn PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize size, int mapBase, int tileBase, bool main);
 	\brief Initialise the console.
 	\param console A pointer to the console initialze data (if null default console will be used)
 	\param layer background layer to use
@@ -228,7 +233,7 @@ void consoleSelect(PrintConsole* console);
 */
 PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize size, int mapBase, int tileBase, bool main);
 
-/*! \fn void consoleDemoInit(void)
+/*! \fn PrintConsole* consoleDemoInit(void)
 \brief Initialize the console to a default state for prototyping.
 This function sets the console to use sub display, VRAM_C, and BG0 and enables MODE_0_2D on the
 sub display.  It is intended for use in prototyping applications which need print ability and not actual

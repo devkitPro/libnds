@@ -28,9 +28,9 @@
 #include <nds/interrupts.h>
 
 #include <nds/arm9/sassert.h>
-
-void timerCreate(int channel, ClockDivider divider, u16 ticks, fp callback)
-{
+//---------------------------------------------------------------------------------
+void timerStart(int channel, ClockDivider divider, u16 ticks, fp callback){
+//---------------------------------------------------------------------------------
 	
 	TIMER_DATA(channel) = ticks;
 	
@@ -50,9 +50,9 @@ void timerCreate(int channel, ClockDivider divider, u16 ticks, fp callback)
 }
 
 u16 elapsed[4] = {0};
-
-u16 timerElapsed(int channel)
-{
+//---------------------------------------------------------------------------------
+u16 timerElapsed(int channel){
+//---------------------------------------------------------------------------------
 	u16 time = TIMER_DATA(channel);
 
 	s32 result = (s32)elapsed[channel] - (s32)time;

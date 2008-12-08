@@ -27,8 +27,45 @@
 ---------------------------------------------------------------------------------*/
 
 /*!	\file video.h
+	\brief contains the basic defnitions for controlling the video hardware.
 
-	\brief DS video functions
+	\section Intro Intro
+	Video.h contains the basic defnitions for controlling the video hardware.
+
+	\section VideoRAM Video Ram Banks
+	The Nintendo DS has nine banks of video memory which may be put to a variety of 
+	uses. They can hold the graphics for your sprites, the textures for your 3D 
+	space ships, the tiles for your 2D platformer, or a direct map of pixels to 
+	render to the screen. Figuring out how to effectively utilize this flexible but 
+	limited amount of memory will be one the most challenging endeavors you will 
+	face early homebrew development.
+
+	The nine banks can be utilized as enumerated by the VRAM types.  Banks are labled
+	A-I.  In order to utilize 2D or 3D texture graphics,  memory must be mapped for 
+	these purposes.
+
+	For instance:  If you initialize a 2D background on the main engine you will be 
+	expected to define both an offset for its map data and an offset for its tile 
+	graphics (bitmapped backgrounds differ slightly).  These offsets are referenced
+	from the start of 2D background graphics memory.  On the main display 2D background 
+	graphics begin at 0x6000000.  
+	
+	Without mapping a VRAM bank to this location data written to your background 
+	tile and map offsets will be lost.  
+
+	VRAM banks can be mapped to specific addresses for specific purposes.  In our 
+	case, any of the 4 main banks amd several of the smaller ones can be mapped to 
+	the main 2D background engine.(A B C and D banks are refered to as “main” 
+	because	they are 128KB and flexible in usage)
+
+	<pre>
+	vramSetBankA(VRAM_A_MAIN_BG);
+	</pre>
+
+	The above would map the 128KB of VRAM_A to 0x6000000 for use as main background 
+	graphics and maps (you can offset the mapping as well and the available offsets 
+	are defined in the VRAM_A_TYPE enumberation)
+
 */
 
 #ifndef VIDEO_ARM9_INCLUDE
@@ -486,8 +523,8 @@ static inline
 void videoBgDisableSub(int number) {REG_DISPCNT_SUB &= ~(1 << (DISPLAY_ENABLE_SHIFT + number));}
 
 
-#define BRIGHTNESS     (*(vu16*)0x0400006C)
-#define SUB_BRIGHTNESS (*(vu16*)0x0400106C)
+#define REG_MASTER_BRIGHT     (*(vu16*)0x0400006C)
+#define REG_MASTER_BRIGHT_SUB (*(vu16*)0x0400106C)
 
 
 // Window 0

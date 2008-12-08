@@ -34,7 +34,19 @@
 
 /*!	\file trig_lut.h
 
-	\brief fixed point trig functions.  Angle is computed useing a 512 degree circle
+	\brief fixed point trig functions.  Angle can be in the range of -32768 to
+	32767.  There are 32768 degrees in the unit circle used by nds.  To convert 
+	between standard degrees (360 per circle):
+
+	angle = degreesToAngle(angleInDegrees);
+
+	or 
+
+	angle = angleInDegrees * 32768 / 360;
+
+	This unit of measure is sometimes refered to as a binary radian (brad) or binary
+	degree.  It allows for more precise representation of angle and faster calculation
+	as the DS has no floating point processor.
  */
 
 
@@ -57,20 +69,20 @@ extern "C" {
 #define degreesToAngle(degrees) ((degrees) * DEGREES_IN_CIRCLE / 360)
 #define angleToDegrees(angle)   ((angle) * 360 / DEGREES_IN_CIRCLE)
 
-//unsigned 16 bit fixed point with 15 bits fraction
+//!unsigned 16 bit fixed point with 15 bits fraction
 typedef u16 fixed_u16_15;
 
-//signed 16 bit fixed point with 12 bits fraction
+//!signed 16 bit fixed point with 12 bits fraction
 typedef s16 fixed_s16_12;
 
-//signed 32 bit fixed point with 15 bits fraction
+//!signed 32 bit fixed point with 15 bits fraction
 typedef s32 fixed_s32_15;
 
-//unsigned 32 bit fixed point with 16 bits fraction
+//!unsigned 32 bit fixed point with 16 bits fraction
 typedef s32 fixed_s32_16;
 
 /*! \fn fixed_s16_12 cosLerp( s16 angle )
-	\param angle (0 to 65535)
+	\param angle (-32768 to 32767)
 	
 	\brief fixed point cosine
 	\return fixed_s16_12 fixed point number with the range [-1, 1]
@@ -78,7 +90,7 @@ typedef s32 fixed_s32_16;
 
 fixed_s16_12 cosLerp(s16 angle);
 /*! \fn fixed_s16_12 sinLerp( s16 angle )
-	\param angle
+	\param angle (-32768 to 32767)
 	
 	\brief fixed point sine
 	\return fixed_s16_12 fixed point number with the range [-1, 1]
@@ -87,36 +99,36 @@ fixed_s16_12 cosLerp(s16 angle);
 fixed_s16_12 sinLerp(s16 angle);
 
 /*! \fn fixed_s16_12 tanLerp( s16 angle )
-	\param angle
-	
+	\param angle (-32768 to 32767)
+
 	\brief fixed point tangent
-	\return fixed_s32_15 fixed point number with the range [-81.483, 524287.999]
+	\return fixed_s16_12 fixed point number with the range [-81.483, 524287.999]
 	
 */
-fixed_s32_15 tanLerp(s16 angle);
+fixed_s16_12 tanLerp(s16 angle);
 
-/*! \fn acosLerp( int par )
-	\param parameter
+/*! \fn short acosLerp( int par )
+	\param par parameter
 	
 	\brief fixed point arccos 
-	\return f32 fixed point number with the range [0, 256]
+	\return short angle (-32768 to 32767)
 	
 */
 short acosLerp(int par);
 /*! \fn asinLerp( int par )
-	\param parameter
+	\param par parameter
 	
 	\brief fixed point arcsin
-	\return f32 fixed point number with the range [-128, 128]
+	\return short angle (-32768 to 32767)
 	
 */
 short asinLerp(int par);
 
 /*! \fn atanLerp( int par )
-	\param parameter
+	\param par parameter
 	
 	\brief fixed point arctan
-	\return f32 fixed point number with the range [-128, 128]
+	\return short angle (-32768 to 32767)
 	
 */
 short atanLerp(int par);

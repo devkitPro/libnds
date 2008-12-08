@@ -29,7 +29,11 @@
 /*! \file sound.h 
 \brief A simple sound playback library for the DS.  Provides functionality
 for starting and stopping sound effects from the ARM9 side as well as access
-to PSG and noise hardware
+to PSG and noise hardware.  Maxmod should be used in most music and sound effect
+situations.
+
+ \example audio/micrecord/source/micrecord.c
+
 */
 
 /*! 
@@ -81,7 +85,7 @@ void soundEnable(void);
 */
 void soundDisable(void);
 
-/*! \fn int soundPlaySample(const void* data, SoundFormat format, u16 dataSize, u16 freq, u8 volume, u8 pan, bool loop, u16 loopPoint); 
+/*! \fn int soundPlaySample(const void* data, SoundFormat format, u32 dataSize, u16 freq, u8 volume, u8 pan, bool loop, u16 loopPoint); 
 	\brief Plays a sound in the specified format at the specified frequency.
 
 	\param data A pointer to the sound data

@@ -49,6 +49,7 @@
  
  \section audio_api Audio API
  - \ref sound.h "Simple Sound Engine"
+ - <a href="http://www.maxmod.org/ref">Maxmod</a>
 
  \section math_api Math
   - \ref math.h "Hardware Assisted Math"
@@ -69,7 +70,7 @@
  - \ref timers.h "Timers"
  
  \section user_io_api User Input/ouput
- - \ref input.h "Keypad and Touch pad"
+ - \ref arm9/input.h "Keypad and Touch pad"
  - \ref keyboard.h "Keyboard"
  - \ref console.h "Console and Debug Printing"
 

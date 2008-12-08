@@ -41,6 +41,7 @@
 //!	LCD status register.
 #define	REG_DISPSTAT	(*(vu16*)0x04000004)
 
+//! LCD Status register bitdefines
 typedef enum 
 {
 	DISP_IN_VBLANK   =  BIT(0),//!	The display currently in a vertical blank.
@@ -48,7 +49,7 @@ typedef enum
 	DISP_YTRIGGERED   = BIT(2),//!	Current scanline and %DISP_Y match.
 	DISP_VBLANK_IRQ   = BIT(3),//!	Interrupt on vertical blank.
 	DISP_HBLANK_IRQ   = BIT(4),//!	Interrupt on horizontal blank.
-	DISP_YTRIGGER_IRQ = BIT(5),//!	Interrupt when current scanline and %DISP_Y match.
+	DISP_YTRIGGER_IRQ = BIT(5) //!	Interrupt when current scanline and %DISP_Y match.
 }DISP_BITS;
 
 //!	Current display scanline.
