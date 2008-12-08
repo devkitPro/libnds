@@ -470,31 +470,40 @@ void consoleLoadFont(PrintConsole* console)
 }
 PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize size, int mapBase, int tileBase, bool main){
 
+	static bool firstConsoleInit = true;
+
 	if(console)
+	{
 		currentConsole = console;
+	}
 	else
 	{
 		*currentConsole = defaultConsole;
-		console = currentConsole;
-	
+		console = currentConsole;	
 	}
 	
 	if(main)
-		console->bgId = bgInit(layer, type, size, mapBase, tileBase);
-	else
-		console->bgId = bgInitSub(layer, type, size, mapBase, tileBase);
-	
-	devoptab_list[STD_OUT] = &dotab_stdout;
-	
-	setvbuf(stdout, NULL , _IONBF, 0);
-	
-	console->consoleInitialised = 1;
-	
-	if(console->bgId >= 0)
 	{
-		console->fontBgGfx = (u16*)bgGetGfxPtr(console->bgId);
-		console->fontBgMap = (u16*)bgGetMapPtr(console->bgId);
+		console->bgId = bgInit(layer, type, size, mapBase, tileBase);
 	}
+	else
+	{
+		console->bgId = bgInitSub(layer, type, size, mapBase, tileBase);
+	}	
+	
+	console->fontBgGfx = (u16*)bgGetGfxPtr(console->bgId);
+	console->fontBgMap = (u16*)bgGetMapPtr(console->bgId);
+	
+	if(firstConsoleInit)
+	{
+		devoptab_list[STD_OUT] = &dotab_stdout;
+	
+		setvbuf(stdout, NULL , _IONBF, 0);
+		
+		firstConsoleInit = false;
+	}
+
+	console->consoleInitialised = 1;
 	
 	consoleCls('2');
 
