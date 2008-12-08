@@ -45,6 +45,7 @@ distribution.
 // Handle system requests from the arm7
 //---------------------------------------------------------------------------------
 void powerValueHandler(u32 value, void* data){
+//---------------------------------------------------------------------------------
 	switch(value)
 	{
 	case PM_REQ_SLEEP:
@@ -53,7 +54,9 @@ void powerValueHandler(u32 value, void* data){
 	}
 }
 
-void systemMsgHandler(int bytes, void* user_data){
+//---------------------------------------------------------------------------------
+void systemMsgHandler(int bytes, void* user_data) {
+//---------------------------------------------------------------------------------
 	
 	FifoMessage message;
 
@@ -70,14 +73,12 @@ void systemMsgHandler(int bytes, void* user_data){
 	}
 }
 
-void systemSleep(void)
-{
-   unsigned long oldIE = REG_IE ;
+//---------------------------------------------------------------------------------
+void systemSleep(void) {
+//---------------------------------------------------------------------------------
  
    fifoSendValue32(FIFO_PM, PM_REQ_SLEEP);
-  
-   REG_IE = IRQ_VBLANK ;
-	
+  	
    //wait two frames to give arm7 a chance
    swiWaitForVBlank();
    swiWaitForVBlank();
@@ -85,20 +86,22 @@ void systemSleep(void)
    //100ms
    swiDelay(419000);
 		    
-   REG_IE = oldIE ; 
-}
+} 
 
-void powerOn(PM_Bits bits)
-{
+//---------------------------------------------------------------------------------
+void powerOn(PM_Bits bits) {
+//---------------------------------------------------------------------------------
    fifoSendValue32(FIFO_PM, PM_REQ_ON | bits);
 }
 
-void powerOff(PM_Bits bits)
-{
+//---------------------------------------------------------------------------------
+void powerOff(PM_Bits bits) {
+//---------------------------------------------------------------------------------
    fifoSendValue32(FIFO_PM, PM_REQ_OFF | bits);
 }
 
-void ledBlink(PM_LedBlinkMode bm)
-{
+//---------------------------------------------------------------------------------
+void ledBlink(PM_LedBlinkMode bm) {
+//---------------------------------------------------------------------------------
    fifoSendValue32(FIFO_PM, PM_REQ_LED | bm);
 }
