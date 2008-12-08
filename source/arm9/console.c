@@ -547,7 +547,7 @@ PrintConsole* consoleDemoInit(void) {
 	videoSetModeSub(MODE_0_2D);
 	vramSetBankC(VRAM_C_SUB_BG); 
 
-	return consoleInit(NULL, currentConsole->bgLayer, BgType_Text4bpp, BgSize_T_256x256, currentConsole->mapBase, currentConsole->gfxBase, false);
+	return consoleInit(NULL, defaultConsole.bgLayer, BgType_Text4bpp, BgSize_T_256x256, defaultConsole.mapBase, defaultConsole.gfxBase, false);
 }
 
 //---------------------------------------------------------------------------------
