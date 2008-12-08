@@ -31,7 +31,7 @@ distribution.
 
 #include <nds/memory.h>
 #include <nds/bios.h>
-#include <nds/arm9/system.h>
+#include <nds/system.h>
 #include <nds/fifocommon.h>
 #include <nds/interrupts.h>
 #include <nds/fifomessages.h>
@@ -45,7 +45,6 @@ distribution.
 // Handle system requests from the arm7
 //---------------------------------------------------------------------------------
 void powerValueHandler(u32 value, void* data){
-//---------------------------------------------------------------------------------
 	switch(value)
 	{
 	case PM_REQ_SLEEP:
@@ -54,9 +53,7 @@ void powerValueHandler(u32 value, void* data){
 	}
 }
 
-//---------------------------------------------------------------------------------
-void systemMsgHandler(int bytes, void* user_data) {
-//---------------------------------------------------------------------------------
+void systemMsgHandler(int bytes, void* user_data){
 	
 	FifoMessage message;
 
@@ -73,35 +70,32 @@ void systemMsgHandler(int bytes, void* user_data) {
 	}
 }
 
-//---------------------------------------------------------------------------------
-void systemSleep(void) {
-//---------------------------------------------------------------------------------
- 
+void systemSleep(void)
+{
    fifoSendValue32(FIFO_PM, PM_REQ_SLEEP);
-  	
-   //wait two frames to give arm7 a chance
-   swiWaitForVBlank();
-   swiWaitForVBlank();
-   
+  
    //100ms
    swiDelay(419000);
-		    
-} 
-
-//---------------------------------------------------------------------------------
-void powerOn(PM_Bits bits) {
-//---------------------------------------------------------------------------------
-   fifoSendValue32(FIFO_PM, PM_REQ_ON | bits);
 }
 
-//---------------------------------------------------------------------------------
-void powerOff(PM_Bits bits) {
-//---------------------------------------------------------------------------------
-   fifoSendValue32(FIFO_PM, PM_REQ_OFF | bits);
+
+void powerOn(PM_Bits bits)
+{
+	if(bits & BIT(16))
+		REG_POWERCNT |= bits & 0xFFFF;
+	else
+		fifoSendValue32(FIFO_PM, PM_REQ_ON | (bits & 0xFFFF));
 }
 
-//---------------------------------------------------------------------------------
-void ledBlink(PM_LedBlinkMode bm) {
-//---------------------------------------------------------------------------------
+void powerOff(PM_Bits bits)
+{
+	if(bits & BIT(16))
+		REG_POWERCNT &= ~(bits & 0xFFFF);
+	else
+		fifoSendValue32(FIFO_PM, PM_REQ_OFF | (bits & 0xFFFF));
+}
+
+void ledBlink(PM_LedBlinkMode bm)
+{
    fifoSendValue32(FIFO_PM, PM_REQ_LED | bm);
 }

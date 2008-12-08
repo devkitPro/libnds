@@ -110,7 +110,7 @@ void glMaterialf(GL_MATERIALS_ENUM mode, rgb color) {
 //---------------------------------------------------------------------------------
 void glInit_C(void) {
 //---------------------------------------------------------------------------------
-	powerON(POWER_3D_CORE | POWER_MATRIX);	// enable 3D core & geometry engine
+	powerOn(POWER_3D_CORE | POWER_MATRIX);	// enable 3D core & geometry engine
 
 	glGlob = glGetGlobals();
 

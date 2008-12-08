@@ -64,19 +64,7 @@ typedef enum {
 } FifoWifiCommands;
 
 
-/*! \enum PM_Bits
-\brief Power Management control bits 
-*/
-typedef enum
-{
-   PM_SOUND_AMP	=	BIT(0) ,   /*!< \brief Power the sound hardware (needed to hear stuff in GBA mode too) */
-   PM_SOUND_MUTE	=	BIT(1),    /*!< \brief   Mute the main speakers, headphone output will still work. */
-   PM_BACKLIGHT_BOTTOM	=BIT(2),    /*!< \brief   Enable the top backlight if set */
-   PM_BACKLIGHT_TOP	=BIT(3)  ,  /*!< \brief   Enable the bottom backlight if set */
-   PM_SYSTEM_PWR		=BIT(6) ,   /*!< \brief  Turn the power *off* if set */
-   PM_POWER_DOWN		=BIT(6),    /*!< \brief  Turn the power *off* if set */
 
-}PM_Bits;
 /*! \enum PM_LedBlinkMode
 \brief Power Management LED blink mode control bits 
 */

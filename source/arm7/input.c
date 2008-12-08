@@ -1,6 +1,6 @@
 #include <nds/arm7/input.h>
 #include <nds/arm7/touch.h>
-#include <nds/arm7/system.h>
+#include <nds/system.h>
 #include <nds/touch.h>
 #include <nds/fifocommon.h>
 #include <nds/fifomessages.h>

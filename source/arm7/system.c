@@ -1,4 +1,4 @@
-#include <nds/arm7/system.h>
+#include <nds/system.h>
 #include <nds/fifocommon.h>
 #include <nds/ndstypes.h>
 #include <nds/interrupts.h>
@@ -67,7 +67,7 @@ void powerValueHandler(u32 value, void* user_data)
 	}
 }
 
-void sleep(void)
+void systemSleep(void)
 {
 	if(!sleepIsEnabled) return;
 	//puts arm9 to sleep which then notifies arm7 above (which causes arm7 to sleep)

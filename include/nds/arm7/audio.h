@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------
-	$Id: audio.h,v 1.18 2008-11-19 18:44:50 dovoto Exp $
+	$Id: audio.h,v 1.19 2008-12-08 15:53:55 dovoto Exp $
 
 	ARM7 audio control
 
@@ -42,7 +42,7 @@ extern "C" {
 #endif
 
 #include <nds/arm7/serial.h>
-#include <nds/arm7/system.h>
+#include <nds/system.h>
 
 #define SOUND_VOL(n)	(n)
 #define SOUND_FREQ(n)	((-0x1000000 / (n)))

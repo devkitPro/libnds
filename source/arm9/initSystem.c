@@ -33,7 +33,7 @@ distribution.
 #include <nds/arm9/video.h>
 #include <nds/arm9/sprite.h>
 #include <nds/arm9/input.h>
-#include <nds/arm9/system.h>
+#include <nds/system.h>
 #include <nds/interrupts.h>
 #include <nds/fifocommon.h>
 #include <time.h>

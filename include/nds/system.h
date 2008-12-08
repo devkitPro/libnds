@@ -41,28 +41,15 @@
 //!	LCD status register.
 #define	REG_DISPSTAT	(*(vu16*)0x04000004)
 
-//!	The display currently in a vertical blank.
-#define DISP_IN_VBLANK     BIT(0)
-
-//!	The display currently in a horizontal blank.
-#define DISP_IN_HBLANK     BIT(1)
-
-//!	Current scanline and %DISP_Y match.
-#define DISP_YTRIGGERED    BIT(2)
-
-//!	Interrupt on vertical blank.
-#define DISP_VBLANK_IRQ    BIT(3)
-
-//!	Interrupt on horizontal blank.
-#define DISP_HBLANK_IRQ    BIT(4)
-
-//!	Interrupt when current scanline and %DISP_Y match.
-#define DISP_YTRIGGER_IRQ  BIT(5)
-
-static inline
-void SetYtrigger(int Yvalue) {
-	REG_DISPSTAT = (REG_DISPSTAT & 0x007F ) | (Yvalue << 8) | (( Yvalue & 0x100 ) >> 1) ;
-}
+typedef enum 
+{
+	DISP_IN_VBLANK   =  BIT(0),//!	The display currently in a vertical blank.
+	DISP_IN_HBLANK    = BIT(1),//!	The display currently in a horizontal blank.
+	DISP_YTRIGGERED   = BIT(2),//!	Current scanline and %DISP_Y match.
+	DISP_VBLANK_IRQ   = BIT(3),//!	Interrupt on vertical blank.
+	DISP_HBLANK_IRQ   = BIT(4),//!	Interrupt on horizontal blank.
+	DISP_YTRIGGER_IRQ = BIT(5),//!	Interrupt when current scanline and %DISP_Y match.
+}DISP_BITS;
 
 //!	Current display scanline.
 #define	REG_VCOUNT		(*(vu16*)0x4000006)
@@ -80,74 +67,68 @@ void SetYtrigger(int Yvalue) {
 */
 #define	REG_POWERCNT	*(vu16*)0x4000304
 
-//!	Turns on specified hardware.
-/*!	This function should only be called after %powerSET.
 
-	\param on What to power on.
-*/
 static inline
-void powerON(int on) { REG_POWERCNT |= on;}
 
-//!	Turns on only the specified hardware.
-/*!	Use this function to power on basic hardware types you
-	wish to use throughout your program.
+void SetYtrigger(int Yvalue) {
+	REG_DISPSTAT = (REG_DISPSTAT & 0x007F ) | (Yvalue << 8) | (( Yvalue & 0x100 ) >> 1) ;
+}
 
-	\param on What to power on.
+#define PM_ARM9_DIRECT BIT(16)
+/*! \enum PM_Bits
+\brief Power Management control bits 
 */
-static inline void powerSET(int on) { REG_POWERCNT = on;}
-
-//!	Turns off the specified hardware.
-/*!	\param off What to power off.
-*/
-static inline void powerOFF(int off) { REG_POWERCNT &= ~off;}
-
-#ifdef ARM9
-#ifdef DOXYGEN
-//!	Power-controlled hardware devices accessable to the ARM9.
-/*!	Used with %powerON, %powerSET, and %powerOFF functions.
-	Note that these should only be used when programming for
-	the ARM9.  Trying to boot up these hardware devices via
-	the ARM7 would lead to unexpected results.
-*/
-enum ARM9_power
+typedef enum
 {
-	POWER_LCD,			//!<	Controls the power for both LCD screens.
-	POWER_2D_A,			//!<	Controls the power for the main 2D core.
-	POWER_MATRIX,		//!<	Controls the power for the 3D matrix.
-	POWER_3D_CORE,		//!<	Controls the power for the main 3D core.
-	POWER_2D_B,			//!<	Controls the power for the sub 2D core.
-	POWER_SWAP_LCDS,	//!<	Controls which screen should use the main core.
-};
-#else
-#define POWER_LCD			BIT(0)
-#define POWER_2D_A			BIT(1)
-#define POWER_MATRIX		BIT(2)
-#define POWER_3D_CORE		BIT(3)
-#define POWER_2D_B			BIT(9)
-#define POWER_SWAP_LCDS		BIT(15)
-#endif /* DOXYGEN */
+	PM_SOUND_AMP	=	BIT(0) ,   /*!< \brief Power the sound hardware (needed to hear stuff in GBA mode too) */
+	PM_SOUND_MUTE	=	BIT(1),    /*!< \brief   Mute the main speakers, headphone output will still work. */
+	PM_BACKLIGHT_BOTTOM	=BIT(2),    /*!< \brief   Enable the top backlight if set */
+	PM_BACKLIGHT_TOP	=BIT(3)  ,  /*!< \brief   Enable the bottom backlight if set */
+	PM_SYSTEM_PWR		=BIT(6) ,   /*!< \brief  Turn the power *off* if set */
 
-//!	Enables power to all hardware required for 2D video.
-#define POWER_ALL_2D     (POWER_LCD |POWER_2D_A |POWER_2D_B)
+	POWER_LCD = PM_ARM9_DIRECT | BIT(0),			//!<	Controls the power for both LCD screens.
+	POWER_2D_A = PM_ARM9_DIRECT | BIT(1),			//!<	Controls the power for the main 2D core.
+	POWER_MATRIX = PM_ARM9_DIRECT | BIT(2),		//!<	Controls the power for the 3D matrix.
+	POWER_3D_CORE = PM_ARM9_DIRECT | BIT(3),		//!<	Controls the power for the main 3D core.
+	POWER_2D_B = PM_ARM9_DIRECT | BIT(9),			//!<	Controls the power for the sub 2D core.
+	POWER_SWAP_LCDS = PM_ARM9_DIRECT | BIT(15),	//!<	Controls which screen should use the main core.
+	POWER_ALL_2D = PM_ARM9_DIRECT | BIT(0) | BIT(1) | BIT(9),
+	POWER_ALL =  PM_ARM9_DIRECT | BIT(0) | BIT(1) | BIT(9) | BIT(3) | BIT(2)
 
-//!	Enables power to all hardware required for 3D video.
-#define POWER_ALL		 (POWER_ALL_2D | POWER_3D_CORE | POWER_MATRIX)
+}PM_Bits;
 
-////! puts the DS to sleep
-//static inline void sleep(void)
-//{
-//   u32 powerTemp = REG_POWERCNT;
-//   
-//   fifoSendValue32(FIFO_REQUEST, FRQ_SLEEP);
-//   
-//   powerOFF(POWER_ALL);
-//
-//   REG_IE = 0;
-//   REG_IE = IRQ_KEYS;
-//
-//   swiHalt();
-//   
-//}
+void systemSleep(void);
+
+//--------------------------------------------------------------
+//    ARM9 section
+//--------------------------------------------------------------
+#ifdef ARM9
+
+//!	Turns on specified hardware.
+/*!	May be called from arm7 or arm9 (arm9 power bits will be ignored by arm7, arm7 power bits
+	will be passed to the arm7 from the arm9).
+
+	\param bits What to power on.
+*/
+void powerOn(PM_Bits bits);
+
+//!	Turns off specified hardware.
+/*!	May be called from arm7 or arm9 (arm9 power bits will be ignored by arm7, arm7 power bits
+	will be passed to the arm7 from the arm9).
+
+	\param bits What to power on.
+*/
+void powerOff(PM_Bits bits);
+
+//!	Set the LED blink mode
+/*!	Arm9 only
+	\param bm What to power on.
+*/
+void ledBlink(PM_LedBlinkMode bm);
+
+//internal fifo handlers
+void systemMsgHandler(int bytes, void* user_data);
+void powerValueHandler(u32 value, void* data);
 
 //!	Switches the screens.
 static inline void lcdSwap(void) { REG_POWERCNT ^= POWER_SWAP_LCDS; }
@@ -159,22 +140,58 @@ static inline void lcdMainOnTop(void) { REG_POWERCNT |= POWER_SWAP_LCDS; }
 static inline void lcdMainOnBottom(void) { REG_POWERCNT &= ~POWER_SWAP_LCDS; }
 #endif
 
+//--------------------------------------------------------------
+//    ARM7 section
+//--------------------------------------------------------------
 #ifdef ARM7
-#ifdef DOXYGEN
+
 //!	Power-controlled hardware devices accessable to the ARM7.
 /*!	Note that these should only be used when programming for
 	the ARM7.  Trying to boot up these hardware devices via
 	the ARM9 would lead to unexpected results.
 */
-enum ARM7_power
+typedef enum 
 {
-	POWER_SOUND,	//!<	Controls the power for the sound controller.
-	POWER_UNKNOWN,	//!<	Controls the power for an unknown device.
-};
-#else
-#define POWER_SOUND       BIT(0)
-#define POWER_UNKNOWN     BIT(1)
-#endif /* DOXYGEN */
+	POWER_SOUND = BIT(0),	//!<	Controls the power for the sound controller.
+
+	PM_CONTROL_REG   = 0, //!<	Selects the PM control register
+	PM_BATTERY_REG   = 1, //!<	Selects the PM nattery register
+	PM_AMPLIFIER_REG = 2, //!<	Selects the PM amplifier register
+	PM_READ_REGISTER = (1<<7), //!<	Selects the PM read register
+	PM_AMP_OFFSET  = 2,		//!<	Selects the PM amp register
+	PM_GAIN_OFFSET  = 3, //!<	Selects the PM gain register
+	PM_GAIN_20 = 0,	//!<	Sets the mic gain to 20db
+	PM_GAIN_40 = 1,//!<	Sets the mic gain to 40db
+	PM_GAIN_80 = 2,//!<	Sets the mic gain to 80db
+	PM_GAIN_160 = 3,//!<	Sets the mic gain to 160db
+	PM_AMP_ON     = 1, //!<	Turns the sound amp on
+	PM_AMP_OFF    = 0 //!<	Turns the sound amp off
+}ARM7_power;
+
+
+//!< PM control register bits - LED control
+#define PM_LED_CONTROL(m)  ((m)<<4)  // ?
+// Warning: These functions use the SPI chain, and are thus 'critical'
+// sections, make sure to disable interrupts during the call if you've
+// got a VBlank IRQ polling the touch screen, etc...
+
+
+//install the fifo power handler
+void installSystemFIFO(void);
+
+//cause the ds to enter low power mode
+void systemSleep(void);
+//internal can check if sleep mode is enabled
+int sleepEnabled(void);
+
+// Read/write a power management register
+int writePowerManagement(int reg, int command);
+
+static inline
+
+int readPowerManagement(int reg) {
+	return writePowerManagement((reg)|PM_READ_REGISTER, 0);
+}
 
 void readUserSettings();
 
