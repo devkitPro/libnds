@@ -8,7 +8,7 @@ extern "C" {
 #endif
 
 
-void sleep(void);
+void systemSleep(void);
 void powerOn(PM_Bits bits);
 void powerOff(PM_Bits bits);
 void ledBlink(PM_LedBlinkMode bm);

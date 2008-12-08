@@ -48,7 +48,7 @@ void powerValueHandler(u32 value, void* data){
 	switch(value)
 	{
 	case PM_REQ_SLEEP:
-		sleep();
+		systemSleep();
 		break;
 	}
 }
@@ -70,7 +70,7 @@ void systemMsgHandler(int bytes, void* user_data){
 	}
 }
 
-void sleep(void)
+void systemSleep(void)
 {
    unsigned long oldIE = REG_IE ;
  

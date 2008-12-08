@@ -31,7 +31,7 @@ extern "C" {
 void installSystemFIFO(void);
 
 //cause the ds to enter low power mode
-void sleep(void);
+void systemSleep(void);
 int sleepEnabled(void);
 
 // Read/write a power management register

@@ -60,7 +60,7 @@ void inputGetAndSend(void){
 	//sleep if lid has been closed for 20 frames
 	if(sleepCounter >= 20) 
 	{
-		sleep();
+		systemSleep();
 		sleepCounter = 0;
 	}
 
