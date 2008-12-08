@@ -147,8 +147,8 @@ extern "C" {
 #include "nds/arm7/audio.h"
 #include "nds/arm7/clock.h"
 #include "nds/arm7/serial.h"
-#include "nds/arm7/system.h"
 #include "nds/arm7/touch.h"
+#include "nds/arm7/input.h"
 
 //---------------------------------------------------------------------------------
 #endif // #ifdef ARM7
