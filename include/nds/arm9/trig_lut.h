@@ -113,7 +113,7 @@ s16 acosLerp(s16 par);
 */
 s16 asinLerp(s16 par);
 
-/*! \fn s16 atanLerp( s16 par )
+/*! \fn s16 atanLerp( s32 par )
 	\param par parameter
 	
 	\brief fixed point arctan

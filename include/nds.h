@@ -80,7 +80,7 @@
  - \ref pcx.h "PCX file loader"
  - \ref dynamicArray.h "General Purpose Data Structures"
 
- \section periferal_api Custom Periferals
+ \section peripheral_api Custom Peripherals
  - \ref rumble.h "Rumble Pack"
  - \ref ndsmotion.h "DS Motion Pack"
 
