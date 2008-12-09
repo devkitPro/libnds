@@ -2,7 +2,6 @@
 
 #include <nds/arm9/input.h>
 #include <nds/arm9/console.h>
-#include <nds/arm9/trig_lut.h>
 #include <nds/arm9/cache.h>
 #include <nds/dma.h>
 #include <nds/bios.h>
