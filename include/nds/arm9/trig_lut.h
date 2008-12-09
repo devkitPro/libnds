@@ -47,7 +47,7 @@
 	This unit of measure is sometimes refered to as a binary radian (brad) or binary
 	degree.  It allows for more precise representation of angle and faster calculation
 	as the DS has no floating point processor.
- */
+*/
 
 
 
@@ -69,69 +69,58 @@ extern "C" {
 #define degreesToAngle(degrees) ((degrees) * DEGREES_IN_CIRCLE / 360)
 #define angleToDegrees(angle)   ((angle) * 360 / DEGREES_IN_CIRCLE)
 
-//!unsigned 16 bit fixed point with 15 bits fraction
-typedef u16 fixed_u16_15;
 
-//!signed 16 bit fixed point with 12 bits fraction
-typedef s16 fixed_s16_12;
-
-//!signed 32 bit fixed point with 15 bits fraction
-typedef s32 fixed_s32_15;
-
-//!unsigned 32 bit fixed point with 16 bits fraction
-typedef s32 fixed_s32_16;
-
-/*! \fn fixed_s16_12 cosLerp( s16 angle )
+/*! \fn s16 cosLerp( s16 angle )
 	\param angle (-32768 to 32767)
 	
 	\brief fixed point cosine
-	\return fixed_s16_12 fixed point number with the range [-1, 1]
+	\return 4.12 fixed point number with the range [-1, 1]
 */
 
-fixed_s16_12 cosLerp(s16 angle);
-/*! \fn fixed_s16_12 sinLerp( s16 angle )
+s16 cosLerp(s16 angle);
+/*! \fn s16 sinLerp( s16 angle )
 	\param angle (-32768 to 32767)
 	
 	\brief fixed point sine
-	\return fixed_s16_12 fixed point number with the range [-1, 1]
+	\return 4.12 fixed point number with the range [-1, 1]
 	
 */
-fixed_s16_12 sinLerp(s16 angle);
+s16 sinLerp(s16 angle);
 
-/*! \fn fixed_s16_12 tanLerp( s16 angle )
+/*! \fn s32 tanLerp( s16 angle )
 	\param angle (-32768 to 32767)
 
 	\brief fixed point tangent
-	\return fixed_s16_12 fixed point number with the range [-81.483, 524287.999]
+	\return 20.12 fixed point number with the range [-81.483, 524287.999]
 	
 */
-fixed_s16_12 tanLerp(s16 angle);
+s32 tanLerp(s16 angle);
 
-/*! \fn short acosLerp( int par )
+/*! \fn s16 acosLerp( s16 par )
 	\param par parameter
 	
 	\brief fixed point arccos 
-	\return short angle (-32768 to 32767)
+	\return s16 angle (-32768 to 32767)
 	
 */
-short acosLerp(int par);
-/*! \fn asinLerp( int par )
+s16 acosLerp(s16 par);
+/*! \fn s16 asinLerp( s16 par )
 	\param par parameter
 	
 	\brief fixed point arcsin
-	\return short angle (-32768 to 32767)
+	\return s16 angle (-32768 to 32767)
 	
 */
-short asinLerp(int par);
+s16 asinLerp(s16 par);
 
-/*! \fn atanLerp( int par )
+/*! \fn s16 atanLerp( s16 par )
 	\param par parameter
 	
 	\brief fixed point arctan
-	\return short angle (-32768 to 32767)
+	\return s16 angle (-32768 to 32767)
 	
 */
-short atanLerp(int par);
+s16 atanLerp(s32 par);
 
 #ifdef __cplusplus
 }
