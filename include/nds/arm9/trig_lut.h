@@ -120,7 +120,7 @@ s16 asinLerp(s16 par);
 	\return s16 angle (-32768 to 32767)
 	
 */
-s16 atanLerp(s32 par);
+//s16 atanLerp(s32 par);
 
 #ifdef __cplusplus
 }
