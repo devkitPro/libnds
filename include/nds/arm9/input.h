@@ -66,6 +66,11 @@ extern "C" {
 */
 void scanKeys(void);
 
+//!	Obtains the current keypad state.
+/*!	Call this function to get keypad state without affecting state of other key functions (keysUp keysHeld etc...)
+*/
+uint32 keysCurrent(void);
+
 //!	Obtains the current keypad held state.
 uint32 keysHeld(void);
 

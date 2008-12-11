@@ -159,7 +159,7 @@ int keboardGetChar(void);
 /*! \fn int keyboardUpdate(void)
 	\brief Processes the keyboard...must be called once per frame
 */
-void keyboardUpdate(void);
+int keyboardUpdate(void);
 #ifdef __cplusplus
 }
 #endif

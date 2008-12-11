@@ -185,14 +185,18 @@ void keyboardShiftState()
          curKeyboard->upper->width * curKeyboard->upper->height * curKeyboard->grid_height * curKeyboard->grid_width / 64 * 2);
    }
 }
-void keyboardUpdate(void)
+int keyboardUpdate(void)
 {
    static int pressed = 0;
    touchPosition touch;
 
-
-   scanKeys();
-   u32 keys = keysDown();
+   static u32 oldKeys = 0;
+  
+   u32 keys = keysCurrent();
+   
+   u32 temp = keys;
+   keys &= ~oldKeys;
+   oldKeys = temp;
 
    if(pressed)
    {
@@ -203,6 +207,8 @@ void keyboardUpdate(void)
          if(curKeyboard->OnKeyReleased)
             curKeyboard->OnKeyReleased(lastKey);
       }
+
+	  return -1;
    }
    else
    {
@@ -214,7 +220,7 @@ void keyboardUpdate(void)
 
          if(key == NOKEY)
          {
-            return;
+            return -1;
          }
 
          pressed = 1;
@@ -222,13 +228,13 @@ void keyboardUpdate(void)
          if(key == DVK_CAPS)
          {
             keyboardShiftState();
-            return;
+            return -1;
          }
          else if(key == DVK_SHIFT)
          {
             keyboardShiftState();
             curKeyboard->shifted = curKeyboard->shifted ? 0 : 1;
-            return;
+            return -1;
          }
 
          if(curKeyboard->shifted)
@@ -253,8 +259,12 @@ void keyboardUpdate(void)
          }
          if(curKeyboard->OnKeyPressed)
             curKeyboard->OnKeyPressed(lastKey);
-      }
+		
+		 return lastKey;
+	  }
    }
+
+   return -1;
 }
 
 ssize_t keyboardRead(struct _reent *r, int unused, char *ptr, size_t len)

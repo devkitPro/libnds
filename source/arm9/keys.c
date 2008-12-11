@@ -1,5 +1,5 @@
 /*------------------------------------------------------------------------------
-	$Id: keys.c,v 1.18 2008-05-24 11:29:42 wntrmute Exp $
+	$Id: keys.c,v 1.19 2008-12-11 19:56:44 dovoto Exp $
 
 	key input code -- provides slightly higher level input forming
 
@@ -97,4 +97,10 @@ void keysSetRepeat( u8 setDelay, u8 setRepeat ) {
 uint32 keysUp(void) {
 //------------------------------------------------------------------------------
 	return (keys ^ keysold) & (~keys);
+}
+
+//------------------------------------------------------------------------------
+uint32 keysCurrent(void) {
+//------------------------------------------------------------------------------
+	return (KEYS_CUR);
 }
