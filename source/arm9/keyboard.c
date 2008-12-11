@@ -155,7 +155,7 @@ Keyboard *curKeyboard = &defaultKeyboard;
 int keyboardGetKey(int x, int y)
 {
    //todo: check lower bounds as well
-   if(x - curKeyboard->offset_x < 0 || y - curKeyboard->offset_y < 0)
+	if(x < curKeyboard->offset_x || y + curKeyboard->offset_y < 0)
       return NOKEY;
 
    if(curKeyboard->state == Lower)
