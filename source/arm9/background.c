@@ -48,8 +48,7 @@ const char* BgUsage =
 
 //look up tables for smoothing register access between the two 
 //displays
-vuint16* bgControl[8] = 
-{
+vu16* bgControl[8] = {
 	&REG_BG0CNT,
 	&REG_BG1CNT,
 	&REG_BG2CNT,
@@ -60,8 +59,7 @@ vuint16* bgControl[8] =
 	&REG_BG3CNT_SUB,
 };
 
-bg_scroll* bgScrollTable[8] = 
-{
+bg_scroll* bgScrollTable[8] = {
 	&BG_OFFSET[0],
 	&BG_OFFSET[1],
 	&BG_OFFSET[2],
@@ -73,8 +71,7 @@ bg_scroll* bgScrollTable[8] =
 	&BG_OFFSET_SUB[3]
 };
 
-bg_transform* bgTransform[8] = 
-{
+bg_transform* bgTransform[8] = {
 	(bg_transform*)0,
 	(bg_transform*)0,
 	(bg_transform*)0x04000020,
@@ -90,35 +87,31 @@ BgState bgState[8];
 
 bool bgIsTextLut[8];
 
-bool bgIsText(int id)
-{
+bool bgIsText(int id) {
 	return bgIsTextLut[id];
 }
 
-bool checkIfText(int id)
-{
+bool checkIfText(int id) {
 	if(id < 2 || (id > 3 && id < 6)) return true;
 
 	u8 mode = (id < 4) ? (videoGetMode() & 7) : (videoGetModeSub() & 7);
 
 	if(!mode) return true;
 
-	if(mode == 1 || mode == 3)
-	{
+	if(mode == 1 || mode == 3) {
 		return id == 3 || id == 7 ? false : true;
 	}
 
 	return false;
 }
-void bgUpdate(int id)
-{
-	if(bgIsTextLut[id])
-	{
+void bgUpdate(int id) {
+
+	if(bgIsTextLut[id]) {
+
 		bgScrollTable[id]->x = bgState[id].scrollX >> 8;
 		bgScrollTable[id]->y = bgState[id].scrollY >> 8;
-	}
-	else
-	{
+
+	} else {
 		s16 angleSin;
 		s16 angleCos;
 
@@ -148,16 +141,14 @@ void bgUpdate(int id)
 
 //initializes and enables the appropriate background with the supplied attributes
 //returns an id which must be supplied to the remainder of the background functions
-int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase)
-{
+int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase) {
 
 	BGCTRL[layer] = BG_MAP_BASE(mapBase) | BG_TILE_BASE(tileBase) 
 		| size | ((type == BgType_Text8bpp) ? BG_COLOR_256 : 0);
 
 	memset(&bgState[layer], sizeof(BgState), 0);
 
-	if(type != BgType_Text8bpp && type != BgType_Text4bpp)
-	{		
+	if(type != BgType_Text8bpp && type != BgType_Text4bpp) {		
 		bgSetScale(layer, 1 << 8, 1 << 8);
 		bgRotate(layer, 0);
 	}
@@ -175,15 +166,14 @@ int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase)
 }
 
 
-int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBase)
-{
+int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBase) {
+
 	BGCTRL_SUB[layer] = BG_MAP_BASE(mapBase) | BG_TILE_BASE(tileBase) 
 		| size | ((type == BgType_Text8bpp) ? BG_COLOR_256 : 0) ;
 
 	memset(&bgState[layer + 4], sizeof(BgState), 0);
 
-	if(type != BgType_Text8bpp && type != BgType_Text4bpp)
-	{		
+	if(type != BgType_Text8bpp && type != BgType_Text4bpp) {		
 		bgSetScale(layer + 4, 1 << 8, 1 << 8);
 		bgRotate(layer, 0);
 	}
