@@ -377,7 +377,7 @@ void oamUpdate(OamState* oam);
 *    \brief sets the specified rotation scale entry
 *    \param oam must be: &oamMain or &oamSub
 *    \param rotId the rotation entry to set
-*    \param angle the ccw angle to rotate [0-511]
+*    \param angle the ccw angle to rotate [-32768 - 32767]
 *    \param sx the inverse scale factor in the x direction 
 *    \param sy the inverse scale factor in the y direction
 */
