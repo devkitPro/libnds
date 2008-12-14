@@ -3,10 +3,18 @@ $(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>dev
 endif
  
 export TOPDIR	:=	$(CURDIR)
-VERSION	:=	$(shell date +%Y%m%d)
+
+export LIBNDS_MAJOR	:= 1
+export LIBNDS_MINOR	:= 3
+export LIBNDS_PATCH	:= 1
+
+
+VERSION	:=	$(LIBNDS_MAJOR).$(LIBNDS_MINOR).$(LIBNDS_PATCH)
+
+
 .PHONY: release debug clean all docs
 
-all: release debug 
+all: include/nds/libversion.h release debug 
 
 #-------------------------------------------------------------------------------
 release: lib
@@ -54,5 +62,19 @@ docs:
 #---------------------------------------------------------------------------------
 	doxygen libnds.dox
 	cat warn.log
+
+#---------------------------------------------------------------------------------
+include/nds/libversion.h : Makefile
+#---------------------------------------------------------------------------------
+	@echo "#ifndef __LIBVERSION_H__" > $@
+	@echo "#define __LIBVERSION_H__" >> $@
+	@echo >> $@
+	@echo "#define _LIBNDS_MAJOR_	$(LIBNDS_MAJOR)" >> $@
+	@echo "#define _LBNDS_MINOR_	$(LIBNDS_MINOR)" >> $@
+	@echo "#define _LIBNDS_PATCH_	$(LIBNDS_PATCH)" >> $@
+	@echo >> $@
+	@echo '#define _LIBNDS_STRING "libNDS Release '$(LIBNDS_MAJOR).$(LIBNDS_MINOR).$(LIBNDS_PATCH)'"' >> $@
+	@echo >> $@
+	@echo "#endif // __LIBVERSION_H__" >> $@
 
 
