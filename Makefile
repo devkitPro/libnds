@@ -66,15 +66,15 @@ docs:
 #---------------------------------------------------------------------------------
 include/nds/libversion.h : Makefile
 #---------------------------------------------------------------------------------
-	@echo "#ifndef __LIBVERSION_H__" > $@
-	@echo "#define __LIBVERSION_H__" >> $@
+	@echo "#ifndef __LIBNDSVERSION_H__" > $@
+	@echo "#define __LIBNDSVERSION_H__" >> $@
 	@echo >> $@
 	@echo "#define _LIBNDS_MAJOR_	$(LIBNDS_MAJOR)" >> $@
-	@echo "#define _LBNDS_MINOR_	$(LIBNDS_MINOR)" >> $@
+	@echo "#define _LIBNDS_MINOR_	$(LIBNDS_MINOR)" >> $@
 	@echo "#define _LIBNDS_PATCH_	$(LIBNDS_PATCH)" >> $@
 	@echo >> $@
 	@echo '#define _LIBNDS_STRING "libNDS Release '$(LIBNDS_MAJOR).$(LIBNDS_MINOR).$(LIBNDS_PATCH)'"' >> $@
 	@echo >> $@
-	@echo "#endif // __LIBVERSION_H__" >> $@
+	@echo "#endif // __LIBNDSVERSION_H__" >> $@
 
 
