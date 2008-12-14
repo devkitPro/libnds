@@ -103,6 +103,7 @@
 extern "C" {
 #endif
 
+#include "nds/libversion.h"
 #include "nds/ndstypes.h"
 #include "nds/bios.h"
 #include "nds/card.h"
