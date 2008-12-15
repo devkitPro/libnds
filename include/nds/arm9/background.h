@@ -868,7 +868,7 @@ static inline
 	\return
 		a pointer to the map 
 */
-u16** bgGetMapPtr(int id)  {
+u16* bgGetMapPtr(int id)  {
 	return (id < 4) ? ((u16**)BG_MAP_RAM(bgGetMapBase(id))) : ((u16**)BG_MAP_RAM_SUB(bgGetMapBase(id)));
 }
 
@@ -880,7 +880,7 @@ static inline
 	\return
 		a pointer to the tile graphics or bitmap graphics
 */
-u16** bgGetGfxPtr(int id)  {
+u16* bgGetGfxPtr(int id)  {
 	if(bgState[id].type < BgType_Bmp8)
 		return (id < 4) ? (u16**)(BG_TILE_RAM(bgGetTileBase(id))) : ((u16**)BG_TILE_RAM_SUB(bgGetTileBase(id)));
 	else
