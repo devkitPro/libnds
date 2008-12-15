@@ -73,14 +73,20 @@ ______________________________
 On the main engine BG0 can be uses as a 3D rendering surface.
 
 </div> 
+    
 
-	\example Graphics/2D/BackgroundAllInOne/source/advanced.cpp
+    
+   \example Graphics/2D/BackgroundAllInOne/source/advanced.cpp
 	\example Graphics/2D/BackgroundAllInOne/source/basic.cpp
 	\example Graphics/2D/BackgroundAllInOne/source/scrolling.cpp
 	\example Graphics/2D/BackgroundAllInOne/source/handmade.cpp
 
 
 */
+
+
+
+
 
 #ifndef _libnds_background_h_
 #define _libnds_background_h_
@@ -90,6 +96,8 @@ On the main engine BG0 can be uses as a 3D rendering surface.
 #include <nds/arm9/sassert.h>
 #include <nds/memory.h>
 #include <nds/dma.h>
+
+
 
 
 /*! \defgroup background_register_group "Background Register Access"
@@ -399,12 +407,13 @@ typedef struct
 	s32 scrollY;
 	int size;
 	int type;
+	bool dirty;
 	
 }BgState;
 
 
 //id -> register look up tables
-extern vu16* bgControl[8];
+extern vuint16* bgControl[8];
 extern bg_scroll* bgScrollTable[8];
 extern bg_transform* bgTransform[8];
 extern BgState bgState[8];
@@ -468,13 +477,16 @@ typedef enum
 extern "C" {
 #endif
 
-   //internally used for debug assertions
+//internally used for debug assertions
 bool bgIsText(int id);
 int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase);
 int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBase);
 
-
-void bgUpdate(int id);
+/*! \fn void bgUpdate(void)
+	\brief Must be called once per frame to update 
+		scroll/scale/and rotation of backgrounds
+*/
+void bgUpdate(void);
 
 static inline
 /*! \fn bgSetRotate(int id, int angle)
@@ -484,11 +496,11 @@ static inline
 	\param angle 
 		the angle of counter clockwise rotation (0 to 511)
 */
-void bgSetRotate(int id, int angle) {
+void bgSetRotate(int id, int angle)
+{
+   bgState[id].angle = angle;
 
-	bgState[id].angle = angle;
-
-   //bgUpdate(id);
+   bgState[id].dirty = true;
 }
 
 
@@ -501,7 +513,8 @@ static inline
 	\param angle 
 		the angle of counter clockwise rotation (-32768 to 32767)
 */
-void bgRotate(int id, int angle) {
+void bgRotate(int id, int angle)
+{
 	sassert(!bgIsText(id), "Cannot Rotate a Text Background");
 	
 	bgSetRotate(id, angle + bgState[id].angle);
@@ -528,17 +541,20 @@ static inline
    the 24.8 bit fractional fixed point center of rotation y component
 
 */
-void bgSet(int id, int angle, s32 sx, s32 sy, s32 scrollX, s32 scrollY, s32 rotCenterX, s32 rotCenterY) {
-   bgState[id].scaleX = sx;
+void bgSet(int id, int angle, s32 sx, s32 sy, s32 scrollX, s32 scrollY, s32 rotCenterX, s32 rotCenterY)
+{
+    bgState[id].scaleX = sx;
 	bgState[id].scaleY = sy;
 
-   bgState[id].scrollX = scrollX;
+    bgState[id].scrollX = scrollX;
 	bgState[id].scrollY = scrollX;
    
   	bgState[id].centerX = rotCenterX;
 	bgState[id].centerY = rotCenterY;
 
-   bgSetRotate(id, angle);
+	bgState[id].angle = angle;
+
+	bgState[id].dirty = true;
 }
 
 static inline 
@@ -553,12 +569,15 @@ static inline
 	\param sy
 		the 24.8 bit fractional fixed point vertical scaling to apply
 */
-void bgSetRotateScale(int id, int angle, s32 sx, s32 sy) {
-   bgState[id].scaleX = sx;
+void bgSetRotateScale(int id, int angle, s32 sx, s32 sy)
+{
+	bgState[id].scaleX = sx;
 	bgState[id].scaleY = sy;
+	bgState[id].angle = angle;
 
-   bgSetRotate(id, angle);
+	bgState[id].dirty = true;
 }
+
 static inline 
 /*! \fn bgSetScale(int id, s32 sx, s32 sy)
 	\brief Sets the scale of the specified background
@@ -569,13 +588,14 @@ static inline
 	\param sy
 		the 24.8 bit fractional fixed point vertical scaling to apply
 */
-void bgSetScale(int id, s32 sx, s32 sy) {
+void bgSetScale(int id, s32 sx, s32 sy)
+{
 	sassert(!bgIsText(id), "Cannot Scale a Text Background");
 	
 	bgState[id].scaleX = sx;
-	bgState[id].scaleY = sy;
-   //bgUpdate(id);
-	
+	bgState[id].scaleY = sy;	
+
+	bgState[id].dirty = true;
 }
 
 static inline 
@@ -600,14 +620,14 @@ static inline
 	\note 
 		tileBase is unused for bitmap backgrounds
 */
-int bgInit(int layer, BgType type, BgSize size, int mapBase, int tileBase) {
-
+int bgInit(int layer, BgType type, BgSize size, int mapBase, int tileBase)
+{
     sassert(layer >= 0 && layer <= 3, "Only layers 0 - 3 are supported");
     sassert(tileBase >= 0 && tileBase <= 15, "Background tile base is out of range");
     sassert(mapBase >=0 && mapBase <= 31, "Background Map Base is out of range");
 	sassert(layer != 0 || !video3DEnabled(), "Background 0 is currently being used for 3D display");
-	sassert(layer > 1 || type == BgType_Text8bpp || type == BgType_Text4bpp, "Incorrect background type for mode");
-	//sassert((size != BgSize_B8_512x1024 && size != BgSize_B8_1024x512) || videoGetMode() == 6, "Incorrect background type for mode"); 
+    sassert(layer > 1 || type == BgType_Text8bpp || type == BgType_Text4bpp, "Incorrect background type for mode");
+    //sassert((size != BgSize_B8_512x1024 && size != BgSize_B8_1024x512) || videoGetMode() == 6, "Incorrect background type for mode"); 
 	sassert(tileBase == 0 || type < BgType_Bmp8, "Tile base is unused for bitmaps.  Can be offset using mapBase * 16KB");
 	sassert((mapBase == 0 || type != BgType_Bmp8) || (size != BgSize_B8_512x1024 && size != BgSize_B8_1024x512), "Large Bitmaps cannot be offset");
 
@@ -636,7 +656,8 @@ static inline
 	\note 
 		tileBase is unused for bitmap backgrounds
 */
-int bgInitSub(int layer, BgType type, BgSize size, int mapBase, int tileBase) {
+int bgInitSub(int layer, BgType type, BgSize size, int mapBase, int tileBase)
+{
     sassert(layer >= 0 && layer <= 3, "Only layers 0 - 3 are supported");
     sassert(tileBase >= 0 && tileBase <= 15, "Background tile base is out of range");
     sassert(mapBase >=0 && mapBase <= 31, "Background Map Base is out of range");
@@ -658,7 +679,8 @@ static inline
 	\return
 		a pointer to the appropriate background control register
 */
-vu16* bgSetControlBits(int id, u16 bits) {
+vuint16* bgSetControlBits(int id, u16 bits)
+{
 	*bgControl[id] |= bits; 
 	return bgControl[id];
 }
@@ -671,19 +693,22 @@ static inline
 	\param bits
 		sets the specified bits to clear in the backgrounds control register
 */
-void  bgClearControlBits(int id, u16 bits) {
+void  bgClearControlBits(int id, u16 bits)
+{
 	*bgControl[id] &= ~bits;
 }
 
 static inline
 
-void bgWrapOn(int id) {
+void bgWrapOn(int id)
+{
    bgSetControlBits(id, BIT(13));
 }
 
 static inline
 
-void bgWrapOff(int id) {
+void bgWrapOff(int id)
+{
    bgClearControlBits(id, BIT(13));
 }
 static inline 
@@ -695,7 +720,8 @@ static inline
 		background priority (0-3), higher level priority will result 
 		in background rendering on top of lower level
 */
-void bgSetPriority(int id, unsigned int priority) {
+void bgSetPriority(int id, unsigned int priority)
+{
 	sassert(priority < 4, "Priority must be less than 4");
 	
 	*bgControl[id] &= ~ 3;
@@ -712,7 +738,8 @@ static inline
 		the 2k offset into vram for the backgrounds tile map or the 
 		16k offset for bitmap graphics
 */
-void bgSetMapBase(int id, unsigned int base) {
+void bgSetMapBase(int id, unsigned int base)
+{
 	sassert(base <= 31, "Map base cannot exceed 31");
 
 	*bgControl[id] &= ~ (31 << MAP_BASE_SHIFT);
@@ -728,7 +755,8 @@ static inline
 		the 16k offset into vram for the backgrounds tile map 
 		ignored for bitmap graphics
 */
-void bgSetTileBase(int id, unsigned int base) {
+void bgSetTileBase(int id, unsigned int base)
+{
 	sassert(base <= 15, "Tile base cannot exceed 15");
 
 	*bgControl[id] &= ~ (15 << TILE_BASE_SHIFT);
@@ -749,11 +777,13 @@ static inline
 		while valid for text backgrounds the fractional part will be ignored
 
 */
-void bgSetScrollf(int id, s32 x, s32 y) {
+void bgSetScrollf(int id, s32 x, s32 y)
+{
 	
 	bgState[id].scrollX = x;
 	bgState[id].scrollY = y;
-   //bgUpdate(id);
+	
+	bgState[id].dirty = true;
 }
 
 static inline 
@@ -766,7 +796,8 @@ static inline
 	\param y
 		the vertical scroll
 */
-void bgSetScroll(int id, int x, int y) {
+void bgSetScroll(int id, int x, int y)
+{
 		bgSetScrollf(id, x << 8, y << 8);
 }
 
@@ -777,7 +808,8 @@ static inline
 	\param id 
 		background id returned from bgInit or bgInitSub
 */
-void bgMosaicEnable(int id) {
+void bgMosaicEnable(int id)
+{
 	*bgControl[id] |= BIT(6);
 }
 
@@ -787,7 +819,8 @@ static inline
 	\param id 
 		background id returned from bgInit or bgInitSub
 */
-void bgMosaicDisable(int id) {
+void bgMosaicDisable(int id)
+{
 	*bgControl[id] &= ~BIT(6);
 }
 
@@ -799,7 +832,8 @@ static inline
 	\param dy
    vertical mosaic value (between 0 and 15)
 */
-void bgSetMosaic(unsigned int dx, unsigned int dy) {
+void bgSetMosaic(unsigned int dx, unsigned int dy)
+{
    sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
 	
 	MOSAIC_CR &= ~0xFF;
@@ -814,7 +848,8 @@ static inline
 	\param dy
    vertical mosaic value (between 0 and 15)
 */
-void bgSetMosaicSub(unsigned int dx, unsigned int dy) {
+void bgSetMosaicSub(unsigned int dx, unsigned int dy)
+{
    sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
 	
 	SUB_MOSAIC_CR &= ~0xFF;
@@ -830,7 +865,8 @@ static inline
 	\return
 		background priority 
 */
-int bgGetPriority(int id) {
+int bgGetPriority(int id)
+{
 	return *bgControl[id] & 3;
 }
 
@@ -844,7 +880,8 @@ static inline
 	\note
 		this is the integer offset of the base not a pointer to the map
 */
-int bgGetMapBase(int id) {
+int bgGetMapBase(int id)
+{
 	return (*bgControl[id] >> MAP_BASE_SHIFT) & 31;
 }
 
@@ -856,7 +893,8 @@ static inline
 	\return
 		background tile base
 */
-int bgGetTileBase(int id) {
+int bgGetTileBase(int id)
+{
 	return (*bgControl[id] >> TILE_BASE_SHIFT) & 31;
 }
 
@@ -868,8 +906,9 @@ static inline
 	\return
 		a pointer to the map 
 */
-u16* bgGetMapPtr(int id)  {
-	return (id < 4) ? ((u16**)BG_MAP_RAM(bgGetMapBase(id))) : ((u16**)BG_MAP_RAM_SUB(bgGetMapBase(id)));
+u16* bgGetMapPtr(int id) 
+{
+	return (id < 4) ? ((u16*)BG_MAP_RAM(bgGetMapBase(id))) : ((u16*)BG_MAP_RAM_SUB(bgGetMapBase(id)));
 }
 
 static inline 
@@ -880,11 +919,12 @@ static inline
 	\return
 		a pointer to the tile graphics or bitmap graphics
 */
-u16* bgGetGfxPtr(int id)  {
+u16* bgGetGfxPtr(int id) 
+{
 	if(bgState[id].type < BgType_Bmp8)
-		return (id < 4) ? (u16**)(BG_TILE_RAM(bgGetTileBase(id))) : ((u16**)BG_TILE_RAM_SUB(bgGetTileBase(id)));
+		return (id < 4) ? (u16*)(BG_TILE_RAM(bgGetTileBase(id))) : ((u16*)BG_TILE_RAM_SUB(bgGetTileBase(id)));
 	else
-		return (id < 4) ? (u16**)(BG_GFX + 0x2000 * (bgGetMapBase(id))) : (u16**)(BG_GFX_SUB + 0x2000 * (bgGetMapBase(id)));
+		return (id < 4) ? (u16*)(BG_GFX + 0x2000 * (bgGetMapBase(id))) : (u16*)(BG_GFX_SUB + 0x2000 * (bgGetMapBase(id)));
 }
 
 
@@ -901,7 +941,8 @@ static inline
 		while valid for text backgrounds the fractional part will be ignored
 
 */
-void bgScrollf(int id, s32 dx, s32 dy) {
+void bgScrollf(int id, s32 dx, s32 dy)
+{	
 	bgSetScrollf(id, bgState[id].scrollX + dx, bgState[id].scrollY + dy);
 }
 
@@ -918,7 +959,8 @@ static inline
 		while valid for text backgrounds the fractional part will be ignored
 
 */
-void bgScroll(int id, int dx, int dy) {
+void bgScroll(int id, int dx, int dy)
+{	
 	bgSetScrollf(id, dx << 8, dy << 8);
 }
 
@@ -928,7 +970,8 @@ static inline
 	\param id 
 		background id returned from bgInit or bgInitSub
 */
-void bgShow(int id) {
+void bgShow(int id)
+{
 	if(id < 4)
 		videoBgEnable(id);
 	else
@@ -941,7 +984,8 @@ static inline
 	\param id 
 		background id returned from bgInit or bgInitSub
 */
-void bgHide(int id) {
+void bgHide(int id)
+{
 	if(id < 4)
 		videoBgDisable(id);
 	else
@@ -961,13 +1005,14 @@ static inline
 		while valid for text backgrounds the fractional part will be ignored
 
 */
-void bgSetCenterf(int id, s32 x, s32 y) {
+void bgSetCenterf(int id, s32 x, s32 y)
+{
 	sassert(!bgIsText(id), "Text Backgrounds have no Center of Rotation");
 		 
  	bgState[id].centerX = x;
 	bgState[id].centerY = y;
 
-  // bgUpdate(id);
+	bgState[id].dirty = true;
 }
 
 static inline 
@@ -981,7 +1026,8 @@ static inline
 		center y
 
 */
-void bgSetCenter(int id, int x, int y) {
+void bgSetCenter(int id, int x, int y)
+{
 	bgSetCenterf(id, x << 8, y << 8);
 }
 

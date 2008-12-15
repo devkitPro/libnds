@@ -104,36 +104,48 @@ bool checkIfText(int id) {
 
 	return false;
 }
-void bgUpdate(int id) {
+void bgUpdate(void) {
 
-	if(bgIsTextLut[id]) {
+	int i = 0;
 
-		bgScrollTable[id]->x = bgState[id].scrollX >> 8;
-		bgScrollTable[id]->y = bgState[id].scrollY >> 8;
+	for(i = 0; i < 8; i++)
+	{
+		if(!bgState[i].dirty) continue;
 
-	} else {
-		s16 angleSin;
-		s16 angleCos;
+		if(bgIsTextLut[i]) 
+		{
 
-		s32 pa, pb, pc, pd; 
+			bgScrollTable[i]->x = bgState[i].scrollX >> 8;
+			bgScrollTable[i]->y = bgState[i].scrollY >> 8;
 
-		// Compute sin and cos
-		angleSin = sinLerp(bgState[id].angle);
-		angleCos = cosLerp(bgState[id].angle);
+		} 
+		else 
+		{
+			s16 angleSin;
+			s16 angleCos;
 
-		// Set the background registers
-		pa = ( angleCos * bgState[id].scaleX ) >> 12;
-		pb = (-angleSin * bgState[id].scaleX ) >> 12;
-		pc = ( angleSin * bgState[id].scaleY ) >> 12;
-		pd = ( angleCos * bgState[id].scaleY ) >> 12;
+			s32 pa, pb, pc, pd; 
 
-		bgTransform[id]->xdx = pa;
-		bgTransform[id]->ydx = pb;
-		bgTransform[id]->xdy = pc;
-		bgTransform[id]->ydy = pd;
+			// Compute sin and cos
+			angleSin = sinLerp(bgState[i].angle);
+			angleCos = cosLerp(bgState[i].angle);
 
-		bgTransform[id]->dx  = (bgState[id].scrollX) - ((pa * bgState[id].centerX + pb * bgState[id].centerY) >> 8);
-		bgTransform[id]->dy  = (bgState[id].scrollY) - ((pc * bgState[id].centerX + pd * bgState[id].centerY) >> 8);
+			// Set the background registers
+			pa = ( angleCos * bgState[i].scaleX ) >> 12;
+			pb = (-angleSin * bgState[i].scaleX ) >> 12;
+			pc = ( angleSin * bgState[i].scaleY ) >> 12;
+			pd = ( angleCos * bgState[i].scaleY ) >> 12;
+
+			bgTransform[i]->xdx = pa;
+			bgTransform[i]->ydx = pb;
+			bgTransform[i]->xdy = pc;
+			bgTransform[i]->ydy = pd;
+
+			bgTransform[i]->dx  = (bgState[i].scrollX) - ((pa * bgState[i].centerX + pb * bgState[i].centerY) >> 8);
+			bgTransform[i]->dy  = (bgState[i].scrollY) - ((pc * bgState[i].centerX + pd * bgState[i].centerY) >> 8);
+		}
+
+		bgState[i].dirty = false;
 	}
 }
 
@@ -160,7 +172,9 @@ int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase) 
 
 	bgIsTextLut[layer] = checkIfText(layer);
 
-	bgUpdate(layer);
+	bgState[layer].dirty = true;
+
+	bgUpdate();
 
 	return layer;
 }
@@ -184,7 +198,9 @@ int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBas
 	videoBgEnableSub(layer);
 	bgIsTextLut[layer + 4] = checkIfText(layer + 4);
 
-	bgUpdate(layer + 4);
+	bgState[layer + 4].dirty = true;
+
+	bgUpdate();
 
 	return layer + 4;
 } 
