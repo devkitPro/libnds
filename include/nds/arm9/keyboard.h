@@ -137,7 +137,8 @@ void keyboardShow(void);
 void keyboardHide(void);
 
 /*! \fn int keyboardGetKey(int x, int y)
-	\brief returns the key located at the supplied x and y
+	\brief returns the ascii code for the key located at the supplied x and y. Will not
+	effect keyboard shift state.
 	\param x the pixel x location
 	\param y the pixel y location
 	\return the key pressed or NOKEY if user pressed outside the keypad
@@ -145,21 +146,26 @@ void keyboardHide(void);
 int keyboardGetKey(int x, int y);
 
 /*! \fn void keyboardGetString(char * buffer, int maxLen)
-	\brief reads the input until a the return key is pressed
+	\brief reads the input until a the return key is pressed or the maxLen 
+	is exceeded.
 	\param buffer a buffer to hold the input string
 	\param maxLen the maximum length to read
 */
 void keyboardGetString(char * buffer, int maxLen);
 
-/*! \fn int keboardGetChar(void)
-	\brief Waits for user to press a key and returns the key pressed
+/*! \fn int keyboardGetChar(void)
+	\brief Waits for user to press a key and returns the key pressed.  Use
+	keyboardUpdate instead for async operation.
 */
-int keboardGetChar(void);
+int keyboardGetChar(void);
 
 /*! \fn int keyboardUpdate(void)
-	\brief Processes the keyboard...must be called once per frame
+	\brief Processes the keyboard. Should be called once per frame
+	when using the keyboard in an async manner.
+	\returns the ascii code of the key pressed or -1 if no key was pressed.
 */
 int keyboardUpdate(void);
+
 #ifdef __cplusplus
 }
 #endif
