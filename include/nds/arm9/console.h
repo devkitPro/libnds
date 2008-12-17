@@ -229,9 +229,10 @@ void consoleSelect(PrintConsole* console);
 	\param size the size of the background
 	\param mapBase the map base
 	\param tileBase the tile graphics base
-	\param main if true main engine is used, otherwise false
+	\param mainDisplay if true main engine is used, otherwise false
+	\param loadGraphics if true the default font graphics will be loaded into the layer
 */
-PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize size, int mapBase, int tileBase, bool main);
+PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize size, int mapBase, int tileBase, bool mainDisplay, bool loadGraphics);
 
 /*! \fn PrintConsole* consoleDemoInit(void)
 \brief Initialize the console to a default state for prototyping.

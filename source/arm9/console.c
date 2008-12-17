@@ -468,21 +468,31 @@ void consoleLoadFont(PrintConsole* console)
 	consoleCls('2');
 
 }
-PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize size, int mapBase, int tileBase, bool main){
+PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize size, int mapBase, int tileBase, bool mainDisplay, bool loadGraphics){
 
 	static bool firstConsoleInit = true;
 
+	if(firstConsoleInit)
+	{
+		devoptab_list[STD_OUT] = &dotab_stdout;
+	
+		setvbuf(stdout, NULL , _IONBF, 0);
+		
+		firstConsoleInit = false;
+	}
+	
 	if(console)
 	{
 		currentConsole = console;
 	}
 	else
 	{
-		*currentConsole = defaultConsole;
 		console = currentConsole;	
 	}
-	
-	if(main)
+
+	*currentConsole = defaultConsole;
+
+	if(mainDisplay)
 	{
 		console->bgId = bgInit(layer, type, size, mapBase, tileBase);
 	}
@@ -493,21 +503,12 @@ PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize 
 	
 	console->fontBgGfx = (u16*)bgGetGfxPtr(console->bgId);
 	console->fontBgMap = (u16*)bgGetMapPtr(console->bgId);
-	
-	if(firstConsoleInit)
-	{
-		devoptab_list[STD_OUT] = &dotab_stdout;
-	
-		setvbuf(stdout, NULL , _IONBF, 0);
-		
-		firstConsoleInit = false;
-	}
 
 	console->consoleInitialised = 1;
 	
 	consoleCls('2');
 
-	if(console->loadGraphics) 
+	if(loadGraphics) 
 		consoleLoadFont(console);
 
 	return currentConsole;
@@ -556,7 +557,7 @@ PrintConsole* consoleDemoInit(void) {
 	videoSetModeSub(MODE_0_2D);
 	vramSetBankC(VRAM_C_SUB_BG); 
 
-	return consoleInit(NULL, defaultConsole.bgLayer, BgType_Text4bpp, BgSize_T_256x256, defaultConsole.mapBase, defaultConsole.gfxBase, false);
+	return consoleInit(NULL, defaultConsole.bgLayer, BgType_Text4bpp, BgSize_T_256x256, defaultConsole.mapBase, defaultConsole.gfxBase, false, true);
 }
 
 //---------------------------------------------------------------------------------
