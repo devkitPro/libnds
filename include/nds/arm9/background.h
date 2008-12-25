@@ -547,7 +547,7 @@ void bgSet(int id, int angle, s32 sx, s32 sy, s32 scrollX, s32 scrollY, s32 rotC
 	bgState[id].scaleY = sy;
 
     bgState[id].scrollX = scrollX;
-	bgState[id].scrollY = scrollX;
+	bgState[id].scrollY = scrollY;
    
   	bgState[id].centerX = rotCenterX;
 	bgState[id].centerY = rotCenterY;
