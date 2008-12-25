@@ -42,12 +42,12 @@ clean:
 #-------------------------------------------------------------------------------
 dist-src: clean
 #-------------------------------------------------------------------------------
-	@tar --exclude=*CVS* -cjf libnds-src-$(VERSION).tar.bz2 arm7 arm9 source include icon.bmp Makefile libnds_license.txt 
+	@tar --exclude=*CVS* --exclude=.svn -cjf libnds-src-$(VERSION).tar.bz2 arm7 arm9 source include icon.bmp Makefile libnds_license.txt 
 
 #-------------------------------------------------------------------------------
 dist-bin: all
 #-------------------------------------------------------------------------------
-	@tar --exclude=*CVS* -cjf libnds-$(VERSION).tar.bz2 include lib icon.bmp libnds_license.txt
+	@tar --exclude=*CVS* --exclude=.svn -cjf libnds-$(VERSION).tar.bz2 include lib icon.bmp libnds_license.txt
 
 dist: dist-bin dist-src
 
