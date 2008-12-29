@@ -110,6 +110,8 @@ void glMaterialf(GL_MATERIALS_ENUM mode, rgb color) {
 //---------------------------------------------------------------------------------
 void glInit_C(void) {
 //---------------------------------------------------------------------------------
+	int i;
+
 	powerOn(POWER_3D_CORE | POWER_MATRIX);	// enable 3D core & geometry engine
 
 	glGlob = glGetGlobals();
@@ -122,7 +124,10 @@ void glInit_C(void) {
 	glGlob->nextPBlock = 0;
 	glGlob->nameCount = 1;
 	DynamicArrayInit(&glGlob->texturePtrs, 16);
-	
+
+	for(i = 0; i < 16; i++)
+		DynamicArraySet(&glGlob->texturePtrs, i, (void*)0);
+
 	while (GFX_STATUS & (1<<27)); // wait till gfx engine is not busy
 
 	// Clear the FIFO
