@@ -66,7 +66,7 @@
 
 // graphics registers
 
-#define DISPLAY_CR       REG_DISPCNT
+#define DISPLAY_CR		REG_DISPCNT
 
 #ifdef ARM9
 #define WAIT_CR			REG_EXMEMCNT
@@ -177,7 +177,6 @@
 #define	REG_COLY_SUB	(*(vu16*)0x4001054)
 
 /*common*/
-#define	REG_DMA			( (vu32*)0x40000B0)
 
 #define	REG_DMA0SAD		(*(vu32*)0x40000B0)
 #define	REG_DMA0SAD_L	(*(vu16*)0x40000B0)
@@ -317,4 +316,12 @@
 #define	REG_CARD_1B4		(*(vu32*)0x040001B4)
 #define	REG_CARD_1B8		(*(vu16*)0x040001B8)
 #define	REG_CARD_1BA		(*(vu16*)0x040001BA)
+
+// sound
+
+#define SOUND_CR			REG_SOUNDCNT
+#define SOUND_MASTER_VOL	REG_MASTER_VOLUME
+
+#define SOUND_BIAS			REG_SOUNDBIAS
+
 #endif

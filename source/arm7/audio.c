@@ -1,7 +1,8 @@
 /*---------------------------------------------------------------------------------
 
 	Copyright (C) 2008
-		Dave Murphy (WinterMute)
+		Dave Murphy  (WinterMute)
+		Jason Rogers (Dovoto)
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any
@@ -27,8 +28,9 @@
 #include <nds/fifocommon.h>
 #include <nds/fifomessages.h>
 
-int getFreeChannel(void)
-{
+//---------------------------------------------------------------------------------
+int getFreeChannel(void) {
+//---------------------------------------------------------------------------------
 	int i;
 
 	for(i = 0; i < 16; i++)
@@ -38,8 +40,9 @@ int getFreeChannel(void)
 	return -1;
 }
 
-int getFreePSGChannel(void)
-{
+//---------------------------------------------------------------------------------
+int getFreePSGChannel(void) {
+//---------------------------------------------------------------------------------
 	int i;
 
 	for(i = 8; i < 14; i++)
@@ -49,8 +52,9 @@ int getFreePSGChannel(void)
 	return -1;
 }
 
-int getFreeNoiseChannel(void)
-{
+//---------------------------------------------------------------------------------
+int getFreeNoiseChannel(void) {
+//---------------------------------------------------------------------------------
 	int i;
 
 	for(i = 14; i < 16; i++)
@@ -61,7 +65,9 @@ int getFreeNoiseChannel(void)
 }
 
 
-void micSwapHandler(u8* buffer, int length){
+//---------------------------------------------------------------------------------
+void micSwapHandler(u8* buffer, int length) {
+//---------------------------------------------------------------------------------
 	
 	MicBufferFullMsg msg;
 	msg.type = MIC_BUFFER_FULL_MESSAGE;
@@ -71,21 +77,21 @@ void micSwapHandler(u8* buffer, int length){
 	fifoSendDatamsg(FIFO_SOUND, sizeof(msg) , (u8*)&msg);
 }
 
+//---------------------------------------------------------------------------------
 void soundDataHandler(int bytes, void *user_data) {
+//---------------------------------------------------------------------------------
 	int channel = -1;
 
 	FifoMessage data;
 
 	fifoGetDatamsg(FIFO_SOUND, bytes, (u8*)&data);
 
-	if(data.type == SOUND_PLAY_MESSAGE)
-	{
+	if(data.type == SOUND_PLAY_MESSAGE) {
 		SoundPlayMsg *msg = (SoundPlayMsg*)&data;
 
 		channel = getFreeChannel(); 
 
-		if(channel >= 0)
-		{
+		if(channel >= 0) {
 			SCHANNEL_SOURCE(channel) = (u32)msg->data;
 			SCHANNEL_REPEAT_POINT(channel) = msg->loopPoint;
 			SCHANNEL_LENGTH(channel) = msg->dataSize;
@@ -93,9 +99,7 @@ void soundDataHandler(int bytes, void *user_data) {
 			SCHANNEL_CR(channel) = SCHANNEL_ENABLE | SOUND_VOL(msg->volume) | SOUND_PAN(msg->pan) | (msg->format << 29) | (msg->loop ? SOUND_REPEAT : SOUND_ONE_SHOT);
 		}
 		
-	}
-	else if(data.type == SOUND_PSG_MESSAGE)
-	{
+	} else if(data.type == SOUND_PSG_MESSAGE) {
 		SoundPsgMsg *msg = (SoundPsgMsg*)&data;
 
 		channel = getFreePSGChannel(); 
@@ -105,21 +109,16 @@ void soundDataHandler(int bytes, void *user_data) {
 			SCHANNEL_CR(channel) = SCHANNEL_ENABLE | msg->volume | SOUND_PAN(msg->pan) | (3 << 29) | (msg->dutyCycle << 24);
 			SCHANNEL_TIMER(channel) = SOUND_FREQ(msg->freq);
 		}
-	}
-	else if(data.type == SOUND_NOISE_MESSAGE)
-	{
+	} else if(data.type == SOUND_NOISE_MESSAGE) {
 		SoundPsgMsg *msg = (SoundPsgMsg*)&data;
 
 		channel = getFreeNoiseChannel(); 
 
-		if(channel >= 0)
-		{	
+		if(channel >= 0) {	
 			SCHANNEL_CR(channel) = SCHANNEL_ENABLE | msg->volume | SOUND_PAN(msg->pan);
 			SCHANNEL_TIMER(channel) = SOUND_FREQ(msg->freq);
 		}
-	}
-	else if(data.type == MIC_RECORD_MESSAGE)
-	{
+	} else if(data.type == MIC_RECORD_MESSAGE) {
 		MicRecordMsg *msg = (MicRecordMsg*)&data;
 
 		micStartRecording(msg->buffer, msg->bufferLength, msg->freq, 1, msg->format, micSwapHandler); 
@@ -130,21 +129,23 @@ void soundDataHandler(int bytes, void *user_data) {
 	fifoSendValue32(FIFO_SOUND, (u32)channel);
 }
 
-void soundCommandHandler(u32 command, void* userdata)
-{
+//---------------------------------------------------------------------------------
+void soundCommandHandler(u32 command, void* userdata) {
+//---------------------------------------------------------------------------------
+
 	int cmd = (command ) & 0x00F00000;
 	int data = command & 0xFFFF;
 	int channel = (command >> 16) & 0xF;
 	
-	switch(cmd)
-	{
+	switch(cmd) {
+
 	case SOUND_MASTER_ENABLE:
-		SOUND_CR = SOUND_ENABLE;
-		SOUND_MASTER_VOL = 127;
+		REG_SOUNDCNT = SOUND_ENABLE;
+		REG_MASTER_VOLUME = 127;
 		break;
 
 	case SOUND_MASTER_DISABLE:
-		SOUND_CR &= ~SOUND_ENABLE;
+		REG_SOUNDCNT &= ~SOUND_ENABLE;
 		break;
 
 	case SOUND_SET_VOLUME:
@@ -164,6 +165,7 @@ void soundCommandHandler(u32 command, void* userdata)
 	case SOUND_KILL:
 		SCHANNEL_CR(channel) &= ~SCHANNEL_ENABLE;
 		break;
+
 	case SOUND_PAUSE:
 		SCHANNEL_CR(channel) &= ~SCHANNEL_ENABLE;
 		break;
@@ -180,7 +182,9 @@ void soundCommandHandler(u32 command, void* userdata)
 	}
 }
 
+//---------------------------------------------------------------------------------
 void installSoundFIFO(void) {
+//---------------------------------------------------------------------------------
 
 	fifoSetDatamsgHandler(FIFO_SOUND, soundDataHandler, 0);
 	fifoSetValue32Handler(FIFO_SOUND, soundCommandHandler, 0);

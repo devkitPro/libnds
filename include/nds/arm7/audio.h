@@ -63,18 +63,20 @@ extern "C" {
 //---------------------------------------------------------------------------------
 // registers
 //---------------------------------------------------------------------------------
-#define SCHANNEL_CR(n)				(*(vuint32*)(0x04000400 + ((n)<<4)))
-#define SCHANNEL_VOL(n)				(*(vuint8*)(0x04000400 + ((n)<<4)))
-#define SCHANNEL_PAN(n)				(*(vuint8*)(0x04000402 + ((n)<<4)))
-#define SCHANNEL_SOURCE(n)			(*(vuint32*)(0x04000404 + ((n)<<4)))
-#define SCHANNEL_TIMER(n)			(*(vint16*)(0x04000408 + ((n)<<4)))
-#define SCHANNEL_REPEAT_POINT(n)	(*(vuint16*)(0x0400040A + ((n)<<4)))
-#define SCHANNEL_LENGTH(n)			(*(vuint32*)(0x0400040C + ((n)<<4)))
 
-#define SOUND_CR          (*(vuint16*)0x04000500)
-#define SOUND_MASTER_VOL  (*(vuint8*)0x04000500)
+#define REG_MASTER_VOLUME	(*(vu8*)0x4000500)
+#define REG_SOUNDCNT		(*(vu16*)0x4000500)
+#define REG_SOUNDBIAS		(*(vu32*)0x4000504)
 
-#define SOUND_BIAS		(*(vuint16*)0x04000504)
+
+#define SCHANNEL_CR(n)				(*(vu32*)(0x04000400 + ((n)<<4)))
+#define SCHANNEL_VOL(n)				(*(vu8*)(0x04000400 + ((n)<<4)))
+#define SCHANNEL_PAN(n)				(*(vu8*)(0x04000402 + ((n)<<4)))
+#define SCHANNEL_SOURCE(n)			(*(vu32*)(0x04000404 + ((n)<<4)))
+#define SCHANNEL_TIMER(n)			(*(vu16*)(0x04000408 + ((n)<<4)))
+#define SCHANNEL_REPEAT_POINT(n)	(*(vu16*)(0x0400040A + ((n)<<4)))
+#define SCHANNEL_LENGTH(n)			(*(vu32*)(0x0400040C + ((n)<<4)))
+
 
 //---------------------------------------------------------------------------------
 // Sound Capture Registers
