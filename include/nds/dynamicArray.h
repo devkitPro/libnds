@@ -58,6 +58,16 @@ void* DynamicArrayInit(DynamicArray* v, int initialSize)
 	return v->data;
 }
 
+static inline
+/*! \fn void* DynamicArrayDelete(DynamicArray* v)
+\brief Frees memory allocated by the dynamic array
+\param v the array to delete
+*/
+void DynamicArrayDelete(DynamicArray* v)
+{
+	if(v->data) free(v->data);
+}
+
 static inline 
 /*! \fn void* DynamicArrayGet(DynamicArray* v, int index)
 \brief Gets the entry at the supplied index
