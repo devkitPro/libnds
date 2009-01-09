@@ -202,14 +202,14 @@ void simpleFree(OamState *oam, int index)
 
 u16* oamAllocateGfx(OamState *oam, SpriteSize size, SpriteColorFormat colorFormat)
 {
-	int bytes = (size & 0xFFF) << 5;
-
+	int bytes = SPRITE_SIZE_PIXELS(size);
+    
 	if(colorFormat == SpriteColorFormat_16Color)
 		bytes = bytes >> 1;
 	else if(colorFormat == SpriteColorFormat_Bmp)
 		bytes = bytes << 1;
 
-	bytes = bytes >>  oam->gfxOffsetStep;
+	bytes = bytes >> oam->gfxOffsetStep;
 
 	int offset = simpleAlloc(oam, bytes ? bytes : 1);
 
@@ -218,7 +218,7 @@ u16* oamAllocateGfx(OamState *oam, SpriteSize size, SpriteColorFormat colorForma
 
 void oamFreeGfx(OamState *oam, const void* gfxOffset)
 {
-	simpleFree(oam, oamGfxPtrToOffset(oam, gfxOffset));
+	simpleFree(oam, oamGfxPtrToOffset(gfxOffset));
 }
 
 int oamCountFragments(OamState *oam)

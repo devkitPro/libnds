@@ -243,6 +243,10 @@ typedef enum {
 
 }SpriteSize;
 
+#define SPRITE_SIZE_SHAPE(size) (((size) >> 12) & 0x3)
+#define SPRITE_SIZE_SIZE(size)  (((size) >> 14) & 0x3)
+#define SPRITE_SIZE_PIXELS(size) (((size) & 0xFFF) << 5)
+
 /** \enum SpriteMapping
 *    Graphics memory layout options
 */
@@ -286,7 +290,7 @@ typedef struct
 	s16 allocBufferSize; /**< current size of the allocation buffer */
 	union
    {
-      SpriteEntry *oamMemory; /**< pointer to shadow oam memory */
+       SpriteEntry *oamMemory; /**< pointer to shadow oam memory */
 	   SpriteRotation *oamRotationMemory; /**< pointer to shadow oam memory for rotation */
    };
 }OamState;
@@ -342,6 +346,21 @@ u16* oamAllocateGfx(OamState *oam, SpriteSize size, SpriteColorFormat colorForma
 */
 void oamFreeGfx(OamState *oam, const void* gfxOffset);
 
+static inline
+/**  \fn void oamSetMosaic(unsigned int dx, unsigned int dy)
+*    \brief sets sprite mosaic
+*    \param dx (0-15) horizontal mosaic value
+*    \param dy (0-15) horizontal mosaic value
+*/
+void oamSetMosaic(unsigned int dx, unsigned int dy)
+{
+    sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
+
+  	
+	MOSAIC_CR &= ~(0xFF00);
+	MOSAIC_CR |= (dx << 8)| (dy << 12);
+}
+
 /** 
 *    \brief sets an oam entry to the supplied values 
 *    \param oam must be: &oamMain or &oamSub
@@ -356,8 +375,11 @@ void oamFreeGfx(OamState *oam, const void* gfxOffset);
 *    \param affineIndex affine index to use (if < 0 or > 31 the sprite will be unrotated)
 *    \param sizeDouble if affineIndex >= 0 this will be used to double the sprite size for rotation
 *    \param hide if non zero (true) the sprite will be hidden
+*    \param vertical flip the sprite vertically
+*    \param horizontal flip the sprite horizontally
+*	 \param mosaic if true mosaic will be applied to the sprite
 */
-void oamSet(OamState* oam, int id,  int x, int y, int priority, int palette_alpha, SpriteSize size, SpriteColorFormat format, const void* gfxOffset, int affineIndex, bool sizeDouble, bool hide);
+void oamSet(OamState* oam, int id,  int x, int y, int priority, int palette_alpha, SpriteSize size, SpriteColorFormat format, const void* gfxOffset, int affineIndex, bool sizeDouble, bool hide, bool hflip, bool vflip, bool mosaic);
 
 /**  \fn void oamClear(OamState *oam, int start, int count)
 *    \brief Hides the sprites in the supplied range: if count is zero all 128 sprites will be hidden
@@ -390,7 +412,7 @@ void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy);
 */
 int oamCountFragments(OamState *oam);
 
-unsigned int oamGfxPtrToOffset(OamState *oam, const void* offset);
+unsigned int oamGfxPtrToOffset(const void* offset);
 
 
 #endif // _libnds_sprite_h_

@@ -115,26 +115,33 @@ void oamClear(OamState *oam, int start, int count) {
 }
 
 //---------------------------------------------------------------------------------
-unsigned int oamGfxPtrToOffset(OamState *oam, const void* offset) {
+unsigned int oamGfxPtrToOffset(const void* offset) {
 //---------------------------------------------------------------------------------
 	unsigned int temp = (unsigned int)offset;
 
-	if(oam == &oamMain)
+	if(temp <= (unsigned int)SPRITE_GFX_SUB)
+	{
 		temp -= (unsigned int)SPRITE_GFX;
+		temp >>= oamMain.gfxOffsetStep;
+	}
 	else
+	{
 		temp -= (unsigned int)SPRITE_GFX_SUB;
-
-	temp >>= oam->gfxOffsetStep;
+		temp >>= oamSub.gfxOffsetStep;
+	}
+	
 
 	return temp;
 }
+
+
 
 //---------------------------------------------------------------------------------
 void oamSet(OamState* oam,	int id,  int x, int y, int priority,
  							int palette_alpha, SpriteSize size,SpriteColorFormat format,
  							const void* gfxOffset,
  							int affineIndex,
- 							bool sizeDouble, bool hide) {  
+ 							bool sizeDouble, bool hide, bool hflip, bool vflip, bool mosaic) {  
 //---------------------------------------------------------------------------------
 
 	if(hide) {
@@ -142,20 +149,22 @@ void oamSet(OamState* oam,	int id,  int x, int y, int priority,
 		return;
 	}
 
-	oam->oamMemory[id].shape = (size >> 12) & 0x3;
-	oam->oamMemory[id].size = (size >> 14) & 0x3;
-	oam->oamMemory[id].gfxIndex = oamGfxPtrToOffset(oam, gfxOffset);
+	oam->oamMemory[id].shape = SPRITE_SIZE_SHAPE(size);
+	oam->oamMemory[id].size = SPRITE_SIZE_SIZE(size);
+	oam->oamMemory[id].gfxIndex = oamGfxPtrToOffset(gfxOffset);
 	oam->oamMemory[id].x = x;
 	oam->oamMemory[id].y = y;
 	oam->oamMemory[id].palette = palette_alpha; 
 	oam->oamMemory[id].priority = priority;
+	oam->oamMemory[id].hFlip = hflip;
+	oam->oamMemory[id].vFlip = vflip;
+	oam->oamMemory[id].isMosaic = mosaic;
 
 	if(affineIndex >= 0 && affineIndex < 32) {
 		oam->oamMemory[id].rotationIndex = affineIndex;
 		oam->oamMemory[id].isSizeDouble = sizeDouble;
 		oam->oamMemory[id].isRotateScale = true;
 	} else {
-		oam->oamMemory[id].rotationIndex = 0;
 		oam->oamMemory[id].isSizeDouble = false;
 		oam->oamMemory[id].isRotateScale = false;
 	}
@@ -174,20 +183,20 @@ void oamUpdate(OamState* oam) {
 
 	if(oam == &oamMain) {
 		dmaCopy(oam->oamMemory, OAM, sizeof(OamMemory));
-	} else {
+	} else { 
 		dmaCopy(oam->oamMemory, OAM_SUB, sizeof(OamMemory));
 	}
 }
 
 //---------------------------------------------------------------------------------
-void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy) {
+void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy){
 //---------------------------------------------------------------------------------
 	int ss = sinLerp(angle);
 	int cc = cosLerp(angle);
 
 	oam->oamRotationMemory[rotId].hdx = cc*sx>>12; 
 	oam->oamRotationMemory[rotId].hdy =-ss*sx>>12;
-	oam->oamRotationMemory[rotId].vdx = ss*sy>>12;;
+	oam->oamRotationMemory[rotId].vdx = ss*sy>>12;
 	oam->oamRotationMemory[rotId].vdy = cc*sy>>12;
 }
 
