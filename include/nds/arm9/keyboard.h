@@ -52,6 +52,7 @@ A simple example of using the keyboard via scanf and stdin
 #define __KEYBOARD_H__
 
 #include <nds/ndstypes.h>
+#include <nds/arm9/background.h>
 
 //!KeyChangedCallback
 typedef void (*KeyChangeCallback)(int key);
@@ -62,10 +63,10 @@ typedef void (*KeyChangeCallback)(int key);
  */
 typedef enum
 {
-	Lower, /*!< Normal keyboard display (lowercase letters) >*/
-	Upper, /*!< Caps lock Held >*/
-	Numeric, /*!< Numeric only keypad (not provided by the default keyboard) >*/
-	Reduced /*!< Reduced footprint keyboard (not provided by the default keyboard) >*/
+	Lower = 0, /*!< Normal keyboard display (lowercase letters) >*/
+	Upper = 1, /*!< Caps lock Held >*/
+	Numeric = 2, /*!< Numeric only keypad (not provided by the default keyboard) >*/
+	Reduced = 3 /*!< Reduced footprint keyboard (not provided by the default keyboard) >*/
 }KeyboardState;
 
 /**
@@ -96,10 +97,11 @@ typedef struct
 	KeyboardState state; /*!< the state of the keyboard>*/
     int shifted;  /*!< true if shifted>*/
     int visible; /*!< true if visible>*/
-	KeyMap* lower; /*!< keymapping for lower case normal keyboard>*/
-    KeyMap* upper;/*!< keymapping for shifted upper case normal keyboard>*/
-    KeyMap* numeric; /*!< keymapping for numeric keypad>*/
-    KeyMap* reduced; /*!< keymapping for reduced footprint keyboard>*/
+	KeyMap* mappings[4];
+	//KeyMap* lower; /*!< keymapping for lower case normal keyboard>*/
+ //   KeyMap* upper;/*!< keymapping for shifted upper case normal keyboard>*/
+ //   KeyMap* numeric; /*!< keymapping for numeric keypad>*/
+ //   KeyMap* reduced; /*!< keymapping for reduced footprint keyboard>*/
 	const u16* tiles; /*!< pointer to graphics tiles, cannot exceed 44KB with default base>*/
     u32 tileLen; /*!< length in bytes of graphics data>*/
     const u16* palette; /*!< pointer to the palette>*/
@@ -121,11 +123,26 @@ extern "C" {
 */
 Keyboard* keyboardGetDefault(void);
 
-/*! \fn keyboardInit(Keyboard* keyboard)
+/*! \fn keyboardInit(Keyboard* keyboardint layer, BgType type, BgSize size, int mapBase, int tileBase, bool mainDisplay, bool loadGraphics);
 	\brief initializes the keyboard system with the supplied keyboard
+	\param keyboard the keyboard struct to initialize (can be NULL)
+	\param layer the background layer to use
+	\param type the background type to initialize
+	\param size the background size to initialize
+	\param mapBase the map base to use for the background
+	\param tileBase the graphics tile base to use for the background
+	\param mainDisplay if true the keyboard will render on the main display
+	\param loadGraphics if true the keyboard graphics will be loaded
+	\return returns the initialized keyboard struct
 */
-void keyboardInit(Keyboard* keyboard);
+Keyboard* keyboardInit(Keyboard* keyboard, int layer, BgType type, BgSize size, int mapBase, int tileBase, bool mainDisplay, bool loadGraphics);
 
+/*! \fn Keyboard* keyboardDemoInit(void)
+	\brief initializes the keyboard with default options
+	
+	Same as calling keyboardInit(NULL, 3, BgType_Text4bpp, BgSize_T_256x512, 20, 0, false, true)
+*/
+Keyboard* keyboardDemoInit(void);
 /*! \fn void keyboardShow(void)
 	\brief Displays the keyboard
 */

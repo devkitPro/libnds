@@ -238,7 +238,7 @@ PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize 
 \brief Initialize the console to a default state for prototyping.
 This function sets the console to use sub display, VRAM_C, and BG0 and enables MODE_0_2D on the
 sub display.  It is intended for use in prototyping applications which need print ability and not actual
-game use.  Print functionality can be utilized with just this call.
+game use.  Print functionality can be utilized with just this call.  
 */
 PrintConsole* consoleDemoInit(void);
 

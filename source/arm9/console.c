@@ -51,8 +51,8 @@ PrintConsole defaultConsole =
 	},
 	0, //font background map 
 	0, //font background gfx
-	31, //map base
-	0, //char base
+	22, //map base
+	3, //char base
 	0, //bg layer in use
 	-1, //bg id
 	0,0, //cursorX cursorY
