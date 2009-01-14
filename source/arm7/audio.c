@@ -115,7 +115,7 @@ void soundDataHandler(int bytes, void *user_data) {
 		channel = getFreeNoiseChannel(); 
 
 		if(channel >= 0) {	
-			SCHANNEL_CR(channel) = SCHANNEL_ENABLE | msg->volume | SOUND_PAN(msg->pan);
+			SCHANNEL_CR(channel) = SCHANNEL_ENABLE | msg->volume | SOUND_PAN(msg->pan) | (3 << 29);
 			SCHANNEL_TIMER(channel) = SOUND_FREQ(msg->freq);
 		}
 	} else if(data.type == MIC_RECORD_MESSAGE) {
