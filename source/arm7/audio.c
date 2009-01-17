@@ -27,6 +27,7 @@
 #include <nds/ipc.h>
 #include <nds/fifocommon.h>
 #include <nds/fifomessages.h>
+#include <nds/system.h>
 
 //---------------------------------------------------------------------------------
 int getFreeChannel(void) {
@@ -130,6 +131,23 @@ void soundDataHandler(int bytes, void *user_data) {
 }
 
 //---------------------------------------------------------------------------------
+void enableSound() {
+//---------------------------------------------------------------------------------
+	powerOn(POWER_SOUND);
+	writePowerManagement(PM_CONTROL_REG, ( readPowerManagement(PM_CONTROL_REG) & ~PM_SOUND_MUTE ) | PM_SOUND_AMP );
+	REG_SOUNDCNT = SOUND_ENABLE;
+	REG_MASTER_VOLUME = 127;
+}
+
+//---------------------------------------------------------------------------------
+void disableSound() {
+//---------------------------------------------------------------------------------
+	REG_SOUNDCNT &= ~SOUND_ENABLE;
+	writePowerManagement(PM_CONTROL_REG, ( readPowerManagement(PM_CONTROL_REG) & ~PM_SOUND_AMP ) | PM_SOUND_MUTE );
+	powerOff(POWER_SOUND);
+}
+
+//---------------------------------------------------------------------------------
 void soundCommandHandler(u32 command, void* userdata) {
 //---------------------------------------------------------------------------------
 
@@ -140,12 +158,11 @@ void soundCommandHandler(u32 command, void* userdata) {
 	switch(cmd) {
 
 	case SOUND_MASTER_ENABLE:
-		REG_SOUNDCNT = SOUND_ENABLE;
-		REG_MASTER_VOLUME = 127;
+		enableSound();
 		break;
 
 	case SOUND_MASTER_DISABLE:
-		REG_SOUNDCNT &= ~SOUND_ENABLE;
+		disableSound();
 		break;
 
 	case SOUND_SET_VOLUME:
