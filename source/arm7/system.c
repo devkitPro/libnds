@@ -6,13 +6,11 @@
 
 bool sleepIsEnabled = true;
 
-void powerValueHandler(u32 value, void* user_data)
-{
+void powerValueHandler(u32 value, void* user_data) {
 	u32 temp;
 	u32 ie_save;
 	
-	switch(value & 0xFFFF0000)
-	{
+	switch(value & 0xFFFF0000) {
 		//power control
 	case PM_REQ_LED:
 		temp = readPowerManagement(PM_CONTROL_REG);
@@ -67,19 +65,17 @@ void powerValueHandler(u32 value, void* user_data)
 	}
 }
 
-void systemSleep(void)
-{
+void systemSleep(void) {
 	if(!sleepIsEnabled) return;
 	//puts arm9 to sleep which then notifies arm7 above (which causes arm7 to sleep)
 	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP);
 }
 
-int sleepEnabled(void) 
-{
+int sleepEnabled(void) {
 	return sleepIsEnabled;
 }
 
-void installSystemFIFO(void)
-{
+void installSystemFIFO(void) {
 	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
 }
+
