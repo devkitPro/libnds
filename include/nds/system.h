@@ -100,6 +100,8 @@ typedef enum
 
 void systemSleep(void);
 
+
+
 //--------------------------------------------------------------
 //    ARM9 section
 //--------------------------------------------------------------
@@ -189,9 +191,18 @@ int sleepEnabled(void);
 int writePowerManagement(int reg, int command);
 
 static inline
-
 int readPowerManagement(int reg) {
 	return writePowerManagement((reg)|PM_READ_REGISTER, 0);
+}
+
+static inline
+void powerOn(PM_Bits bits) {
+	REG_POWERCNT |= bits;
+}
+
+static inline
+void powerOff(PM_Bits bits) {
+	REG_POWERCNT &= ~bits;
 }
 
 void readUserSettings();
