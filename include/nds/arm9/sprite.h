@@ -412,6 +412,8 @@ void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy);
 */
 int oamCountFragments(OamState *oam);
 
+void oamAllocReset(OamState *oam);
+
 unsigned int oamGfxPtrToOffset(const void* offset);
 
 

@@ -62,6 +62,8 @@ void oamInit(OamState *oam, SpriteMapping mapping, bool extPalette) {
 		REG_DISPCNT_SUB &= ~DISPLAY_SPRITE_ATTR_MASK;
 		REG_DISPCNT_SUB |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;      
 	}
+
+	oamAllocReset(oam);
 }
 
 //---------------------------------------------------------------------------------
@@ -151,7 +153,6 @@ void oamSet(OamState* oam,	int id,  int x, int y, int priority,
 
 	oam->oamMemory[id].shape = SPRITE_SIZE_SHAPE(size);
 	oam->oamMemory[id].size = SPRITE_SIZE_SIZE(size);
-	oam->oamMemory[id].gfxIndex = oamGfxPtrToOffset(gfxOffset);
 	oam->oamMemory[id].x = x;
 	oam->oamMemory[id].y = y;
 	oam->oamMemory[id].palette = palette_alpha; 
@@ -170,8 +171,12 @@ void oamSet(OamState* oam,	int id,  int x, int y, int priority,
 	}
 
 	if(format != SpriteColorFormat_Bmp) {
+		oam->oamMemory[id].gfxIndex = oamGfxPtrToOffset(gfxOffset);
 		oam->oamMemory[id].colorMode = format;
 	} else {  
+		int sx = ((u32)gfxOffset >> 1) & ((1 << oam->gfxOffsetStep) - 1);
+		int sy = (((u32)gfxOffset >> 1) >> oam->gfxOffsetStep) & 0xFF;
+		oam->oamMemory[id].gfxIndex = (sx >> 3) | ((sy >> 3) << (oam->gfxOffsetStep - 3));
 		oam->oamMemory[id].blendMode = format;
 	}
 }

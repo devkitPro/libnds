@@ -25,17 +25,23 @@ AllocHeader* getAllocHeader(OamState *oam, int index)
 	return &oam->allocBuffer[index];
 }
 
-
-int simpleAlloc(OamState *oam, int size)
+void oamAllocReset(OamState *oam)
 {
 	//allocate the buffer if null
 	if(oam->allocBuffer == NULL)
 	{
 		oam->allocBuffer = (AllocHeader*)malloc(sizeof(AllocHeader) * oam->allocBufferSize);
+	}
 
-		getAllocHeader(oam, 0)->nextFree = 1024;
-		getAllocHeader(oam, 0)->size = 1024;
+	getAllocHeader(oam, 0)->nextFree = 1024;
+	getAllocHeader(oam, 0)->size = 1024;
+}
 
+int simpleAlloc(OamState *oam, int size)
+{
+	if(oam->allocBuffer == NULL)
+	{
+		oamAllocReset(oam);
 	}
 
 	u16 curOffset = oam->firstFree;
