@@ -26,14 +26,14 @@ DATA			:=	../source/arm9
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH	:=	-mthumb -mthumb-interwork -march=armv5te -mtune=arm946e-s 
+ARCH	:=	-mthumb -mthumb-interwork -march=armv5te -mtune=arm946e-s -DARM9
 
 CFLAGS	:=	-g -Wall -O2\
  			-fomit-frame-pointer\
 			-ffast-math \
 			$(ARCH)
 
-CFLAGS	+=	$(INCLUDE) -DARM9
+CFLAGS	+=	$(INCLUDE)
 CXXFLAGS	:=	$(CFLAGS)
 
 ASFLAGS	:=	-g $(ARCH)
