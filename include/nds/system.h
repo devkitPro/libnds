@@ -141,6 +141,24 @@ static inline void lcdMainOnTop(void) { REG_POWERCNT |= POWER_SWAP_LCDS; }
 
 //!	Forces the main core to display on the bottom.
 static inline void lcdMainOnBottom(void) { REG_POWERCNT &= ~POWER_SWAP_LCDS; }
+
+//!	Set the arm9 vector base
+/*!	Arm9 only
+	\param highVector.
+*/
+void setVectorBase(int highVector);
+
+typedef struct sysVectors_t {
+	u32	reset;
+	u32	undefined;
+	u32	swi;
+	u32	prefetch_abort;
+	u32	data_abort;
+	u32	fiq;
+} sysVectors;
+
+extern sysVectors SystemVectors;
+
 #endif
 
 //--------------------------------------------------------------
