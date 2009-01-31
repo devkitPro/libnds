@@ -41,10 +41,7 @@ keyboardGetDefault() or create your own keyboard.
 </div>
 */
 
-/*! 
-\example input/keyboard/source/keymain.c
-A simple example of using the keyboard via scanf and stdin
-*/	
+
 	
 
 
@@ -123,7 +120,7 @@ extern "C" {
 */
 Keyboard* keyboardGetDefault(void);
 
-/*! \fn keyboardInit(Keyboard* keyboardint layer, BgType type, BgSize size, int mapBase, int tileBase, bool mainDisplay, bool loadGraphics);
+/*! \fn Keyboard* keyboardInit(Keyboard* keyboard, int layer, BgType type, BgSize size, int mapBase, int tileBase, bool mainDisplay, bool loadGraphics);
 	\brief initializes the keyboard system with the supplied keyboard
 	\param keyboard the keyboard struct to initialize (can be NULL)
 	\param layer the background layer to use

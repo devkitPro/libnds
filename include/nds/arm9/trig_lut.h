@@ -113,14 +113,7 @@ s16 acosLerp(s16 par);
 */
 s16 asinLerp(s16 par);
 
-/*! \fn s16 atanLerp( s32 par )
-	\param par parameter
-	
-	\brief fixed point arctan
-	\return s16 angle (-32768 to 32767)
-	
-*/
-//s16 atanLerp(s32 par);
+
 
 #ifdef __cplusplus
 }

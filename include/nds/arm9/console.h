@@ -59,11 +59,7 @@ The print console must be initialized to use DB_CONSOL
 
 </div>
 
-\example Graphics/2D/ansi_console/source/main.c
-\example Graphics/2D/console_windows/source/main.c
-\example Graphics/2D/custom_font/source/main.c
-\example Graphics/2D/printBothScreens/source/template.c
-\example Graphics/2D/rotscale_text/source/main.c
+
 */
 
 #ifndef CONSOLE_H
@@ -221,7 +217,8 @@ PrintConsole* consoleGetDefault(void);
 */
 void consoleSelect(PrintConsole* console);
 
-/*! \fn PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize size, int mapBase, int tileBase, bool main);
+/*! \fn PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize size, int mapBase, int tileBase, bool mainDisplay, bool loadGraphics);
+
 	\brief Initialise the console.
 	\param console A pointer to the console initialze data (if null default console will be used)
 	\param layer background layer to use

@@ -28,10 +28,7 @@
     \brief wraps the bios decompress functionality into something a bit easier to deal with
 */
 
-/*! 
-	\example Graphics/2D/16bit_color_bmp/source/template.cpp
-	Decompressing graphics to vram using lz77 
-*/		
+	
 
 
 #ifndef NDS_DECOMPRESS

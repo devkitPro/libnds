@@ -88,6 +88,66 @@
  - \ref console.h "Debug via printf to DS screen or NO$GBA"
  - \ref debug.h "Send message to NO$GBA"
 
+ <!-- EXAMPLES -->
+    <!-- backgrounds -->
+	\example Graphics/Backgrounds/all_in_one/source/advanced.cpp
+	\example Graphics/Backgrounds/all_in_one/source/basic.cpp
+	\example Graphics/Backgrounds/all_in_one/source/scrolling.cpp
+	\example Graphics/Backgrounds/all_in_one/source/handmade.cpp
+
+    <!-- sprites -->
+    \example Graphics/Sprites/allocation_test/source/main.c
+	\example Graphics/Sprites/animate_simple/source/template.c
+	\example Graphics/Sprites/bitmap_sprites/source/main.cpp
+ 	\example Graphics/Sprites/fire_and_sprites/source/main.cpp
+	\example Graphics/Sprites/simple/source/template.c
+
+	<!-- keyboard -->
+	\example input/keyboard/keyboard_stdin/source/keymain.c
+	\example input/keyboard/keyboard_async/source/template.c
+
+	<!-- touchpad -->
+	\example input/Touch_Pad/touch_area/source/template.c
+	\example input/Touch_Pad/touch_look/source/main.cpp
+	\example input/Touch_Pad/touch_test/source/main.c
+
+	<!-- 3D -->
+	\example Graphics/3D/nehe/lesson01/source/nehe1.cpp
+	\example Graphics/3D/nehe/lesson02/source/nehe2.cpp
+	\example Graphics/3D/nehe/lesson03/source/nehe3.cpp
+	\example Graphics/3D/nehe/lesson04/source/nehe4.cpp
+	\example Graphics/3D/nehe/lesson05/source/nehe5.cpp
+	\example Graphics/3D/nehe/lesson06/source/nehe6.cpp
+	\example Graphics/3D/nehe/lesson07/source/nehe7.cpp
+	\example Graphics/3D/nehe/lesson08/source/nehe8.cpp
+	\example Graphics/3D/nehe/lesson09/source/nehe9.cpp
+	\example Graphics/3D/nehe/lesson10/source/nehe10.cpp
+	\example Graphics/3D/nehe/lesson10b/source/nehe10b.cpp
+	\example Graphics/3D/nehe/lesson11/source/nehe11.cpp
+	\example Graphics/3D/3D_Both_Screens/source/template.c
+	\example Graphics/3D/Display_List/source/main.cpp
+
+	<!-- RTC -->
+	\example RealTimeClock/Watch/source/main.cpp
+
+	<!-- sound api -->
+	\example audio/micrecord/source/micrecord.c
+
+	<!-- hello world -->
+	\example hello_world/source/main.cpp
+
+	<!-- decompress -->
+	\example Graphics/Backgrounds/16bit_color_bmp/source/template.cpp
+
+	<!-- printing -->
+	\example Graphics/Printing/ansi_console/source/main.c
+	\example Graphics/Printing/console_windows/source/main.c
+	\example Graphics/Printing/custom_font/source/main.c
+	\example Graphics/Printing/print_both_screens/source/template.c
+	\example Graphics/Printing/rotscale_text/source/main.c
+
+
+
 */
 
 #ifndef NDS_INCLUDE

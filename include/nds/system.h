@@ -144,7 +144,7 @@ static inline void lcdMainOnBottom(void) { REG_POWERCNT &= ~POWER_SWAP_LCDS; }
 
 //!	Set the arm9 vector base
 /*!	Arm9 only
-	\param highVector.
+	\param highVector high vector
 */
 void setVectorBase(int highVector);
 

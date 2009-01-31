@@ -76,10 +76,6 @@ On the main engine BG0 can be uses as a 3D rendering surface.
     
 
     
-   \example Graphics/2D/BackgroundAllInOne/source/advanced.cpp
-	\example Graphics/2D/BackgroundAllInOne/source/basic.cpp
-	\example Graphics/2D/BackgroundAllInOne/source/scrolling.cpp
-	\example Graphics/2D/BackgroundAllInOne/source/handmade.cpp
 
 
 */

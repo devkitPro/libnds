@@ -31,21 +31,7 @@
 /*! \file videoGL.h 
 \brief openGL (ish) interface to DS 3D hardware. 
 */
-
-/*! 
-\example Graphics/3D/nehe/lesson01/source/nehe1.cpp
-\example Graphics/3D/nehe/lesson02/source/nehe2.cpp
-\example Graphics/3D/nehe/lesson03/source/nehe3.cpp
-\example Graphics/3D/nehe/lesson04/source/nehe4.cpp
-\example Graphics/3D/nehe/lesson05/source/nehe5.cpp
-\example Graphics/3D/nehe/lesson06/source/nehe6.cpp
-\example Graphics/3D/nehe/lesson07/source/nehe7.cpp
-\example Graphics/3D/nehe/lesson08/source/nehe8.cpp
-\example Graphics/3D/nehe/lesson09/source/nehe9.cpp
-\example Graphics/3D/nehe/lesson10/source/nehe10.cpp
-\example Graphics/3D/nehe/lesson10b/source/nehe10b.cpp
-\example Graphics/3D/nehe/lesson11/source/nehe11.cpp
-*/		
+		
 
 
 #ifndef VIDEOGL_ARM9_INCLUDE
@@ -803,7 +789,7 @@ void glMultMatrix3x3(const m3x3 * m) {
 GL_STATIC_INL
 /*!  \fn void glRotateXi(int angle)
 \brief Rotates the current modelview matrix by angle about the x axis 
-\param angle The angle to rotate by (angle is 0-511) */
+\param angle The angle to rotate by (angle is -32768 to 32767) */
 void glRotateXi(int angle) {
 	int32 sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
 	int32 cosine = cosLerp(angle);//COS[angle & LUT_MASK];
@@ -824,7 +810,7 @@ void glRotateXi(int angle) {
 GL_STATIC_INL
 /*!  \fn void glRotateYi(int angle) 
 \brief Rotates the current modelview matrix by angle about the y axis 
-\param angle The angle to rotate by (angle is 0-511) */
+\param angle The angle to rotate by (angle is -32768 to 32767) */
  void glRotateYi(int angle) {
 	int32 sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
 	int32 cosine = cosLerp(angle);//COS[angle & LUT_MASK];
@@ -845,7 +831,7 @@ GL_STATIC_INL
 GL_STATIC_INL
 /*!  \fn void glRotateZi(int angle)
 \brief Rotates the current modelview matrix by angle about the z axis 
-\param angle The angle to rotate by (angle is 0-511) */
+\param angle The angle to rotate by (angle is -32768 to 32767) */
 void glRotateZi(int angle) {
 	int32 sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
 	int32 cosine = cosLerp(angle);//COS[angle & LUT_MASK];
@@ -985,7 +971,7 @@ void glFrustumf32(int32 left, int32 right, int32 bottom, int32 top, int32 near, 
 GL_STATIC_INL
 /*!  \fn void gluPerspectivef32(int fovy, int32 aspect, int32 zNear, int32 zFar)
 \brief Utility function which sets up the projection matrix (fixed point version)
-\param fovy Specifies the field of view in degrees (0 -511) 
+\param fovy Specifies the field of view in degrees (-32768 to 32767) 
 \param aspect Specifies the aspect ratio of the screen (normally screen width/screen height)
 \param zNear Specifies the near clipping plane
 \param zFar Specifies the far clipping plane */

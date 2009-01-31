@@ -32,7 +32,7 @@ for starting and stopping sound effects from the ARM9 side as well as access
 to PSG and noise hardware.  Maxmod should be used in most music and sound effect
 situations.
 
- \example audio/micrecord/source/micrecord.c
+ 
 
 */
 

@@ -29,9 +29,7 @@
 /*! \file sprite.h
     \brief nds sprite functionality.
    
-   \example Graphics/2D/SimpleSprite/source/template.c
-	\example Graphics/2D/SpriteAllocationTest/source/main.c
-	\example Graphics/2D/Sprite_Bitmap/source/main.cpp
+
 */
 
 #ifndef _libnds_sprite_h_
@@ -375,8 +373,8 @@ void oamSetMosaic(unsigned int dx, unsigned int dy)
 *    \param affineIndex affine index to use (if < 0 or > 31 the sprite will be unrotated)
 *    \param sizeDouble if affineIndex >= 0 this will be used to double the sprite size for rotation
 *    \param hide if non zero (true) the sprite will be hidden
-*    \param vertical flip the sprite vertically
-*    \param horizontal flip the sprite horizontally
+*    \param vflip flip the sprite vertically
+*    \param hflip flip the sprite horizontally
 *	 \param mosaic if true mosaic will be applied to the sprite
 */
 void oamSet(OamState* oam, int id,  int x, int y, int priority, int palette_alpha, SpriteSize size, SpriteColorFormat format, const void* gfxOffset, int affineIndex, bool sizeDouble, bool hide, bool hflip, bool vflip, bool mosaic);
