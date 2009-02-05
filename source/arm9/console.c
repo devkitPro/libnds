@@ -603,13 +603,34 @@ void consolePrintChar(char c) {
 
 	switch(c) {
 		/*
-		The only special characters we will handle are tab (\t), carriage return (\r) & line feed (\n).
+		The only special characters we will handle are tab (\t), carriage return (\r), line feed (\n)
+		and backspace (\b).
 		Carriage return & line feed will function the same: go to next line and put cursor at the beginning.
 		For everything else, use VT sequences.
 
 		Reason: VT sequences are more specific to the task of cursor placement.
 		The special escape sequences \b \f & \v are archaic and non-portable.
 		*/
+		case 8:
+			currentConsole->cursorX--;
+			
+			if(currentConsole->cursorX < 0)
+			{			
+				if(currentConsole->cursorY > 0) 
+				{	
+					currentConsole->cursorX = currentConsole->windowX - 1;
+					currentConsole->cursorY--;
+				}
+				else
+				{
+					currentConsole->cursorX = 0;
+				}
+			}
+
+			currentConsole->fontBgMap[currentConsole->cursorX + currentConsole->windowX + (currentConsole->cursorY + currentConsole->windowY) * currentConsole->consoleWidth] = currentConsole->fontCurPal | (u16)(' ' + currentConsole->fontCharOffset - currentConsole->font.asciiOffset);
+			
+			break;
+
 		case 9:
 			currentConsole->cursorX  += currentConsole->tabSize;
 			break;

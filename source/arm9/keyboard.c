@@ -45,7 +45,7 @@ distribution.
 int keyBufferOffset = 0;
 int keyBufferLength = 0; 
 int lastKey = -1;
-
+bool stdioRead = false;
 char keyBuffer[KEY_BUFFER_SIZE];
 
 // negative values are keys with no sensible ascii representation.  
@@ -266,11 +266,29 @@ int keyboardUpdate(void)
 				return -1;
 			}
 
+
 			pressed = 1;
 
 			swapKeyGfx(key, true);
 
-			if(key >= 0)
+			if(key == DVK_BACKSPACE)
+			{
+				
+				if(keyBufferLength > 0)
+				{
+					keyBufferLength--;
+					keyBufferOffset--;
+
+					if(keyBufferOffset < 0) 
+						keyBufferOffset = KEY_BUFFER_SIZE - 1;
+				}
+				else if(stdioRead)
+				{
+					return -1;
+				}
+			}
+
+			else if(key >= 0)
 			{
 				keyBuffer[keyBufferOffset++] = (char)key;
 
@@ -284,6 +302,7 @@ int keyboardUpdate(void)
 					keyBufferOffset = 0;
 				}
 			}
+
 			if(curKeyboard->OnKeyPressed)
 				curKeyboard->OnKeyPressed(lastKey);
 
@@ -294,12 +313,16 @@ int keyboardUpdate(void)
 	return -1;
 }
 
+
+
 ssize_t keyboardRead(struct _reent *r, int unused, char *ptr, size_t len)
 {	
 	int wasHidden = 0;
 	int tempLen;
 	int c = NOKEY;
 
+	stdioRead = true;
+	
 	if(!curKeyboard->visible)
 	{
 		wasHidden = 1;
@@ -328,6 +351,8 @@ ssize_t keyboardRead(struct _reent *r, int unused, char *ptr, size_t len)
 	{
 		keyboardHide();
 	}
+
+	stdioRead = false;
 
 	return tempLen;
 }
