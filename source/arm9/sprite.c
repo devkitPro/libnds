@@ -32,7 +32,7 @@ OamState oamSub = {
 void oamInit(OamState *oam, SpriteMapping mapping, bool extPalette) {
 //---------------------------------------------------------------------------------
 	int i;
-	int extPaletteFlag = extPalette ? 1 : 0;
+	int extPaletteFlag = extPalette ? DISPLAY_SPR_EXT_PALETTE : 0;
 
 	oam->gfxOffsetStep = (mapping & 3) + 5;
 

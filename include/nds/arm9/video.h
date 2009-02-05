@@ -223,7 +223,6 @@ typedef enum {
 	VRAM_E_MAIN_SPRITE     = 2,
 	VRAM_E_TEX_PALETTE     = 3,
 	VRAM_E_BG_EXT_PALETTE  = 4,
-	VRAM_E_OBJ_EXT_PALETTE = 5,
 } VRAM_E_TYPE;
 
 /** \brief  Allowed VRAM bank F modes */
@@ -243,7 +242,7 @@ typedef enum {
 	VRAM_F_BG_EXT_PALETTE  = 4,
 	VRAM_F_BG_EXT_PALETTE_SLOT01 = 4 | VRAM_OFFSET(0),
 	VRAM_F_BG_EXT_PALETTE_SLOT23 = 4 | VRAM_OFFSET(1),
-	VRAM_F_OBJ_EXT_PALETTE = 5,
+	VRAM_F_SPRITE_EXT_PALETTE = 5,
 } VRAM_F_TYPE;
 
 /** \brief  Allowed VRAM bank G modes */
@@ -263,7 +262,7 @@ typedef enum {
 	VRAM_G_BG_EXT_PALETTE  = 4,
 	VRAM_G_BG_EXT_PALETTE_SLOT01 = 4 | VRAM_OFFSET(0),
 	VRAM_G_BG_EXT_PALETTE_SLOT23 = 4 | VRAM_OFFSET(1),
-	VRAM_G_OBJ_EXT_PALETTE = 5,
+	VRAM_G_SPRITE_EXT_PALETTE = 5,
 } VRAM_G_TYPE;
 
 /** \brief  Allowed VRAM bank H modes */
@@ -289,16 +288,16 @@ typedef u16 _palette[256];
 typedef _palette _ext_palette[16];
 
 /** \brief  Used for accessing vram E as an external palette */
-#define VRAM_E_EXT_PALETTE ((_ext_palette *)VRAM_E)
+#define VRAM_E_EXT_PALETTE ((_palette *)VRAM_E)
 
 /** \brief  Used for accessing vram F as an external palette */
-#define VRAM_F_EXT_PALETTE ((_ext_palette *)VRAM_F)
+#define VRAM_F_EXT_PALETTE ((_palette *)VRAM_F)
 
-/** \brief  Used for accessing vram G as an external palette */
-#define VRAM_G_EXT_PALETTE ((_ext_palette *)VRAM_G)
+/** \brief  Used for accessing _palette G as an external palette */
+#define VRAM_G_EXT_PALETTE ((_palette *)VRAM_G)
 
 /** \brief  Used for accessing vram H as an external palette */
-#define VRAM_H_EXT_PALETTE ((_ext_palette *)VRAM_H)
+#define VRAM_H_EXT_PALETTE ((_palette *)VRAM_H)
 
 /** \brief  Set the main 4 bank modes. 
 *    \param a mapping mode of VRAM_A
