@@ -19,14 +19,14 @@ all: include/nds/libversion.h release debug
 #-------------------------------------------------------------------------------
 release: lib
 #-------------------------------------------------------------------------------
-	$(MAKE) -C arm9 BUILD=release
-	$(MAKE) -C arm7 BUILD=release
+	$(MAKE) -C arm9 BUILD=release || { exit 1;}
+	$(MAKE) -C arm7 BUILD=release || { exit 1;}
  
 #-------------------------------------------------------------------------------
 debug: lib
 #-------------------------------------------------------------------------------
-	$(MAKE) -C arm9 BUILD=debug
-	$(MAKE) -C arm7 BUILD=debug
+	$(MAKE) -C arm9 BUILD=debug || { exit 1;}
+	$(MAKE) -C arm7 BUILD=debug || { exit 1;}
 
 #-------------------------------------------------------------------------------
 lib:
