@@ -559,6 +559,14 @@ void videoBgDisableSub(int number) {REG_DISPCNT_SUB &= ~(1 << (DISPLAY_ENABLE_SH
 #define MOSAIC_CR      (*(vu16*)0x0400004C)
 #define SUB_MOSAIC_CR  (*(vu16*)0x0400104C)
 
+#define REG_BLDCNT     (*(vu16*)0x04000050)
+#define REG_BLDY	   (*(vu16*)0x04000054)
+#define REG_BLDALPHA   (*(vu16*)0x04000052)
+
+#define REG_BLDCNT_SUB     (*(vu16*)0x04001050)
+#define REG_BLDY_SUB	   (*(vu16*)0x04001054)
+#define REG_BLDALPHA_SUB   (*(vu16*)0x04001052)
+
 #define BLEND_CR       (*(vu16*)0x04000050)
 #define BLEND_AB       (*(vu16*)0x04000052)
 #define BLEND_Y        (*(vu16*)0x04000054)
