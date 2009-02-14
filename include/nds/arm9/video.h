@@ -521,6 +521,12 @@ static inline
 */
 void videoBgDisableSub(int number) {REG_DISPCNT_SUB &= ~(1 << (DISPLAY_ENABLE_SHIFT + number));}
 
+/** \brief
+	\param screen 1 = main screen, 2 = subscreen, 3 = both
+	\param level -16 = black, 0 = full brightness, 16 = white
+
+*/
+void setBrightness(int screen, int level);
 
 #define REG_MASTER_BRIGHT     (*(vu16*)0x0400006C)
 #define REG_MASTER_BRIGHT_SUB (*(vu16*)0x0400106C)
@@ -564,16 +570,9 @@ void videoBgDisableSub(int number) {REG_DISPCNT_SUB &= ~(1 << (DISPLAY_ENABLE_SH
 #define REG_BLDALPHA   (*(vu16*)0x04000052)
 
 #define REG_BLDCNT_SUB     (*(vu16*)0x04001050)
-#define REG_BLDY_SUB	   (*(vu16*)0x04001054)
 #define REG_BLDALPHA_SUB   (*(vu16*)0x04001052)
+#define REG_BLDY_SUB	   (*(vu16*)0x04001054)
 
-#define BLEND_CR       (*(vu16*)0x04000050)
-#define BLEND_AB       (*(vu16*)0x04000052)
-#define BLEND_Y        (*(vu16*)0x04000054)
-
-#define SUB_BLEND_CR   (*(vu16*)0x04001050)
-#define SUB_BLEND_AB   (*(vu16*)0x04001052)
-#define SUB_BLEND_Y    (*(vu16*)0x04001054)
 
 #define BLEND_NONE         (0<<6)
 #define BLEND_ALPHA        (1<<6)

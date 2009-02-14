@@ -1,10 +1,11 @@
 /*---------------------------------------------------------------------------------
 
-	Copyright (C) 2005
+	Copyright (C) 2005 - 2009
 		Michael Noland (joat)
 		Jason Rogers (dovoto)
 		Dave Murphy (WinterMute)
 		Mike Parks (BigRedPimp)
+
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any
 	damages arising from the use of this software.
@@ -12,14 +13,14 @@
 	purpose, including commercial applications, and to alter it and
 	redistribute it freely, subject to the following restrictions:
  
-  1. The origin of this software must not be misrepresented; you
-     must not claim that you wrote the original software. If you use
-     this software in a product, an acknowledgment in the product
-     documentation would be appreciated but is not required.
-  2. Altered source versions must be plainly marked as such, and
-     must not be misrepresented as being the original software.
-  3. This notice may not be removed or altered from any source
-     distribution.
+	1.	The origin of this software must not be misrepresented; you
+		must not claim that you wrote the original software. If you use
+		this software in a product, an acknowledgment in the product
+		documentation would be appreciated but is not required.
+	2.	Altered source versions must be plainly marked as such, and
+		must not be misrepresented as being the original software.
+	3.	This notice may not be removed or altered from any source
+		distribution.
 	
 ---------------------------------------------------------------------------------*/
 
@@ -28,7 +29,7 @@
 
 
 //---------------------------------------------------------------------------------
-uint32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d) {
+u32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d) {
 //---------------------------------------------------------------------------------
 	uint32 vramTemp = VRAM_CR;
 
@@ -43,7 +44,7 @@ uint32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE
 
 
 //---------------------------------------------------------------------------------
-void vramRestoreMainBanks(uint32 vramTemp) {
+void vramRestoreMainBanks(u32 vramTemp) {
 //---------------------------------------------------------------------------------
   VRAM_CR = vramTemp;
 }
@@ -111,4 +112,19 @@ void vramSetBankI(VRAM_I_TYPE i) {
 	VRAM_I_CR = VRAM_ENABLE | i;
 }
 
+//---------------------------------------------------------------------------------
+void setBrightness( int screen, int level) {
+//---------------------------------------------------------------------------------
+	int mode = 1<<14;
+
+	if ( level < 0){
+		level = -level;
+		mode = 2<<14;
+	}
+	
+	if (level>16) level =16;
+
+	if (screen & 1) REG_MASTER_BRIGHT=(mode | level); 
+	if (screen & 2) REG_MASTER_BRIGHT=(mode | level);
+}
 
