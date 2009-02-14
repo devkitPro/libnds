@@ -116,9 +116,14 @@
 #define	REG_MOSAIC_L	(*(vu32*)0x400004C)
 #define	REG_MOSAIC_H	(*(vu32*)0x400004E)
 
-#define	REG_BLDMOD		(*(vu16*)0x4000050)
-#define	REG_COLV		(*(vu16*)0x4000052)
-#define	REG_COLY		(*(vu16*)0x4000054)
+#define BLEND_CR		REG_BLDCNT
+#define BLEND_AB		REG_BLDALPHA
+#define BLEND_Y     	REG_BLDY
+
+#define SUB_BLEND_CR	REG_BLDCNT_SUB
+#define SUB_BLEND_AB	REG_BLDALPHA_SUB
+#define SUB_BLEND_Y		REG_BLDY_SUB
+
 
 #define SERIAL_CR       REG_SPICNT
 #define SERIAL_DATA     REG_SPIDATA
