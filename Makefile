@@ -6,7 +6,7 @@ export TOPDIR	:=	$(CURDIR)
 
 export LIBNDS_MAJOR	:= 1
 export LIBNDS_MINOR	:= 3
-export LIBNDS_PATCH	:= 2
+export LIBNDS_PATCH	:= 3
 
 
 VERSION	:=	$(LIBNDS_MAJOR).$(LIBNDS_MINOR).$(LIBNDS_PATCH)
