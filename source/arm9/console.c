@@ -581,7 +581,7 @@ static void newRow() {
 		
 		for(colCount = 0; colCount < currentConsole->windowWidth; colCount++)
 			currentConsole->fontBgMap[(colCount + currentConsole->windowX) + (rowCount + currentConsole->windowY) * currentConsole->consoleWidth] =
-				' ';
+				(' ' + currentConsole->fontCharOffset - currentConsole->font.asciiOffset);
 	
 	}
 }
