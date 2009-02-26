@@ -3,6 +3,7 @@
 #include <nds/ndstypes.h>
 #include <nds/interrupts.h>
 #include <nds/bios.h>
+#include <nds/arm7/clock.h>
 
 bool sleepIsEnabled = true;
 
@@ -53,6 +54,9 @@ void powerValueHandler(u32 value, void* user_data) {
 
 		// Turn the speaker up.
 		swiChangeSoundBias(1,0x400); 
+
+		// update clock tracking
+		resyncClock();
 		break;
 
 	case PM_REQ_SLEEP_DISABLE:

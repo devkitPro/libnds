@@ -131,6 +131,7 @@ void BCDToInteger(uint8 * data, uint32 length);
 void integerToBCD(uint8 * data, uint32 length);
 
 void initClockIRQ();
+void resyncClock();
 
 #ifdef __cplusplus
 }
