@@ -60,7 +60,7 @@ void readUserSettings() {
 	
 	// if both slots are valid pick the most recent
 	if ( calc1CRC == slot1CRC && calc2CRC == slot2CRC ) { 
-		currentSettings = (slot2count == (( slot2count + 1 ) & 0x7f) ? &slot2 : &slot1);
+		currentSettings = (slot2count == (( slot1count + 1 ) & 0x7f) ? &slot2 : &slot1);
 	} else {
 		if ( calc2CRC == slot2CRC )
 			currentSettings = &slot2;
