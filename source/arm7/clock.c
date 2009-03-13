@@ -262,6 +262,15 @@ static time_t __mktime( RTCtime *dstime ) {
 }
 
 //---------------------------------------------------------------------------------
+void resyncClock() {
+//---------------------------------------------------------------------------------
+	RTCtime dstime;
+	rtcGetTimeAndDate((uint8 *)&dstime);
+	
+	__transferRegion()->unixTime = __mktime(&dstime);
+}
+
+//---------------------------------------------------------------------------------
 void initClockIRQ() {
 //---------------------------------------------------------------------------------
 
@@ -289,9 +298,6 @@ void initClockIRQ() {
 	rtcTransaction(command, 4, 0, 0);
 
 	// Read all time settings on first start
-	RTCtime dstime;
-	rtcGetTimeAndDate((uint8 *)&dstime);
-	
-	__transferRegion()->unixTime = __mktime(&dstime);
+	resyncClock();
 }
 
