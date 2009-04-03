@@ -168,10 +168,16 @@ void glInit_C(void) {
 //---------------------------------------------------------------------------------
 void glResetTextures(void) {
 //---------------------------------------------------------------------------------
+	int i;
+
 	glGlob->activeTexture = 0;
 	glGlob->nextBlock = (uint32*)0x06800000;
 	glGlob->nextPBlock = 0;
 	glGlob->nameCount = 1;
+
+	for(i = 0; i < glGlob->texturePtrs.cur_size; i++)
+		DynamicArraySet(&glGlob->texturePtrs, i, (void*)0);
+
 }
 
 //---------------------------------------------------------------------------------
