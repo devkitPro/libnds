@@ -125,6 +125,6 @@ void setBrightness( int screen, int level) {
 	if (level>16) level =16;
 
 	if (screen & 1) REG_MASTER_BRIGHT=(mode | level); 
-	if (screen & 2) REG_MASTER_BRIGHT=(mode | level);
+	if (screen & 2) REG_MASTER_BRIGHT_SUB=(mode | level);
 }
 
