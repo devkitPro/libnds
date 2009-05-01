@@ -381,6 +381,7 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 			size = size << 1;
 			break;
 		case GL_RGB4:
+		case GL_COMPRESSED:
 			size = size >> 2;
 			break;
 		case GL_RGB16:
