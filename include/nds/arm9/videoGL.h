@@ -93,7 +93,7 @@ typedef short t16;        /*!< \brief text coordinate 12.4 fixed point */
 #define inttot16(n)          ((n) << 4) /*!< \brief convert int to t16 */
 #define t16toint(n)          ((n) >> 4) /*!< \brief convert t16 to int */
 #define floattot16(n)        ((t16)((n) * (1 << 4))) /*!< \brief convert float to t16 */
-#define TEXTURE_PACK(u,v)    ((u & 0xFFFF) | ((v) << 16)) /*!< \brief Pack 2 t16 texture coordinate values into a 32bit value */
+#define TEXTURE_PACK(u,v)    (((u) & 0xFFFF) | ((v) << 16)) /*!< \brief Pack 2 t16 texture coordinate values into a 32bit value */
 
 typedef short int v16;       /*!< \brief vertex 4.12 fixed format */
 #define inttov16(n)          ((n) << 12) /*!< \brief convert int to v16 */
