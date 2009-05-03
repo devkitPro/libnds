@@ -255,6 +255,19 @@ static inline u16 timerFreqToTicks_1024(int freq) {return (-0x2000000 >> 10) / f
 */
 static inline void timerStop(int channel){TIMER_CR(channel) &= ~TIMER_ENABLE;}
 
+/*! \fn void cpuStartTiming(int timer);
+	\brief begins cpu Timing using two timers for 32bit resolution.
+	\param timer The base hardware channel to use (0 - 2)
+	
+	
+*/
+void cpuStartTiming(u32 timer);
+
+/*! \fn void cpuEndTiming(int timer);
+	\brief ends cpu Timing
+	\return The number of ticks which have elapsed since cpuStartTiming
+*/
+u32 cpuEndTiming();
 
 //---------------------------------------------------------------------------------
 #ifdef __cplusplus

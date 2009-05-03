@@ -2,8 +2,9 @@
 
 	Timer API
 
-  Copyright (C) 2008
+  Copyright (C) 2008 - 2009
 			Jason Rogers (dovoto)
+			Mukunda Johnson (eKid)
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any
@@ -68,3 +69,39 @@ u16 timerElapsed(int channel){
 
 	return (u16) result;
 }
+
+
+/*
+  CPU Usage - http://forums.devkitpro.org/viewtopic.php?f=6&t=415
+
+  original Source by eKid
+  adapted by Ryouarashi and Weirdfox
+*/
+
+static int localTimer = 0;
+
+//---------------------------------------------------------------------------------
+void cpuStartTiming(u32 timer) {
+//---------------------------------------------------------------------------------
+	sassert(timer < 3, "timer must be in range 0 - 2");
+	localTimer = timer;
+
+    TIMER_CR(timer) = 0;
+    TIMER_CR(timer+1) = 0;
+
+    TIMER_DATA(timer) = 0;
+    TIMER_DATA(timer+1) = 0;
+
+    TIMER_CR(timer+1) = TIMER_CASCADE | TIMER_ENABLE;
+    TIMER_CR(timer) = TIMER_ENABLE;
+}
+
+//---------------------------------------------------------------------------------
+u32 cpuEndTiming() {
+//---------------------------------------------------------------------------------
+    TIMER_CR(localTimer) = 0;
+    TIMER_CR(localTimer+1) = 0;
+
+    return ( (TIMER_DATA(localTimer) | (TIMER_DATA(localTimer+1)<<16) ));
+}
+
