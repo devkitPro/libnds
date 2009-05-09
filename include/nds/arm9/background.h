@@ -607,8 +607,9 @@ static inline
 	\param size
 		the size of the background
 	\param mapBase
-		the 2k offset into vram the tile map will be placed OR
-		the 16 offset into vram the bitmap data will be placed for bitmap backgrounds
+		the 2k offset into vram the tile map will be placed
+		<br>--OR--<br>
+		the 16k offset into vram the bitmap data will be placed for bitmap backgrounds
 	\param tileBase
 		the 16k offset into vram the tile graphics data will be placed
 	\return
@@ -643,8 +644,9 @@ static inline
 	\param size
 		the size of the background
 	\param mapBase
-		the 2k offset into vram the tile map will be placed OR
-		the 16 offset into vram the bitmap data will be placed for bitmap backgrounds
+		the 2k offset into vram the tile map will be placed 
+		<br>--OR--<br>
+		the 16k offset into vram the bitmap data will be placed for bitmap backgrounds
 	\param tileBase
 		the 16k offset into vram the tile graphics data will be placed
 	\return
