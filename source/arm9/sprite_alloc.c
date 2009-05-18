@@ -8,16 +8,28 @@
 
 #include <stdlib.h>
 
+// A terse macro to convert an allocation buffer index
+// into an AllocHeader. Assumes 'oam' is in the current scope.
+
+#define AH(id) getAllocHeader(oam, id)
+
+
 //buffer grows depending on usage
-void resizeBuffer(OamState *oam)
+static void resizeBuffer(OamState *oam)
 {
 	oam->allocBufferSize *= 2;
 
 	oam->allocBuffer = (AllocHeader*)realloc(oam->allocBuffer, sizeof(AllocHeader) * oam->allocBufferSize);
 }
 
-AllocHeader* getAllocHeader(OamState *oam, int index)
+static AllocHeader* getAllocHeader(OamState *oam, int index)
 {
+	// Note that this function may resize the allocBuffer any time you refer to
+	// a new 'index' for the first time. This will invalidate any pointers that
+	// getAllocHeader() has previously returned, since the buffer may have moved
+	// to a different location in memory. The pointers returned by this function
+	// must be discarded any time a new allocHeader may have been allocated.
+
 	//resize buffer if needed
 	if(index >= oam->allocBufferSize)
 		resizeBuffer(oam);
@@ -33,11 +45,11 @@ void oamAllocReset(OamState *oam)
 		oam->allocBuffer = (AllocHeader*)malloc(sizeof(AllocHeader) * oam->allocBufferSize);
 	}
 
-	getAllocHeader(oam, 0)->nextFree = 1024;
-	getAllocHeader(oam, 0)->size = 1024;
+	AH(0)->nextFree = 1024;
+	AH(0)->size = 1024;
 }
 
-int simpleAlloc(OamState *oam, int size)
+static int simpleAlloc(OamState *oam, int size)
 {
 	if(oam->allocBuffer == NULL)
 	{
@@ -58,13 +70,13 @@ int simpleAlloc(OamState *oam, int size)
 	if(misalignment)
 		misalignment = size - misalignment;
 
-	AllocHeader *next = getAllocHeader(oam, oam->firstFree);
-	AllocHeader *last = next;
+	int next = oam->firstFree;
+	int last = next;
 
 	//find a big enough block
-	while(next->size - misalignment < size)
+	while(AH(next)->size - misalignment < size)
 	{
-		curOffset = next->nextFree;
+		curOffset = AH(next)->nextFree;
 
 		misalignment = curOffset & (size - 1);
 
@@ -77,7 +89,7 @@ int simpleAlloc(OamState *oam, int size)
 		}
 
 		last = next;
-		next = getAllocHeader(oam, next->nextFree); 
+		next = curOffset;
 	}
 
 	//next should now point to a large enough block and last should point to the block prior
@@ -85,67 +97,67 @@ int simpleAlloc(OamState *oam, int size)
 	////align to block size
 	if(misalignment)
 	{
-		int tempSize = next->size;
-		int tempNextFree = next->nextFree;
+		int tempSize = AH(next)->size;
+		int tempNextFree = AH(next)->nextFree;
 
 		curOffset += misalignment;
 
-		next->size = misalignment;
-		next->nextFree = curOffset;
+		AH(next)->size = misalignment;
+		AH(next)->nextFree = curOffset;
 
 		last = next;
+		next = curOffset;
 
-		next = getAllocHeader(oam, curOffset);
-		next->size = tempSize - misalignment;
-		next->nextFree = tempNextFree; 
+		AH(next)->size = tempSize - misalignment;
+		AH(next)->nextFree = tempNextFree; 
 	}
 
 	//is the block the first free block
 	if(curOffset == oam->firstFree)
 	{
-		if(next->size == size)
+		if(AH(next)->size == size)
 		{
-			oam->firstFree = next->nextFree;
+			oam->firstFree = AH(next)->nextFree;
 		}
 		else
 		{
 			oam->firstFree = curOffset + size;
-			getAllocHeader(oam, oam->firstFree)->nextFree = next->nextFree;
-			getAllocHeader(oam, oam->firstFree)->size = next->size - size;
+			AH(oam->firstFree)->nextFree = AH(next)->nextFree;
+			AH(oam->firstFree)->size = AH(next)->size - size;
 		}
 	}
 	else
 	{
-		if(next->size == size)
+		if(AH(next)->size == size)
 		{
-			last->nextFree = next->nextFree;
+			AH(last)->nextFree = AH(next)->nextFree;
 		}
 		else
 		{
-			last->nextFree = curOffset + size;
+			AH(last)->nextFree = curOffset + size;
 
-			getAllocHeader(oam, curOffset + size)->nextFree = next->nextFree;
-			getAllocHeader(oam, curOffset + size)->size = next->size - size;
+			AH(curOffset + size)->nextFree = AH(next)->nextFree;
+			AH(curOffset + size)->size = AH(next)->size - size;
 		}
 	}
 
-	next->size = size;
+	AH(next)->size = size;
 
 	return curOffset;
 }
 
-void simpleFree(OamState *oam, int index)
+static void simpleFree(OamState *oam, int index)
 {
 	u16 curOffset = oam->firstFree;
 
-	AllocHeader *next = getAllocHeader(oam, oam->firstFree);
-	AllocHeader *current = getAllocHeader(oam, index);
+	int next = oam->firstFree;
+	int current = index;
 
 	//if we were out of memory its trivial
 	if(oam->firstFree == -1 || oam->firstFree >= 1024)
 	{
 		oam->firstFree = index;
-		current->nextFree = 1024;
+		AH(current)->nextFree = 1024;
 		return;
 	}
 
@@ -153,14 +165,14 @@ void simpleFree(OamState *oam, int index)
 	if(index < oam->firstFree)
 	{
 		//check for abutment and combine if necessary
-		if(index + current->size == oam->firstFree)
+		if(index + AH(current)->size == oam->firstFree)
 		{
-			current->size += next->size;
-			current->nextFree = next->nextFree;
+			AH(current)->size += AH(next)->size;
+			AH(current)->nextFree = AH(next)->nextFree;
 		}
 		else
 		{
-			current->nextFree = oam->firstFree;
+			AH(current)->nextFree = oam->firstFree;
 		}
 
 		oam->firstFree = index;
@@ -169,11 +181,11 @@ void simpleFree(OamState *oam, int index)
 	}
 
 	//otherwise locate the free block prior to index
-	while(index > next->nextFree)
+	while(index > AH(next)->nextFree)
 	{
-		curOffset = next->nextFree;
+		curOffset = AH(next)->nextFree;
 
-		next = getAllocHeader(oam, next->nextFree);
+		next = AH(next)->nextFree;
 	}
 
 
@@ -182,25 +194,25 @@ void simpleFree(OamState *oam, int index)
 	//    next      | ~ |  current    | ~ |     nextFree
 
 	//check if current abuts nextFree
-	if(next->nextFree == index + current->size && next->nextFree < 1024)
+	if(AH(next)->nextFree == index + AH(current)->size && AH(next)->nextFree < 1024)
 	{
-		current->size += getAllocHeader(oam, next->nextFree)->size;
-		current->nextFree = getAllocHeader(oam, next->nextFree)->nextFree;
+		AH(current)->size += AH(AH(next)->nextFree)->size;
+		AH(current)->nextFree = AH(AH(next)->nextFree)->nextFree;
 	}
 	else
 	{
-		current->nextFree = next->nextFree;
+		AH(current)->nextFree = AH(next)->nextFree;
 	}
 
 	//check if current abuts previous free block
-	if (curOffset + next->size == index)
+	if (curOffset + AH(next)->size == index)
 	{
-		next->size += current->size;
-		next->nextFree = current->nextFree;   
+		AH(next)->size += AH(current)->size;
+		AH(next)->nextFree = AH(current)->nextFree;   
 	}
 	else
 	{
-		next->nextFree = index;
+		AH(next)->nextFree = index;
 	}
 }
 
