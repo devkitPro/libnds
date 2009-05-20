@@ -18,11 +18,11 @@ void inputGetAndSend(void){
 	static int sleepCounter = 0;
 
 	touchPosition tempPos = {0};
-	SystemInputMsg input = {0};
+	FifoMessage msg = {0};
 
 	u16 keys= REG_KEYXY;
 
-	input.keys = keys;
+	msg.SystemInput.keys = keys;
 
 	if(keys & KEY_TOUCH)
 	{
@@ -30,7 +30,7 @@ void inputGetAndSend(void){
 	}
 	else
 	{
-		input.keys |= KEY_TOUCH;
+		msg.SystemInput.keys |= KEY_TOUCH;
 
 		if(penDown)
 		{
@@ -38,8 +38,8 @@ void inputGetAndSend(void){
 			
 			if(tempPos.rawx && tempPos.rawy)
 			{
-				input.keys &= ~KEY_TOUCH;
-				input.touch = tempPos;
+				msg.SystemInput.keys &= ~KEY_TOUCH;
+				msg.SystemInput.touch = tempPos;
 			}
 			else
 			{
@@ -64,7 +64,7 @@ void inputGetAndSend(void){
 		sleepCounter = 0;
 	}
 
-	input.type = SYS_INPUT_MESSAGE; //set message type
+	msg.type = SYS_INPUT_MESSAGE; //set message type
 
-	fifoSendDatamsg(FIFO_SYSTEM, sizeof(input), (u8*)&input);
+	fifoSendDatamsg(FIFO_SYSTEM, sizeof(msg), (u8*)&msg);
 }

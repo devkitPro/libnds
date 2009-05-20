@@ -70,10 +70,10 @@ int getFreeNoiseChannel(void) {
 void micSwapHandler(u8* buffer, int length) {
 //---------------------------------------------------------------------------------
 	
-	MicBufferFullMsg msg;
+	FifoMessage msg;
 	msg.type = MIC_BUFFER_FULL_MESSAGE;
-	msg.buffer = (void*)buffer;
-	msg.length = (u32)length;
+	msg.MicBufferFull.buffer = (void*)buffer;
+	msg.MicBufferFull.length = (u32)length;
 
 	fifoSendDatamsg(FIFO_SOUND, sizeof(msg) , (u8*)&msg);
 }
@@ -83,46 +83,42 @@ void soundDataHandler(int bytes, void *user_data) {
 //---------------------------------------------------------------------------------
 	int channel = -1;
 
-	FifoMessage data;
+	FifoMessage msg;
 
-	fifoGetDatamsg(FIFO_SOUND, bytes, (u8*)&data);
+	fifoGetDatamsg(FIFO_SOUND, bytes, (u8*)&msg);
 
-	if(data.type == SOUND_PLAY_MESSAGE) {
-		SoundPlayMsg *msg = (SoundPlayMsg*)&data;
+	if(msg.type == SOUND_PLAY_MESSAGE) {
 
 		channel = getFreeChannel(); 
 
 		if(channel >= 0) {
-			SCHANNEL_SOURCE(channel) = (u32)msg->data;
-			SCHANNEL_REPEAT_POINT(channel) = msg->loopPoint;
-			SCHANNEL_LENGTH(channel) = msg->dataSize;
-			SCHANNEL_TIMER(channel) = SOUND_FREQ(msg->freq);
-			SCHANNEL_CR(channel) = SCHANNEL_ENABLE | SOUND_VOL(msg->volume) | SOUND_PAN(msg->pan) | (msg->format << 29) | (msg->loop ? SOUND_REPEAT : SOUND_ONE_SHOT);
+			SCHANNEL_SOURCE(channel) = (u32)msg.SoundPlay.data;
+			SCHANNEL_REPEAT_POINT(channel) = msg.SoundPlay.loopPoint;
+			SCHANNEL_LENGTH(channel) = msg.SoundPlay.dataSize;
+			SCHANNEL_TIMER(channel) = SOUND_FREQ(msg.SoundPlay.freq);
+			SCHANNEL_CR(channel) = SCHANNEL_ENABLE | SOUND_VOL(msg.SoundPlay.volume) | SOUND_PAN(msg.SoundPlay.pan) | (msg.SoundPlay.format << 29) | (msg.SoundPlay.loop ? SOUND_REPEAT : SOUND_ONE_SHOT);
 		}
 		
-	} else if(data.type == SOUND_PSG_MESSAGE) {
-		SoundPsgMsg *msg = (SoundPsgMsg*)&data;
+	} else if(msg.type == SOUND_PSG_MESSAGE) {
 
 		channel = getFreePSGChannel(); 
 
 		if(channel >= 0)
 		{
-			SCHANNEL_CR(channel) = SCHANNEL_ENABLE | msg->volume | SOUND_PAN(msg->pan) | (3 << 29) | (msg->dutyCycle << 24);
-			SCHANNEL_TIMER(channel) = SOUND_FREQ(msg->freq);
+			SCHANNEL_CR(channel) = SCHANNEL_ENABLE | msg.SoundPsg.volume | SOUND_PAN(msg.SoundPsg.pan) | (3 << 29) | (msg.SoundPsg.dutyCycle << 24);
+			SCHANNEL_TIMER(channel) = SOUND_FREQ(msg.SoundPsg.freq);
 		}
-	} else if(data.type == SOUND_NOISE_MESSAGE) {
-		SoundPsgMsg *msg = (SoundPsgMsg*)&data;
+	} else if(msg.type == SOUND_NOISE_MESSAGE) {
 
 		channel = getFreeNoiseChannel(); 
 
 		if(channel >= 0) {	
-			SCHANNEL_CR(channel) = SCHANNEL_ENABLE | msg->volume | SOUND_PAN(msg->pan) | (3 << 29);
-			SCHANNEL_TIMER(channel) = SOUND_FREQ(msg->freq);
+			SCHANNEL_CR(channel) = SCHANNEL_ENABLE | msg.SoundPsg.volume | SOUND_PAN(msg.SoundPsg.pan) | (3 << 29);
+			SCHANNEL_TIMER(channel) = SOUND_FREQ(msg.SoundPsg.freq);
 		}
-	} else if(data.type == MIC_RECORD_MESSAGE) {
-		MicRecordMsg *msg = (MicRecordMsg*)&data;
+	} else if(msg.type == MIC_RECORD_MESSAGE) {
 
-		micStartRecording(msg->buffer, msg->bufferLength, msg->freq, 1, msg->format, micSwapHandler); 
+		micStartRecording(msg.MicRecord.buffer, msg.MicRecord.bufferLength, msg.MicRecord.freq, 1, msg.MicRecord.format, micSwapHandler); 
 	
 		channel = 17;
 	}

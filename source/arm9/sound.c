@@ -39,13 +39,13 @@ void soundDisable(void){
 	fifoSendValue32(FIFO_SOUND, SOUND_MASTER_DISABLE);
 }
 int soundPlayPSG(DutyCycle cycle, u16 freq, u8 volume, u8 pan){
-	SoundPsgMsg msg;
+	FifoMessage msg;
 
 	msg.type = SOUND_PSG_MESSAGE;
-	msg.dutyCycle = cycle;
-	msg.freq = freq;
-	msg.volume = volume;
-	msg.pan = pan;
+	msg.SoundPsg.dutyCycle = cycle;
+	msg.SoundPsg.freq = freq;
+	msg.SoundPsg.volume = volume;
+	msg.SoundPsg.pan = pan;
 
 	fifoSendDatamsg(FIFO_SOUND, sizeof(msg), (u8*)&msg);
 
@@ -54,12 +54,12 @@ int soundPlayPSG(DutyCycle cycle, u16 freq, u8 volume, u8 pan){
 	return (int)fifoGetValue32(FIFO_SOUND);
 }
 int soundPlayNoise(u16 freq, u8 volume, u8 pan){
-	SoundPsgMsg msg;
+	FifoMessage msg;
 
 	msg.type = SOUND_NOISE_MESSAGE;
-	msg.freq = freq;
-	msg.volume = volume;
-	msg.pan = pan;
+	msg.SoundPsg.freq = freq;
+	msg.SoundPsg.volume = volume;
+	msg.SoundPsg.pan = pan;
 
 	fifoSendDatamsg(FIFO_SOUND, sizeof(msg), (u8*)&msg);
 
@@ -70,17 +70,17 @@ int soundPlayNoise(u16 freq, u8 volume, u8 pan){
 
 int soundPlaySample(const void* data, SoundFormat format, u32 dataSize, u16 freq, u8 volume, u8 pan, bool loop, u16 loopPoint){ 
 	
-	SoundPlayMsg msg;
+	FifoMessage msg;
 
 	msg.type = SOUND_PLAY_MESSAGE;
-	msg.data = data;
-	msg.freq = freq;
-	msg.volume = volume;
-	msg.pan = pan;
-	msg.loop = loop;
-	msg.format = format;
-	msg.loopPoint = loopPoint;
-	msg.dataSize = dataSize >> 2;
+	msg.SoundPlay.data = data;
+	msg.SoundPlay.freq = freq;
+	msg.SoundPlay.volume = volume;
+	msg.SoundPlay.pan = pan;
+	msg.SoundPlay.loop = loop;
+	msg.SoundPlay.format = format;
+	msg.SoundPlay.loopPoint = loopPoint;
+	msg.SoundPlay.dataSize = dataSize >> 2;
 
 	fifoSendDatamsg(FIFO_SOUND, sizeof(msg), (u8*)&msg);
 
@@ -110,27 +110,25 @@ void soundSetFreq(int soundId, u16 freq){
 MicCallback micCallback = 0;
 
 void micBufferHandler(int bytes, void* user_data){
-	FifoMessage data;
+	FifoMessage msg;
 
-	fifoGetDatamsg(FIFO_SOUND, bytes, (u8*)&data);
+	fifoGetDatamsg(FIFO_SOUND, bytes, (u8*)&msg);
 	
-	if(data.type == MIC_BUFFER_FULL_MESSAGE)
-	{
-		MicBufferFullMsg *msg = (MicBufferFullMsg*)&data;
+	if(msg.type == MIC_BUFFER_FULL_MESSAGE) {
 
-		if(micCallback) micCallback(msg->buffer, msg->length);
+		if(micCallback) micCallback(msg.MicBufferFull.buffer, msg.MicBufferFull.length);
 	}
 }
 
 
 int soundMicRecord(void *buffer, u32 bufferLength, MicFormat format, int freq, MicCallback callback){
-	MicRecordMsg msg;
+	FifoMessage msg;
 
 	msg.type = MIC_RECORD_MESSAGE;
-	msg.format = format;
-	msg.buffer = buffer;
-	msg.freq = freq;
-	msg.bufferLength = bufferLength;
+	msg.MicRecord.format = format;
+	msg.MicRecord.buffer = buffer;
+	msg.MicRecord.freq = freq;
+	msg.MicRecord.bufferLength = bufferLength;
 
 	micCallback = callback;
 

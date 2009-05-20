@@ -45,48 +45,47 @@ typedef enum {
 
 typedef struct{
 	u16 type;
-	u8 empty[32]; 
-}ALIGN(4) FifoMessage;
 
-//sound messages
-typedef struct{
-	u16 type; 	
-	const void* data;
-	u16 loopPoint;
-	u16 dataSize;
-	u16 freq;
-	u8 volume;
-	u8 pan;
-	bool loop;
-	u8 format;
-}ALIGN(4) SoundPlayMsg;
+	union {
 
-typedef struct{
-	u16 type;
-	u16 freq;	
-	u8 dutyCycle;
-	u8 volume;
-	u8 pan;
-}ALIGN(4) SoundPsgMsg;
+		struct {
+			u16 type; 	
+			const void* data;
+			u16 loopPoint;
+			u16 dataSize;
+			u16 freq;
+			u8 volume;
+			u8 pan;
+			bool loop;
+			u8 format;
+		} SoundPlay;
 
-typedef struct{
-	u16 type;
-	void* buffer;
-	u32 bufferLength;
-	u16 freq;
-	u8 format;
-}ALIGN(4) MicRecordMsg;
+		struct{
+			u16 freq;	
+			u8 dutyCycle;
+			u8 volume;
+			u8 pan;
+		} SoundPsg;
 
-typedef struct{
-	u16 type;
-	void* buffer;
-	u32 length;
-}ALIGN(4) MicBufferFullMsg;
+		struct{
+			void* buffer;
+			u32 bufferLength;
+			u16 freq;
+			u8 format;
+		} MicRecord;
 
-typedef struct{
-	u16 type;
-	touchPosition touch;
-	u16 keys;
-}ALIGN(4) SystemInputMsg;
+		struct{
+			void* buffer;
+			u32 length;
+		} MicBufferFull;
+
+		struct{
+			touchPosition touch;
+			u16 keys;
+		} SystemInput;
+	};
+
+} ALIGN(4) FifoMessage;
+
 
 #endif

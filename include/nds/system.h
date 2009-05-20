@@ -223,6 +223,11 @@ void powerOff(PM_Bits bits) {
 	REG_POWERCNT &= ~bits;
 }
 
+static inline
+void systemShutDown() {
+	powerOn(PM_SYSTEM_PWR);
+}
+
 void readUserSettings();
 
 #endif /* ARM7 */

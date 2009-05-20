@@ -45,33 +45,32 @@ distribution.
 // Handle system requests from the arm7
 //---------------------------------------------------------------------------------
 void powerValueHandler(u32 value, void* data){
-	switch(value)
-	{
+//---------------------------------------------------------------------------------
+	switch(value) {
 	case PM_REQ_SLEEP:
 		systemSleep();
 		break;
 	}
 }
 
+//---------------------------------------------------------------------------------
 void systemMsgHandler(int bytes, void* user_data){
-	
-	FifoMessage message;
+//---------------------------------------------------------------------------------
 
-	SystemInputMsg *input;
+	FifoMessage msg;
 
-	fifoGetDatamsg(FIFO_SYSTEM, bytes, (u8*)&message);
+	fifoGetDatamsg(FIFO_SYSTEM, bytes, (u8*)&msg);
 
-	switch (message.type)
-	{
+	switch (msg.type) {
 	case SYS_INPUT_MESSAGE:
-		input = (SystemInputMsg*)&message;
-		setTransferInputData(&(input->touch), input->keys);
+		setTransferInputData(&(msg.SystemInput.touch), msg.SystemInput.keys);
 		break;
 	}
 }
 
-void systemSleep(void)
-{
+//---------------------------------------------------------------------------------
+void systemSleep(void) {
+//---------------------------------------------------------------------------------
    fifoSendValue32(FIFO_PM, PM_REQ_SLEEP);
   
    //100ms
@@ -79,23 +78,25 @@ void systemSleep(void)
 }
 
 
-void powerOn(PM_Bits bits)
-{
+//---------------------------------------------------------------------------------
+void powerOn(PM_Bits bits) {
+//---------------------------------------------------------------------------------
 	if(bits & BIT(16))
 		REG_POWERCNT |= bits & 0xFFFF;
 	else
 		fifoSendValue32(FIFO_PM, PM_REQ_ON | (bits & 0xFFFF));
 }
 
-void powerOff(PM_Bits bits)
-{
+//---------------------------------------------------------------------------------
+void powerOff(PM_Bits bits) {
 	if(bits & BIT(16))
 		REG_POWERCNT &= ~(bits & 0xFFFF);
 	else
 		fifoSendValue32(FIFO_PM, PM_REQ_OFF | (bits & 0xFFFF));
 }
 
-void ledBlink(PM_LedBlinkMode bm)
-{
+//---------------------------------------------------------------------------------
+void ledBlink(PM_LedBlinkMode bm) {
+//---------------------------------------------------------------------------------
    fifoSendValue32(FIFO_PM, PM_REQ_LED | bm);
 }
