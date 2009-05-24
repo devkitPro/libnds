@@ -82,7 +82,7 @@ void consolePrintChar(char c);
 
 //---------------------------------------------------------------------------------
 static void consoleCls(char mode) {
-	//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
 	int i = 0;
 	int colTemp,rowTemp;
@@ -132,7 +132,7 @@ static void consoleCls(char mode) {
 }
 //---------------------------------------------------------------------------------
 static void consoleClearLine(char mode) {
-	//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
 	int i = 0;
 	int colTemp;
@@ -196,7 +196,7 @@ static void consoleClearLine(char mode) {
 
 //---------------------------------------------------------------------------------
 ssize_t nocash_write(struct _reent *r, int fd, const char *ptr, size_t len) {
-	//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 	int count = 0;
 
 	if(!ptr || len <= 0) return -1;
@@ -216,7 +216,7 @@ ssize_t nocash_write(struct _reent *r, int fd, const char *ptr, size_t len) {
 
 //---------------------------------------------------------------------------------
 ssize_t con_write(struct _reent *r,int fd,const char *ptr, size_t len) {
-	//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
 	char chr;
 
@@ -364,8 +364,9 @@ static const devoptab_t dotab_stderr = {
 	NULL
 };
 
-void consoleLoadFont(PrintConsole* console)
-{
+//---------------------------------------------------------------------------------
+void consoleLoadFont(PrintConsole* console) {
+//---------------------------------------------------------------------------------
 	int i;
 
 	u16* palette = BG_PALETTE_SUB;
@@ -468,7 +469,13 @@ void consoleLoadFont(PrintConsole* console)
 	consoleCls('2');
 
 }
-PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize size, int mapBase, int tileBase, bool mainDisplay, bool loadGraphics){
+
+//---------------------------------------------------------------------------------
+PrintConsole* consoleInit(PrintConsole* console, int layer,
+				BgType type, BgSize size,
+				int mapBase, int tileBase,
+				bool mainDisplay, bool loadGraphics){
+//---------------------------------------------------------------------------------
 
 	static bool firstConsoleInit = true;
 
@@ -549,9 +556,9 @@ void consoleDebugInit(DebugDevice device){
 	}
 }
 
-////---------------------------------------------------------------------------------
-//// Places the console in a default mode using bg0 of the sub display, and vram c for 
-//// font and map..this is provided for rapid prototyping and nothing more
+//---------------------------------------------------------------------------------
+// Places the console in a default mode using bg0 of the sub display, and vram c for 
+// font and map..this is provided for rapid prototyping and nothing more
 PrintConsole* consoleDemoInit(void) {
 //---------------------------------------------------------------------------------
 	videoSetModeSub(MODE_0_2D);
@@ -562,7 +569,7 @@ PrintConsole* consoleDemoInit(void) {
 
 //---------------------------------------------------------------------------------
 static void newRow() {
-	//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 	
 	
 	currentConsole->cursorY ++;
@@ -589,7 +596,7 @@ static void newRow() {
 
 //---------------------------------------------------------------------------------
 void consolePrintChar(char c) {
-	//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 
 	if(currentConsole->PrintChar) 
 		if(currentConsole->PrintChar(currentConsole, c))
@@ -635,8 +642,10 @@ void consolePrintChar(char c) {
 			currentConsole->cursorX  += currentConsole->tabSize;
 			break;
 		case 10:
-		case 13:
+			currentConsole->cursorX  = 0;
 			newRow();
+			break;
+		case 13:
 			currentConsole->cursorX  = 0;
 			break;
 		default:
@@ -648,7 +657,7 @@ void consolePrintChar(char c) {
 
 //---------------------------------------------------------------------------------
 void consoleClear(void) {
-	//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 	iprintf("\x1b[2J");
 }
 
