@@ -346,17 +346,29 @@ void oamFreeGfx(OamState *oam, const void* gfxOffset);
 
 static inline
 /**  \fn void oamSetMosaic(unsigned int dx, unsigned int dy)
-*    \brief sets sprite mosaic
+*    \brief sets engine A global sprite mosaic
 *    \param dx (0-15) horizontal mosaic value
 *    \param dy (0-15) horizontal mosaic value
 */
 void oamSetMosaic(unsigned int dx, unsigned int dy)
 {
     sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
-
   	
-	MOSAIC_CR &= ~(0xFF00);
-	MOSAIC_CR |= (dx << 8)| (dy << 12);
+	REG_MOSAIC &= ~(0xFF00);
+	REG_MOSAIC |= (dx << 8)| (dy << 12);
+}
+
+static inline
+/**  \fn void oamSetMosaicSub(unsigned int dx, unsigned int dy)
+*    \brief sets engine B global sprite mosaic
+*    \param dx (0-15) horizontal mosaic value
+*    \param dy (0-15) horizontal mosaic value
+*/
+void oamSetMosaicSub(unsigned int dx, unsigned int dy){
+    sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
+  	
+	REG_MOSAIC &= ~(0xFF00);
+	REG_MOSAIC |= (dx << 8)| (dy << 12);
 }
 
 /** 
@@ -403,6 +415,28 @@ void oamUpdate(OamState* oam);
 */
 void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy);
 
+static inline
+/**
+* @brief allows you to directly sets the affine transformation matrix
+*
+* with this, you have more freedom to set the matrix, but it might be more difficult to use if
+* you're not used to affine transformation matrix. this will erase the previous matrix stored at rotId.
+*
+* @param oam   the oam engine, must be &oamMain or &oamSub
+* @param rotId   the id of the rotscale item you want to change, must be 0-31
+* @param hdx   the horizontal x value?
+* @param hdy   the horizontal y value?
+* @param vdx   the vertical x value?
+* @param vdy   the vertical y value?
+*/
+void oamAffineTransformation(OamState* oam, int rotId, int hdx, int hdy, int vdx, int vdy) {
+	sassert(rotId >= 0 && rotId < 32, "oamAffineTransformation() rotId is out of bounds, must be 0-31");
+
+	oam->oamRotationMemory[rotId].hdx = hdx >>12;
+	oam->oamRotationMemory[rotId].hdy = hdy >>12;
+	oam->oamRotationMemory[rotId].vdx = vdx >>12;
+	oam->oamRotationMemory[rotId].vdy = vdy >>12;
+}
 
 /**  \fn void oamCountFragments(OamState *oam)
 *    \brief determines the number of fragments in the allocation engine
