@@ -48,7 +48,7 @@ time_t theTime;
 // Reset the DS registers to sensible defaults
 //---------------------------------------------------------------------------------
 void initSystem(void) {
-	//---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 	register int i;
 	//stop timers and dma
 	for (i=0; i<4; i++) 
@@ -80,5 +80,6 @@ void initSystem(void) {
 	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
 	fifoSetDatamsgHandler(FIFO_SYSTEM, systemMsgHandler, 0);
 
+	__transferRegion()->buttons = 0xffff;
 	punixTime = (time_t*)&__transferRegion()->unixTime;
 }
