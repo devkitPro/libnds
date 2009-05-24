@@ -834,8 +834,8 @@ void bgSetMosaic(unsigned int dx, unsigned int dy)
 {
    sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
 	
-	MOSAIC_CR &= ~0xFF;
-	MOSAIC_CR |= dx | (dy << 4);
+	REG_MOSAIC &= ~0xFF;
+	REG_MOSAIC |= dx | (dy << 4);
 }
 
 static inline
@@ -850,8 +850,8 @@ void bgSetMosaicSub(unsigned int dx, unsigned int dy)
 {
    sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
 	
-	SUB_MOSAIC_CR &= ~0xFF;
-	SUB_MOSAIC_CR |= dx | (dy << 4);
+	REG_MOSAIC_SUB &= ~0xFF;
+	REG_MOSAIC_SUB |= dx | (dy << 4);
 
 }
 

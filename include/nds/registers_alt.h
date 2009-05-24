@@ -112,9 +112,8 @@
 #define	REG_WININ		(*(vu16*)0x4000048)
 #define	REG_WINOUT		(*(vu16*)0x400004A)
 
-#define	REG_MOSAIC		(*(vu32*)0x400004C)
-#define	REG_MOSAIC_L	(*(vu32*)0x400004C)
-#define	REG_MOSAIC_H	(*(vu32*)0x400004E)
+
+#define MOSAIC_CR		REG_MOSAIC
 
 #define BLEND_CR		REG_BLDCNT
 #define BLEND_AB		REG_BLDALPHA
@@ -173,9 +172,7 @@
 #define	REG_WININ_SUB		(*(vu16*)0x4001048)
 #define	REG_WINOUT_SUB		(*(vu16*)0x400104A)
 
-#define	REG_MOSAIC_SUB		(*(vu32*)0x400104C)
-#define	REG_MOSAIC_L_SUB	(*(vu16*)0x400104C)
-#define	REG_MOSAIC_H_SUB	(*(vu16*)0x400104E)
+#define	SUB_MOSAIC_CR		REG_MOSAIC_SUB
 
 #define	REG_BLDMOD_SUB	(*(vu16*)0x4001050)
 #define	REG_COLV_SUB	(*(vu16*)0x4001052)

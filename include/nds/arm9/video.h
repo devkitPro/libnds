@@ -562,8 +562,8 @@ void setBrightness(int screen, int level);
 #define SUB_WIN_IN     (*(vu16*)0x04001048)
 #define SUB_WIN_OUT    (*(vu16*)0x0400104A)
 
-#define MOSAIC_CR      (*(vu16*)0x0400004C)
-#define SUB_MOSAIC_CR  (*(vu16*)0x0400104C)
+#define	REG_MOSAIC		(*(vu16*)0x0400004C)
+#define	REG_MOSAIC_SUB	(*(vu16*)0x0400104C)
 
 #define REG_BLDCNT     (*(vu16*)0x04000050)
 #define REG_BLDY	   (*(vu16*)0x04000054)
