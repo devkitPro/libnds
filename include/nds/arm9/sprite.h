@@ -350,12 +350,11 @@ static inline
 *    \param dx (0-15) horizontal mosaic value
 *    \param dy (0-15) horizontal mosaic value
 */
-void oamSetMosaic(unsigned int dx, unsigned int dy)
-{
-    sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
+void oamSetMosaic(unsigned int dx, unsigned int dy) {
+	sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
   	
-	REG_MOSAIC &= ~(0xFF00);
-	REG_MOSAIC |= (dx << 8)| (dy << 12);
+	mosaicShadow = ( mosaicShadow & 0x00ff) | (dx << 8)| (dy << 12);
+	REG_MOSAIC = mosaicShadow;
 }
 
 static inline
@@ -365,10 +364,10 @@ static inline
 *    \param dy (0-15) horizontal mosaic value
 */
 void oamSetMosaicSub(unsigned int dx, unsigned int dy){
-    sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
+	sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
   	
-	REG_MOSAIC &= ~(0xFF00);
-	REG_MOSAIC |= (dx << 8)| (dy << 12);
+	mosaicShadowSub = ( mosaicShadowSub & 0x00ff) | (dx << 8)| (dy << 12);
+	REG_MOSAIC_SUB = mosaicShadow;
 }
 
 /** 

@@ -83,6 +83,9 @@
 extern "C" {
 #endif
 
+extern u16 mosaicShadow;
+extern u16 mosaicShadowSub;
+
 #define BG_PALETTE       ((u16*)0x05000000)/** \brief background palette memory*/
 #define BG_PALETTE_SUB   ((u16*)0x05000400)/** \brief background palette memory (sub engine)*/
 

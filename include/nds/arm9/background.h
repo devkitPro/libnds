@@ -830,12 +830,12 @@ static inline
 	\param dy
    vertical mosaic value (between 0 and 15)
 */
-void bgSetMosaic(unsigned int dx, unsigned int dy)
-{
-   sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
+void bgSetMosaic(unsigned int dx, unsigned int dy) {
+	sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
 	
-	REG_MOSAIC &= ~0xFF;
-	REG_MOSAIC |= dx | (dy << 4);
+	mosaicShadow = ( mosaicShadow & 0xff00) | (dx | (dy << 4));
+	REG_MOSAIC = mosaicShadow;
+
 }
 
 static inline
@@ -846,12 +846,11 @@ static inline
 	\param dy
    vertical mosaic value (between 0 and 15)
 */
-void bgSetMosaicSub(unsigned int dx, unsigned int dy)
-{
-   sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
-	
-	REG_MOSAIC_SUB &= ~0xFF;
-	REG_MOSAIC_SUB |= dx | (dy << 4);
+void bgSetMosaicSub(unsigned int dx, unsigned int dy) {
+	sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
+
+	mosaicShadowSub = ( mosaicShadowSub & 0xff00) | (dx | (dy << 4));
+	REG_MOSAIC_SUB = mosaicShadowSub;
 
 }
 
