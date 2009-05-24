@@ -196,6 +196,8 @@ void oamUpdate(OamState* oam) {
 //---------------------------------------------------------------------------------
 void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy){
 //---------------------------------------------------------------------------------
+	sassert(rotId >= 0 && rotId < 32, "oamAffineTransformation() rotId is out of bounds, must be 0-31");   
+
 	int ss = sinLerp(angle);
 	int cc = cosLerp(angle);
 
