@@ -66,6 +66,8 @@ void irqInit() {
 //---------------------------------------------------------------------------------
 	int i;
 
+	REG_IE	= 0;			// disable all interrupts
+
 	// Set all interrupts to dummy functions.
 	for(i = 0; i < MAX_INTERRUPTS; i ++)
 	{
@@ -75,7 +77,6 @@ void irqInit() {
 
 	IRQ_HANDLER = IntrMain;
 
-	REG_IE	= 0;			// disable all interrupts
 	REG_IF	= IRQ_ALL;		// clear all pending interrupts
 	REG_IME = 1;			// enable global interrupt
 
