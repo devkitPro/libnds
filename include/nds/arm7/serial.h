@@ -39,10 +39,10 @@
 
 
 // 'Networking'
-#define REG_RCNT	(*(vuint16*)0x04000134)
-#define REG_KEYXY	(*(vuint16*)0x04000136)
-#define RTC_CR		(*(vuint16*)0x04000138)
-#define RTC_CR8		(*( vuint8*)0x04000138)
+#define REG_RCNT	(*(vu16*)0x04000134)
+#define REG_KEYXY	(*(vu16*)0x04000136)
+#define RTC_CR		(*(vu16*)0x04000138)
+#define RTC_CR8		(*( vu8*)0x04000138)
 
 #define REG_SIOCNT	(*(vuint16*)0x04000128)
 
@@ -66,12 +66,6 @@
 #define SPI_ENABLE  BIT(15)
 #define SPI_IRQ     BIT(14)
 #define SPI_BUSY    BIT(7)
-
-// Pick the SPI clock speed
-#define SPI_BAUD_4MHZ    0
-#define SPI_BAUD_2MHZ    1
-#define SPI_BAUD_1MHZ    2
-#define SPI_BAUD_512KHZ  3
 
 // meh
 #define SPI_BAUD_4MHz    0
@@ -124,7 +118,7 @@ void SerialWaitBusy() {
 
 
 // Read the firmware
-void readFirmware(uint32 address, void * destination, uint32 size);
+void readFirmware(u32 address, void * destination, u32 size);
 
 
 #endif
