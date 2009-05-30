@@ -36,8 +36,7 @@
 
 #ifndef NDS_SYSTEM_INCLUDE
 #define NDS_SYSTEM_INCLUDE
-#include <nds/fifocommon.h>
-
+#include "ndstypes.h"
 //!	LCD status register.
 #define	REG_DISPSTAT	(*(vu16*)0x04000004)
 
@@ -113,7 +112,7 @@ void systemSleep(void);
 
 	\param bits What to power on.
 */
-void powerOn(PM_Bits bits);
+void powerOn(int bits);
 
 //!	Turns off specified hardware.
 /*!	May be called from arm7 or arm9 (arm9 power bits will be ignored by arm7, arm7 power bits
@@ -121,13 +120,13 @@ void powerOn(PM_Bits bits);
 
 	\param bits What to power on.
 */
-void powerOff(PM_Bits bits);
+void powerOff(int bits);
 
 //!	Set the LED blink mode
 /*!	Arm9 only
 	\param bm What to power on.
 */
-void ledBlink(PM_LedBlinkMode bm);
+void ledBlink(int bm);
 
 //internal fifo handlers
 void systemMsgHandler(int bytes, void* user_data);
