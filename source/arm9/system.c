@@ -56,7 +56,6 @@ void powerValueHandler(u32 value, void* data){
 //---------------------------------------------------------------------------------
 void systemMsgHandler(int bytes, void* user_data){
 //---------------------------------------------------------------------------------
-
 	FifoMessage msg;
 
 	fifoGetDatamsg(FIFO_SYSTEM, bytes, (u8*)&msg);
@@ -79,7 +78,7 @@ void systemSleep(void) {
 
 
 //---------------------------------------------------------------------------------
-void powerOn(PM_Bits bits) {
+void powerOn(int bits) {
 //---------------------------------------------------------------------------------
 	if(bits & BIT(16))
 		REG_POWERCNT |= bits & 0xFFFF;
@@ -88,7 +87,7 @@ void powerOn(PM_Bits bits) {
 }
 
 //---------------------------------------------------------------------------------
-void powerOff(PM_Bits bits) {
+void powerOff(int bits) {
 	if(bits & BIT(16))
 		REG_POWERCNT &= ~(bits & 0xFFFF);
 	else
@@ -96,7 +95,7 @@ void powerOff(PM_Bits bits) {
 }
 
 //---------------------------------------------------------------------------------
-void ledBlink(PM_LedBlinkMode bm) {
+void ledBlink(int bm) {
 //---------------------------------------------------------------------------------
    fifoSendValue32(FIFO_PM, PM_REQ_LED | bm);
 }
