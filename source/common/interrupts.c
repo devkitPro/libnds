@@ -24,6 +24,7 @@
 
 #include <nds/interrupts.h>
 #include <nds/system.h>
+#include <nds/ipc.h>
 
 void IntrMain();	// Prototype for assembly interrupt dispatcher
 
@@ -59,6 +60,8 @@ void irqSet(int mask, IntFn handler) {
 		REG_DISPSTAT |= DISP_VBLANK_IRQ ;
 	if(mask & IRQ_HBLANK)
 		REG_DISPSTAT |= DISP_HBLANK_IRQ ;
+	if(mask & IRQ_IPC_SYNC)
+		REG_IPC_SYNC |= IPC_SYNC_IRQ_ENABLE;
 }
 
 //---------------------------------------------------------------------------------
@@ -104,6 +107,8 @@ void irqEnable(uint32 irq) {
 		REG_DISPSTAT |= DISP_HBLANK_IRQ ;
 	if (irq & IRQ_VCOUNT)
 		REG_DISPSTAT |= DISP_YTRIGGER_IRQ;
+	if(irq & IRQ_IPC_SYNC)
+		REG_IPC_SYNC |= IPC_SYNC_IRQ_ENABLE;
 
 	REG_IE |= irq;
 }
@@ -117,6 +122,8 @@ void irqDisable(uint32 irq) {
 		REG_DISPSTAT &= ~DISP_HBLANK_IRQ ;
 	if (irq & IRQ_VCOUNT)
 		REG_DISPSTAT &= ~DISP_YTRIGGER_IRQ;
+	if(irq & IRQ_IPC_SYNC)
+		REG_IPC_SYNC &= ~IPC_SYNC_IRQ_ENABLE;
 
 	REG_IE &= ~irq;
 }
