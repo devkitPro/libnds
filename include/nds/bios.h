@@ -82,30 +82,6 @@ void swiSoftReset(void);
 */
 void swiDelay(uint32 duration);
 
-/*! \fn swiIntrWait(int waitForSet, uint32 flags)
-
-	\brief wait for interrupt(s) to occur
-
-	\param waitForSet
-		0: Return if the interrupt has already occured
-		1: Wait until the interrupt has been set since the call
-	\param flags
-		interrupt mask to wait for
-
-*/
-
-void swiIntrWait(int waitForSet, uint32 flags);
-
-/*! \fn  swiWaitForVBlank()
-	\brief Wait for vblank interrupt
-
-	Waits for a vertical blank interrupt
-
-	\note Identical to calling swiIntrWait(1, 1)
-*/
-
-void swiWaitForVBlank(void);
-
 /*!	\fn int swiDivide(int numerator, int divisor)
 	\param numerator
 		signed integer to divide

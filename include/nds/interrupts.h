@@ -179,6 +179,40 @@ void irqEnable(uint32 irq);
 */
 void irqDisable(uint32 irq);
 
+/*! \fn swiIntrWait(int waitForSet, uint32 flags)
+
+	\brief wait for interrupt(s) to occur
+
+	\param waitForSet
+		0: Return if the interrupt has already occured
+		1: Wait until the interrupt has been set since the call
+	\param flags
+		interrupt mask to wait for
+
+*/
+
+void swiIntrWait(int waitForSet, uint32 flags);
+
+/*! \fn  swiWaitForVBlank()
+	\brief Wait for vblank interrupt
+
+	Waits for a vertical blank interrupt
+
+	\note Identical to calling swiIntrWait(1, 1)
+*/
+
+void swiWaitForVBlank(void);
+
+static inline int enterCriticalSection() {
+	int oldIME = REG_IME;
+	REG_IME = 0;
+	return oldIME;
+}
+
+static inline void leaveCriticalSection(int oldIME) {
+	REG_IME = oldIME;
+}
+
 
 #ifdef __cplusplus
 }
