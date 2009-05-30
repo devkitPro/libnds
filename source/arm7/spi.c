@@ -23,32 +23,35 @@
 ---------------------------------------------------------------------------------*/
 
 #include <nds/arm7/serial.h>
-
+#include <nds/interrupts.h>
 
 //---------------------------------------------------------------------------------
 int writePowerManagement(int reg, int command) {
 //---------------------------------------------------------------------------------
-  // Write the register / access mode (bit 7 sets access mode)
-  while (REG_SPICNT & SPI_BUSY);
-  REG_SPICNT = SPI_ENABLE | SPI_BAUD_1MHZ | SPI_BYTE_MODE | SPI_CONTINUOUS | SPI_DEVICE_POWER;
-  REG_SPIDATA = reg;
+	int oldIME=enterCriticalSection();
+	// Write the register / access mode (bit 7 sets access mode)
+	while (REG_SPICNT & SPI_BUSY);
+	REG_SPICNT = SPI_ENABLE | SPI_BAUD_1MHz | SPI_BYTE_MODE | SPI_CONTINUOUS | SPI_DEVICE_POWER;
+	REG_SPIDATA = reg;
 
-  // Write the command / start a read
-  while (REG_SPICNT & SPI_BUSY);
-  REG_SPICNT = SPI_ENABLE | SPI_BAUD_1MHZ | SPI_BYTE_MODE | SPI_DEVICE_POWER;
-  REG_SPIDATA = command;
+	// Write the command / start a read
+	while (REG_SPICNT & SPI_BUSY);
+	REG_SPICNT = SPI_ENABLE | SPI_BAUD_1MHz | SPI_BYTE_MODE | SPI_DEVICE_POWER;
+	REG_SPIDATA = command;
 
-  // Read the result
-  while (REG_SPICNT & SPI_BUSY);
-  return REG_SPIDATA & 0xFF;
+	// Read the result
+	while (REG_SPICNT & SPI_BUSY);
+
+	leaveCriticalSection(oldIME);
+
+	return REG_SPIDATA & 0xFF;
 }
 
-
 //---------------------------------------------------------------------------------
-void readFirmware(uint32 address, void * destination, uint32 size) {
+void readFirmware(u32 address, void * destination, u32 size) {
 //---------------------------------------------------------------------------------
-	uint8 * buffer = (uint8 *)destination;
-
+	int oldIME=enterCriticalSection();
+	u8 *buffer = destination;
 	// Read command
 	while (REG_SPICNT & SPI_BUSY);
 	REG_SPICNT = SPI_ENABLE | SPI_BYTE_MODE | SPI_CONTINUOUS | SPI_DEVICE_FIRMWARE;
@@ -60,17 +63,18 @@ void readFirmware(uint32 address, void * destination, uint32 size) {
 	while (REG_SPICNT & SPI_BUSY);
 	REG_SPIDATA = (address>>8) & 0xFF;
 	while (REG_SPICNT & SPI_BUSY);
-	REG_SPIDATA = (address>>0) & 0xFF;
+	REG_SPIDATA = (address) & 0xFF;
 	while (REG_SPICNT & SPI_BUSY);
 
+	u32 i;
 	// Read the data
-	while (size--) {
+	for(i=0;i<size;i++) {
 		REG_SPIDATA = 0;
-		if ( size == 0 ) REG_SPICNT = SPI_ENABLE | SPI_BYTE_MODE | SPI_DEVICE_FIRMWARE;
 		while (REG_SPICNT & SPI_BUSY);
-		*buffer++ = (REG_SPIDATA & 0xFF);
+		buffer[i] = (REG_SPIDATA & 0xFF);
 	}
 
 	REG_SPICNT = 0;
+	leaveCriticalSection(oldIME);
 }
 
