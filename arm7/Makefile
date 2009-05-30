@@ -25,7 +25,7 @@ INCLUDES	:=	../include ../source/common
 #---------------------------------------------------------------------------------
 ARCH	:=	-mthumb -mthumb-interwork -mcpu=arm7tdmi -mtune=arm7tdmi 
 
-CFLAGS	:=	-g -Wall -O2\
+CFLAGS	:=	 -Wall -Os\
  			-fomit-frame-pointer\
 			-ffast-math \
 			$(ARCH)
