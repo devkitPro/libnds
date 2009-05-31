@@ -95,11 +95,10 @@ static inline
 */
 void DynamicArraySet(DynamicArray *v, int index, void* item)
 {
-	if(index >= v->cur_size)
-	{
-		v->data = (void**)realloc(v->data, sizeof(void*) * v->cur_size);
-		v->cur_size *= 2;
+	if(index >= v->cur_size) {
+		v->data = (void**)realloc(v->data, sizeof(void*) * v->cur_size * 2);
 		memset(v->data + v->cur_size, 0, sizeof(void*) * v->cur_size);
+		v->cur_size *= 2;
 	}
 	
 	v->data[index] = item;
