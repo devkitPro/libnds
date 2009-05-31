@@ -5,7 +5,7 @@
 #include <nds/arm9/trig_lut.h>
 #include <nds/arm9/cache.h>
 #include <nds/dma.h>
-#include <nds/bios.h>
+#include <nds/interrupts.h>
 
 #include <stdio.h>	// for NULL 
 
