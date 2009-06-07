@@ -7,7 +7,7 @@
 // Some aspects of this configuration can be changed...
 
 // FIFO_CHANNEL_BITS - number of bits used to specify the channel in a packet - default=4
-#define FIFO_CHANNEL_BITS				3
+#define FIFO_CHANNEL_BITS				4
 
 // FIFO_MAX_DATA_WORDS - maximum number of bytes that can be sent in a fifo message
 #define FIFO_MAX_DATA_BYTES				128
@@ -258,7 +258,7 @@ static bool fifoInternalSend(u32 firstword, int extrawordcount, u32 * wordlist) 
 	if(fifo_freewords<extrawordcount+1) return false;
 	if(extrawordcount<0 || extrawordcount>(FIFO_MAX_DATA_BYTES/4)) return false;
 
-	int count = 0;
+	int count = 0, firstwordsent=0;
 	int oldIME = enterCriticalSection();
 
 	if ( fifo_send_queue.head == FIFO_BUFFER_TERMINATE ) {
@@ -266,26 +266,34 @@ static bool fifoInternalSend(u32 firstword, int extrawordcount, u32 * wordlist) 
 		if ( !(REG_IPC_FIFO_CR & IPC_FIFO_SEND_FULL) ) {
 		
 			REG_IPC_FIFO_TX = firstword;
+			firstwordsent=1;
 			while( !(REG_IPC_FIFO_CR & IPC_FIFO_SEND_FULL) && count<extrawordcount) {
 				REG_IPC_FIFO_TX = wordlist[count];
 				count++;
 			}
-		} else {
-			u32 head = fifo_allocBlock();
-			FIFO_BUFFER_DATA(head)=firstword;
-			fifo_send_queue.head = fifo_send_queue.tail = head;
-			REG_IPC_FIFO_CR |= IPC_FIFO_SEND_IRQ;
 		}
+	}
+
+	if (!firstwordsent) {
+		u32 head = fifo_allocBlock();
+		FIFO_BUFFER_DATA(head)=firstword;
+		fifo_send_queue.head = fifo_send_queue.tail = head;
 	}
 
 	while (count<extrawordcount) {
 		u32 next = fifo_allocBlock();
-		FIFO_BUFFER_SETNEXT(fifo_send_queue.tail,next);
+		if(fifo_send_queue.head == FIFO_BUFFER_TERMINATE) {
+			fifo_send_queue.head = next;
+		} else {
+			FIFO_BUFFER_SETNEXT(fifo_send_queue.tail,next);		
+		}
 		FIFO_BUFFER_DATA(next)=wordlist[count];
 		count++;
 		fifo_send_queue.tail = next;
 	}
-	
+
+	if ( fifo_send_queue.head != FIFO_BUFFER_TERMINATE)	REG_IPC_FIFO_CR |= IPC_FIFO_SEND_IRQ;
+
 	leaveCriticalSection(oldIME);
 	
 	return true;
@@ -539,6 +547,7 @@ static void fifoInternalRecvInterrupt() {
 }
 
 static void fifoInternalSendInterrupt() {
+
 	if ( fifo_send_queue.head == FIFO_BUFFER_TERMINATE ) {
 		REG_IPC_FIFO_CR &= ~IPC_FIFO_SEND_IRQ;	// disable send irq
 	} else {
@@ -590,9 +599,6 @@ bool fifoInit() {
 	}
 	FIFO_BUFFER_SETCONTROL(FIFO_BUFFER_ENTRIES-1, FIFO_BUFFER_TERMINATE, FIFO_BUFFERCONTROL_UNUSED, 0);
 
-
-
-
 	#define __SYNC_START	0
 	#define __SYNC_END		14
 
@@ -621,7 +627,7 @@ bool fifoInit() {
 
 	irqSet(IRQ_FIFO_EMPTY,fifoInternalSendInterrupt);
 	irqSet(IRQ_FIFO_NOT_EMPTY,fifoInternalRecvInterrupt);
-	irqEnable(IRQ_FIFO_NOT_EMPTY);
+	irqEnable(IRQ_FIFO_NOT_EMPTY|IRQ_FIFO_EMPTY);
 	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR | IPC_FIFO_RECV_IRQ;
 
 	return true;
