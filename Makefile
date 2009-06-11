@@ -40,9 +40,9 @@ clean:
 	@$(MAKE) -C arm7 clean
 
 #-------------------------------------------------------------------------------
-dist-src: clean
+dist-src:
 #-------------------------------------------------------------------------------
-	@tar --exclude=*CVS* --exclude=.svn -cjf libnds-src-$(VERSION).tar.bz2 arm7 arm9 source include icon.bmp Makefile libnds_license.txt 
+	@tar --exclude=*CVS* --exclude=.svn -cjf libnds-src-$(VERSION).tar.bz2 arm7/Makefile arm9/Makefile source include icon.bmp Makefile libnds_license.txt 
 
 #-------------------------------------------------------------------------------
 dist-bin: all
