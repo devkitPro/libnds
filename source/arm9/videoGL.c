@@ -409,22 +409,31 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 	vramTemp = vramSetMainBanks(VRAM_A_LCD,VRAM_B_LCD,VRAM_C_LCD,VRAM_D_LCD);
 
 	if (type == GL_RGB) {
-		// We do GL_RGB as GL_RGBA, but we set each alpha bit to 1 during the copy
-		u16 * src = (u16*)texture;
-		u16 * dest = (u16*)addr;
 
 		glTexParameter(sizeX, sizeY, addr, GL_RGBA, param);
 
-		while (size--) {
-			*dest++ = *src | (1 << 15);
-			src++;
+		if(texture) {
+			
+			// We do GL_RGB as GL_RGBA, but we set each alpha bit to 1 during the copy
+			u16 * src = (u16*)texture;
+			u16 * dest = (u16*)addr;
+
+			while (size--) {
+				*dest++ = *src | (1 << 15);
+				src++;
+			}
 		}
 	} else {
 		// For everything else, we do a straight copy
 		glTexParameter(sizeX, sizeY, addr, type, param);
-		swiCopy((uint32*)texture, addr , size / 4 | COPY_MODE_WORD);
+		
+		if(texture) {
+			swiCopy((uint32*)texture, addr , size / 4 | COPY_MODE_WORD);
+		}
 	}
+	
 	vramRestoreMainBanks(vramTemp);
+	
 	return 1;
 }
 
