@@ -367,7 +367,7 @@ void oamSetMosaicSub(unsigned int dx, unsigned int dy){
 	sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
   	
 	mosaicShadowSub = ( mosaicShadowSub & 0x00ff) | (dx << 8)| (dy << 12);
-	REG_MOSAIC_SUB = mosaicShadow;
+	REG_MOSAIC_SUB = mosaicShadowSub;
 }
 
 /** 
