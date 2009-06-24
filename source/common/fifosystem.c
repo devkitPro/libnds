@@ -570,7 +570,11 @@ static void fifoInternalSendInterrupt() {
 	}
 }
 
+static volatile int __timeout = 0;
 
+static void __timeoutvbl() {
+	__timeout++;
+}
 bool fifoInit() {
 
 
@@ -602,29 +606,31 @@ bool fifoInit() {
 	#define __SYNC_START	0
 	#define __SYNC_END		14
 
-	int timeout=120;
-	irqEnable(IRQ_IPC_SYNC);
 
 	int their_value=0,my_value=__SYNC_START,count=0;
+
+	irqSet(IRQ_VBLANK,__timeoutvbl);
+	irqEnable(IRQ_IPC_SYNC|IRQ_VBLANK);
 
 	do {
 		their_value = IPC_GetSync();
 		if(their_value == __SYNC_END) break;
-		if(count>5) break;
+		if(count>=3) break;
 		if( ((my_value + 1)&15 ) == their_value ) count++;
 		my_value=(their_value+1)&15;
 		IPC_SendSync(my_value);
 		swiIntrWait(1,IRQ_IPC_SYNC|IRQ_VBLANK);
-	} while (timeout--);
+	} while (__timeout < 60);
 
 	irqDisable(IRQ_IPC_SYNC);
-	IPC_SendSync(__SYNC_END);
+	irqSet(IRQ_VBLANK,0);
 	
-	if (timeout==0) {
+	if (__timeout>=60) {
 		IPC_SendSync(0);
 		return false;
 	}
 
+	IPC_SendSync(__SYNC_END);
 	irqSet(IRQ_FIFO_EMPTY,fifoInternalSendInterrupt);
 	irqSet(IRQ_FIFO_NOT_EMPTY,fifoInternalRecvInterrupt);
 	irqEnable(IRQ_FIFO_NOT_EMPTY|IRQ_FIFO_EMPTY);
