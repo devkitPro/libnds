@@ -55,7 +55,7 @@
 
 	VRAM banks can be mapped to specific addresses for specific purposes.  In our 
 	case, any of the 4 main banks amd several of the smaller ones can be mapped to 
-	the main 2D background engine.(A B C and D banks are refered to as ìmainî 
+	the main 2D background engine.(A B C and D banks are refered to as √¨main√Æ 
 	because	they are 128KB and flexible in usage)
 
 	<pre>
@@ -291,16 +291,16 @@ typedef u16 _palette[256];
 typedef _palette _ext_palette[16];
 
 /** \brief  Used for accessing vram E as an external palette */
-#define VRAM_E_EXT_PALETTE ((_palette *)VRAM_E)
+#define VRAM_E_EXT_PALETTE ((_ext_palette *)VRAM_E)
 
 /** \brief  Used for accessing vram F as an external palette */
-#define VRAM_F_EXT_PALETTE ((_palette *)VRAM_F)
+#define VRAM_F_EXT_PALETTE ((_ext_palette *)VRAM_F)
 
 /** \brief  Used for accessing _palette G as an external palette */
-#define VRAM_G_EXT_PALETTE ((_palette *)VRAM_G)
+#define VRAM_G_EXT_PALETTE ((_ext_palette *)VRAM_G)
 
 /** \brief  Used for accessing vram H as an external palette */
-#define VRAM_H_EXT_PALETTE ((_palette *)VRAM_H)
+#define VRAM_H_EXT_PALETTE ((_ext_palette *)VRAM_H)
 
 /** \brief  Set the main 4 bank modes. 
 *    \param a mapping mode of VRAM_A
