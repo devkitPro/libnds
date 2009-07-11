@@ -128,6 +128,13 @@ int soundPlayNoise(u16 freq, u8 volume, u8 pan);
 */
 void soundPause(int soundId);
 
+/*! \fn void soundSetWaveDuty(int soundId, DutyCycle cycle)
+	\brief Sets the Wave Duty of a PSG sound
+	\param soundId The sound ID returned by play sound
+	\param cycle The DutyCycle of the sound wave
+*/
+void soundSetWaveDuty(int soundId, DutyCycle cycle);
+
 /*! \fn void soundKill(int soundId)
 	\brief Stops the sound specified by soundId and frees any resources allocated
 	\param soundId The sound ID returned by play sound

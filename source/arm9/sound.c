@@ -88,23 +88,33 @@ int soundPlaySample(const void* data, SoundFormat format, u32 dataSize, u16 freq
 
 	return (int)fifoGetValue32(FIFO_SOUND);
 }
+
 void soundPause(int soundId){
 	fifoSendValue32(FIFO_SOUND, SOUND_PAUSE | (soundId << 16));
 }
+
 void soundKill(int soundId){
 	fifoSendValue32(FIFO_SOUND, SOUND_KILL | (soundId << 16));
 }
+
 void soundResume(int soundId){
 	fifoSendValue32(FIFO_SOUND, SOUND_RESUME | (soundId << 16));
 }
+
 void soundSetVolume(int soundId, u8 volume){
 	fifoSendValue32(FIFO_SOUND, SOUND_SET_VOLUME | (soundId << 16) | volume);
 }
+
 void soundSetPan(int soundId, u8 pan){
 	fifoSendValue32(FIFO_SOUND, SOUND_SET_PAN | (soundId << 16) | pan);
 }
+
 void soundSetFreq(int soundId, u16 freq){
 	fifoSendValue32(FIFO_SOUND, SOUND_SET_FREQ | (soundId << 16) | freq);
+}
+
+void soundSetWaveDuty(int soundId, DutyCycle cycle){
+	fifoSendValue32(FIFO_SOUND, SOUND_SET_WAVEDUTY | (soundId << 16) | cycle);
 }
 
 MicCallback micCallback = 0;

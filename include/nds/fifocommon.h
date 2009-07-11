@@ -28,16 +28,17 @@ typedef enum {
 
 
 typedef enum {
-   	SOUND_SET_PAN		= 0 << 20,
-	SOUND_SET_VOLUME	= 1 << 20,
-	SOUND_SET_FREQ		= 2 << 20,
-	SOUND_MASTER_ENABLE		= 3 << 20,
-	SOUND_MASTER_DISABLE       = 4 << 20 ,
-	SOUND_PAUSE			= 5 << 20 ,
-	SOUND_RESUME		= 6 << 20 ,
-	SOUND_KILL			= 7 << 20 ,
-	SOUND_SET_MASTER_VOL	= 8 << 20 ,
-	MIC_STOP		 = 9 << 20
+   	SOUND_SET_PAN			= 0 << 20,
+	SOUND_SET_VOLUME		= 1 << 20,
+	SOUND_SET_FREQ			= 2 << 20,
+	SOUND_SET_WAVEDUTY		= 3 << 20,
+	SOUND_MASTER_ENABLE		= 4 << 20,
+	SOUND_MASTER_DISABLE	= 5 << 20,
+	SOUND_PAUSE				= 6 << 20,
+	SOUND_RESUME			= 7 << 20,
+	SOUND_KILL				= 8 << 20,
+	SOUND_SET_MASTER_VOL	= 9 << 20,
+	MIC_STOP		 		= 10 << 20
 
 } FifoSoundCommand;
 

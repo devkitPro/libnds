@@ -175,6 +175,11 @@ void soundCommandHandler(u32 command, void* userdata) {
 		SCHANNEL_TIMER(channel) = SOUND_FREQ(data);
 		break;
 
+	case SOUND_SET_WAVEDUTY:
+		SCHANNEL_CR(channel) &=	 ~(7 << 24);
+		SCHANNEL_CR(channel) |=	(data) << 24;
+		break;
+
 	case SOUND_KILL:
 		SCHANNEL_CR(channel) &= ~SCHANNEL_ENABLE;
 		break;
