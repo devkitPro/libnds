@@ -290,17 +290,27 @@ typedef u16 _palette[256];
 /** \brief  An array of 16 256-color palettes */
 typedef _palette _ext_palette[16];
 
-/** \brief  Used for accessing vram E as an external palette */
+/** \brief  Used for accessing vram E as an extended palette */
 #define VRAM_E_EXT_PALETTE ((_ext_palette *)VRAM_E)
 
-/** \brief  Used for accessing vram F as an external palette */
+/** \brief  Used for accessing vram F as an extended palette */
 #define VRAM_F_EXT_PALETTE ((_ext_palette *)VRAM_F)
 
-/** \brief  Used for accessing _palette G as an external palette */
+/** \brief  Used for accessing vram G as an extended palette */
 #define VRAM_G_EXT_PALETTE ((_ext_palette *)VRAM_G)
 
-/** \brief  Used for accessing vram H as an external palette */
+/** \brief  Used for accessing vram H as an extended palette */
 #define VRAM_H_EXT_PALETTE ((_ext_palette *)VRAM_H)
+
+/** \brief  Used for accessing vram F as an extended sprite palette */
+#define VRAM_F_EXT_SPR_PALETTE ((_palette *)VRAM_F)
+
+/** \brief  Used for accessing vram G as an extended sprite palette */
+#define VRAM_G_EXT_SPR_PALETTE ((_palette *)VRAM_G)
+
+/** \brief  Used for accessing vram I as an extended sprite palette */
+#define VRAM_I_EXT_SPR_PALETTE ((_palette *)VRAM_I)
+
 
 /** \brief  Set the main 4 bank modes. 
 *    \param a mapping mode of VRAM_A
