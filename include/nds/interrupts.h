@@ -131,8 +131,9 @@ struct IntTable{IntFn handler; u32 mask;};
 /*! \fn irqInit()
 	\brief Initialise the libnds interrupt system.
 
-	Call this function at the start of any application which requires interrupt support.
-	This function should be used in preference to irqInitHandler.
+	This function is called internally (prior to main()) to set up irqs
+    on the ARM9.  It must be called on the ARM7 prior to installing irq
+    handlers.
 	 
 */
 void irqInit();
