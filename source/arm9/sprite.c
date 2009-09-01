@@ -121,7 +121,7 @@ unsigned int oamGfxPtrToOffset(const void* offset) {
 //---------------------------------------------------------------------------------
 	unsigned int temp = (unsigned int)offset;
 
-	if(temp <= (unsigned int)SPRITE_GFX_SUB)
+	if(temp < (unsigned int)SPRITE_GFX_SUB)
 	{
 		temp -= (unsigned int)SPRITE_GFX;
 		temp >>= oamMain.gfxOffsetStep;
