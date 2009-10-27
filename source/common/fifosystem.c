@@ -276,8 +276,13 @@ static bool fifoInternalSend(u32 firstword, int extrawordcount, u32 * wordlist) 
 
 	if (!firstwordsent) {
 		u32 head = fifo_allocBlock();
+		if(fifo_send_queue.head == FIFO_BUFFER_TERMINATE) {
+			fifo_send_queue.head = head;
+		} else {
+			FIFO_BUFFER_SETNEXT(fifo_send_queue.tail,head);		
+		}
 		FIFO_BUFFER_DATA(head)=firstword;
-		fifo_send_queue.head = fifo_send_queue.tail = head;
+		fifo_send_queue.tail = head;
 	}
 
 	while (count<extrawordcount) {
@@ -597,7 +602,7 @@ bool fifoInit() {
 		fifo_datamsg_func[i] = 0;
 	}
 
-	for(i=0;i<FIFO_BUFFER_ENTRIES;i++) {
+	for(i=0;i<FIFO_BUFFER_ENTRIES-1;i++) {
 		FIFO_BUFFER_DATA(i) = 0;
 		FIFO_BUFFER_SETCONTROL(i, i+1, 0, 0);
 	}
@@ -605,7 +610,7 @@ bool fifoInit() {
 
 	#define __SYNC_START	0
 	#define __SYNC_END		14
-
+	#define __TIMEOUT		120
 
 	int their_value=0,my_value=__SYNC_START,count=0;
 
@@ -616,16 +621,16 @@ bool fifoInit() {
 		their_value = IPC_GetSync();
 		if(their_value == __SYNC_END) break;
 		if(count>=3) break;
-		if( ((my_value + 1)&15 ) == their_value ) count++;
-		my_value=(their_value+1)&15;
+		if( ((my_value + 1)&7 ) == their_value ) count++;
+		my_value=(their_value+1)&7;
 		IPC_SendSync(my_value);
 		swiIntrWait(1,IRQ_IPC_SYNC|IRQ_VBLANK);
-	} while (__timeout < 60);
+	} while (__timeout < __TIMEOUT);
 
 	irqDisable(IRQ_IPC_SYNC);
 	irqSet(IRQ_VBLANK,0);
 	
-	if (__timeout>=60) {
+	if (__timeout>= __TIMEOUT) {
 		IPC_SendSync(0);
 		return false;
 	}
