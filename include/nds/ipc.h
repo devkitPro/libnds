@@ -30,42 +30,6 @@
 #define NDS_IPC_INCLUDE
 
 #include "ndstypes.h"
-#include <time.h>
-
-//---------------------------------------------------------------------------------
-typedef struct sTransferSoundData {
-//---------------------------------------------------------------------------------
-	const void *data;
-	u32 len;
-	u32 rate;
-	u8 vol;
-	u8 pan;
-	u8 format;
-	u8 PADDING;
-} TransferSoundData, * pTransferSoundData;
-
-
-//---------------------------------------------------------------------------------
-typedef struct sTransferRegion {
-//---------------------------------------------------------------------------------
-	vs16 touchX,   touchY;		// TSC X, Y
-	vs16 touchXpx, touchYpx;	// TSC X, Y pixel values
-	vs16 touchZ1,  touchZ2;		// TSC x-panel measurements
-	vu16 buttons;				// X, Y, /PENIRQ buttons
-	time_t	unixTime;
-
-} TransferRegion, * pTransferRegion;
-
-
-static inline
-TransferRegion volatile * getIPC() __attribute__ ((deprecated));
-
-static inline
-TransferRegion volatile * getIPC() {
-	return (TransferRegion volatile *)(0x027FF000);
-}
-
-#define IPC getIPC()
 
 //---------------------------------------------------------------------------------
 // Synchronization register
