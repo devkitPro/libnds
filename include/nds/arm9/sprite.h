@@ -293,6 +293,10 @@ typedef struct OamState
    };
 }OamState;
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 //!oamMain an object representing the main 2D engine
 extern OamState oamMain;
 //!oamSub an object representing the sub 2D engine
@@ -447,5 +451,9 @@ void oamAllocReset(OamState *oam);
 
 unsigned int oamGfxPtrToOffset(const void* offset);
 
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif // _libnds_sprite_h_
