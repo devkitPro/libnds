@@ -104,7 +104,7 @@ On the main engine BG0 can be uses as a 3D rendering surface.
 /*! \struct bg_scroll
 \brief register overlay for scroll registers
 */
-typedef struct {
+typedef struct bg_scroll {
 	u16 x;/*!< x scroll*/
 	u16 y;/*!< y scroll*/
 } bg_scroll;
@@ -112,7 +112,7 @@ typedef struct {
 /*! \struct bg_transform
 \brief register overlay for affine matrix registers
 */
-typedef struct {
+typedef struct bg_transform {
     s16 xdx; /*!< change in x per dx*/
     s16 ydx; /*!< change in y per dx*/
     s16 xdy; /*!< change in x per dy*/
@@ -124,7 +124,7 @@ typedef struct {
 /*! \struct bg_attribute
 \brief register overlay for background attribute registers
 */
-typedef struct {
+typedef struct bg_attribute {
     u16 control[4];/*!< Background control registers*/
     bg_scroll scroll[4];/*!< Background scroll registers*/
     bg_transform bg2_rotation;/*!< Background 2 affine matrix*/
@@ -392,7 +392,7 @@ struct directly sets background registers.
 */
 
 //background state	
-typedef struct
+typedef struct BgState
 {
 	int angle;
 	s32 centerX;

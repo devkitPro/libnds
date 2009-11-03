@@ -42,7 +42,7 @@
 extern const u32  DLDI_MAGIC_NUMBER;
 
 // I/O interface with DLDI extensions
-typedef struct {
+typedef struct DLDI_INTERFACE {
 	u32 	magicNumber;
 	char	magicString [DLDI_MAGIC_STRING_LEN];
 	u8		versionNumber;

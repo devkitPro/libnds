@@ -31,7 +31,7 @@
 #include <nds/arm9/input.h>
 
 //---------------------------------------------------------------------------------
-typedef struct {
+typedef struct __TransferRegion {
 //---------------------------------------------------------------------------------
 	vs16 touchX,   touchY;		// TSC X, Y
 	vs16 touchXpx, touchYpx;	// TSC X, Y pixel values

@@ -128,7 +128,7 @@ typedef enum {
  * @union SpriteEntry
  * @brief A bitfield of sprite attribute goodness...ugly to look at but not so bad to use
  */
-typedef union {
+typedef union SpriteEntry {
 	struct {
  
 		struct {
@@ -196,7 +196,7 @@ typedef union {
  * @struct SpriteRotation
  * @brief A sprite rotation entry
  */
-typedef struct {
+typedef struct SpriteRotation {
   uint16 filler1[3]; /**< Unused! Filler for the sprite entry attributes which overlap these */
   int16 hdx;		 /**< The change in x per horizontal pixel */
 
@@ -215,7 +215,7 @@ typedef struct {
 #define MATRIX_COUNT 32
 
 
-typedef union {
+typedef union OAMTable {
 	SpriteEntry oamBuffer[SPRITE_COUNT];
 	SpriteRotation matrixBuffer[MATRIX_COUNT];
 } OAMTable;
@@ -270,7 +270,7 @@ typedef enum{
 }SpriteColorFormat;
 
 
-typedef struct 
+typedef struct AllocHeader
 {
    u16 nextFree;
    u16 size;
@@ -280,7 +280,7 @@ typedef struct
 *   Holds the state for a 2D sprite engine, there are two of these objects
 *   oamMain and oamSub and these must be passed in to all oam functions
 */
-typedef struct
+typedef struct OamState
 {
 	int gfxOffsetStep; /**< The distance between tiles as 2^gfxOffsetStep */
 	s16 firstFree;/**< pointer to the first free block of tiles */

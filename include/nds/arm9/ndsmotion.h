@@ -37,7 +37,7 @@
 //---------------------------------------------------------------------------------
 
 
-typedef struct 
+typedef struct MotionCalibration
 {
 	short xoff, yoff, zoff, goff;
 	short xsens, ysens, zsens, gsens;

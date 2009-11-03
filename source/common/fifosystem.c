@@ -147,7 +147,7 @@
 // FIFO_BUFFER_ENTRIES*8 of global buffer space
 vu32	fifo_buffer[FIFO_BUFFER_ENTRIES*2];
 
-typedef struct {
+typedef struct fifo_queue {
 	vu16 head;
 	vu16 tail;
 } fifo_queue;

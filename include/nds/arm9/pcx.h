@@ -35,7 +35,7 @@
 #ifndef PCX_H
 #define PCX_H
  
-typedef struct
+typedef struct PCXHeader
 {
    char         manufacturer;   //should be 0
    char         version;        //should be 5 

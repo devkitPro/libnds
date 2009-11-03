@@ -78,7 +78,7 @@ extern "C" {
 typedef bool(* ConsolePrint)(void* con, char c);
 
 
-typedef struct
+typedef struct ConsoleFont
 {
 	u16* gfx;  /*!< A pointer to the font graphics (will be loaded by consoleInit() if loadGraphics is true >*/
 	u16* pal;  /*!< A pointer to the font palette (will be loaded by consoleInit() if loadGraphics is true >*/
@@ -133,7 +133,7 @@ typedef struct
  </pre></div>
 
  */
-typedef struct 
+typedef struct PrintConsole
 {
 	ConsoleFont font;
 

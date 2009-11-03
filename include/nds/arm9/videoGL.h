@@ -114,22 +114,22 @@ typedef short int v10;       /*!< \brief normal .10 fixed point, NOT USED FOR 10
 typedef unsigned short rgb; /*!< \brief Holds a color value. 1bit alpha, 5bits red, 5bits green, 5bits blue. */
 
 /*! \brief Holds a Matrix of 3x3 */
-typedef struct {
+typedef struct m3x3 {
 	int32 m[9]; /*!< array that holds matrix */
 } m3x3;
 
 /*! \brief Holds a Matrix of 4x4 */
-typedef struct {
+typedef struct m4x4 {
 	int32 m[16]; /*!< array that holds matrix */
 } m4x4;
 
 /*! \brief Holds a Matrix of 4x3 */
-typedef struct {
+typedef struct m4x3 {
 	int32 m[12]; /*!< array that holds matrix */
 } m4x3;
 
 /*! \brief Holds a Vector<BR>related functions: glScalev(), glTranslatev() */
-typedef struct {
+typedef struct GLvector {
 	int32 x, y, z;
 } GLvector;
 
@@ -279,7 +279,7 @@ This struct hold hidden globals for videoGL. The structure is initialized in the
 units without problem. This is automatically done by glInit() so don't worry too
 much about it. This is only an issue because of hte mix of inlined/real functions.
 ---------------------------------------------------------------------------------*/
-typedef struct {
+typedef struct gl_hidden_globals {
 	GL_MATRIX_MODE_ENUM matrixMode; // holds the current Matrix Mode
 	
 	// holds the current state of the clear color register

@@ -37,7 +37,7 @@
 /*! \struct DynamicArray
 \brief A resizable array
 */
-typedef struct
+typedef struct DynamicArray
 {
 	void** data; /*!< \brief pointer to array of void pointers */
 	int cur_size; /*!< \brief currently allocated size of the array */

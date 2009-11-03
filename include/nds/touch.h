@@ -3,7 +3,7 @@
 /*! \struct touchPosition
 	\brief holds data related to the touch screen
 */
-typedef struct {
+typedef struct touchPosition {
 	u16	rawx; //!< Raw x value from the A2D
 	u16	rawy; //!< Raw x value from the A2D
 	u16	px;   //!< Processes pixel X value

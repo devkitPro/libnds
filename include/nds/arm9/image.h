@@ -41,7 +41,7 @@ pointer data.
 /*! \struct RGB_24
 \brief holds a red green blue triplet
 */
- typedef struct
+ typedef struct RGB_24
  {
     unsigned char r,g,b;
  }__attribute__ ((packed)) RGB_24;
@@ -49,7 +49,7 @@ pointer data.
  /*! \struct sImage
  \brief A generic image structure
  */
- typedef struct
+ typedef struct sImage
  {
     short height; /*!< \brief The height of the image in pixels */
     short width; /*!< \brief The width of the image in pixels */

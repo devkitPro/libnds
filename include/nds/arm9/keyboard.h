@@ -70,8 +70,7 @@ typedef enum
  * \struct KeyMap
  * \brief defines a key mapping
  */
-typedef struct 
-{
+typedef struct KeyMap {
    const u16* mapDataPressed;/*!< the map for keys pressed >*/
    const u16* mapDataReleased;/*!< the map for keys released >*/
    const int* keymap; /*!< the lookup table for x y grid location to corresponding key >*/
@@ -83,8 +82,7 @@ typedef struct
  * \struct Keyboard
  * \brief describes a keyboard
  */
-typedef struct 
-{
+typedef struct Keyboard {
 	int background;/*!< Background number to use, after init() this contains the background ID >*/
 	int keyboardOnSub; /*!< boolean to determine if keyboard is on sub screen or main >*/
     int offset_x; /*!< x offset of the map, can be used to center a custom keyboard >*/

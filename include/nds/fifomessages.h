@@ -43,7 +43,7 @@ typedef enum {
 	SYS_INPUT_MESSAGE = 0x1239
 }FifoMessageType;
 
-typedef struct{
+typedef struct FifoMessage {
 	u16 type;
 
 	union {
