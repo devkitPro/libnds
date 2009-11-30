@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-  $Id: exceptionHandler.s,v 1.3 2006-08-03 09:35:36 wntrmute Exp $
 
   Copyright (C) 2005
   	Dave Murphy (WinterMute)
