@@ -161,7 +161,7 @@ typedef struct sNDSHeader {
   u8 zero[0x90];
 } __attribute__ ((__packed__)) tNDSHeader;
 
-#define __NDSHeader ((tNDSHeader *)0x027FFE00)
+#define __NDSHeader ((tNDSHeader *)0x02FFFE00)
 
 /*!
 * \brief the NDS banner format

@@ -254,10 +254,10 @@ typedef struct tPERSONAL_DATA {
 
   u8 alarmHour;				//!<	What hour the alarm clock is set to (0-23).
   u8 alarmMinute;			//!<	What minute the alarm clock is set to (0-59).
-            //0x027FFCD3  alarm minute
+            //0x02FFFCD3  alarm minute
 
   u8 RESERVED2[4];			//!<	???
-           //0x027FFCD4  ??
+           //0x02FFFCD4  ??
 
   u16 calX1;				//!<	Touchscreen calibration: first X touch
   u16 calY1;				//!<	Touchscreen calibration: first Y touch
