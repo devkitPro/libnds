@@ -136,24 +136,24 @@ __libnds_mpu_setup:
 	cmp	r0,#0
 	bne	debug_mode
 
-	ldr	r2,=( PAGE_4M | 0x02000000 | 1)	
-	ldr	r3,=( PAGE_4M | 0x02C00000 | 1)	
+	ldr	r3,=( PAGE_4M | 0x02000000 | 1)	
+	ldr	r2,=( PAGE_16M | 0x02000000 | 1)	
 	mov	r8,#0x02400000
 
 	adr	r9,dsmasks
 	b	setregions
 
 debug_mode:
-	ldr	r2,=( PAGE_8M | 0x02000000 | 1)	
-	ldr	r3,=( PAGE_8M | 0x02800000 | 1)	
+	ldr	r3,=( PAGE_8M | 0x02000000 | 1)	
+	ldr	r2,=( PAGE_8M | 0x02800000 | 1)	
 	mov	r8,#0x02800000
 	adr	r9,debugmasks
 	b	setregions
 
 dsi_mode:
 	ldr	r1,=( PAGE_8M  | 0x03000000 | 1)	
-	ldr	r2,=( PAGE_16M | 0x02000000 | 1)	
-	ldr	r3,=( PAGE_16M | 0x0C000000 | 1)	
+	ldr	r3,=( PAGE_16M | 0x02000000 | 1)	
+	ldr	r2,=( PAGE_16M | 0x0C000000 | 1)	
 	mov	r8,#0x03000000
 	adr	r9,dsimasks
 
@@ -165,12 +165,12 @@ setregions:
 	mcr	p15, 0, r1, c6, c5, 0
 
 	@-------------------------------------------------------------------------
-	@ Region 6 - cacheable main ram
+	@ Region 6 - non cacheable main ram
 	@-------------------------------------------------------------------------
 	mcr	p15, 0, r2, c6, c6, 0
 
 	@-------------------------------------------------------------------------
-	@ Region 7 - non cacheable main ram
+	@ Region 7 - cacheable main ram
 	@-------------------------------------------------------------------------
 	mcr	p15, 0, r3, c6, c7, 0
 
@@ -184,7 +184,7 @@ setregions:
 	@-------------------------------------------------------------------------
 	@ DCache & ICache enable
 	@-------------------------------------------------------------------------
-	ldr	r0,=0b01000010
+	ldr	r0,=0b10000010
 	mcr	p15, 0, r0, c2, c0, 0
 	mcr	p15, 0, r0, c2, c0, 1
 
