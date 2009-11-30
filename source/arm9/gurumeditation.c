@@ -209,10 +209,9 @@ static void defaultHandler() {
 //---------------------------------------------------------------------------------
 	consoleDemoInit();
 
-	BG_PALETTE[0] = RGB15(31,0,0);
-	BG_PALETTE[255] = RGB15(31,31,31);
+	BG_PALETTE_SUB[0] = RGB15(31,0,0);
+	BG_PALETTE_SUB[255] = RGB15(31,31,31);
 
-	
 	iprintf("\x1b[5CGuru Meditation Error!\n");
 	u32	currentMode = getCPSR() & 0x1f;
 	u32 thumbState = ((*(u32*)0x02FFFD90) & 0x20);
