@@ -210,12 +210,10 @@ static inline
 *   \param arm9card if true the arm9 is the owner of slot 1, otherwise the arm7
 */
 void sysSetBusOwners(bool arm9rom, bool arm9card) {
-  u16 pattern = REG_EXMEMCNT & ~(ARM7_OWNS_CARD|ARM7_OWNS_ROM);
-  pattern = pattern | (arm9card ?  0: ARM7_OWNS_CARD ) |
-                      (arm9rom ?  0: ARM7_OWNS_ROM );
-  REG_EXMEMCNT = pattern;
+  REG_EXMEMCNT = (REG_EXMEMCNT & ~(ARM7_OWNS_CARD|ARM7_OWNS_ROM)) |
+								(arm9card ?  0: ARM7_OWNS_CARD) |
+                      			(arm9rom ?  0: ARM7_OWNS_ROM );
 }
-
 #endif
 
 

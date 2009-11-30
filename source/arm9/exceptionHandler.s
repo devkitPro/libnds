@@ -21,15 +21,6 @@
   3. This notice may not be removed or altered from any source
      distribution.
 
-  $Log: not supported by cvs2svn $
-  Revision 1.2  2006/07/06 02:14:33  wntrmute
-  read r15 in enterException
-  add return to bios
-
-  Revision 1.1  2006/06/18 21:16:26  wntrmute
-  added arm9 exception handler API
-
-
 ---------------------------------------------------------------------------------*/
 	.text
 
@@ -62,7 +53,7 @@ enterException:
 	mcr	p15,0,r0,c1,c0,0
 
 	// bios exception stack
-	ldr 	r0, =0x027FFD90
+	ldr 	r0, =0x02FFFD90
 
 	// grab r15 from bios exception stack
 	ldr	r2,[r0,#8]

@@ -41,7 +41,7 @@ typedef struct __TransferRegion {
 
 } __TransferRegion, * __pTransferRegion;
 
-#define transfer (*(__TransferRegion volatile *)(0x027FF000))
+#define transfer (*(__TransferRegion volatile *)(0x02FFF000))
 
 static inline void setTransferInputData(touchPosition *touch, u16 buttons)
 {
@@ -55,8 +55,7 @@ static inline void setTransferInputData(touchPosition *touch, u16 buttons)
 }
 static inline
 __TransferRegion volatile * __transferRegion() {
-	//return &transfer;
-	return (__TransferRegion volatile *)(0x027FF000);
+	return &transfer;
 }
 
 

@@ -140,12 +140,14 @@ __libnds_mpu_setup:
 	ldr	r3,=( PAGE_4M | 0x02C00000 | 1)	
 	mov	r8,#0x02400000
 
+	adr	r9,dsmasks
 	b	setregions
 
 debug_mode:
 	ldr	r2,=( PAGE_8M | 0x02000000 | 1)	
 	ldr	r3,=( PAGE_8M | 0x02800000 | 1)	
 	mov	r8,#0x02800000
+	adr	r9,debugmasks
 	b	setregions
 
 dsi_mode:
@@ -153,6 +155,7 @@ dsi_mode:
 	ldr	r2,=( PAGE_16M | 0x02000000 | 1)	
 	ldr	r3,=( PAGE_16M | 0x0C000000 | 1)	
 	mov	r8,#0x03000000
+	adr	r9,dsimasks
 
 setregions:
 
@@ -162,7 +165,7 @@ setregions:
 	mcr	p15, 0, r1, c6, c5, 0
 
 	@-------------------------------------------------------------------------
-	@ Region 6 - Main Memory
+	@ Region 6 - cacheable main ram
 	@-------------------------------------------------------------------------
 	mcr	p15, 0, r2, c6, c6, 0
 
@@ -204,4 +207,35 @@ setregions:
 	orr	r0,r0,r1
 	mcr	p15, 0, r0, c1, c0, 0
 
+	ldr	r0,=masks
+	str	r9,[r0]
+
 	bx	lr
+
+dsmasks:
+	.word	0x003fffff, 0x02000000, 0x02c00000
+debugmasks:
+	.word	0x007fffff, 0x02000000, 0x02800000
+dsimasks:
+	.word	0x00ffffff, 0x02000000, 0x0c000000
+
+masks:	.word	dsmasks
+
+	.global memCached, memUncached
+
+memCached:
+	ldr	r1,masks
+	ldr	r2,[r1],#4
+	and	r0,r0,r2
+	ldr	r2,[r1]
+	orr	r0,r0,r2
+	bx	lr
+
+memUncached:
+	ldr	r1,masks
+	ldr	r2,[r1],#8
+	and	r0,r0,r2
+	ldr	r2,[r1]
+	orr	r0,r0,r2
+	bx	lr
+

@@ -294,7 +294,7 @@ typedef struct tPERSONAL_DATA {
 #define	REG_KEYCNT		(*(vuint16*)0x04000132)
 
 //!	Default location for the user's personal data (see %PERSONAL_DATA).
-#define PersonalData ((PERSONAL_DATA*)0x27FFC80)
+#define PersonalData ((PERSONAL_DATA*)0x2FFFC80)
 
 // argv struct magic number
 #define ARGV_MAGIC 0x5f617267
@@ -314,7 +314,7 @@ struct __argv {
 };
 
 //!	Default location for the libnds argv structure.
-#define __system_argv		((struct __argv *)0x027FFF70)
+#define __system_argv		((struct __argv *)0x02FFFE70)
 
 
 typedef	struct {
@@ -327,5 +327,10 @@ typedef	struct {
 	u8 minutes;	// 0 to 59
 	u8 seconds;	// 0 to 59
 } RTCtime;
+
+#ifdef ARM9
+void *memCached(void *address);
+void *memUncached(void *address);
+#endif
 
 #endif

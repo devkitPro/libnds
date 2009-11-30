@@ -25,7 +25,7 @@
 #define _exceptions_h_
 //---------------------------------------------------------------------------------
 
-#define EXCEPTION_VECTOR	(*(VoidFunctionPointer *)(0x27FFD9C))
+#define EXCEPTION_VECTOR	(*(VoidFunctionPointer *)(0x2FFFD9C))
 
 
 extern VoidFunctionPointer exceptionC[] ;

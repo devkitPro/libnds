@@ -37,10 +37,10 @@
 //  please don't edit below this line.
 
 #define FIFO_ADDRESSDATA_SHIFT			0
-#define FIFO_MINADDRESSDATABITS			22
-#define FIFO_ADDRESSDATA_MASK			0x003FFFFF
+#define FIFO_MINADDRESSDATABITS			24
+#define FIFO_ADDRESSDATA_MASK			0x00FFFFFF
 #define FIFO_ADDRESSBASE				0x02000000
-#define FIFO_ADDRESSCOMPATIBLE			0xFFC00000
+#define FIFO_ADDRESSCOMPATIBLE			0xFF000000
 
 #define FIFO_NUM_CHANNELS				(1<<FIFO_CHANNEL_BITS)
 #define FIFO_CHANNEL_SHIFT				(32-FIFO_CHANNEL_BITS)
@@ -305,7 +305,7 @@ static bool fifoInternalSend(u32 firstword, int extrawordcount, u32 * wordlist) 
 }
 
 // fifoSendAddress - Send an address (from mainram only) to the other cpu (on a specific channel)
-//  Address can be in the range of 0x02000000-0x023FFFFF
+//  Address can be in the range of 0x02000000-0x02FFFFFF
 bool fifoSendAddress(int channel, void *address) {
 	if(channel<0 || channel>=FIFO_NUM_CHANNELS) return false;
 	if( !FIFO_IS_ADDRESS_COMPATIBLE(address) ) return false;
@@ -585,6 +585,8 @@ bool fifoInit() {
 
 	int i;
 
+	REG_IPC_FIFO_CR = IPC_FIFO_SEND_CLEAR | IPC_FIFO_RECV_EMPTY | IPC_FIFO_SEND_EMPTY;
+
 	for(i=0;i<FIFO_NUM_CHANNELS;i++) {
 
 		fifo_address_queue[i].head = FIFO_BUFFER_TERMINATE;
@@ -638,8 +640,8 @@ bool fifoInit() {
 	IPC_SendSync(__SYNC_END);
 	irqSet(IRQ_FIFO_EMPTY,fifoInternalSendInterrupt);
 	irqSet(IRQ_FIFO_NOT_EMPTY,fifoInternalRecvInterrupt);
+	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_RECV_IRQ;
 	irqEnable(IRQ_FIFO_NOT_EMPTY|IRQ_FIFO_EMPTY);
-	REG_IPC_FIFO_CR = IPC_FIFO_ENABLE | IPC_FIFO_SEND_CLEAR | IPC_FIFO_RECV_IRQ;
 
 	return true;
 }
