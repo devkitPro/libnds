@@ -81,6 +81,5 @@ void initSystem(void) {
 	fifoSetDatamsgHandler(FIFO_SYSTEM, systemMsgHandler, 0);
 
 	__transferRegion()->buttons = 0xffff;
-	asm volatile("mov r11,r11\n");
 	punixTime = (time_t*)memUncached((void *)&__transferRegion()->unixTime);
 }
