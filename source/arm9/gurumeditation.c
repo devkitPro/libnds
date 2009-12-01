@@ -204,8 +204,9 @@ static const char *registerNames[] =
 		"r8 ","r9 ","r10","r11","r12","sp ","lr ","pc " };
 
 extern const char __itcm_start[];
+
 //---------------------------------------------------------------------------------
-static void defaultHandler() {
+void guruMeditationDump() {
 //---------------------------------------------------------------------------------
 	consoleDemoInit();
 
@@ -250,10 +251,15 @@ static void defaultHandler() {
 	iprintf("\n");
 	u32 *stack = (u32 *)exceptionRegisters[13];
 	for ( i=0; i<10; i++ ) {
-		iprintf( "\x1b[%d;2H%08X: %08X %08X", i + 14, (u32)&stack[i*2],stack[i*2], stack[(i*2)+1] );
+		iprintf( "\x1b[%d;2H%08X:  %08X %08X", i + 14, (u32)&stack[i*2],stack[i*2], stack[(i*2)+1] );
 	}
-	while(1);
+}
 
+//---------------------------------------------------------------------------------
+static void defaultHandler() {
+//---------------------------------------------------------------------------------
+	guruMeditationDump();
+	while(1);
 }
 
 //---------------------------------------------------------------------------------
