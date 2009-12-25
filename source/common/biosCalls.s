@@ -27,17 +27,39 @@
 	.text
 	.align 4
 
-	.thumb
-
+	.arm
 @---------------------------------------------------------------------------------
 	.global swiSoftReset
-	.thumb_func
 @---------------------------------------------------------------------------------
 swiSoftReset:
 @---------------------------------------------------------------------------------
-	swi	0x00
-	bx	lr
 
+#ifdef ARM7
+	ldr	r0,=0x2FFFE34
+	ldr	r0,[r0]
+#endif
+
+#ifdef ARM9
+	.arch	armv5te
+	.cpu	arm946e-s
+	ldr	r1, =0x00002078			@ disable TCM and protection unit
+	mcr	p15, 0, r1, c1, c0
+	@ Disable cache
+	mov	r0, #0
+	mcr	p15, 0, r0, c7, c5, 0		@ Instruction cache
+	mcr	p15, 0, r0, c7, c6, 0		@ Data cache
+
+	@ Wait for write buffer to empty 
+	mcr	p15, 0, r0, c7, c10, 4
+
+	ldr	r0,=0x2FFFE24
+	ldr	r0,[r0]
+#endif
+	bx	r0
+
+	.pool
+
+	.thumb
 
 @---------------------------------------------------------------------------------
 	.global swiDelay

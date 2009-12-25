@@ -25,15 +25,15 @@
 #define _exceptions_h_
 //---------------------------------------------------------------------------------
 
-#define EXCEPTION_VECTOR	(*(VoidFunctionPointer *)(0x2FFFD9C))
+#define EXCEPTION_VECTOR	(*(VoidFn *)(0x2FFFD9C))
 
 
-extern VoidFunctionPointer exceptionC[] ;
-extern u32 exceptionStack ;
+extern VoidFn exceptionC[];
+extern u32 exceptionStack;
 extern s32 exceptionRegisters[];
 
 void enterException(void);
-void setExceptionHandler(VoidFunctionPointer handler);
+void setExceptionHandler(VoidFn handler);
 void defaultExceptionHandler();
 
 u32 getCPSR();

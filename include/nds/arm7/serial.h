@@ -44,24 +44,24 @@
 #define RTC_CR		(*(vu16*)0x04000138)
 #define RTC_CR8		(*( vu8*)0x04000138)
 
-#define REG_SIOCNT	(*(vuint16*)0x04000128)
+#define REG_SIOCNT	(*(vu16*)0x04000128)
 
-#define SIO_DATA8       (*(vuint8*)0x0400012A)
-#define SIO_DATA32      (*(vuint32*)0x04000120)
+#define SIO_DATA8       (*(vu8*)0x0400012A)
+#define SIO_DATA32      (*(vu32*)0x04000120)
 
 
 // Fixme: Does the hardware still support 16 bit comms mode?
 // BIOS makes use of 32 bit mode, so some regs still exist
-#define SIO_MULTI_0     (*(vuint16*)0x04000120)
-#define SIO_MULTI_1     (*(vuint16*)0x04000122)
-#define SIO_MULTI_2     (*(vuint16*)0x04000124)
-#define SIO_MULTI_3     (*(vuint16*)0x04000126)
-#define SIO_MULTI_SEND  (*(vuint16*)0x0400012A)
+#define SIO_MULTI_0     (*(vu16*)0x04000120)
+#define SIO_MULTI_1     (*(vu16*)0x04000122)
+#define SIO_MULTI_2     (*(vu16*)0x04000124)
+#define SIO_MULTI_3     (*(vu16*)0x04000126)
+#define SIO_MULTI_SEND  (*(vu16*)0x0400012A)
 
 
 // SPI chain registers
-#define REG_SPICNT      (*(vuint16*)0x040001C0)
-#define REG_SPIDATA     (*(vuint16*)0x040001C2)
+#define REG_SPICNT      (*(vu16*)0x040001C0)
+#define REG_SPIDATA     (*(vu16*)0x040001C2)
 
 #define SPI_ENABLE  BIT(15)
 #define SPI_IRQ     BIT(14)

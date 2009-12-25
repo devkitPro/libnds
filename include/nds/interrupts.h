@@ -121,7 +121,7 @@ extern "C" {
 #endif
 
 
-extern VoidFunctionPointer	__irq_vector[];
+extern VoidFn	__irq_vector[];
 extern	vuint32	__irq_flags[];
 #define VBLANK_INTR_WAIT_FLAGS  *(__irq_flags)
 #define IRQ_HANDLER             *(__irq_vector)
@@ -151,7 +151,7 @@ void irqInit();
 
 	\warning Only one IRQ_MASK can be specified with this function.
 */
-void irqSet(IRQ_MASK irq, VoidFunctionPointer handler);
+void irqSet(IRQ_MASK irq, VoidFn handler);
 /*! \fn irqClear(IRQ_MASK irq)
 	\brief remove the handler associated with the interrupt mask irq.
 	\param irq Mask associated with the interrupt.
@@ -166,7 +166,7 @@ void irqClear(IRQ_MASK irq);
 	\param handler Address of the function to use as an interrupt dispatcher
 	\note the function *must* be ARM code
 */
-void irqInitHandler(VoidFunctionPointer handler);
+void irqInitHandler(VoidFn handler);
 /*! \fn irqEnable(uint32 irq)
 	\brief Allow the given interrupt to occur.
 	\param irq The set of interrupt masks to enable.

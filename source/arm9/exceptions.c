@@ -26,7 +26,7 @@
 #include <nds/arm9/exceptions.h>
 
 //---------------------------------------------------------------------------------
-void setExceptionHandler(VoidFunctionPointer handler) {
+void setExceptionHandler(VoidFn handler) {
 //---------------------------------------------------------------------------------
 	exceptionStack = (u32)0x23EFFFC ;
 	EXCEPTION_VECTOR = enterException ;
