@@ -236,7 +236,7 @@ u16* oamAllocateGfx(OamState *oam, SpriteSize size, SpriteColorFormat colorForma
 
 void oamFreeGfx(OamState *oam, const void* gfxOffset)
 {
-	simpleFree(oam, oamGfxPtrToOffset(gfxOffset));
+	simpleFree(oam, oamGfxPtrToOffset(oam, gfxOffset));
 }
 
 int oamCountFragments(OamState *oam)

@@ -117,23 +117,9 @@ void oamClear(OamState *oam, int start, int count) {
 }
 
 //---------------------------------------------------------------------------------
-unsigned int oamGfxPtrToOffset(const void* offset) {
+unsigned int oamGfxPtrToOffset(OamState *oam, const void* offset) {
 //---------------------------------------------------------------------------------
-	unsigned int temp = (unsigned int)offset;
-
-	if(temp < (unsigned int)SPRITE_GFX_SUB)
-	{
-		temp -= (unsigned int)SPRITE_GFX;
-		temp >>= oamMain.gfxOffsetStep;
-	}
-	else
-	{
-		temp -= (unsigned int)SPRITE_GFX_SUB;
-		temp >>= oamSub.gfxOffsetStep;
-	}
-	
-
-	return temp;
+	return ((u32)offset & 0xFFFFF) >> oam->gfxOffsetStep;;
 }
 
 
@@ -160,8 +146,10 @@ void oamSet(OamState* oam,	int id,  int x, int y, int priority,
 	oam->oamMemory[id].hFlip = hflip;
 	oam->oamMemory[id].vFlip = vflip;
 	oam->oamMemory[id].isMosaic = mosaic;
+    oam->oamMemory[id].gfxIndex = oamGfxPtrToOffset(oam, gfxOffset); 
 
-	if(affineIndex >= 0 && affineIndex < 32) {
+
+    if(affineIndex >= 0 && affineIndex < 32) {
 		oam->oamMemory[id].rotationIndex = affineIndex;
 		oam->oamMemory[id].isSizeDouble = sizeDouble;
 		oam->oamMemory[id].isRotateScale = true;
@@ -171,13 +159,9 @@ void oamSet(OamState* oam,	int id,  int x, int y, int priority,
 	}
 
 	if(format != SpriteColorFormat_Bmp) {
-		oam->oamMemory[id].gfxIndex = oamGfxPtrToOffset(gfxOffset);
 		oam->oamMemory[id].colorMode = format;
 	} else {  
-		int sx = ((u32)gfxOffset >> 1) & ((1 << oam->gfxOffsetStep) - 1);
-		int sy = (((u32)gfxOffset >> 1) >> oam->gfxOffsetStep) & 0xFF;
-		oam->oamMemory[id].gfxIndex = (sx >> 3) | ((sy >> 3) << (oam->gfxOffsetStep - 3));
-		oam->oamMemory[id].blendMode = format;
+        oam->oamMemory[id].blendMode = format;
 	}
 }
 

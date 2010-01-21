@@ -449,7 +449,7 @@ int oamCountFragments(OamState *oam);
 
 void oamAllocReset(OamState *oam);
 
-unsigned int oamGfxPtrToOffset(const void* offset);
+unsigned int oamGfxPtrToOffset(OamState *oam, const void* offset);
 
 
 #ifdef __cplusplus
