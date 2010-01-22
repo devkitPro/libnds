@@ -122,17 +122,16 @@ s16 cosLerp(s16 angle){
 	
 s32 tanLutLookup(int i) {
 
-	i = (i >> ANG_BITSFRACTION) & 511;
-	
-	int lutVal = i & 127;
+	i = (i >> ANG_BITSFRACTION) & 255;
+ 	
+ 	int lutVal = i & 127;
+ 
+	if(i == 128) return (MAX_TAN);
+ 
+ 	if(i < 128) return TAN_LUT[lutVal];
 
-	if(i == 128 || i == 384) return (MAX_TAN);
+ 	return -TAN_LUT[(LUT_SIZE - lutVal)];
 
-	if(i < 128) return TAN_LUT[lutVal];
-	if(i < 256) return -TAN_LUT[(LUT_SIZE - lutVal)];
-		
-	if(i < 384) return TAN_LUT[lutVal];
-	return -TAN_LUT[(LUT_SIZE - lutVal)];
 }
 
 s32 tanLerp(s16 angle) {
