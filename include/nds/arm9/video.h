@@ -326,50 +326,59 @@ u32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d)
 */
 void vramRestoreMainBanks(u32 vramTemp);
 
+static inline
 /** \brief  Set bank A to the indicated mapping. 
 *    \param a the mapping of the bank
 */
-void vramSetBankA(VRAM_A_TYPE a);
+void vramSetBankA(VRAM_A_TYPE a) { VRAM_A_CR = VRAM_ENABLE | a; }
 
+static inline
 /** \brief  Set bank B to the indicated mapping. 
 *    \param b the mapping of the bank
 */
-void vramSetBankB(VRAM_B_TYPE b);
+void vramSetBankB(VRAM_B_TYPE b) { VRAM_B_CR = VRAM_ENABLE | b; }
 
+static inline
 /** \brief  Set bank C to the indicated mapping. 
 *    \param c the mapping of the bank
 */
-void vramSetBankC(VRAM_C_TYPE c);
+void vramSetBankC(VRAM_C_TYPE c) { VRAM_C_CR = VRAM_ENABLE | c; }
 
+static inline
 /** \brief  Set bank D to the indicated mapping. 
 *    \param d the mapping of the bank
 */
-void vramSetBankD(VRAM_D_TYPE d);
+void vramSetBankD(VRAM_D_TYPE d) { VRAM_D_CR = VRAM_ENABLE | d; }
 
+static inline
 /** \brief  Set bank E to the indicated mapping. 
 *    \param e the mapping of the bank
 */
-void vramSetBankE(VRAM_E_TYPE e);
+void vramSetBankE(VRAM_E_TYPE e) { VRAM_E_CR = VRAM_ENABLE | e; }
 
+static inline
 /** \brief  Set bank F to the indicated mapping. 
 *    \param f the mapping of the bank
 */
-void vramSetBankF(VRAM_F_TYPE f);
+void vramSetBankF(VRAM_F_TYPE f) { VRAM_F_CR = VRAM_ENABLE | f; }
 
+static inline
 /** \brief  Set bank G to the indicated mapping. 
 *    \param g the mapping of the bank
 */
-void vramSetBankG(VRAM_G_TYPE g);
+void vramSetBankG(VRAM_G_TYPE g) { VRAM_G_CR = VRAM_ENABLE | g; }
 
+static inline
 /** \brief  Set bank H to the indicated mapping. 
 *    \param h the mapping of the bank
 */
-void vramSetBankH(VRAM_H_TYPE h);
+void vramSetBankH(VRAM_H_TYPE h) { VRAM_H_CR = VRAM_ENABLE | h; }
 
+static inline
 /** \brief  Set bank I to the indicated mapping. 
 *    \param i the mapping of the bank
 */
-void vramSetBankI(VRAM_I_TYPE i);
+void vramSetBankI(VRAM_I_TYPE i) { VRAM_I_CR = VRAM_ENABLE | i; }
 
 
 // Display control registers
