@@ -1,8 +1,6 @@
 /*---------------------------------------------------------------------------------
 
-	Copyright (C) 2005
-		Michael Noland (joat)
-		Jason Rogers (dovoto)
+	Copyright (C) 2009
 		Dave Murphy (WinterMute)
 
 	This software is provided 'as-is', without any express or implied
@@ -33,10 +31,9 @@
 @---------------------------------------------------------------------------------
 swiSoftReset:
 @---------------------------------------------------------------------------------
-
+	REG_IME = 0;
 #ifdef ARM7
 	ldr	r0,=0x2FFFE34
-	ldr	r0,[r0]
 #endif
 
 #ifdef ARM9
@@ -53,8 +50,9 @@ swiSoftReset:
 	mcr	p15, 0, r0, c7, c10, 4
 
 	ldr	r0,=0x2FFFE24
-	ldr	r0,[r0]
 #endif
+
+	ldr	r0,[r0]
 	bx	r0
 
 	.pool
