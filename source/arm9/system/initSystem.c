@@ -47,7 +47,7 @@ time_t theTime;
 //---------------------------------------------------------------------------------
 // Reset the DS registers to sensible defaults
 //---------------------------------------------------------------------------------
-void initSystem(void) {
+void __attribute__((weak)) initSystem(void) {
 //---------------------------------------------------------------------------------
 	register int i;
 	//stop timers and dma
