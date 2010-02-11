@@ -39,10 +39,7 @@ distribution.
 #include <time.h>
 #include <libnds_internal.h>
 
-
 extern time_t *punixTime;
-time_t theTime;
-
 
 //---------------------------------------------------------------------------------
 // Reset the DS registers to sensible defaults
