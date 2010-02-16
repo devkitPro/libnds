@@ -34,33 +34,43 @@
 	.extern	irqTable
 	.code 32
 
-	.global	IntrMain
+	.global	IntrMain, __cpsr_mask
 @---------------------------------------------------------------------------------
 IntrMain:
 @---------------------------------------------------------------------------------
-	mov	r3, #0x4000000		@ REG_BASE
+	mov	r12, #0x4000000		@ REG_BASE
 
-	ldr	r1, [r3, #0x208]	@ r1 = IME
-	str	r3, [r3, #0x208]	@ disable IME
+	ldr	r1, [r12, #0x208]	@ r1 = IME
+	mov	r0, #0
+	str	r0, [r12, #0x208]	@ disable IME
 	mrs	r0, spsr
-	stmfd	sp!, {r0-r1,r3,lr}	@ {spsr, IME, REG_BASE, lr_irq}
+	stmfd	sp!, {r0-r1,r12,lr}	@ {spsr, IME, REG_BASE, lr_irq}
 
-	ldr	r1, [r3,#0x210]		@ REG_IE
-	ldr	r2, [r3,#0x214]		@ REG_IF
-	and	r1,r1,r2
+	add	r12, r12, #0x210
+	ldmia	r12, {r1,r2}
+	ands	r1, r1, r2
+	ldr	r0, =__irq_flags		@ defined by linker script
+	ldr	r2, =irqTable
+#ifdef ARM7
+	bne	setflags
+	
+	add	r12, r12, #8
+	ldmia	r12, {r1,r2}
+	ands	r1, r1, r2
+	ldr	r0, =__irq_flags2
+	ldr	r2, =irqTable2
 
-	ldr	r0,=__irq_flags		@ defined by linker script
+#endif
+setflags:
+	ldr	r3,[r0]
+	orr	r3,r3,r1
+	str	r3,[r0]
 
-	ldr	r2,[r0]
-	orr	r2,r2,r1
-	str	r2,[r0]
-
-	ldr	r2,=irqTable
 @---------------------------------------------------------------------------------
 findIRQ:
 @---------------------------------------------------------------------------------
 	ldr r0, [r2, #4]
-	cmp	r0,#0
+	cmp	r0, #0
 	beq	no_handler
 	ands	r0, r0, r1
 	bne	jump_intr
@@ -70,9 +80,9 @@ findIRQ:
 @---------------------------------------------------------------------------------
 no_handler:
 @---------------------------------------------------------------------------------
-	str	r1, [r3, #0x0214]	@ IF Clear
-	ldmfd   sp!, {r0-r1,r3,lr}	@ {spsr, IME, REG_BASE, lr_irq}
-	str	r1, [r3, #0x208]	@ restore REG_IME
+	str	r1, [r12, #4]	@ IF Clear
+	ldmfd   sp!, {r0-r1,r12,lr}	@ {spsr, IME, REG_BASE, lr_irq}
+	str	r1, [r12, #0x208]	@ restore REG_IME
 	mov	pc,lr
 
 @---------------------------------------------------------------------------------
@@ -87,32 +97,31 @@ jump_intr:
 got_handler:
 @---------------------------------------------------------------------------------
 
-	mrs	r2, cpsr
-	bic	r2, r2, #0xdf		@ \__
-	orr	r2, r2, #0x1f		@ /  --> Enable IRQ & FIQ. Set CPU mode to System.
-	msr	cpsr,r2
+	str	r0, [r12, #4]	@ IF Clear
 
-	str	r0, [r3, #0x0214]	@ IF Clear
+	mrs	r2, cpsr
+	mov	r3, r2
+	bic	r3, r3, #0xdf		@ \__
+	orr	r3, r3, #0x1f		@ /  --> Enable IRQ & FIQ. Set CPU mode to System.
+	msr	cpsr,r3
+
 	
-	push	{lr}
+	push	{r2,lr}
 	adr	lr, IntrRet
 	bx	r1
 
 @---------------------------------------------------------------------------------
 IntrRet:
 @---------------------------------------------------------------------------------
-	mov	r3, #0x4000000		@ REG_BASE
-	str	r3, [r3, #0x208]	@ disable IME
-	pop	{lr}
+	mov	r12, #0x4000000		@ REG_BASE
+	str	r13, [r12, #0x208]	@ disable IME
+	pop	{r2,lr}
 
-	mrs	r3, cpsr
-	bic	r3, r3, #0xdf		@ \__
-	orr	r3, r3, #0x92		@ /  --> Disable IRQ. Enable FIQ. Set CPU mode to IRQ.
-	msr	cpsr, r3
+	msr	cpsr, r2
 
-	ldmfd   sp!, {r0-r1,r3,lr}	@ {spsr, IME, REG_BASE, lr_irq}
+	ldmfd   sp!, {r0-r1,r12,lr}	@ {spsr, IME, REG_BASE, lr_irq}
 	msr	spsr, r0		@ restore spsr
-	str	r1, [r3, #0x208]	@ restore REG_IME
+	str	r1, [r12, #0x208]	@ restore REG_IME
 	mov	pc,lr
 
 	.pool

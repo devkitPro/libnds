@@ -40,6 +40,9 @@ void irqDummy(void) {}
 #endif
 
 struct IntTable irqTable[MAX_INTERRUPTS] INT_TABLE_SECTION;
+#ifdef ARM7
+struct IntTable irqTable2[MAX_INTERRUPTS] INT_TABLE_SECTION;
+#endif
 
 //---------------------------------------------------------------------------------
 void irqSet(int mask, IntFn handler) {
@@ -93,6 +96,10 @@ void irqInitHandler(IntFn handler) {
 	REG_IF = ~0;
 	REG_IE = 0;
 
+#ifdef ARM7
+	REG_IF2 = ~0;
+	REG_IE2 = 0;
+#endif
 	IRQ_HANDLER = handler;
 
 	REG_IME = 1;
