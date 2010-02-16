@@ -85,6 +85,8 @@ typedef enum IRQ_MASKS IRQ_MASK;
 */
 #define REG_IE	(*(vuint32*)0x04000210)
 
+#define REG_IE2	(*(vuint32*)0x04000218)
+
 /*! \def REG_IF
 
     \brief Interrupt Flag Register.
@@ -97,6 +99,8 @@ typedef enum IRQ_MASKS IRQ_MASK;
 */
 #define REG_IF	(*(vuint32*)0x04000214)
 
+#define REG_IF2	(*(vuint32*)0x0400021C)
+
 /*! \def REG_IME
 
     \brief Interrupt Master Enable Register.
@@ -106,6 +110,8 @@ typedef enum IRQ_MASKS IRQ_MASK;
 
 */
 #define REG_IME	(*(vuint16*)0x04000208)
+
+#define REG_IME2	(*(vuint16*)0x0400020a)
 
 /*! \enum IME_VALUE
 	\brief values allowed for REG_IME
