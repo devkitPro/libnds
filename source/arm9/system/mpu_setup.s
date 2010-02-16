@@ -49,7 +49,8 @@ __libnds_mpu_setup:
 @ turn the power on for M3
 @---------------------------------------------------------------------------------
 	ldr     r1, =0x8203
-	add	r0,r0,#0x304
+	mov	r0, #0x04000000
+	add	r0, r0, #0x304
 	strh    r1, [r0]
 
 	ldr	r1, =0x00002078			@ disable TCM and protection unit
@@ -118,17 +119,6 @@ __libnds_mpu_setup:
 	ldr	r0,[r0]
 	ands	r0,r0,#0x8000
 	bne	dsi_mode
-
-	@ set sensible stacks to allow bios call
-	mov	r0, #0x13		@ Switch to SVC Mode
-	msr	cpsr, r0
-	mov	r1,#0x03000000
-	sub	r1,r1,#0x1000
-	mov	sp,r1
-	mov	r0, #0x1F		@ Switch to System Mode
-	msr	cpsr, r0
-	sub	r1,r1,#0x100
-	mov	sp,r1
 	
 	swi	0xf0000
 
@@ -178,7 +168,7 @@ setregions:
 	@-------------------------------------------------------------------------
 	@ Write buffer enable
 	@-------------------------------------------------------------------------
-	ldr	r0,=0b00000010
+	ldr	r0,=0b10000000
 	mcr	p15, 0, r0, c3, c0, 0
 
 	@-------------------------------------------------------------------------
