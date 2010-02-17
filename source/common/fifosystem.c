@@ -1,6 +1,7 @@
 #include <nds/fifocommon.h>
 #include <nds/ipc.h>
 #include <nds/interrupts.h>
+#include <nds/bios.h>
 
 #include <string.h>
 
@@ -439,6 +440,13 @@ static void fifoInternalRecvInterrupt() {
 	while( !(REG_IPC_FIFO_CR & IPC_FIFO_RECV_EMPTY) ) {
 		data = REG_IPC_FIFO_RX;
 		
+		if (data == 0x4000c) {
+			REG_IPC_SYNC = 0x100;
+			while((REG_IPC_SYNC&0x0f) != 1);
+			REG_IPC_SYNC = 0;
+			swiSoftReset();
+		}
+		
 		REG_IME=0;
 		block=fifo_allocBlock();
 		if (block != FIFO_BUFFER_TERMINATE ) {
@@ -461,7 +469,7 @@ static void fifoInternalRecvInterrupt() {
 		
 			block = fifo_receive_queue.head;
 			data = FIFO_BUFFER_DATA(block);
-		
+
 			u32 channel = FIFO_UNPACK_CHANNEL(data);
 
 			if (FIFO_IS_ADDRESS(data)) {
