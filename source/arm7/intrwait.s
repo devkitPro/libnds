@@ -34,10 +34,6 @@ testirq:
 	ands	r0, r1,	r3
 	eorne	r3, r3,	r0
 	strne	r3, [r12,#-8]
-/*	ldr	r3, [r12,#-0x40]
-	ands	r0, r2,	r3
-	eorne	r3, r3,	r0
-	strne	r3, [r12,#-0x40]
-*/	mov	r0, #1
+	mov	r0, #1
 	strb	r0, [r12,#0x208]
 	bx	lr
