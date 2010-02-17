@@ -2,8 +2,8 @@
 
 initSystem.c -- Code for initialising the DS
 
-Copyright (C) 2007
-Dave Murphy (WinterMute)
+Copyright (C) 2007 - 2010
+	Dave Murphy (WinterMute)
 
 This software is provided 'as-is', without any express or implied
 warranty.  In no event will the authors be held liable for any
@@ -39,6 +39,8 @@ distribution.
 #include <time.h>
 #include <libnds_internal.h>
 
+#include <sys/iosupport.h>
+void __libnds_exit(int rc);
 extern time_t *punixTime;
 
 //---------------------------------------------------------------------------------
@@ -71,12 +73,16 @@ void __attribute__((weak)) initSystem(void) {
 	VRAM_I_CR = 0;
 
 	irqInit();
-	irqEnable(IRQ_VBLANK);
 	fifoInit();
 
 	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
 	fifoSetDatamsgHandler(FIFO_SYSTEM, systemMsgHandler, 0);
 
 	__transferRegion()->buttons = 0xffff;
+
 	punixTime = (time_t*)memUncached((void *)&__transferRegion()->unixTime);
+
+	__syscalls.exit = __libnds_exit;
+	irqEnable(IRQ_VBLANK);
+
 }

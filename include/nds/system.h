@@ -316,6 +316,14 @@ struct __argv {
 //!	Default location for the libnds argv structure.
 #define __system_argv		((struct __argv *)0x02FFFE70)
 
+#define BOOTSIG	0x62757473746F6F62ULL
+
+struct __bootstub {
+	u64	bootsig;
+	VoidFn arm9reboot;
+	VoidFn arm7reboot;
+	u32 bootsize;
+};
 
 typedef	struct {
 	u8 year;	// add 2000 to get 4 digit year
