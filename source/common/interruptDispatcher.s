@@ -28,7 +28,7 @@
 #endif
 
 #ifdef ARM9
-	.section	.itcm,"ax",%progbits
+	.section .itcm,"ax",%progbits
 #endif
 
 	.extern	irqTable
@@ -41,6 +41,9 @@ IntrMain:
 	mov	r12, #0x4000000		@ REG_BASE
 
 	ldr	r1, [r12, #0x208]	@ r1 = IME
+	cmp	r1, #0
+	bxeq	lr
+	
 	mov	r0, #0
 	str	r0, [r12, #0x208]	@ disable IME
 	mrs	r0, spsr
@@ -49,7 +52,7 @@ IntrMain:
 	add	r12, r12, #0x210
 	ldmia	r12, {r1,r2}
 	ands	r1, r1, r2
-	ldr	r0, =__irq_flags		@ defined by linker script
+	ldr	r0, =__irq_flags	@ defined by linker script
 	ldr	r2, =irqTable
 #ifdef ARM7
 	bne	setflags
@@ -114,7 +117,7 @@ got_handler:
 IntrRet:
 @---------------------------------------------------------------------------------
 	mov	r12, #0x4000000		@ REG_BASE
-	str	r13, [r12, #0x208]	@ disable IME
+	str	r12, [r12, #0x208]	@ disable IME
 	pop	{r2,lr}
 
 	msr	cpsr, r2
