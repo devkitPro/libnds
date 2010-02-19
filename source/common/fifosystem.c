@@ -445,15 +445,16 @@ static void fifoInternalRecvInterrupt() {
 			while((REG_IPC_SYNC&0x0f) != 1);
 			REG_IPC_SYNC = 0;
 			swiSoftReset();
-		}
+		} else {
 		
-		REG_IME=0;
-		block=fifo_allocBlock();
-		if (block != FIFO_BUFFER_TERMINATE ) {
-			FIFO_BUFFER_DATA(block)=data;
-			fifo_queueBlock(&fifo_receive_queue,block,block);
+			REG_IME=0;
+			block=fifo_allocBlock();
+			if (block != FIFO_BUFFER_TERMINATE ) {
+				FIFO_BUFFER_DATA(block)=data;
+				fifo_queueBlock(&fifo_receive_queue,block,block);
+			}
+			REG_IME=1;
 		}
-		REG_IME=1;
 	}
 
 	REG_IME=0;
