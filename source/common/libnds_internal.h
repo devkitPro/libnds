@@ -29,6 +29,7 @@
 //---------------------------------------------------------------------------------
 #include <time.h>
 #include <nds/arm9/input.h>
+#include <nds/system.h>
 
 //---------------------------------------------------------------------------------
 typedef struct __TransferRegion {
@@ -38,7 +39,7 @@ typedef struct __TransferRegion {
 	vs16 touchZ1,  touchZ2;		// TSC x-panel measurements
 	vu16 buttons;				// X, Y, /PENIRQ buttons
 	time_t	unixTime;
-
+	struct __bootstub *bootcode;
 } __TransferRegion, * __pTransferRegion;
 
 #define transfer (*(__TransferRegion volatile *)(0x02FFF000))
