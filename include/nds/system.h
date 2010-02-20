@@ -284,15 +284,6 @@ typedef struct tPERSONAL_DATA {
   u32	RESERVED4;
 } PACKED PERSONAL_DATA ;
 
-//!	Key input register.
-/*!	On the ARM9, the hinge "button", the touch status, and the
-	X and Y buttons cannot be accessed directly.
-*/
-#define	REG_KEYINPUT	(*(vuint16*)0x04000130)
-
-//!	Key input control register.
-#define	REG_KEYCNT		(*(vuint16*)0x04000132)
-
 //!	Default location for the user's personal data (see %PERSONAL_DATA).
 #define PersonalData ((PERSONAL_DATA*)0x2FFFC80)
 
