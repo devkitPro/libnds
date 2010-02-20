@@ -60,8 +60,8 @@ IntrMain:
 	add	r12, r12, #8
 	ldmia	r12, {r1,r2}
 	ands	r1, r1, r2
-	ldr	r0, =__irq_flags2
-	ldr	r2, =irqTable2
+	ldr	r0, =__irq_flagsaux
+	ldr	r2, =irqTableAUX
 
 #endif
 setflags:
