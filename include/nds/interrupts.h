@@ -61,13 +61,17 @@ enum IRQ_MASKS {
 	IRQ_IPC_SYNC		=	BIT(16),	/*!< IPC sync interrupt mask */
 	IRQ_FIFO_EMPTY		=	BIT(17),	/*!< Send FIFO empty interrupt mask */
 	IRQ_FIFO_NOT_EMPTY	=	BIT(18),	/*!< Receive FIFO not empty interrupt mask */
-	IRQ_CARD			=	BIT(19),	/*!< interrupt mask */
+	IRQ_CARD			=	BIT(19),	/*!< interrupt mask DS Card Slot*/
 	IRQ_CARD_LINE		=	BIT(20),	/*!< interrupt mask */
 	IRQ_GEOMETRY_FIFO	=	BIT(21),	/*!< geometry FIFO interrupt mask */
-	IRQ_LID				=	BIT(22),	/*!< interrupt mask */
+	IRQ_LID				=	BIT(22),	/*!< interrupt mask DS hinge*/
 	IRQ_SPI				=	BIT(23),	/*!< SPI interrupt mask */
 	IRQ_WIFI			=	BIT(24),	/*!< WIFI interrupt mask (ARM7)*/
 	IRQ_ALL				=	(~0)
+};
+
+enum IRQ_MASKSAUX {
+	IRQ_POWER	=	BIT(6)	/*!< Power Button interrupt mask (DSi ARM7)*/
 };
 
 #define IRQ_TIMER(n) (1 << ((n) + 3))
@@ -85,7 +89,7 @@ typedef enum IRQ_MASKS IRQ_MASK;
 */
 #define REG_IE	(*(vuint32*)0x04000210)
 
-#define REG_IE2	(*(vuint32*)0x04000218)
+#define REG_AUXIE	(*(vuint32*)0x04000218)
 
 /*! \def REG_IF
 
@@ -99,7 +103,7 @@ typedef enum IRQ_MASKS IRQ_MASK;
 */
 #define REG_IF	(*(vuint32*)0x04000214)
 
-#define REG_IF2	(*(vuint32*)0x0400021C)
+#define REG_AUXIF	(*(vuint32*)0x0400021C)
 
 /*! \def REG_IME
 
@@ -109,9 +113,7 @@ typedef enum IRQ_MASKS IRQ_MASK;
 	interrupts will occur if not masked out in REG_IE.
 
 */
-#define REG_IME	(*(vuint16*)0x04000208)
-
-#define REG_IME2	(*(vuint16*)0x0400020a)
+#define REG_IME	(*(vuint32*)0x04000208)
 
 /*! \enum IME_VALUE
 	\brief values allowed for REG_IME
@@ -129,7 +131,10 @@ extern "C" {
 
 extern VoidFn	__irq_vector[];
 extern	vuint32	__irq_flags[];
-#define VBLANK_INTR_WAIT_FLAGS  *(__irq_flags)
+extern	vuint32	__irq_flagsaux[];
+
+#define INTR_WAIT_FLAGS  *(__irq_flags)
+#define INTR_WAIT_FLAGSAUX  *(__irq_flagsaux)
 #define IRQ_HANDLER             *(__irq_vector)
 
 struct IntTable{IntFn handler; u32 mask;};
@@ -143,7 +148,7 @@ struct IntTable{IntFn handler; u32 mask;};
 	 
 */
 void irqInit();
-/*! \fn irqSet(IRQ_MASK irq, VoidFunctionPointer handler)
+/*! \fn irqSet(u32 irq, VoidFunctionPointer handler)
 	\brief Add a handler for the given interrupt mask.
 
 	Specify the handler to use for the given interrupt. This only works with
@@ -157,12 +162,15 @@ void irqInit();
 
 	\warning Only one IRQ_MASK can be specified with this function.
 */
-void irqSet(IRQ_MASK irq, VoidFn handler);
-/*! \fn irqClear(IRQ_MASK irq)
+void irqSet(u32 irq, VoidFn handler);
+void irqSetAUX(u32 irq, VoidFn handler);
+
+/*! \fn irqClear(u32 irq)
 	\brief remove the handler associated with the interrupt mask irq.
 	\param irq Mask associated with the interrupt.
 */
-void irqClear(IRQ_MASK irq);
+void irqClear(u32 irq);
+void irqClearAUX(u32 irq);
 /*! \fn irqInitHandler(VoidFunctionPointer handler)
 	\brief Install a user interrupt dispatcher.
 
@@ -178,15 +186,17 @@ void irqInitHandler(VoidFn handler);
 	\param irq The set of interrupt masks to enable.
 	\note Specify multiple interrupts to enable by ORing several IRQ_MASKS.
 */
-void irqEnable(uint32 irq);
+void irqEnable(u32 irq);
+void irqEnableAUX(u32 irq);
 /*! \fn irqDisable(uint32 irq)
 	\brief Prevent the given interrupt from occuring.
 	\param irq The set of interrupt masks to disable.
 	\note Specify multiple interrupts to disable by ORing several IRQ_MASKS.
 */
-void irqDisable(uint32 irq);
+void irqDisable(u32 irq);
+void irqDisableAUX(u32 irq);
 
-/*! \fn swiIntrWait(int waitForSet, uint32 flags)
+/*! \fn swiIntrWait(u32 waitForSet, uint32 flags)
 
 	\brief wait for interrupt(s) to occur
 
@@ -198,7 +208,7 @@ void irqDisable(uint32 irq);
 
 */
 
-void swiIntrWait(int waitForSet, uint32 flags);
+void swiIntrWait(u32 waitForSet, uint32 flags);
 
 /*! \fn  swiWaitForVBlank()
 	\brief Wait for vblank interrupt

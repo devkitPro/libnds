@@ -41,11 +41,11 @@ void irqDummy(void) {}
 
 struct IntTable irqTable[MAX_INTERRUPTS] INT_TABLE_SECTION;
 #ifdef ARM7
-struct IntTable irqTable2[MAX_INTERRUPTS] INT_TABLE_SECTION;
+struct IntTable irqTableAUX[MAX_INTERRUPTS] INT_TABLE_SECTION;
 #endif
 
 //---------------------------------------------------------------------------------
-void irqSet(int mask, IntFn handler) {
+static void __irqSet(u32 mask, IntFn handler, struct IntTable irqTable[] ) {
 //---------------------------------------------------------------------------------
 	if (!mask) return;
 
@@ -58,7 +58,12 @@ void irqSet(int mask, IntFn handler) {
 
 	irqTable[i].handler	= handler;
 	irqTable[i].mask	= mask;
+}
 
+//---------------------------------------------------------------------------------
+void irqSet(u32 mask, IntFn handler) {
+//---------------------------------------------------------------------------------
+	__irqSet(mask,handler,irqTable);
 	if(mask & IRQ_VBLANK)
 		REG_DISPSTAT |= DISP_VBLANK_IRQ ;
 	if(mask & IRQ_HBLANK)
@@ -97,8 +102,8 @@ void irqInitHandler(IntFn handler) {
 	REG_IE = 0;
 
 #ifdef ARM7
-	REG_IF2 = ~0;
-	REG_IE2 = 0;
+	REG_AUXIF = ~0;
+	REG_AUXIE = 0;
 #endif
 	IRQ_HANDLER = handler;
 
@@ -136,7 +141,7 @@ void irqDisable(uint32 irq) {
 }
 
 //---------------------------------------------------------------------------------
-void irqClear(int mask) {
+static void __irqClear(u32 mask, struct IntTable irqTable[]) {
 //---------------------------------------------------------------------------------
 	int i = 0;
 
@@ -145,7 +150,39 @@ void irqClear(int mask) {
 
 	if ( i == MAX_INTERRUPTS ) return;
 
-	irqDisable( mask);
-
 	irqTable[i].handler	= irqDummy;
 }
+
+//---------------------------------------------------------------------------------
+void irqClear(u32 mask) {
+//---------------------------------------------------------------------------------
+	__irqClear(mask,irqTable);
+	irqDisable( mask);
+}
+
+#ifdef ARM7
+//---------------------------------------------------------------------------------
+void irqSetAUX(u32 mask, IntFn handler) {
+//---------------------------------------------------------------------------------
+	__irqSet(mask,handler,irqTableAUX);
+}
+
+//---------------------------------------------------------------------------------
+void irqClearAUX(u32 mask) {
+//---------------------------------------------------------------------------------
+	__irqClear(mask,irqTableAUX);
+	irqDisable( mask);
+}
+
+//---------------------------------------------------------------------------------
+void irqDisableAUX(uint32 irq) {
+//---------------------------------------------------------------------------------
+	REG_AUXIE &= ~irq;
+}
+
+//---------------------------------------------------------------------------------
+void irqEnableAUX(uint32 irq) {
+//---------------------------------------------------------------------------------
+	REG_AUXIE |= irq;
+}
+#endif
