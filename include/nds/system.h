@@ -330,6 +330,11 @@ typedef	struct {
 #ifdef ARM9
 void *memCached(void *address);
 void *memUncached(void *address);
+void resetARM7(u32 address);
+#endif
+
+#ifdef ARM7
+void resetARM9(u32 address);
 #endif
 
 #endif
