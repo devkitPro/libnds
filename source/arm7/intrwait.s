@@ -18,10 +18,7 @@ swiIntrWait:
 	blne	testirq
 
 wait_irq:
-	mov	lr, #0x80
-	strb	lr, [r12,#0x301]
-	nop
-	nop
+	swi	#(6<<16)
 	bl	testirq
 	beq	wait_irq
 	ldmfd	sp!, {lr}
