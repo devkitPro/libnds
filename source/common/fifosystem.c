@@ -440,21 +440,16 @@ static void fifoInternalRecvInterrupt() {
 	while( !(REG_IPC_FIFO_CR & IPC_FIFO_RECV_EMPTY) ) {
 		data = REG_IPC_FIFO_RX;
 		
-		if (data == 0x4000c) {
-			REG_IPC_SYNC = 0x100;
-			while((REG_IPC_SYNC&0x0f) != 1);
-			REG_IPC_SYNC = 0;
-			swiSoftReset();
-		} else {
 		
-			REG_IME=0;
-			block=fifo_allocBlock();
-			if (block != FIFO_BUFFER_TERMINATE ) {
-				FIFO_BUFFER_DATA(block)=data;
-				fifo_queueBlock(&fifo_receive_queue,block,block);
-			}
-			REG_IME=1;
+		REG_IME=0;
+		block=fifo_allocBlock();
+		if (block != FIFO_BUFFER_TERMINATE ) {
+			FIFO_BUFFER_DATA(block)=data;
+			fifo_queueBlock(&fifo_receive_queue,block,block);
 		}
+
+		REG_IME=1;
+
 	}
 
 	REG_IME=0;
@@ -473,7 +468,17 @@ static void fifoInternalRecvInterrupt() {
 
 			u32 channel = FIFO_UNPACK_CHANNEL(data);
 
-			if (FIFO_IS_ADDRESS(data)) {
+			if ( (data & (FIFO_ADDRESSBIT | FIFO_IMMEDIATEBIT)) == (FIFO_ADDRESSBIT | FIFO_IMMEDIATEBIT) ) {
+
+				asm __volatile__ ( "mov r11,r11\n");
+				if ((data & FIFO_ADDRESSDATA_MASK) == 0x4000c ) {
+					REG_IPC_SYNC = 0x100;
+					while((REG_IPC_SYNC&0x0f) != 1);
+					REG_IPC_SYNC = 0;
+					swiSoftReset();
+				}
+				
+			} else if (FIFO_IS_ADDRESS(data)) {
 
 				volatile void * address = FIFO_UNPACK_ADDRESS(data);
 

@@ -39,7 +39,7 @@ void resetARM7(u32 address) {
 
 #endif
 
-	REG_IPC_FIFO_TX = 0x4000c;
+	REG_IPC_FIFO_TX = 0x0c04000c;
 	while((REG_IPC_SYNC & 0x0f) != 1);
 	REG_IPC_SYNC = 0x100;
 	while((REG_IPC_SYNC & 0x0f) != 0);
