@@ -470,7 +470,6 @@ static void fifoInternalRecvInterrupt() {
 
 			if ( (data & (FIFO_ADDRESSBIT | FIFO_IMMEDIATEBIT)) == (FIFO_ADDRESSBIT | FIFO_IMMEDIATEBIT) ) {
 
-				asm __volatile__ ( "mov r11,r11\n");
 				if ((data & FIFO_ADDRESSDATA_MASK) == 0x4000c ) {
 					REG_IPC_SYNC = 0x100;
 					while((REG_IPC_SYNC&0x0f) != 1);
