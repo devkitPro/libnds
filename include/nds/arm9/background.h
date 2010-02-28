@@ -958,7 +958,7 @@ static inline
 */
 void bgScroll(int id, int dx, int dy)
 {	
-	bgSetScrollf(id, dx << 8, dy << 8);
+	bgScrollf(id, dx << 8, dy << 8);
 }
 
 static inline 
