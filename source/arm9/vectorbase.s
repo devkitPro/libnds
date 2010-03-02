@@ -30,6 +30,7 @@
 	ldr	r15,vec_swi
 	ldr	r15,vec_prefetch_abort
 	ldr	r15,vec_data_abort
+dummy:	b	dummy
 	ldr	r15,vec_irq
 	ldr	r15,vec_fiq
 
@@ -45,9 +46,9 @@ vec_prefetch_abort:
 vec_data_abort:
 	.word	0xFFFF0010
 vec_irq:
-	.word	0xFFFF0014
-vec_fiq:
 	.word	0xFFFF0018
+vec_fiq:
+	.word	0xFFFF001C
 
 
 @---------------------------------------------------------------------------------
