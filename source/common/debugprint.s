@@ -66,3 +66,11 @@ buffer:
  
 //---------------------------------------------------------------------------------
         .pool
+
+        .arm
+        .align
+		.global ideasMessage
+
+ideasMessage:
+		swi 0xfcfcfc
+		bx lr

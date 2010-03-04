@@ -215,6 +215,16 @@ ssize_t nocash_write(struct _reent *r, int fd, const char *ptr, size_t len) {
 
 
 //---------------------------------------------------------------------------------
+ssize_t ideas_write(struct _reent *r, int fd, const char *ptr, size_t len){
+//---------------------------------------------------------------------------------
+	if(!ptr || len <= 0) return -1;
+
+	ideasMessage(ptr);
+	
+	return len;
+}
+
+//---------------------------------------------------------------------------------
 ssize_t con_write(struct _reent *r,int fd,const char *ptr, size_t len) {
 //---------------------------------------------------------------------------------
 
@@ -353,7 +363,7 @@ static const devoptab_t dotab_stdout = {
 };
 
 
-static const devoptab_t dotab_stderr = {
+static const devoptab_t dotab_nocash = {
 	"nocash",
 	0,
 	NULL,
@@ -364,6 +374,26 @@ static const devoptab_t dotab_stderr = {
 	NULL
 };
 
+static const devoptab_t dotab_null = {
+	"null",
+	0,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL,
+	NULL
+};
+static const devoptab_t dotab_ideas = {
+	"ideas",
+	0,
+	NULL,
+	NULL,
+	ideas_write,
+	NULL,
+	NULL,
+	NULL
+};
 //---------------------------------------------------------------------------------
 void consoleLoadFont(PrintConsole* console) {
 //---------------------------------------------------------------------------------
@@ -540,16 +570,26 @@ void consoleSetFont(PrintConsole* console, ConsoleFont* font){
 void consoleDebugInit(DebugDevice device){
 //---------------------------------------------------------------------------------
 
-	if(device & DebugDevice_NOCASH)
+	switch(device)
 	{
-		devoptab_list[STD_ERR] = &dotab_stderr;
+	case DebugDevice_NOCASH:
+		devoptab_list[STD_ERR] = &dotab_nocash;
 		setvbuf(stderr, NULL , _IONBF, 0);
-	}
-
-	if(device & DebugDevice_CONSOLE)
-	{
+		return;
+	case DebugDevice_CONSOLE:
 		devoptab_list[STD_ERR] = &dotab_stdout;
 		setvbuf(stderr, NULL , _IONBF, 0);
+		return;
+	case DebugDevice_IDEAS:
+		devoptab_list[STD_ERR] = &dotab_ideas;
+		setvbuf(stderr, NULL , _IONBF, 0);
+		return;
+	case DebugDevice_NULL:
+		devoptab_list[STD_ERR] = &dotab_null;
+		setvbuf(stderr, NULL , _IONBF, 0);
+		return;
+
+
 	}
 }
 

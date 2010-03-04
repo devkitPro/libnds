@@ -181,8 +181,10 @@ typedef struct PrintConsole
  */
 typedef enum 
 {
-	DebugDevice_NOCASH = 0x1, /*!< Prints debug statements to no$gba debug window >*/
-	DebugDevice_CONSOLE = 0x02 /*!< Prints debug statements to DS console window >*/
+	DebugDevice_NULL = 0x0,  /*!< swallows prints to stderr >*/
+	DebugDevice_NOCASH = 0x1, /*!< Directs stderr debug statements to no$gba debug window >*/
+	DebugDevice_CONSOLE = 0x02, /*!< Directs stderr debug statements to DS console window >*/
+	DebugDevice_IDEAS = 0x3 /*!< Directs stderr debug statements to iDeaS or Desmume console window >*/
 }DebugDevice;
 
 /*! \fn void consoleSetFont(PrintConsole* console, ConsoleFont* font)
