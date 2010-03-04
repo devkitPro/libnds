@@ -286,12 +286,13 @@ typedef struct OamState
 	s16 firstFree;/**< pointer to the first free block of tiles */
 	AllocHeader *allocBuffer; /**< allocation buffer for graphics allocation */
 	s16 allocBufferSize; /**< current size of the allocation buffer */
-	SpriteMapping spriteMapping;
 	union
    {
        SpriteEntry *oamMemory; /**< pointer to shadow oam memory */
 	   SpriteRotation *oamRotationMemory; /**< pointer to shadow oam memory for rotation */
    };
+   SpriteMapping spriteMapping;
+
 }OamState;
 
 #ifdef __cplusplus
