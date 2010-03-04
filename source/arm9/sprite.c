@@ -17,6 +17,7 @@ OamState oamMain = {
 	0, 
 	NULL, 
 	32, 
+	SpriteMapping_1D_128,
 	{OamMemory}
 };
 
@@ -25,6 +26,7 @@ OamState oamSub = {
 	0, 
 	NULL, 
 	32, 
+	SpriteMapping_1D_128,
 	{OamMemorySub}
 };
 
@@ -35,6 +37,8 @@ void oamInit(OamState *oam, SpriteMapping mapping, bool extPalette) {
 	int extPaletteFlag = extPalette ? DISPLAY_SPR_EXT_PALETTE : 0;
 
 	oam->gfxOffsetStep = (mapping & 3) + 5;
+
+	oam->spriteMapping = mapping;
 
 	dmaFillWords(0, oam->oamMemory, sizeof(OamMemory));
 
@@ -119,7 +123,32 @@ void oamClear(OamState *oam, int start, int count) {
 //---------------------------------------------------------------------------------
 unsigned int oamGfxPtrToOffset(OamState *oam, const void* offset) {
 //---------------------------------------------------------------------------------
-	return ((u32)offset & 0xFFFFF) >> oam->gfxOffsetStep;;
+	if(oam->spriteMapping & DISPLAY_SPR_1D)
+	{
+		return ((u32)offset & 0xFFFFF) >> oam->gfxOffsetStep;;
+	}
+	else
+	{
+		u32 size = (oam->spriteMapping & DISPLAY_SPR_2D_BMP_256);
+		
+		u32 toffset = (((u32)offset) & 0xFFFFF) >> 1;
+
+		if (size == DISPLAY_SPR_2D_BMP_256)
+		{
+			u32 x = (toffset & 0xFF);
+			u32 y = (toffset >> (8 + 3));
+
+			return (x >> 3) | (y << 5);
+		}
+		else
+		{
+			u32 x = (toffset & 0x7F);
+			u32 y = (toffset >> (7 + 3)) ;
+
+			return (x >> 3)| (y << 4);
+		}
+	
+	}
 }
 
 
