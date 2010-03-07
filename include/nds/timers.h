@@ -262,7 +262,7 @@ static inline void timerStop(int channel){TIMER_CR(channel) &= ~TIMER_ENABLE;}
 */
 void cpuStartTiming(u32 timer);
 
-/*! \fn void cpuEndTiming();
+/*! \fn u32 cpuEndTiming();
 	\brief ends cpu Timing
 	\return The number of ticks which have elapsed since cpuStartTiming
 */
