@@ -70,6 +70,10 @@ enum IRQ_MASKS {
 	IRQ_ALL				=	(~0)
 };
 
+/*! \enum IRQ_MASKSAUX
+	\brief values allowed for REG_AUXIE and REG_AUXIF
+
+*/
 enum IRQ_MASKSAUX {
 	IRQ_POWER	=	BIT(6)	/*!< Power Button interrupt mask (DSi ARM7)*/
 };
@@ -148,7 +152,7 @@ struct IntTable{IntFn handler; u32 mask;};
 	 
 */
 void irqInit();
-/*! \fn irqSet(u32 irq, VoidFunctionPointer handler)
+/*! \fn irqSet(u32 irq, VoidFn handler)
 	\brief Add a handler for the given interrupt mask.
 
 	Specify the handler to use for the given interrupt. This only works with
@@ -171,7 +175,7 @@ void irqSetAUX(u32 irq, VoidFn handler);
 */
 void irqClear(u32 irq);
 void irqClearAUX(u32 irq);
-/*! \fn irqInitHandler(VoidFunctionPointer handler)
+/*! \fn irqInitHandler(VoidFn handler)
 	\brief Install a user interrupt dispatcher.
 
 	This function installs the main interrupt function, all interrupts are serviced through this routine. For most
