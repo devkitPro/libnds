@@ -222,14 +222,16 @@ void powerOff(PM_Bits bits) {
 	REG_POWERCNT &= ~bits;
 }
 
+void readUserSettings();
+
+#endif /* ARM7 */
+
+// Common functions
+
 static inline
 void systemShutDown() {
 	powerOn(PM_SYSTEM_PWR);
 }
-
-void readUserSettings();
-
-#endif /* ARM7 */
 
 //!	User's DS settings.
 /*!	\struct tPERSONAL_DATA
