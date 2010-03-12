@@ -15,6 +15,8 @@ void __libnds_exit(int rc) {
 #ifdef ARM7
 		bootcode->arm7reboot();
 #endif
+	} else {
+		systemShutDown();
 	}
 	
 	while(1);
