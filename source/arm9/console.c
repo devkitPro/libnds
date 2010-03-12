@@ -215,16 +215,6 @@ ssize_t nocash_write(struct _reent *r, int fd, const char *ptr, size_t len) {
 
 
 //---------------------------------------------------------------------------------
-ssize_t ideas_write(struct _reent *r, int fd, const char *ptr, size_t len){
-//---------------------------------------------------------------------------------
-	if(!ptr || len <= 0) return -1;
-
-	ideasMessage(ptr);
-	
-	return len;
-}
-
-//---------------------------------------------------------------------------------
 ssize_t con_write(struct _reent *r,int fd,const char *ptr, size_t len) {
 //---------------------------------------------------------------------------------
 
@@ -384,16 +374,7 @@ static const devoptab_t dotab_null = {
 	NULL,
 	NULL
 };
-static const devoptab_t dotab_ideas = {
-	"ideas",
-	0,
-	NULL,
-	NULL,
-	ideas_write,
-	NULL,
-	NULL,
-	NULL
-};
+
 //---------------------------------------------------------------------------------
 void consoleLoadFont(PrintConsole* console) {
 //---------------------------------------------------------------------------------
@@ -574,23 +555,16 @@ void consoleDebugInit(DebugDevice device){
 	{
 	case DebugDevice_NOCASH:
 		devoptab_list[STD_ERR] = &dotab_nocash;
-		setvbuf(stderr, NULL , _IONBF, 0);
-		return;
+		break;
 	case DebugDevice_CONSOLE:
 		devoptab_list[STD_ERR] = &dotab_stdout;
-		setvbuf(stderr, NULL , _IONBF, 0);
-		return;
-	case DebugDevice_IDEAS:
-		devoptab_list[STD_ERR] = &dotab_ideas;
-		setvbuf(stderr, NULL , _IONBF, 0);
-		return;
+		break;
 	case DebugDevice_NULL:
 		devoptab_list[STD_ERR] = &dotab_null;
-		setvbuf(stderr, NULL , _IONBF, 0);
-		return;
-
-
+		break;
 	}
+	setvbuf(stderr, NULL , _IONBF, 0);
+
 }
 
 //---------------------------------------------------------------------------------
