@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------------
 
-	Copyright (C) 2008
+	Copyright (C) 2008 - 2010
 		Mukunda Johnson (eKid)
 		Jason Rogers (dovoto)
 		Dave Murphy (WinterMute)
@@ -66,11 +66,3 @@ buffer:
  
 //---------------------------------------------------------------------------------
         .pool
-
-        .arm
-        .align
-		.global ideasMessage
-
-ideasMessage:
-		swi 0xfcfcfc
-		bx lr

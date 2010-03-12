@@ -42,7 +42,6 @@ On the ARM 9 this functionality is best accessed via the console studio integrat
 \param message The message to send
 */
 void nocashMessage(const char *message);
-void ideasMessage(const char *message);
 
 #endif // NDS_DEBUG_INCLUDE
 
