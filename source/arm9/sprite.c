@@ -1,7 +1,7 @@
 #include <nds/arm9/sprite.h>
 
-#include <nds/arm9/input.h>
-#include <nds/arm9/console.h>
+//#include <nds/arm9/input.h>
+//#include <nds/arm9/console.h>
 #include <nds/arm9/trig_lut.h>
 #include <nds/arm9/cache.h>
 #include <nds/dma.h>
@@ -17,8 +17,8 @@ OamState oamMain = {
 	0, 
 	NULL, 
 	32, 
-	SpriteMapping_1D_128,
-	{OamMemory}
+	{OamMemory},
+	SpriteMapping_1D_128
 };
 
 OamState oamSub = {
@@ -26,8 +26,8 @@ OamState oamSub = {
 	0, 
 	NULL, 
 	32, 
-	SpriteMapping_1D_128,
-	{OamMemorySub}
+	{OamMemorySub},
+	SpriteMapping_1D_128
 };
 
 //---------------------------------------------------------------------------------
