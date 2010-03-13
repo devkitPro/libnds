@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: gbfs.h,v 1.4 2007-10-20 20:43:23 wntrmute Exp $
 
 	access object in a GBFS file
 
@@ -37,7 +36,7 @@ Before you #include "gbfs.h", you should define the following types:
   typedef (unsigned 32-bit integer) u32;
 Your system header should do this for you.
 */
-
+#warning gbfs is deprecated for nds
 #ifndef _INCLUDE_GBFS_H_
 #define _INCLUDE_GBFS_H_
 
