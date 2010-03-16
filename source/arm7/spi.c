@@ -1,7 +1,8 @@
 /*---------------------------------------------------------------------------------
 
-  Copyright (C) 2005
+  Copyright (C) 2005 - 2010
     Michael Noland (joat)
+	Dave Murphy (WinterMute)
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any
