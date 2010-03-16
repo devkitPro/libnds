@@ -141,6 +141,12 @@ static inline void lcdMainOnTop(void) { REG_POWERCNT |= POWER_SWAP_LCDS; }
 //!	Forces the main core to display on the bottom.
 static inline void lcdMainOnBottom(void) { REG_POWERCNT &= ~POWER_SWAP_LCDS; }
 
+//! Powers down the DS
+static inline
+void systemShutDown() {
+	powerOn(PM_SYSTEM_PWR);
+}
+
 //!	Set the arm9 vector base
 /*!	Arm9 only
 	\param highVector high vector
@@ -213,7 +219,7 @@ int readPowerManagement(int reg) {
 }
 
 static inline
-void powerOn(PM_Bits bits) {
+void powerOn(int bits) {
 	REG_POWERCNT |= bits;
 }
 
@@ -223,15 +229,12 @@ void powerOff(PM_Bits bits) {
 }
 
 void readUserSettings();
+void systemShutDown();
 
 #endif /* ARM7 */
 
 // Common functions
 
-static inline
-void systemShutDown() {
-	powerOn(PM_SYSTEM_PWR);
-}
 
 //!	User's DS settings.
 /*!	\struct tPERSONAL_DATA
