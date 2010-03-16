@@ -176,31 +176,26 @@ extern sysVectors SystemVectors;
 	the ARM7.  Trying to boot up these hardware devices via
 	the ARM9 would lead to unexpected results.
 */
-typedef enum 
-{
-	POWER_SOUND = BIT(0),	//!<	Controls the power for the sound controller.
+typedef enum {
+	POWER_SOUND = BIT(0),			//!<	Controls the power for the sound controller.
 
-	PM_CONTROL_REG   = 0, //!<	Selects the PM control register
-	PM_BATTERY_REG   = 1, //!<	Selects the PM nattery register
-	PM_AMPLIFIER_REG = 2, //!<	Selects the PM amplifier register
-	PM_READ_REGISTER = (1<<7), //!<	Selects the PM read register
-	PM_AMP_OFFSET  = 2,		//!<	Selects the PM amp register
-	PM_GAIN_OFFSET  = 3, //!<	Selects the PM gain register
-	PM_GAIN_20 = 0,	//!<	Sets the mic gain to 20db
-	PM_GAIN_40 = 1,//!<	Sets the mic gain to 40db
-	PM_GAIN_80 = 2,//!<	Sets the mic gain to 80db
-	PM_GAIN_160 = 3,//!<	Sets the mic gain to 160db
-	PM_AMP_ON     = 1, //!<	Turns the sound amp on
-	PM_AMP_OFF    = 0 //!<	Turns the sound amp off
-}ARM7_power;
-
+	PM_CONTROL_REG		= 0,		//!<	Selects the PM control register
+	PM_BATTERY_REG		= 1,		//!<	Selects the PM nattery register
+	PM_AMPLIFIER_REG	= 2,		//!<	Selects the PM amplifier register
+	PM_READ_REGISTER	= (1<<7),	//!<	Selects the PM read register
+	PM_AMP_OFFSET		= 2,		//!<	Selects the PM amp register
+	PM_GAIN_OFFSET		= 3,		//!<	Selects the PM gain register
+	PM_BACKLIGHT_LEVEL	= 4, 		//!<	Selects the DS Lite backlight register
+	PM_GAIN_20			= 0,		//!<	Sets the mic gain to 20db
+	PM_GAIN_40			= 1,		//!<	Sets the mic gain to 40db
+	PM_GAIN_80			= 2,		//!<	Sets the mic gain to 80db
+	PM_GAIN_160			= 3,		//!<	Sets the mic gain to 160db
+	PM_AMP_ON			= 1,		//!<	Turns the sound amp on
+	PM_AMP_OFF			= 0			//!<	Turns the sound amp off
+} ARM7_power;
 
 //!< PM control register bits - LED control
 #define PM_LED_CONTROL(m)  ((m)<<4)  // ?
-// Warning: These functions use the SPI chain, and are thus 'critical'
-// sections, make sure to disable interrupts during the call if you've
-// got a VBlank IRQ polling the touch screen, etc...
-
 
 //install the fifo power handler
 void installSystemFIFO(void);
@@ -209,6 +204,10 @@ void installSystemFIFO(void);
 void systemSleep(void);
 //internal can check if sleep mode is enabled
 int sleepEnabled(void);
+
+// Warning: These functions use the SPI chain, and are thus 'critical'
+// sections, make sure to disable interrupts during the call if you've
+// got a VBlank IRQ polling the touch screen, etc...
 
 // Read/write a power management register
 int writePowerManagement(int reg, int command);
@@ -232,6 +231,16 @@ void readUserSettings();
 void systemShutDown();
 
 #endif /* ARM7 */
+
+//!	Backlight level settings
+/*!	Note, these are only available on DS Lite.
+*/
+typedef enum {
+	BACKLIGHT_LOW,
+	BACKLIGHT_MED,
+	BACKLIGHT_HIGH,
+	BACKLIGHT_MAX	
+} BACKLIGHT_LEVELS;
 
 // Common functions
 
