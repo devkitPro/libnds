@@ -29,6 +29,10 @@
 #ifndef NDS_DLDI_INCLUDE
 #define NDS_DLDI_INCLUDE
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "../disc_io.h"
 
 #define FIX_ALL						0x01
@@ -109,4 +113,7 @@ dldiFree(loadedDldi);
 */
 extern void dldiFree (DLDI_INTERFACE* dldi);
 
+#ifdef __cplusplus
+}
+#endif
 #endif // NDS_DLDI_INCLUDE

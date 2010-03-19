@@ -27,6 +27,9 @@
 
 #define EXCEPTION_VECTOR	(*(VoidFn *)(0x2FFFD9C))
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 extern VoidFn exceptionC[];
 extern u32 exceptionStack;
@@ -37,6 +40,10 @@ void setExceptionHandler(VoidFn handler);
 void defaultExceptionHandler();
 
 u32 getCPSR();
+
+#ifdef __cplusplus
+}
+#endif
 
 //---------------------------------------------------------------------------------
 #endif // _exceptions_h_
