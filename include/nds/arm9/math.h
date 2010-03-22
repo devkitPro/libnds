@@ -72,7 +72,7 @@
 //  Fixed Point versions
 
 STATIC_INL
-/** \fn divf32(int32 num, int32 den)
+/** \fn static int32 divf32(int32 num, int32 den)
 *    \brief Fixed point divide
 *    \param num Takes 20.12 numerator and denominator
 *    \param den Takes 20.12 numerator and denominator
