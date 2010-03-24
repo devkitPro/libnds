@@ -108,6 +108,4 @@ void installSystemFIFO(void) {
 	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
 }
 
-void systemShutDown() {
-	writePowerManagement(PM_CONTROL_REG,PM_SYSTEM_PWR);
-}
+
