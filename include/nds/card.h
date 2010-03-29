@@ -31,25 +31,34 @@
 #include "ndstypes.h"
 
 // Card bus
-#define CARD_CR1       (*(vuint16*)0x040001A0)
-#define CARD_CR1H      (*(vuint8*)0x040001A1)
-#define CARD_EEPDATA   (*(vuint8*)0x040001A2)
-#define CARD_CR2       (*(vuint32*)0x040001A4)
-#define CARD_COMMAND   ((vuint8*)0x040001A8)
+//#define CARD_CR1H      (*(vu8*)0x040001A1)
+   
+#define CARD_COMMAND   ((vu8*)0x040001A8)
 
-#define CARD_DATA_RD   (*(vuint32*)0x04100010)
+#define REG_ROMCTRL		(*(vu32*)0x040001A4)
+#define REG_AUXSPICNT	(*(vu16*)0x040001A0)
+#define REG_AUXSPICNTH	(*(vu8*)0x040001A1)
+#define REG_AUXSPIDATA	(*(vu8*)0x040001A2)
 
-#define CARD_1B0       (*(vuint32*)0x040001B0)
-#define CARD_1B4       (*(vuint32*)0x040001B4)
-#define CARD_1B8       (*(vuint16*)0x040001B8)
-#define CARD_1BA       (*(vuint16*)0x040001BA)
+#define CARD_DATA_RD   (*(vu32*)0x04100010)
+
+#define CARD_1B0       (*(vu32*)0x040001B0)
+#define CARD_1B4       (*(vu32*)0x040001B4)
+#define CARD_1B8       (*(vu16*)0x040001B8)
+#define CARD_1BA       (*(vu16*)0x040001BA)
 
 
 #define CARD_CR1_ENABLE  0x80  // in byte 1, i.e. 0x8000
 #define CARD_CR1_IRQ     0x40  // in byte 1, i.e. 0x4000
 
+// SPI EEPROM COMMANDS
+#define EEPROM_WRSR	0x01
+#define EEPROM_WRDI	0x04
+#define EEPROM_RDSR	0x05
+#define EEPROM_WREN	0x06
+#define EEPROM_RDID 0x9f
 
-// CARD_CR2 register:
+// ROMCTRL register:
 
 #define CARD_ACTIVATE     (1<<31)           // when writing, get the ball rolling
 #define CARD_WR           (1<<30)           // Card write enable
@@ -88,29 +97,29 @@ extern "C" {
 #endif
 
 
-void cardWriteCommand(const uint8 *command);
-void cardPolledTransfer(uint32 flags, uint32 *destination, uint32 length, const uint8 *command);
-void cardStartTransfer(const uint8 *command, uint32 *destination, int channel, uint32 flags);
-uint32 cardWriteAndRead(const uint8 *command, uint32 flags);
-void cardParamCommand (uint8 command, uint32 parameter, uint32 flags, uint32 *destination, uint32 length);
+void cardWriteCommand(const u8 *command);
+void cardPolledTransfer(u32 flags, u32 *destination, u32 length, const u8 *command);
+void cardStartTransfer(const u8 *command, u32 *destination, int channel, u32 flags);
+uint32 cardWriteAndRead(const u8 *command, u32 flags);
+void cardParamCommand (u8 command, u32 parameter, u32 flags, u32 *destination, u32 length);
 
 // These commands require the cart to not be initialized yet, which may mean the user
 // needs to eject and reinsert the cart or they will return random data.
-void cardReadHeader(uint8 *header);
-uint32 cardReadID(uint32 flags);
+void cardReadHeader(u8 *header);
+u32 cardReadID(u32 flags);
 
 // Reads from the EEPROM
-void cardReadEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype);
+void cardReadEeprom(u32 address, u8 *data, u32 length, u32 addrtype);
 
 // Writes to the EEPROM. TYPE 3 EEPROM must be erased first (I think?)
-void cardWriteEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype);
+void cardWriteEeprom(u32 address, u8 *data, u32 length, u32 addrtype);
 
 // Returns the ID of the EEPROM chip? Doesn't work well, most chips give ff,ff
 // i = 0 or 1
-uint8 cardEepromReadID(uint8 i); 
+u32 cardEepromReadID(); 
 
 // Sends a command to the EEPROM
-uint8 cardEepromCommand(uint8 command, uint32 address); 
+u8 cardEepromCommand(u8 command); 
 
 /*
  * -1:no card or no EEPROM
@@ -122,13 +131,13 @@ uint8 cardEepromCommand(uint8 command, uint32 address);
 int cardEepromGetType(void);
 
 // Returns the size in bytes of EEPROM
-uint32 cardEepromGetSize();
+u32 cardEepromGetSize();
 
 // Erases the entire chip. TYPE 3 chips MUST be erased before writing to them. (I think?)
 void cardEepromChipErase(void);
 
 // Erases a single sector of the TYPE 3 chip
-void cardEepromSectorErase(uint32 address);
+void cardEepromSectorErase(u32 address);
 
 #ifdef __cplusplus
 }

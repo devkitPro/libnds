@@ -35,13 +35,13 @@
 
 #define WAIT_CYCLES 185
 
-#define CARD_WaitBusy()   while (CARD_CR1 & /*BUSY*/0x80);
+#define CARD_WaitBusy()   while (REG_AUXSPICNT & /*BUSY*/0x80);
 
 // enables SPI bus at 4.19 MHz
-#define SPI_On() CARD_CR1 = /*E*/0x8000 | /*SEL*/0x2000 | /*MODE*/0x40 | 0;
+#define SPI_On() REG_AUXSPICNT = /*E*/0x8000 | /*SEL*/0x2000 | /*MODE*/0x40 | 0;
 
 // disables SPI bus
-#define SPI_Off() CARD_CR1 = 0;
+#define SPI_Off() REG_AUXSPICNT = 0;
 
 // Volatile GBA bus SRAM for reading from DS Motion Pak
 #define V_SRAM ((volatile unsigned char*)0x0A000000)
@@ -56,9 +56,9 @@ MotionCalibration calibration = {2048, 2048, 2048, 1680, 819, 819, 819, 825};
 unsigned char motion_spi(unsigned char in_byte){
 
 	unsigned char out_byte;
-	CARD_EEPDATA = in_byte; // send the output byte to the SPI bus
+	REG_AUXSPIDATA = in_byte; // send the output byte to the SPI bus
 	CARD_WaitBusy(); // wait for transmission to complete
-	out_byte=CARD_EEPDATA; // read the input byte from the SPI bus
+	out_byte=REG_AUXSPIDATA; // read the input byte from the SPI bus
 	return out_byte;
 }
 
