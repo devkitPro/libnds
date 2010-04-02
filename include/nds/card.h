@@ -31,7 +31,6 @@
 #include "ndstypes.h"
 
 // Card bus
-//#define CARD_CR1H      (*(vu8*)0x040001A1)
    
 #define CARD_COMMAND   ((vu8*)0x040001A8)
 
