@@ -2,7 +2,7 @@
 
 	Video registers and defines
 
-	Copyright (C) 2005
+	Copyright (C) 2005 - 2010
 		Michael Noland (joat)
 		Jason Rogers (dovoto)
 		Dave Murphy (WinterMute)
@@ -170,7 +170,7 @@ typedef enum {
 	VRAM_B_MAIN_BG_0x06020000	= 1 | VRAM_OFFSET(1),
 	VRAM_B_MAIN_BG_0x06040000	= 1 | VRAM_OFFSET(2),
 	VRAM_B_MAIN_BG_0x06060000	= 1 | VRAM_OFFSET(3),
-	VRAM_B_MAIN_SPRITE	= 2 | VRAM_OFFSET(1),
+	VRAM_B_MAIN_SPRITE	= 2,
 	VRAM_B_MAIN_SPRITE_0x06400000	= 2,
 	VRAM_B_MAIN_SPRITE_0x06420000	= 2 | VRAM_OFFSET(1),
 	VRAM_B_TEXTURE	= 3 | VRAM_OFFSET(1),
@@ -321,7 +321,15 @@ typedef _palette _ext_palette[16];
 */
 u32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d);
 
-/** \brief  Set the main 4 bank modes. 
+static inline
+/** \brief  Set VRAM banks to basic default. 
+*    \return the previous settings
+*/
+u32 vramDefault() {
+	return vramSetMainBanks(VRAM_A_MAIN_BG, VRAM_B_MAIN_SPRITE, VRAM_C_SUB_BG, VRAM_D_SUB_SPRITE);
+}
+
+/** \brief  Restore the main 4 bank modes. 
 *    \param vramTemp restores the main 4 banks to the value encoded in vramTemp (returned from vramSetMainBanks)
 */
 void vramRestoreMainBanks(u32 vramTemp);

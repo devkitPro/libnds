@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------------
 
-	Copyright (C) 2005 - 2009
+	Copyright (C) 2005 - 2010
 		Michael Noland (joat)
 		Jason Rogers (dovoto)
 		Dave Murphy (WinterMute)
@@ -46,7 +46,7 @@ u32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d)
 //---------------------------------------------------------------------------------
 void vramRestoreMainBanks(u32 vramTemp) {
 //---------------------------------------------------------------------------------
-  VRAM_CR = vramTemp;
+	VRAM_CR = vramTemp;
 }
 
 //---------------------------------------------------------------------------------
