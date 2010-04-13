@@ -247,13 +247,11 @@ void cardWriteEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype
 //---------------------------------------------------------------------------------
 void cardEepromChipErase(void) {
 //---------------------------------------------------------------------------------
-	int sz, sectors, i;
+	int sz, sector;
 	sz=cardEepromGetSize();
 
-	sectors = sz/(64*1024);
-	
-	for ( i = 0; i < sectors; i ++) {
-		cardEepromSectorErase(0x10000 * i);
+	for ( sector = 0; sector < sz; sector+=0x10000) {
+		cardEepromSectorErase(sector);
 	}
 }
 
