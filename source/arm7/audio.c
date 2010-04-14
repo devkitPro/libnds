@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------------
 
-	Copyright (C) 2008
+	Copyright (C) 2008 - 2010
 		Dave Murphy  (WinterMute)
 		Jason Rogers (Dovoto)
 

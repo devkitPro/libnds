@@ -49,15 +49,15 @@ typedef struct FifoMessage {
 	union {
 
 		struct {
-			u16 type; 	
 			const void* data;
+			u32 dataSize;
 			u16 loopPoint;
-			u16 dataSize;
 			u16 freq;
 			u8 volume;
 			u8 pan;
 			bool loop;
 			u8 format;
+			u8 channel;
 		} SoundPlay;
 
 		struct{
@@ -65,6 +65,7 @@ typedef struct FifoMessage {
 			u8 dutyCycle;
 			u8 volume;
 			u8 pan;
+			u8 channel;
 		} SoundPsg;
 
 		struct{
