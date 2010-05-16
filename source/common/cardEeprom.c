@@ -125,10 +125,11 @@ uint32 cardEepromGetSize() {
 
 	if(type == 3) {
 		int id = cardEepromReadID();
+
+		device = id & 0xffff;
 		
 		if ( ((id >> 16) & 0xff) == 0x20 ) {
 			
-			device = id & 0xffff;
 		
 			if( device == 0x4014)
 				return 1024*1024;		//	8Mbit(1 meg)
@@ -137,8 +138,16 @@ uint32 cardEepromGetSize() {
 				return 512*1024;		//	4Mbit(512KByte)
 
 			if( device == 0x2017)
-				return 8*1024*1024;	//	64Mbit(8 meg)
+				return 8*1024*1024;		//	64Mbit(8 meg)
 		}
+
+		if ( ((id >> 16) & 0xff) == 0x62 ) {
+			
+			if (device == 0x1100)
+				return 512*1024;		//	4Mbit(512KByte)
+
+		}
+		
 
 		return 256*1024;		//	2Mbit(256KByte)
 	}
