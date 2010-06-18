@@ -30,9 +30,10 @@
 ---------------------------------------------------------------------------------*/
 #include <nds/ndstypes.h>
 #include <nds/arm9/image.h>
+#include <nds/arm9/sassert.h>
 #include <nds/dma.h>
 
-
+#include <string.h>
 #include <malloc.h>
 
 //---------------------------------------------------------------------------------
@@ -62,6 +63,9 @@ void image8to16(sImage* img) {
 //---------------------------------------------------------------------------------
 	int i;
 
+	sassert(img->bpp == 8, "image must be 8 bpp");
+	sassert(img->palette != NULL, "image must have a palette set");
+
 	u16* temp = (u16*)malloc(img->height*img->width*2);
 
 	for(i = 0; i < img->height * img->width; i++)
@@ -69,6 +73,8 @@ void image8to16(sImage* img) {
 
 	free (img->image.data8);
 	free (img->palette);
+
+	img->palette = NULL;
 
 	img->bpp = 16;
 	img->image.data16 = temp;
@@ -79,6 +85,9 @@ void image8to16trans(sImage* img, u8 transparentColor) {
 //---------------------------------------------------------------------------------
 	int i;
 	u8 c;
+
+	sassert(img->bpp == 8, "image must be 8 bpp");
+	sassert(img->palette != NULL, "image must have a palette set");
 
 	u16* temp = (u16*)malloc(img->height*img->width*2);
 
@@ -94,6 +103,8 @@ void image8to16trans(sImage* img, u8 transparentColor) {
 
 	free (img->image.data8);
 	free (img->palette);
+
+	img->palette = NULL;
 
 	img->bpp = 16;
 	img->image.data16 = temp;

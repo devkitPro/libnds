@@ -366,7 +366,7 @@ uint32* getNextTextureSlot(int size) {
 //  Empty fields and target are unused but provided for code compatibility.
 //  type is simply the texture type (GL_RGB, GL_RGB8 ect...)
 //---------------------------------------------------------------------------------
-int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, GL_TEXTURE_PARAM_ENUM  param, const uint8* texture) {
+int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, GL_TEXTURE_PARAM_ENUM  param, const void* texture) {
 //---------------------------------------------------------------------------------
 	uint32 size = 0;
 	uint32* addr;

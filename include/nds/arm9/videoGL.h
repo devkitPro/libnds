@@ -357,7 +357,7 @@ void glRotatef32i(int angle, int32 x, int32 y, int32 z);
 \param empty2 not used, just here for OpenGL compatibility
 \param param parameters for the texture
 \param texture pointer to the texture data to load */
-int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, int param, const uint8* texture);
+int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, int param, const void* texture);
 
 /*! \brief Loads a palette into the specified texture addr
 \param pal pointer to the palette to load
