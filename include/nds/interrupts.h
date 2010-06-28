@@ -29,9 +29,7 @@
 ---------------------------------------------------------------------------------*/
 
 /*! \file interrupts.h
-
     \brief nds interrupt support.
-
 */
 
 #ifndef NDS_INTERRUPTS_INCLUDE
@@ -39,10 +37,8 @@
 
 #include <nds/ndstypes.h>
 
-/*! \enum IRQ_MASKS
-	\brief values allowed for REG_IE and REG_IF
 
-*/
+//! values allowed for REG_IE and REG_IF
 enum IRQ_MASKS {
 	IRQ_VBLANK			=	BIT(0),		/*!< vertical blank interrupt mask */
 	IRQ_HBLANK			=	BIT(1),		/*!< horizontal blank interrupt mask */
@@ -67,22 +63,30 @@ enum IRQ_MASKS {
 	IRQ_LID				=	BIT(22),	/*!< interrupt mask DS hinge*/
 	IRQ_SPI				=	BIT(23),	/*!< SPI interrupt mask */
 	IRQ_WIFI			=	BIT(24),	/*!< WIFI interrupt mask (ARM7)*/
-	IRQ_ALL				=	(~0)
+	IRQ_ALL				=	(~0)		/*!< 'mask' for all interrupt */
 };
 
-/*! \enum IRQ_MASKSAUX
-	\brief values allowed for REG_AUXIE and REG_AUXIF
+typedef enum IRQ_MASKS IRQ_MASK;
 
-*/
+
+//! values allowed for REG_AUXIE and REG_AUXIF
 enum IRQ_MASKSAUX {
 	IRQ_POWER	=	BIT(6)	/*!< Power Button interrupt mask (DSi ARM7)*/
 };
 
+/*!
+	\brief returns the mask for a given timer.
+
+	\param n the timer.
+
+	\return the bitmask.
+*/
 #define IRQ_TIMER(n) (1 << ((n) + 3))
 
+//! maximum number of interrupts.
 #define MAX_INTERRUPTS  25
 
-typedef enum IRQ_MASKS IRQ_MASK;
+
 
 /*! \def REG_IE
 
@@ -92,7 +96,6 @@ typedef enum IRQ_MASKS IRQ_MASK;
 	the corresponding bit is set, the IRQ will be masked out.
 */
 #define REG_IE	(*(vuint32*)0x04000210)
-
 #define REG_AUXIE	(*(vuint32*)0x04000218)
 
 /*! \def REG_IF
@@ -106,7 +109,6 @@ typedef enum IRQ_MASKS IRQ_MASK;
 
 */
 #define REG_IF	(*(vuint32*)0x04000214)
-
 #define REG_AUXIF	(*(vuint32*)0x0400021C)
 
 /*! \def REG_IME
@@ -119,12 +121,11 @@ typedef enum IRQ_MASKS IRQ_MASK;
 */
 #define REG_IME	(*(vuint32*)0x04000208)
 
-/*! \enum IME_VALUE
-	\brief values allowed for REG_IME
-*/
+
+//! values allowed for REG_IME
 enum IME_VALUE {
 	IME_DISABLE = 0, 	/*!< Disable all interrupts. */
-	IME_ENABLE = 1,	/*!< Enable all interrupts not masked out in REG_IE */
+	IME_ENABLE = 1,		/*!< Enable all interrupts not masked out in REG_IE */
 };
 
 
@@ -149,9 +150,10 @@ struct IntTable{IntFn handler; u32 mask;};
 	This function is called internally (prior to main()) to set up irqs
     on the ARM9.  It must be called on the ARM7 prior to installing irq
     handlers.
-	 
+
 */
 void irqInit();
+
 /*! \fn irqSet(u32 irq, VoidFn handler)
 	\brief Add a handler for the given interrupt mask.
 
@@ -175,16 +177,18 @@ void irqSetAUX(u32 irq, VoidFn handler);
 */
 void irqClear(u32 irq);
 void irqClearAUX(u32 irq);
+
 /*! \fn irqInitHandler(VoidFn handler)
 	\brief Install a user interrupt dispatcher.
 
 	This function installs the main interrupt function, all interrupts are serviced through this routine. For most
 	purposes the libnds interrupt dispacther should be used in preference to user code unless you know *exactly* what you're doing.
-	
+
 	\param handler Address of the function to use as an interrupt dispatcher
 	\note the function *must* be ARM code
 */
 void irqInitHandler(VoidFn handler);
+
 /*! \fn irqEnable(uint32 irq)
 	\brief Allow the given interrupt to occur.
 	\param irq The set of interrupt masks to enable.
@@ -192,6 +196,7 @@ void irqInitHandler(VoidFn handler);
 */
 void irqEnable(u32 irq);
 void irqEnableAUX(u32 irq);
+
 /*! \fn irqDisable(uint32 irq)
 	\brief Prevent the given interrupt from occuring.
 	\param irq The set of interrupt masks to disable.
@@ -211,7 +216,6 @@ void irqDisableAUX(u32 irq);
 		interrupt mask to wait for
 
 */
-
 void swiIntrWait(u32 waitForSet, uint32 flags);
 
 /*! \fn  swiWaitForVBlank()
@@ -221,7 +225,6 @@ void swiIntrWait(u32 waitForSet, uint32 flags);
 
 	\note Identical to calling swiIntrWait(1, 1)
 */
-
 void swiWaitForVBlank(void);
 
 static inline int enterCriticalSection() {

@@ -25,9 +25,13 @@
 #ifndef _INPUT_H_
 #define _INPUT_H_
 
-// Keyboard
+/*! \file
+	\brief common values for keypad input.
 
-//!	Bit values for the keypad buttons.
+	common values that can be used on both the arm9 and arm7.
+*/
+
+//! enum values for the keypad buttons.
 typedef enum KEYPAD_BITS {
   KEY_A      = BIT(0),  //!< Keypad A button.
   KEY_B      = BIT(1),  //!< Keypad B button.
@@ -45,14 +49,15 @@ typedef enum KEYPAD_BITS {
   KEY_LID    = BIT(13)  //!< Lid state.
 } KEYPAD_BITS;
 
-//!	Key input register.
-/*!	On the ARM9, the hinge "button", the touch status, and the
+
+/*!	\brief Key input register.
+	On the ARM9, the hinge "button", the touch status, and the
 	X and Y buttons cannot be accessed directly.
 */
 #define	REG_KEYINPUT	(*(vuint16*)0x04000130)
 
+
 //!	Key input control register.
 #define	REG_KEYCNT		(*(vuint16*)0x04000132)
-
 
 #endif

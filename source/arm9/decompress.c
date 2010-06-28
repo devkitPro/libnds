@@ -27,66 +27,69 @@ distribution.
 
 #include <nds/arm9/decompress.h>
 #include <nds/bios.h>
-#include <nds/arm9/sassert.h>   
+#include <nds/arm9/sassert.h>
 
 int getHeader(uint8 *source, uint16 *dest, uint32 arg) {
-   return *(uint32*)source;
+	return *(uint32*)source;
 }
 
 uint8 readByte(uint8 *source) {
-   return *source;
+	return *source;
 }
+
 TDecompressionStream decomStream = {
-   getHeader,
-   0,
-   readByte
+	getHeader,
+	0,
+	readByte
 };
 
 void decompress(const void* data, void* dst, DecompressType type)
 {
-
-   switch(type)
-   {
-   case LZ77Vram:
-      swiDecompressLZSSVram((void*)data, (void*)dst, 0, &decomStream);
-      break;
-   case LZ77:
-      swiDecompressLZSSWram((void*)data, (void*)dst);
-      break;
-   case HUFF:
-      swiDecompressHuffman((void*)data, (void*)dst, 0, &decomStream);
-      break;
-   case RLE:
-      swiDecompressRLEWram((void*)data, (void*)dst);
-      break;
-   case RLEVram:
-      swiDecompressRLEVram((void*)data, (void*)dst, 0, &decomStream);
-      break;
-   default:
-      break;
-   }
+	switch(type)
+	{
+		case LZ77Vram:
+			swiDecompressLZSSVram((void*)data, (void*)dst, 0, &decomStream);
+			break;
+		case LZ77:
+			swiDecompressLZSSWram((void*)data, (void*)dst);
+			break;
+		case HUFF:
+			swiDecompressHuffman((void*)data, (void*)dst, 0, &decomStream);
+			break;
+		case RLE:
+			swiDecompressRLEWram((void*)data, (void*)dst);
+			break;
+		case RLEVram:
+			swiDecompressRLEVram((void*)data, (void*)dst, 0, &decomStream);
+			break;
+		default:
+			break;
+	}
 }
+
 void decompressStream(const void* data, void* dst, DecompressType type, getByteCallback readCB, getHeaderCallback getHeaderCB)
 {
 #ifdef ARM9
-   sassert(type != LZ77 && type != RLE, "LZ77 and RLE do not support streaming, use Vram versions");
+	sassert(type != LZ77 && type != RLE, "LZ77 and RLE do not support streaming, use Vram versions");
 #endif
 
-   decomStream.readByte= readCB;
-   decomStream.getSize = getHeaderCB;
+	decomStream.readByte= readCB;
+	decomStream.getSize = getHeaderCB;
 
-   switch(type)
-   {
-   case LZ77Vram:
-      swiDecompressLZSSVram((void*)data, (void*)dst, 0, &decomStream);
-      break;
-   case HUFF:
-      swiDecompressHuffman((void*)data, (void*)dst, 0, &decomStream);
-      break;
-   case RLEVram:
-      swiDecompressRLEVram((void*)data, (void*)dst, 0, &decomStream);
-      break;
-   default:
-      break;
-   }
+	switch(type)
+	{
+		case LZ77Vram:
+			swiDecompressLZSSVram((void*)data, (void*)dst, 0, &decomStream);
+			break;
+		case HUFF:
+			swiDecompressHuffman((void*)data, (void*)dst, 0, &decomStream);
+			break;
+		case RLEVram:
+			swiDecompressRLEVram((void*)data, (void*)dst, 0, &decomStream);
+			break;
+		default:
+			break;
+	}
+
+	//shouldn't decomStream.readByte and decomStream.getSize be reset to there original value here?
 }

@@ -1,8 +1,11 @@
 #ifndef __TOUCH_H__
 #define __TOUCH_H__
-/*! \struct touchPosition
-	\brief holds data related to the touch screen
+
+/*! \file
+	\brief contains a struct with touch screen data.
 */
+
+//! holds data related to the touch screen.
 typedef struct touchPosition {
 	u16	rawx; //!< Raw x value from the A2D
 	u16	rawy; //!< Raw x value from the A2D

@@ -27,7 +27,7 @@
 
 /*
 	This file should be deprecated.
-	
+
 	All hardware register defines should be replaced with REG_ for consistency and namespacing
 
 	http://forum.gbadev.org/viewtopic.php?t=4993
@@ -262,7 +262,7 @@
 
 
 
-/*3D graphics suff*/
+/*3D graphics stuff*/
 #define	REG_GFX_FIFO		(*(vu32*) 0x4000400)
 #define	REG_GFX_STATUS		(*(vu32*) 0x4000600)
 #define	REG_GFX_CONTROL		(*(vu16*) 0x4000060)

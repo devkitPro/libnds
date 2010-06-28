@@ -25,49 +25,46 @@
 
 ---------------------------------------------------------------------------------*/
 /*! \file decompress.h
-    \brief wraps the bios decompress functionality into something a bit easier to deal with
+    \brief wraps the bios decompress functionality into something a bit easier to deal with.
 */
-
-	
 
 
 #ifndef NDS_DECOMPRESS
 #define NDS_DECOMPRESS
 
 #include <nds/ndstypes.h>
+#include <nds/bios.h>
 
-typedef u8 (*getByteCallback)(u8 *source);
-typedef int (*getHeaderCallback)(u8 *source, u16 *dest, u32 arg);
 
-/** \brief the types of decompression available */
+//! the types of decompression available.
 typedef enum
 {
-   LZ77, /** \brief LZ77 decompression  */
-   LZ77Vram,/** \brief vram safe LZ77 decompression  */
-   HUFF,/** \brief vram safe huff decompression  */
-   RLE,/** \brief run length encoded decompression  */
-   RLEVram /** \brief vram safe run length encoded decompression  */
+   LZ77, 		//!< LZ77 decompression.
+   LZ77Vram,	//!< vram safe LZ77 decompression.
+   HUFF,		//!< vram safe huff decompression.
+   RLE,			//!< run length encoded decompression.
+   RLEVram 		//!< vram safe run length encoded decompression.
 }DecompressType;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/** \fn decompress(const void* data, void* dst, DecompressType type)
-*    \brief decompresses data using the suported type
-*    \param dst the destination to decompress to
-*    \param data the data to decompress
-*    \param type the type of data to decompress
+/*!
+	\brief decompresses data using the suported type
+	\param dst the destination to decompress to
+	\param data the data to decompress
+	\param type the type of data to decompress
 */
 void decompress(const void* data, void* dst, DecompressType type);
 
-/** \fn decompressStream(const void* data, void* dst, DecompressType type,  getByteCallback readCB, getHeaderCallback getHeaderCB)
-*    \brief decompresses data using the suported type (only LZ77Vram, HUFF, and RLEVram support streaming)
-*    \param dst the destination to decompress to
-*    \param data the data to decompress
-*    \param type the type of data to decompress
-*    \param readCB a callback to read the next byte of data
-*    \param getHeaderCB a callback to read the 32 byte header
+/*!
+	\brief decompresses data using the suported type (only LZ77Vram, HUFF, and RLEVram support streaming)
+	\param dst the destination to decompress to.
+	\param data the data to decompress.
+	\param type the type of data to decompress.
+	\param readCB a callback to read the next byte of data.
+	\param getHeaderCB a callback to read the 32 byte header.
 */
 void decompressStream(const void* data, void* dst, DecompressType type, getByteCallback readCB, getHeaderCallback getHeaderCB);
 

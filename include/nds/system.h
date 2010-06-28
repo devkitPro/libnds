@@ -27,28 +27,29 @@
 
 ---------------------------------------------------------------------------------*/
 
-//!	NDS hardware definitions.
 /*!	\file system.h
-
+	\brief NDS hardware definitions.
 	These definitions are usually only touched during
 	the initialization of the program.
 */
 
 #ifndef NDS_SYSTEM_INCLUDE
 #define NDS_SYSTEM_INCLUDE
+
 #include "ndstypes.h"
+
 //!	LCD status register.
 #define	REG_DISPSTAT	(*(vu16*)0x04000004)
 
 //! LCD Status register bitdefines
-typedef enum 
+typedef enum
 {
-	DISP_IN_VBLANK   =  BIT(0),//!	The display currently in a vertical blank.
-	DISP_IN_HBLANK    = BIT(1),//!	The display currently in a horizontal blank.
-	DISP_YTRIGGERED   = BIT(2),//!	Current scanline and %DISP_Y match.
-	DISP_VBLANK_IRQ   = BIT(3),//!	Interrupt on vertical blank.
-	DISP_HBLANK_IRQ   = BIT(4),//!	Interrupt on horizontal blank.
-	DISP_YTRIGGER_IRQ = BIT(5) //!	Interrupt when current scanline and %DISP_Y match.
+	DISP_IN_VBLANK   =  BIT(0), //!<	The display currently in a vertical blank.
+	DISP_IN_HBLANK    = BIT(1), //!<	The display currently in a horizontal blank.
+	DISP_YTRIGGERED   = BIT(2), //!<	Current scanline and %DISP_Y match.
+	DISP_VBLANK_IRQ   = BIT(3), //!<	Interrupt on vertical blank.
+	DISP_HBLANK_IRQ   = BIT(4), //!<	Interrupt on horizontal blank.
+	DISP_YTRIGGER_IRQ = BIT(5)  //!<	Interrupt when current scanline and %DISP_Y match.
 }DISP_BITS;
 
 //!	Current display scanline.
@@ -69,22 +70,24 @@ typedef enum
 
 
 static inline
+/*!
+	\brief sets the Y trigger(?)
 
+	\param Yvalue the value for the Y trigger.
+*/
 void SetYtrigger(int Yvalue) {
 	REG_DISPSTAT = (REG_DISPSTAT & 0x007F ) | (Yvalue << 8) | (( Yvalue & 0x100 ) >> 1) ;
 }
 
 #define PM_ARM9_DIRECT BIT(16)
-/*! \enum PM_Bits
-\brief Power Management control bits 
-*/
+//! Power Management control bits
 typedef enum
 {
-	PM_SOUND_AMP		= BIT(0) ,   /*!< \brief Power the sound hardware (needed to hear stuff in GBA mode too) */
-	PM_SOUND_MUTE		= BIT(1),    /*!< \brief   Mute the main speakers, headphone output will still work. */
-	PM_BACKLIGHT_BOTTOM	= BIT(2),    /*!< \brief   Enable the top backlight if set */
-	PM_BACKLIGHT_TOP	= BIT(3)  ,  /*!< \brief   Enable the bottom backlight if set */
-	PM_SYSTEM_PWR		= BIT(6) ,   /*!< \brief  Turn the power *off* if set */
+	PM_SOUND_AMP		= BIT(0),		//!< Power the sound hardware (needed to hear stuff in GBA mode too).
+	PM_SOUND_MUTE		= BIT(1),		//!< Mute the main speakers, headphone output will still work.
+	PM_BACKLIGHT_BOTTOM	= BIT(2),		//!< Enable the top backlight if set.
+	PM_BACKLIGHT_TOP	= BIT(3),		//!< Enable the bottom backlight if set.
+	PM_SYSTEM_PWR		= BIT(6),		//!< Turn the power *off* if set.
 
 	POWER_LCD		= PM_ARM9_DIRECT | BIT(0),		//!<	Controls the power for both LCD screens.
 	POWER_2D_A		= PM_ARM9_DIRECT | BIT(1),		//!<	Controls the power for the main 2D core.
@@ -92,11 +95,16 @@ typedef enum
 	POWER_3D_CORE	= PM_ARM9_DIRECT | BIT(3),		//!<	Controls the power for the main 3D core.
 	POWER_2D_B		= PM_ARM9_DIRECT | BIT(9),		//!<	Controls the power for the sub 2D core.
 	POWER_SWAP_LCDS	= PM_ARM9_DIRECT | BIT(15),		//!<	Controls which screen should use the main core.
-	POWER_ALL_2D	= PM_ARM9_DIRECT | POWER_LCD | POWER_2D_A | POWER_2D_B,	//!< power just 2D hardware
-	POWER_ALL		= PM_ARM9_DIRECT | POWER_ALL_2D | POWER_3D_CORE | POWER_MATRIX //!< power everything
-
+	POWER_ALL_2D	= PM_ARM9_DIRECT | POWER_LCD | POWER_2D_A | POWER_2D_B,			//!< power just 2D hardware.
+	POWER_ALL		= PM_ARM9_DIRECT | POWER_ALL_2D | POWER_3D_CORE | POWER_MATRIX	//!< power everything.
 }PM_Bits;
 
+
+/*!	\brief Causes the nds to go to sleep.
+	The nds will be reawakened when the lid is opened.
+
+	\note By default, this is automatically called when closing the lid.
+*/
 void systemSleep(void);
 
 
@@ -143,7 +151,7 @@ static inline void lcdMainOnBottom(void) { REG_POWERCNT &= ~POWER_SWAP_LCDS; }
 
 //! Powers down the DS
 static inline
-void systemShutDown() {
+void systemShutDown(void) {
 	powerOn(PM_SYSTEM_PWR);
 }
 
@@ -153,18 +161,27 @@ void systemShutDown() {
 */
 void setVectorBase(int highVector);
 
+
+/*! \brief A struct with all the CPU exeption vectors.
+	each member contains an ARM instuction that will be executed when an exeption occured.
+
+	See gbatek for more information.
+*/
 typedef struct sysVectors_t {
-	u32	reset;
-	u32	undefined;
-	u32	swi;
-	u32	prefetch_abort;
-	u32	data_abort;
-	u32	fiq;
+	u32	reset;			//!< CPU reset.
+	u32	undefined;		//!< undefined instruction.
+	u32	swi;			//!< software interrupt.
+	u32	prefetch_abort;	//!< prefetch abort.
+	u32	data_abort;		//!< data abort.
+	/* according to gbatek, there should be 4 bytes reserved and 4 bytes for normal interupt
+	asuming the struct follows the memory layout?...*/
+	u32	fiq;			//!< fast interrupt.
 } sysVectors;
+
 
 extern sysVectors SystemVectors;
 
-#endif
+#endif //ARM9
 
 //--------------------------------------------------------------
 //    ARM7 section
@@ -175,6 +192,7 @@ extern sysVectors SystemVectors;
 /*!	Note that these should only be used when programming for
 	the ARM7.  Trying to boot up these hardware devices via
 	the ARM9 would lead to unexpected results.
+	ARM7 only.
 */
 typedef enum {
 	POWER_SOUND = BIT(0),			//!<	Controls the power for the sound controller.
@@ -195,7 +213,7 @@ typedef enum {
 } ARM7_power;
 
 //!< PM control register bits - LED control
-#define PM_LED_CONTROL(m)  ((m)<<4)  // ?
+#define PM_LED_CONTROL(m)  ((m)<<4)
 
 //install the fifo power handler
 void installSystemFIFO(void);
@@ -232,22 +250,22 @@ void systemShutDown();
 
 #endif /* ARM7 */
 
-//!	Backlight level settings
-/*!	Note, these are only available on DS Lite.
+
+/*!	\brief Backlight level settings.
+	Note, these are only available on DS Lite.
 */
 typedef enum {
-	BACKLIGHT_LOW,
-	BACKLIGHT_MED,
-	BACKLIGHT_HIGH,
-	BACKLIGHT_MAX	
+	BACKLIGHT_LOW,	//!< low backlight setting.
+	BACKLIGHT_MED,	//!< medium backlight setting.
+	BACKLIGHT_HIGH,	//!< high backlight setting.
+	BACKLIGHT_MAX	//!< max backlight setting.
 } BACKLIGHT_LEVELS;
+
 
 // Common functions
 
-
-//!	User's DS settings.
-/*!	\struct tPERSONAL_DATA
-
+/*!
+	\brief User's DS settings.
 	Defines the structure the DS firmware uses for transfer
 	of the user's settings to the booted program.
 */
@@ -292,10 +310,10 @@ typedef struct tPERSONAL_DATA {
 	unsigned settingsLost		: 1;	//!<	User Settings Lost (0=Normal, 1=Prompt/Settings Lost)
 	unsigned RESERVED2			: 6;	//!<	???
   } _user_data;
-  
-  u16	RESERVED3;
-  u32	rtcOffset;
-  u32	RESERVED4;
+
+  u16	RESERVED3;			//!<	???
+  u32	rtcOffset;			//!<	Real Time Clock offset.
+  u32	RESERVED4;			//!<	???
 } PACKED PERSONAL_DATA ;
 
 //!	Default location for the user's personal data (see %PERSONAL_DATA).
@@ -304,14 +322,12 @@ typedef struct tPERSONAL_DATA {
 // argv struct magic number
 #define ARGV_MAGIC 0x5f617267
 
-//!	argv structure
-/*!	\struct __argv
-
+/*!
+	\brief argv structure.
 	structure used to set up argc/argv on the DS
-
 */
 struct __argv {
-	int argvMagic;		//!< argv magic number, set to 0x5f617267 ('_arg') if valid 
+	int argvMagic;		//!< argv magic number, set to 0x5f617267 ('_arg') if valid
 	char *commandLine;	//!< base address of command line, set of null terminated strings
 	int length;			//!< total length of command line
 	int argc;			//!< internal use, number of arguments
@@ -330,20 +346,34 @@ struct __bootstub {
 	u32 bootsize;
 };
 
+//! struct containing time and day of the real time clock.
 typedef	struct {
-	u8 year;	// add 2000 to get 4 digit year
-	u8 month;	// 1 to 12
-	u8 day;		// 1 to (days in month)
+	u8 year;	//!< add 2000 to get 4 digit year
+	u8 month;	//!< 1 to 12
+	u8 day;		//!< 1 to (days in month)
 
-	u8 weekday;	// day of week
-	u8 hours;	// 0 to 11 for AM, 52 to 63 for PM
-	u8 minutes;	// 0 to 59
-	u8 seconds;	// 0 to 59
+	u8 weekday;	//!< day of week
+	u8 hours;	//!< 0 to 11 for AM, 52 to 63 for PM
+	u8 minutes;	//!< 0 to 59
+	u8 seconds;	//!< 0 to 59
 } RTCtime;
 
+
 #ifdef ARM9
+/*!
+	\brief returns a cached mirror of an address.
+	\param address an address.
+	\return a pointer to the cached mirror of that address.
+*/
 void *memCached(void *address);
+
+/*!
+	\brief returns an uncached mirror of an address.
+	\param address an address.
+	\return a pointer to the uncached mirror of that address.
+*/
 void *memUncached(void *address);
+
 void resetARM7(u32 address);
 #endif
 

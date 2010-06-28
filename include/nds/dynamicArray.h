@@ -25,7 +25,7 @@
 
 ---------------------------------------------------------------------------------*/
 /*! \file dynamicArray.h
-\brief A dynamically resizing array for general use
+\brief A dynamically resizing array for general use.
 */
 
 #ifndef __DYNAMICARRAY_H__
@@ -44,7 +44,7 @@ typedef struct DynamicArray
 }DynamicArray;
 
 
-static inline 
+static inline
 /*! \fn void* DynamicArrayInit(DynamicArray* v, int initialSize)
 \brief Initializes an array with the supplied initial size
 \param v the array to initialize
@@ -55,7 +55,7 @@ void* DynamicArrayInit(DynamicArray* v, int initialSize)
 {
 	v->cur_size = initialSize;
 	v->data = (void**)malloc(sizeof(void*) * initialSize);
-	
+
 	return v->data;
 }
 
@@ -69,7 +69,7 @@ void DynamicArrayDelete(DynamicArray* v)
 	if(v->data) free(v->data);
 }
 
-static inline 
+static inline
 /*! \fn void* DynamicArrayGet(DynamicArray* v, int index)
 \brief Gets the entry at the supplied index
 \param v The array to get from.
@@ -82,11 +82,11 @@ void* DynamicArrayGet(DynamicArray* v, int index)
 	{
 		return NULL;
 	}
-	
+
 	return v->data[index];
 }
 
-static inline 
+static inline
 /*! \fn void DynamicArraySet(DynamicArray *v, int index, void* item)
 \brief Sets the entry to the supplied value
 \param v The array to set
@@ -100,7 +100,7 @@ void DynamicArraySet(DynamicArray *v, int index, void* item)
 		memset(v->data + v->cur_size, 0, sizeof(void*) * v->cur_size);
 		v->cur_size *= 2;
 	}
-	
+
 	v->data[index] = item;
 }
 
