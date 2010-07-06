@@ -28,8 +28,6 @@
 ---------------------------------------------------------------------------------*/
 /*! \file sprite.h
     \brief nds sprite functionality.
-   
-
 */
 
 #ifndef _libnds_sprite_h_
@@ -91,9 +89,9 @@ typedef enum
 	OBJMODE_BLENDED,	/**< Color blending is on - Sprite can use HW blending features. */
 	OBJMODE_WINDOWED,	/**< Sprite can be seen only inside the sprite window. */
 	OBJMODE_BITMAP,		/**< Sprite is not using tiles - per pixel image data. */
- 
+
 } ObjBlendMode;
- 
+
 /** \brief The shape of the sprite */
 typedef enum {
 	OBJSHAPE_SQUARE,	/**< Sprite shape is NxN (Height == Width). */
@@ -101,7 +99,7 @@ typedef enum {
 	OBJSHAPE_TALL,		/**< Sprite shape is NxM with N < M (Height > Width). */
 	OBJSHAPE_FORBIDDEN,	/**< Sprite shape is undefined. */
 } ObjShape;
- 
+
 /** \brief The size of the sprite */
 typedef enum {
 	OBJSIZE_8,		/**< Major sprite size is 8px. */
@@ -124,35 +122,37 @@ typedef enum {
 	OBJPRIORITY_3,		/**< sprite priority level 3 - lowest. */
 } ObjPriority;
 
-/**
- * @union SpriteEntry
- * @brief A bitfield of sprite attribute goodness...ugly to look at but not so bad to use
- */
-typedef union SpriteEntry {
-	struct {
- 
-		struct {
-			u16 y						:8;	/**< Sprite Y position. */
-			union {
-				struct {
+//! A bitfield of sprite attribute goodness...ugly to look at but not so bad to use.
+typedef union SpriteEntry
+{
+	struct
+	{
+		struct
+		{
+			u16 y							:8;	/**< Sprite Y position. */
+			union
+			{
+				struct
+				{
 					u8 						:1;
 					bool isHidden 			:1;	/**< Sprite is hidden (isRotoscale cleared). */
 					u8						:6;
 				};
-				struct {
+				struct
+				{
 					bool isRotateScale		:1;	/**< Sprite uses affine parameters if set. */
-					bool isSizeDouble			:1;	/**< Sprite bounds is doubled (isRotoscale set). */
-					ObjBlendMode blendMode		:2;	/**< Sprite object mode. */
+					bool isSizeDouble		:1;	/**< Sprite bounds is doubled (isRotoscale set). */
+					ObjBlendMode blendMode	:2;	/**< Sprite object mode. */
 					bool isMosaic			:1;	/**< Enables mosaic effect if set. */
-					ObjColMode colorMode		:1;	/**< Sprite color mode. */
-					ObjShape shape		:2;	/**< Sprite shape. */
+					ObjColMode colorMode	:1;	/**< Sprite color mode. */
+					ObjShape shape			:2;	/**< Sprite shape. */
 				};
 			};
 		};
- 
+
 		union {
 			struct {
-				u16 x					:9;	/**< Sprite X position. */
+				u16 x						:9;	/**< Sprite X position. */
 				u8 							:7;
 			};
 			struct {
@@ -166,78 +166,79 @@ typedef union SpriteEntry {
 					};
 					struct {
 						u8					:1;
-						u8 rotationIndex		:5; /**< Affine parameter number to use (isRotoscale set). */
-						ObjSize size	:2; /**< Sprite size. */
+						u8 rotationIndex	:5; /**< Affine parameter number to use (isRotoscale set). */
+						ObjSize size		:2; /**< Sprite size. */
 					};
 				};
 			};
 		};
- 
-		struct {
-			u16 gfxIndex						:10;/**< Upper-left tile index. */
-			ObjPriority priority		:2;	/**< Sprite priority. */
-			
-				u8 palette						:4;	/**< Sprite palette to use in paletted color modes. */
-				
-		
+
+		struct
+		{
+			u16 gfxIndex					:10;/**< Upper-left tile index. */
+			ObjPriority priority			:2;	/**< Sprite priority. */
+			u8 palette						:4;	/**< Sprite palette to use in paletted color modes. */
 		};
- 
+
 		u16 attribute3;							/**< Unused! Four of those are used as a sprite rotation matrice */
 	};
- 
+
 	struct {
 		uint16 attribute[3];
 		uint16 filler;
 	};
- 
+
 } SpriteEntry, * pSpriteEntry;
 
-/**
- * @struct SpriteRotation
- * @brief A sprite rotation entry
- */
-typedef struct SpriteRotation {
-  uint16 filler1[3]; /**< Unused! Filler for the sprite entry attributes which overlap these */
-  int16 hdx;		 /**< The change in x per horizontal pixel */
 
-  uint16 filler2[3];  /**< Unused! Filler for the sprite entry attributes which overlap these */
-  int16 hdy;		  /**< The change in y per horizontal pixel */
 
-  uint16 filler3[3];  /**< Unused! Filler for the sprite entry attributes which overlap these */
-  int16 vdx;		  /**< The change in x per vertical pixel */
+//! A sprite rotation entry.
+typedef struct SpriteRotation
+{
+	uint16 filler1[3];	/**< Unused! Filler for the sprite entry attributes which overlap these */
+	int16 hdx;			/**< The change in x per horizontal pixel */
 
-  uint16 filler4[3];  /**< Unused! Filler for the sprite entry attributes which overlap these */
-  int16 vdy;			/**< The change in y per vertical pixel */
-  
+	uint16 filler2[3];	/**< Unused! Filler for the sprite entry attributes which overlap these */
+	int16 hdy;			/**< The change in y per horizontal pixel */
+
+	uint16 filler3[3];	/**< Unused! Filler for the sprite entry attributes which overlap these */
+	int16 vdx;			/**< The change in x per vertical pixel */
+
+	uint16 filler4[3];	/**< Unused! Filler for the sprite entry attributes which overlap these */
+	int16 vdy;			/**< The change in y per vertical pixel */
 } SpriteRotation, * pSpriteRotation;
 
+
+//! maximum number of sprites per engine available.
 #define SPRITE_COUNT 128
+//! maximum number of affine matrices per engine available.
 #define MATRIX_COUNT 32
 
 
+//is this union still used?
 typedef union OAMTable {
 	SpriteEntry oamBuffer[SPRITE_COUNT];
 	SpriteRotation matrixBuffer[MATRIX_COUNT];
 } OAMTable;
- 
-/** \enum SpriteSize
-*    Enumerates all sizes supported by the 2D engine
-*/
+
+
+
+//! Enumerates all sizes supported by the 2D engine.
 typedef enum {
-   SpriteSize_8x8   = (OBJSIZE_8 << 14) | (OBJSHAPE_SQUARE << 12) | (8*8>>5), /**< 8x8 */
-   SpriteSize_16x16 = (OBJSIZE_16 << 14) | (OBJSHAPE_SQUARE << 12) | (16*16>>5), /**< 16x16 */
-   SpriteSize_32x32 = (OBJSIZE_32 << 14) | (OBJSHAPE_SQUARE << 12) | (32*32>>5), /**< 32x32 */
-   SpriteSize_64x64 = (OBJSIZE_64 << 14) | (OBJSHAPE_SQUARE << 12) | (64*64>>5), /**< 64x64 */
+   SpriteSize_8x8   = (OBJSIZE_8 << 14) | (OBJSHAPE_SQUARE << 12) | (8*8>>5),		//!< 8x8
+   SpriteSize_16x16 = (OBJSIZE_16 << 14) | (OBJSHAPE_SQUARE << 12) | (16*16>>5),	//!< 16x16
+   SpriteSize_32x32 = (OBJSIZE_32 << 14) | (OBJSHAPE_SQUARE << 12) | (32*32>>5),	//!< 32x32
+   SpriteSize_64x64 = (OBJSIZE_64 << 14) | (OBJSHAPE_SQUARE << 12) | (64*64>>5),	//!< 64x64
 
-   SpriteSize_16x8  = (OBJSIZE_8 << 14)  | (OBJSHAPE_WIDE << 12) | (16*8>>5),/**< 16x8 */
-   SpriteSize_32x8  = (OBJSIZE_16 << 14) | (OBJSHAPE_WIDE << 12) | (32*8>>5),/**< 32x8 */
-   SpriteSize_32x16 = (OBJSIZE_32 << 14) | (OBJSHAPE_WIDE << 12) | (32*16>>5),/**< 32x16 */
-   SpriteSize_64x32 = (OBJSIZE_64 << 14) | (OBJSHAPE_WIDE << 12) | (64*32>>5),/**< 64x32 */
+   SpriteSize_16x8  = (OBJSIZE_8 << 14)  | (OBJSHAPE_WIDE << 12) | (16*8>>5),		//!< 16x8
+   SpriteSize_32x8  = (OBJSIZE_16 << 14) | (OBJSHAPE_WIDE << 12) | (32*8>>5),		//!< 32x8
+   SpriteSize_32x16 = (OBJSIZE_32 << 14) | (OBJSHAPE_WIDE << 12) | (32*16>>5),		//!< 32x16
+   SpriteSize_64x32 = (OBJSIZE_64 << 14) | (OBJSHAPE_WIDE << 12) | (64*32>>5),		//!< 64x32
 
-   SpriteSize_8x16  = (OBJSIZE_8 << 14)  | (OBJSHAPE_TALL << 12) | (8*16>>5),/**< 8x16 */
-   SpriteSize_8x32  = (OBJSIZE_16 << 14) | (OBJSHAPE_TALL << 12) | (8*32>>5),/**< 8x32 */
-   SpriteSize_16x32 = (OBJSIZE_32 << 14) | (OBJSHAPE_TALL << 12) | (16*32>>5),/**< 16x32 */
-   SpriteSize_32x64 = (OBJSIZE_64 << 14) | (OBJSHAPE_TALL << 12) | (32*64>>5)/**< 32x64 */
+   SpriteSize_8x16  = (OBJSIZE_8 << 14)  | (OBJSHAPE_TALL << 12) | (8*16>>5),		//!< 8x16
+   SpriteSize_8x32  = (OBJSIZE_16 << 14) | (OBJSHAPE_TALL << 12) | (8*32>>5),		//!< 8x32
+   SpriteSize_16x32 = (OBJSIZE_32 << 14) | (OBJSHAPE_TALL << 12) | (16*32>>5),		//!< 16x32
+   SpriteSize_32x64 = (OBJSIZE_64 << 14) | (OBJSHAPE_TALL << 12) | (32*64>>5)		//!< 32x64
 
 }SpriteSize;
 
@@ -245,24 +246,20 @@ typedef enum {
 #define SPRITE_SIZE_SIZE(size)  (((size) >> 14) & 0x3)
 #define SPRITE_SIZE_PIXELS(size) (((size) & 0xFFF) << 5)
 
-/** \enum SpriteMapping
-*    Graphics memory layout options
-*/
+//! Graphics memory layout options.
 typedef enum{
-   SpriteMapping_1D_32 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_32 | (0 << 28) | 0, /**< 1D tile mapping 32 byte boundary between offset */
-   SpriteMapping_1D_64 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_64 | (1 << 28) | 1,/**< 1D tile mapping 64 byte boundary between offset */
-   SpriteMapping_1D_128 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_128 | (2 << 28) | 2,/**< 1D tile mapping 128 byte boundary between offset */
-   SpriteMapping_1D_256 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_256 | (3 << 28) | 3,/**< 1D tile mapping 256 byte boundary between offset */
-   SpriteMapping_2D = DISPLAY_SPR_2D | (4 << 28),/**< 2D tile mapping 32 byte boundary between offset */
+   SpriteMapping_1D_32 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_32 | (0 << 28) | 0,	/**< 1D tile mapping 32 byte boundary between offset */
+   SpriteMapping_1D_64 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_64 | (1 << 28) | 1,	/**< 1D tile mapping 64 byte boundary between offset */
+   SpriteMapping_1D_128 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_128 | (2 << 28) | 2,	/**< 1D tile mapping 128 byte boundary between offset */
+   SpriteMapping_1D_256 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_256 | (3 << 28) | 3,	/**< 1D tile mapping 256 byte boundary between offset */
+   SpriteMapping_2D = DISPLAY_SPR_2D | (4 << 28),									/**< 2D tile mapping 32 byte boundary between offset */
    SpriteMapping_Bmp_1D_128 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_128 | DISPLAY_SPR_1D_BMP |DISPLAY_SPR_1D_BMP_SIZE_128 | (5 << 28) | 2,/**< 1D bitmap mapping 128 byte boundary between offset */
    SpriteMapping_Bmp_1D_256 = DISPLAY_SPR_1D | DISPLAY_SPR_1D_SIZE_256 | DISPLAY_SPR_1D_BMP |DISPLAY_SPR_1D_BMP_SIZE_256 | (6 << 28) | 3,/**< 1D bitmap mapping 256 byte boundary between offset */
-   SpriteMapping_Bmp_2D_128 = DISPLAY_SPR_2D | DISPLAY_SPR_2D_BMP_128 | (7 << 28) | 2,/**< 2D bitmap mapping 128 pixels wide bitmap */
-   SpriteMapping_Bmp_2D_256 = DISPLAY_SPR_2D | DISPLAY_SPR_2D_BMP_256 | (8 << 28) | 3/**< 2D bitmap mapping 256 pixels wide bitmap */
+   SpriteMapping_Bmp_2D_128 = DISPLAY_SPR_2D | DISPLAY_SPR_2D_BMP_128 | (7 << 28) | 2,	/**< 2D bitmap mapping 128 pixels wide bitmap */
+   SpriteMapping_Bmp_2D_256 = DISPLAY_SPR_2D | DISPLAY_SPR_2D_BMP_256 | (8 << 28) | 3	/**< 2D bitmap mapping 256 pixels wide bitmap */
 }SpriteMapping;
 
-/** \enum SpriteColorFormat
-*    Color formats for sprite graphics
-*/
+//! Color formats for sprite graphics.
 typedef enum{
    SpriteColorFormat_16Color = OBJCOLOR_16,/**< 16 colors per sprite*/
    SpriteColorFormat_256Color = OBJCOLOR_256,/**< 256 colors per sprite*/
@@ -276,23 +273,23 @@ typedef struct AllocHeader
    u16 size;
 }AllocHeader;
 
-/** \struct OamState
-*   Holds the state for a 2D sprite engine, there are two of these objects
-*   oamMain and oamSub and these must be passed in to all oam functions
+
+//this struct can be made smaller by rearanging the members.
+/**	\brief Holds the state for a 2D sprite engine.
+	There are two of these objects, oamMain and oamSub and these must be passed in to all oam functions.
 */
 typedef struct OamState
 {
-	int gfxOffsetStep; /**< The distance between tiles as 2^gfxOffsetStep */
-	s16 firstFree;/**< pointer to the first free block of tiles */
-	AllocHeader *allocBuffer; /**< allocation buffer for graphics allocation */
-	s16 allocBufferSize; /**< current size of the allocation buffer */
+	int gfxOffsetStep;			/**< The distance between tiles as 2^gfxOffsetStep */
+	s16 firstFree;				/**< pointer to the first free block of tiles */
+	AllocHeader *allocBuffer;	/**< array, allocation buffer for graphics allocation */
+	s16 allocBufferSize;		/**< current size of the allocation buffer */
 	union
-   {
-       SpriteEntry *oamMemory; /**< pointer to shadow oam memory */
-	   SpriteRotation *oamRotationMemory; /**< pointer to shadow oam memory for rotation */
-   };
-   SpriteMapping spriteMapping;
-
+	{
+		SpriteEntry *oamMemory;				/**< pointer to shadow oam memory */
+		SpriteRotation *oamRotationMemory;	/**< pointer to shadow oam memory for rotation */
+	};
+	SpriteMapping spriteMapping;			//!< the mapping of the oam.
 }OamState;
 
 #ifdef __cplusplus
@@ -304,29 +301,30 @@ extern OamState oamMain;
 //!oamSub an object representing the sub 2D engine
 extern OamState oamSub;
 
-/**  \fn void oamInit(OamState* oam, SpriteMapping mapping, bool extPalette)
-*    \brief Initializes the 2D sprite engine  In order to mix tiled and bitmap sprites 
+/**
+*    \brief Initializes the 2D sprite engine  In order to mix tiled and bitmap sprites
             use SpriteMapping_Bmp_1D_128 or SpriteMapping_Bmp_1D_256.  This will set mapping for both
             to 1D and give same sized boundaries so the sprite gfx allocation will function.  VBlank IRQ must
             be enabled for this function to work.
 *    \param oam must be: &oamMain or &oamSub
-*    \param mapping the mapping mode 
+*    \param mapping the mapping mode
 *    \param extPalette if true the engine sets up extended palettes for 8bpp sprites
 */
 void oamInit(OamState* oam, SpriteMapping mapping, bool extPalette);
 
-/**  \fn void oamDisable(OamState* oam)
+/**
 *    \brief Disables sprite rendering
 *    \param oam must be: &oamMain or &oamSub
 */
 void oamDisable(OamState* oam );
-/**  \fn void oamEnable(OamState* oam)
+
+/**
 *    \brief Enables sprite rendering
 *    \param oam must be: &oamMain or &oamSub
 */
 void oamEnable(OamState* oam );
 
-/**  \fn u16* oamGetGfxPtr(OamState* oam, int gfxOffsetIndex)
+/**
 *    \brief translates an oam offset into a video ram address
 *    \param oam must be: &oamMain or &oamSub
 *    \param gfxOffsetIndex the index to compute
@@ -334,7 +332,7 @@ void oamEnable(OamState* oam );
 */
 u16* oamGetGfxPtr(OamState* oam, int gfxOffsetIndex);
 
-/**  \fn u16* oamAllocateGfx(OamState *oam, SpriteSize size, SpriteColorFormat colorFormat)
+/**
 *    \brief Allocates graphics memory for the supplied sprite attributes
 *    \param oam must be: &oamMain or &oamSub
 *    \param size the size of the sprite to allocate
@@ -343,41 +341,41 @@ u16* oamGetGfxPtr(OamState* oam, int gfxOffsetIndex);
 */
 u16* oamAllocateGfx(OamState *oam, SpriteSize size, SpriteColorFormat colorFormat);
 
-/**  \fn void oamFreeGfx(OamState *oam, const void* gfxOffset)
-*    \brief translates an oam offset into a video ram address
+/**
+*    \brief free vram memory obtained with oamAllocateGfx.
 *    \param oam must be: &oamMain or &oamSub
 *    \param gfxOffset a vram offset obtained from oamAllocateGfx
 */
 void oamFreeGfx(OamState *oam, const void* gfxOffset);
 
 static inline
-/**  \fn void oamSetMosaic(unsigned int dx, unsigned int dy)
+/**
 *    \brief sets engine A global sprite mosaic
 *    \param dx (0-15) horizontal mosaic value
 *    \param dy (0-15) horizontal mosaic value
 */
 void oamSetMosaic(unsigned int dx, unsigned int dy) {
-	sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
-  	
+	sassert(dx < 16 && dy < 16, "Mosaic range must be 0 to 15");
+
 	mosaicShadow = ( mosaicShadow & 0x00ff) | (dx << 8)| (dy << 12);
 	REG_MOSAIC = mosaicShadow;
 }
 
 static inline
-/**  \fn void oamSetMosaicSub(unsigned int dx, unsigned int dy)
+/**
 *    \brief sets engine B global sprite mosaic
 *    \param dx (0-15) horizontal mosaic value
 *    \param dy (0-15) horizontal mosaic value
 */
 void oamSetMosaicSub(unsigned int dx, unsigned int dy){
-	sassert(dx < 16 && dy < 16, "Mosaic range is 0 to 15");
-  	
+	sassert(dx < 16 && dy < 16, "Mosaic range must be 0 to 15");
+
 	mosaicShadowSub = ( mosaicShadowSub & 0x00ff) | (dx << 8)| (dy << 12);
 	REG_MOSAIC_SUB = mosaicShadowSub;
 }
 
-/** 
-*    \brief sets an oam entry to the supplied values 
+/**
+*    \brief sets an oam entry to the supplied values
 *    \param oam must be: &oamMain or &oamSub
 *    \param id the oam number to be set [0 - 127]
 *    \param x the x location of the sprite in pixels
@@ -396,7 +394,7 @@ void oamSetMosaicSub(unsigned int dx, unsigned int dy){
 */
 void oamSet(OamState* oam, int id,  int x, int y, int priority, int palette_alpha, SpriteSize size, SpriteColorFormat format, const void* gfxOffset, int affineIndex, bool sizeDouble, bool hide, bool hflip, bool vflip, bool mosaic);
 
-/**  \fn void oamClear(OamState *oam, int start, int count)
+/**
 *    \brief Hides the sprites in the supplied range: if count is zero all 128 sprites will be hidden
 *    \param oam must be: &oamMain or &oamSub
 *    \param start The first index to clear
@@ -404,18 +402,18 @@ void oamSet(OamState* oam, int id,  int x, int y, int priority, int palette_alph
 */
 void oamClear(OamState *oam, int start, int count);
 
-/**  \fn void oamUpdate(OamState* oam);
+/**
 *    \brief causes oam memory to be updated...must be called during vblank if using oam api
 *    \param oam must be: &oamMain or &oamSub
 */
 void oamUpdate(OamState* oam);
 
-/**  \fn void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy)
+/**
 *    \brief sets the specified rotation scale entry
 *    \param oam must be: &oamMain or &oamSub
 *    \param rotId the rotation entry to set
 *    \param angle the ccw angle to rotate [-32768 - 32767]
-*    \param sx the inverse scale factor in the x direction 
+*    \param sx the inverse scale factor in the x direction
 *    \param sy the inverse scale factor in the y direction
 */
 void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy);
@@ -434,20 +432,24 @@ static inline
 * @param vdx   the vertical x value?
 * @param vdy   the vertical y value?
 */
-void oamAffineTransformation(OamState* oam, int rotId, int hdx, int hdy, int vdx, int vdy) {
+void oamAffineTransformation(OamState* oam, int rotId, int hdx, int hdy, int vdx, int vdy)
+{
 	sassert(rotId >= 0 && rotId < 32, "oamAffineTransformation() rotId is out of bounds, must be 0-31");
 
-	oam->oamRotationMemory[rotId].hdx = hdx >>12;
-	oam->oamRotationMemory[rotId].hdy = hdy >>12;
-	oam->oamRotationMemory[rotId].vdx = vdx >>12;
-	oam->oamRotationMemory[rotId].vdy = vdy >>12;
+	oam->oamRotationMemory[rotId].hdx = hdx;
+	oam->oamRotationMemory[rotId].hdy = hdy;
+	oam->oamRotationMemory[rotId].vdx = vdx;
+	oam->oamRotationMemory[rotId].vdy = vdy;
 }
 
-/**  \fn void oamCountFragments(OamState *oam)
-*    \brief determines the number of fragments in the allocation engine
-*    \param oam must be: &oamMain or &oamSub
+/**
+	\brief determines the number of fragments in the allocation engine
+	\param oam must be: &oamMain or &oamSub
+	\return the number of fragments.
 */
 int oamCountFragments(OamState *oam);
+
+
 
 void oamAllocReset(OamState *oam);
 

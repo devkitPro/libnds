@@ -26,19 +26,13 @@
 #ifndef _sound_h_
 #define _sound_h_
 
-/*! \file sound.h 
-\brief A simple sound playback library for the DS.  Provides functionality
-for starting and stopping sound effects from the ARM9 side as well as access
-to PSG and noise hardware.  Maxmod should be used in most music and sound effect
-situations.
-
- 
-
+/*! \file sound.h
+	\brief A simple sound playback library for the DS.  Provides functionality
+	for starting and stopping sound effects from the ARM9 side as well as access
+	to PSG and noise hardware.  Maxmod should be used in most music and sound effect
+	situations.
 */
 
-/*! 
-
-*/	
 
 #ifdef __cplusplus
 extern "C" {
@@ -75,17 +69,17 @@ typedef enum {
 }DutyCycle;
 
 /*! \fn void soundEnable(void)
-	\brief Enables Sound on the DS.  Should be called prior to 
+	\brief Enables Sound on the DS.  Should be called prior to
 	attempting sound playback
 */
 void soundEnable(void);
 
 /*! \fn void soundDisable(void)
-	\brief Disables Sound on the DS.  
+	\brief Disables Sound on the DS.
 */
 void soundDisable(void);
 
-/*! \fn int soundPlaySample(const void* data, SoundFormat format, u32 dataSize, u16 freq, u8 volume, u8 pan, bool loop, u16 loopPoint); 
+/*! \fn int soundPlaySample(const void* data, SoundFormat format, u32 dataSize, u16 freq, u8 volume, u8 pan, bool loop, u16 loopPoint);
 	\brief Plays a sound in the specified format at the specified frequency.
 
 	\param data A pointer to the sound data
@@ -99,7 +93,7 @@ void soundDisable(void);
 	\return An integer id coresponding to the channel of playback.  This value can be used to pause, resume, or kill the sound
 	as well as adjust volume, pan, and frequency
 */
-int soundPlaySample(const void* data, SoundFormat format, u32 dataSize, u16 freq, u8 volume, u8 pan, bool loop, u16 loopPoint); 
+int soundPlaySample(const void* data, SoundFormat format, u32 dataSize, u16 freq, u8 volume, u8 pan, bool loop, u16 loopPoint);
 
 /*! \fn int soundPlayPSG(DutyCycle cycle, u16 freq, u8 volume, u8 pan);
 	\brief Pause a tone with the specified properties
@@ -146,6 +140,7 @@ void soundKill(int soundId);
 	\param soundId The sound ID returned by play sound
 */
 void soundResume(int soundId);
+
 /*! \fn void soundSetVolume(int soundId, u8 volume)
 	\brief Sets the sound volume
 	\param soundId The sound ID returned by play sound
@@ -181,9 +176,7 @@ void soundSetFreq(int soundId, u16 freq);
 int soundMicRecord(void *buffer, u32 bufferLength, MicFormat format, int freq, MicCallback callback);
 
 /*! \fn void soundMicOff(void)
-
 	\brief Stops the microphone from recording
-	
 */
 void soundMicOff(void);
 

@@ -23,7 +23,7 @@
 
 ---------------------------------------------------------------------------------*/
 /*! \file image.h
-\brief An image abstraction for working with image data.
+	\brief An image abstraction for working with image data.
 
 <div class="fileHeader">
 Image data pointers must be allocated using malloc as the conversion
@@ -38,61 +38,61 @@ pointer data.
 
 #include <nds/arm9/video.h>
 
-/*! \struct RGB_24
-\brief holds a red green blue triplet
-*/
- typedef struct RGB_24
- {
-    unsigned char r,g,b;
- }__attribute__ ((packed)) RGB_24;
+//!	\brief holds a red green blue triplet
+typedef struct RGB_24
+{
+	unsigned char r;	//!< 8 bits for the red value.
+	unsigned char g;	//!< 8 bits for the green value.
+	unsigned char b;	//!< 8 bits for the blue value.
+}__attribute__ ((packed)) RGB_24;
 
- /*! \struct sImage
- \brief A generic image structure
- */
- typedef struct sImage
- {
-    short height; /*!< \brief The height of the image in pixels */
-    short width; /*!< \brief The width of the image in pixels */
-    int bpp;/*!< \brief Bits per pixel (should be 4 8 16 or 24) */
-    unsigned short* palette /*!< \brief A pointer to the palette data */;
-    
-    /*! \union image
-    \brief A union of data pointers to the pixel data 
-    */
-    union
-    {
-       u8* data8;
-       u16* data16;
-       u32* data32;
-    } image;
 
- } sImage, *psImage;
+
+//!	A generic image structure.
+typedef struct sImage
+{
+	short height; 				/*!< \brief The height of the image in pixels */
+	short width; 				/*!< \brief The width of the image in pixels */
+	int bpp;					/*!< \brief Bits per pixel (should be 4 8 16 or 24) */
+	unsigned short* palette;	/*!< \brief A pointer to the palette data */
+
+	//! A union of data pointers to the pixel data.
+	union
+	{
+		u8* data8;		//!< pointer to 8 bit data.
+		u16* data16;	//!< pointer to 16 bit data.
+		u32* data32;	//!< pointer to 32 bit data.
+	} image;
+
+} sImage, *psImage;
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/*! \brief Converts a 24 bit image to 16 bit 
-\param img a pointer to image to manipulate
+/*! \brief Converts a 24 bit image to 16 bit
+	\param img a pointer to image to manipulate
 */
 void image24to16(sImage* img);
+
 /*! \brief Converts an 8 bit image to 16 bit setting the alpha bit
-\param img a pointer to image to manipulate
+	\param img a pointer to image to manipulate
 */
 void image8to16(sImage* img);
-/*! \brief Converts an 8 bit image to 16 bit with 
-alpha bit cleared for the supplied palette index 
-\param img a pointer to image to manipulate
-\param transparentColor Color indexes equal to this value will have the alpha bit clear
+
+/*! \brief Converts an 8 bit image to 16 bit with alpha bit cleared for the supplied palette index
+	\param img a pointer to image to manipulate
+	\param transparentColor Color indexes equal to this value will have the alpha bit clear
 */
 void image8to16trans(sImage* img, u8 transparentColor);
-/*! \brief frees the image data. Only call if the image data 
-was returned from an image loader
-\param img a pointer to image to manipulate (the image data will be free() )
+
+/*! \brief frees the image data. Only call if the image data was returned from an image loader
+	\param img a pointer to image to manipulate (the image data will be free() )
 */
 void imageDestroy(sImage* img);
-/*! \brief Tiles 8 bit image data into a sequence of 8x8 tiles 
-\param img a pointer to image to manipulate
+
+/*! \brief Tiles 8 bit image data into a sequence of 8x8 tiles
+	\param img a pointer to image to manipulate
 */
 void imageTileData(sImage* img);
 
@@ -100,7 +100,7 @@ void imageTileData(sImage* img);
 }
 #endif
 
-
+//why is this included here?
 #include <nds/arm9/pcx.h>
 
 #endif

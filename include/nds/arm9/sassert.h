@@ -4,7 +4,7 @@
 
 	Copyright (C) 2007
 		Dave Murphy (WinterMute)
-		Jason Rogers (Dovoto) 
+		Jason Rogers (Dovoto)
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any
@@ -27,7 +27,7 @@
 
 ---------------------------------------------------------------------------------*/
 /*! \file sassert.h
-\brief Simple assertion with a message conplies to nop if NDEBUG is defined
+	\brief Simple assertion with a message conplies to nop if NDEBUG is defined
 */
 
 #ifndef _sassert_h_
@@ -44,7 +44,7 @@ extern "C" {
 #ifdef NDEBUG           /* required by ANSI standard */
 #define sassert(e,s)  	((void)0)
 #else
-/*! \brief Causes a blue screen of death if e is not true with the msg "msg" displayed*/
+//! Causes a blue screen of death if e is not true with the msg "msg" displayed
 #define sassert(e,msg)       ((e) ? (void)0 : __sassert(__FILE__, __LINE__, #e, msg))
 
 #endif /* NDEBUG */
@@ -55,4 +55,4 @@ void __sassert(const char *fileName, int lineNumber, const char* conditionString
 }
 #endif
 
-#endif // _sassert_h_ 
+#endif // _sassert_h_

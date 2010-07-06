@@ -35,12 +35,12 @@
 /*!	\file trig_lut.h
 
 	\brief fixed point trig functions.  Angle can be in the range of -32768 to
-	32767.  There are 32768 degrees in the unit circle used by nds.  To convert 
+	32767.  There are 32768 degrees in the unit circle used by nds.  To convert
 	between standard degrees (360 per circle):
 
 	angle = degreesToAngle(angleInDegrees);
 
-	or 
+	or
 
 	angle = angleInDegrees * 32768 / 360;
 
@@ -50,66 +50,83 @@
 */
 
 
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+//!	number of degrees in a circle.
 #define DEGREES_IN_CIRCLE (1 << 15)
 
+/*!	\brief convert a fixed point number to an integer.
+	\param n the number the number to convert.
+	\param bits the number of bits used for the decimal part.
+	\return the integer part.
+*/
 #define fixedToInt(n, bits) ((int)((n)>>(bits)))
+
+/*!	\brief converts an integer to a fixed point number.
+	\param n the integer to convert.
+	\param bits the number of bits used for the decimal part.
+	\return the fixed point number.
+*/
 #define intToFixed(n, bits) ((int)((n)<<(bits)))
 
+
+/*!	\brief converts a floating point number to a fixed point number.
+	\param n the floating point number to convert.
+	\param bits the number of bits used for the decimal part.
+	\return the fixed point number.
+*/
 #define floatToFixed(n, bits) ((int)((n) * (float)(1<<(bits))))
+
+/*!	\brief converts a fixed point number to a floating point number.
+	\param n the fixed point number to convert.
+	\param bits the number of bits used for the decimal part.
+	\return the floating point number.
+*/
 #define fixedToFloat(n, bits) (((float)(n)) / (float)(1<<(bits)))
 
+/*!	\brief removes the decimal part of a fixed point number.
+	\param n the fixed point number.
+	\param bits the number of bits used for the decimal part.
+	\return a fixed point number with 0 as a decimal part.
+*/
 #define floorFixed(n, bits) ((int)((n) & ~(((1 << (bits)) - 1))))
 
+
+//! convert an angle in 360 degree format to the format used by libnds.
 #define degreesToAngle(degrees) ((degrees) * DEGREES_IN_CIRCLE / 360)
+//! converts an angle in the format used by libnds in the 360 degree format.
 #define angleToDegrees(angle)   ((angle) * 360 / DEGREES_IN_CIRCLE)
 
 
-/*! \fn s16 cosLerp( s16 angle )
+/*! \brief fixed point cosine
 	\param angle (-32768 to 32767)
-	
-	\brief fixed point cosine
 	\return 4.12 fixed point number with the range [-1, 1]
 */
-
 s16 cosLerp(s16 angle);
-/*! \fn s16 sinLerp( s16 angle )
+
+/*! \brief fixed point sine
 	\param angle (-32768 to 32767)
-	
-	\brief fixed point sine
 	\return 4.12 fixed point number with the range [-1, 1]
-	
 */
 s16 sinLerp(s16 angle);
 
-/*! \fn s32 tanLerp( s16 angle )
+/*! \brief fixed point tangent
 	\param angle (-32768 to 32767)
-
-	\brief fixed point tangent
 	\return 20.12 fixed point number with the range [-81.483, 524287.999]
-	
 */
 s32 tanLerp(s16 angle);
 
-/*! \fn s16 acosLerp( s16 par )
+/*! \brief fixed point arccos
 	\param par parameter
-	
-	\brief fixed point arccos 
 	\return s16 angle (-32768 to 32767)
-	
 */
 s16 acosLerp(s16 par);
-/*! \fn s16 asinLerp( s16 par )
+
+/*! \brief fixed point arcsin
 	\param par parameter
-	
-	\brief fixed point arcsin
 	\return s16 angle (-32768 to 32767)
-	
 */
 s16 asinLerp(s16 par);
 

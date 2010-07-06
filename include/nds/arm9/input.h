@@ -27,8 +27,8 @@
 
 
 ---------------------------------------------------------------------------------*/
-//!	NDS input support.
-/*! \file arm9/input.h
+/*! \file
+	\brief NDS button and touchscreen input support.
 */
 
 //---------------------------------------------------------------------------------
@@ -42,13 +42,13 @@
 extern "C" {
 #endif
 
-//!	Obtains the current keypad state.
-/*!	Call this function once per main loop in order to use the keypad functions.
+/*!	\brief Obtains the current keypad state.
+	Call this function once per main loop in order to use the keypad functions.
 */
 void scanKeys(void);
 
-//!	Obtains the current keypad state.
-/*!	Call this function to get keypad state without affecting state of other key functions (keysUp keysHeld etc...)
+/*!	\brief Obtains the current keypad state.
+	Call this function to get keypad state without affecting state of other key functions (keysUp keysHeld etc...)
 */
 uint32 keysCurrent(void);
 
@@ -61,8 +61,8 @@ uint32 keysDown(void);
 //!	Obtains the current keypad pressed or repeating state.
 uint32 keysDownRepeat(void);
 
-//!	Sets the key repeat parameters.
-/*!	\param setDelay Number of %scanKeys calls before keys start to repeat.
+/*!	\brief Sets the key repeat parameters.
+	\param setDelay Number of %scanKeys calls before keys start to repeat.
 	\param setRepeat Number of %scanKeys calls before keys repeat.
 */
 void keysSetRepeat( u8 setDelay, u8 setRepeat );
@@ -75,9 +75,9 @@ uint32 keysUp(void);
 __attribute__ ((deprecated)) touchPosition touchReadXY() ;
 
 
-/*!	\fn touchRead(touchPosition *data)
+/*!
 	\brief Obtains the current touchpad state.
-	\param data a touchPosition ptr which will be filled by the function
+	\param data a touchPosition ptr which will be filled by the function.
 */
 void touchRead(touchPosition *data);
 

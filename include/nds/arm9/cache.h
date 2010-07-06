@@ -27,8 +27,7 @@
 
 ---------------------------------------------------------------------------------*/
 /*! \file cache.h
-\brief ARM9 cache control functions.
-
+	\brief ARM9 cache control functions.
 */
 #ifndef	_cache_h_
 #define _cache_h_
@@ -45,7 +44,7 @@ extern "C" {
 */
 void	IC_InvalidateAll();
 
-	
+
 /*! \fn IC_InvalidateRange(const void *base, u32 size)
 	\brief invalidate the instruction cache for a range of addresses.
 	\param base base address of the region to invalidate

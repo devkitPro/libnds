@@ -26,7 +26,7 @@
 
 ---------------------------------------------------------------------------------*/
 /*!	\file math.h
-	   \brief hardware coprocessor instructions
+	\brief hardware coprocessor math instructions.
 */
 
 #ifndef MATH_ARM9_INCLUDE
@@ -34,9 +34,6 @@
 
 #include "nds/ndstypes.h"
 
-#ifndef STATIC_INL
-#define STATIC_INL static inline
-#endif
 
 #define REG_DIVCNT			(*(vu16*)(0x04000280))
 #define REG_DIV_NUMER		(*(vs64*) (0x04000290))
@@ -71,12 +68,12 @@
 
 //  Fixed Point versions
 
-STATIC_INL
-/** \fn static int32 divf32(int32 num, int32 den)
+static inline
+/**
 *    \brief Fixed point divide
-*    \param num Takes 20.12 numerator and denominator
-*    \param den Takes 20.12 numerator and denominator
-*    \return returns 20.12 result
+*    \param num Takes 20.12 numerator.
+*    \param den Takes 20.12 denominator.
+*    \return returns 20.12 result.
 */
 int32 divf32(int32 num, int32 den)
 {
@@ -92,23 +89,23 @@ int32 divf32(int32 num, int32 den)
 	return (REG_DIV_RESULT_L);
 }
 
-STATIC_INL 
-/** \fn  static int32 mulf32(int32 a, int32 b)
+static inline
+/**
 *   \brief Fixed point multiply
-*   \param a Takes 20.12 
-*   \param b Takes 20.12 
+*   \param a Takes 20.12
+*   \param b Takes 20.12
 *   \return returns 20.12 result
 */
 int32 mulf32(int32 a, int32 b)
 {
-	long long result = (long long)a*(long long)b;
+	long long result = (long long)a * (long long)b;
 	return (int32)(result >> 12);
 }
 
-STATIC_INL 
-/** \fn int32 sqrtf32(int32 a)
+static inline
+/**
 *   \brief Fixed point sqrt
-*   \param a Takes 20.12 
+*   \param a Takes 20.12
 *   \return returns 20.12 result
 */
 int32 sqrtf32(int32 a)
@@ -126,8 +123,8 @@ int32 sqrtf32(int32 a)
 
 //  Integer versions
 
-STATIC_INL 
-/** \fn  int32 div32(int32 num, int32 den)
+static inline
+/**
 *   \brief integer divide
 *   \param num  numerator
 *   \param den  denominator
@@ -147,8 +144,8 @@ int32 div32(int32 num, int32 den)
 	return (REG_DIV_RESULT_L);
 }
 
-STATIC_INL 
-/** \fn  int32 mod32(int32 num, int32 den)
+static inline
+/**
 *   \brief integer modulous
 *   \param num  numerator
 *   \param den  denominator
@@ -168,8 +165,8 @@ int32 mod32(int32 num, int32 den)
 	return (REG_DIVREM_RESULT_L);
 }
 
-STATIC_INL 
-/** \fn  int32 div64(int64 num, int32 den)
+static inline
+/**
 *   \brief integer 64 bit divide
 *   \param num  64 bit numerator
 *   \param den  32 bit denominator
@@ -178,19 +175,19 @@ STATIC_INL
 int32 div64(int64 num, int32 den)
 {
 	REG_DIVCNT = DIV_64_32;
-	
+
 	while(REG_DIVCNT & DIV_BUSY);
-	
+
 	REG_DIV_NUMER = num;
 	REG_DIV_DENOM_L = den;
-	
+
 	while(REG_DIVCNT & DIV_BUSY);
-	
+
 	return (REG_DIV_RESULT_L);
 }
 
-STATIC_INL 
-/** \fn int32 mod64(int64 num, int32 den)
+static inline
+/**
 *   \brief integer 64 bit modulous
 *   \param num  64 bit numerator
 *   \param den  32 bit denominator
@@ -210,8 +207,8 @@ int32 mod64(int64 num, int32 den)
 	return (REG_DIVREM_RESULT_L);
 }
 
-STATIC_INL 
-/** \fn int32 sqrt32(int a)
+static inline
+/**
 *   \brief integer sqrt
 *   \param a 32 bit integer argument
 *   \return returns 32 bit integer result
@@ -229,8 +226,8 @@ u32 sqrt32(int a)
 	return REG_SQRT_RESULT;
 }
 
-STATIC_INL 
-/** \fn int32 sqrt64(long long a)
+static inline
+/**
 *   \brief integer sqrt
 *   \param a 64 bit integer argument
 *   \return returns 32 bit integer result
@@ -247,12 +244,13 @@ u32 sqrt64(long long a)
 
 	return REG_SQRT_RESULT;
 }
-STATIC_INL 
-/** \fn void crossf32(int32 *a, int32 *b, int32 *result)
+
+static inline
+/**
 *   \brief 1.19.12 fixed point cross product function result = AxB
-*   \param a pointer to fixed 3x3 matrix 
-*   \param b pointer to fixed 3x3 matrix 
-*   \param result pointer to fixed 3x3 matrix 
+*   \param a pointer to fixed 3x3 matrix
+*   \param b pointer to fixed 3x3 matrix
+*   \param result pointer to fixed 3x3 matrix
 * Cross product
 * x = Ay * Bz - By * Az
 * y = Az * Bx - Bz * Ax
@@ -266,12 +264,12 @@ void crossf32(int32 *a, int32 *b, int32 *result)
 }
 
 
-STATIC_INL 
-/** \fn int32 dotf32(int32 *a, int32 *b)
+static inline
+/**
 *   \brief 1.19.12 fixed point dot product function result = A dot B
-*   \param a pointer to fixed 3x3 matrix 
-*   \param b pointer to fixed 3x3 matrix 
-*   \return 32 bit integer result 
+*   \param a pointer to fixed 3x3 matrix
+*   \param b pointer to fixed 3x3 matrix
+*   \return 32 bit integer result
 * Dot Product
 * result = Ax * Bx + Ay * By + Az * Bz
 */
@@ -282,10 +280,10 @@ int32 dotf32(int32 *a, int32 *b)
 
 
 
-STATIC_INL 
-/** \fn void normalizef32(int32* a)
+static inline
+/**
 *   \brief 1.19.12 fixed point normalize function A = A  / |A|
-*   \param a pointer to fixed 3x3 matrix 
+*   \param a pointer to fixed 3x3 matrix
 * Normalize
 * Ax = Ax / mag
 * Ay = Ay / mag
@@ -300,5 +298,6 @@ void normalizef32(int32* a)
 	a[1] = divf32(a[1], magnitude);
 	a[2] = divf32(a[2], magnitude);
 }
-#endif
 
+
+#endif
