@@ -65,7 +65,7 @@ enum {
 int SimpleKbdLower[] = {
 
 	DVK_FOLD, DVK_FOLD, NOKEY, '1', '1', '2', '2', '3', '3', '4', '4', '5', '5', '6', '6', '7', 
-	'7', '8', '8', '9', '9', '0', '0', '-', '-', '+', '+', DVK_BACKSPACE, DVK_BACKSPACE, DVK_BACKSPACE, DVK_BACKSPACE, DVK_BACKSPACE ,
+	'7', '8', '8', '9', '9', '0', '0', '-', '-', '=', '=', DVK_BACKSPACE, DVK_BACKSPACE, DVK_BACKSPACE, DVK_BACKSPACE, DVK_BACKSPACE ,
 
 	DVK_TAB, DVK_TAB, DVK_TAB, DVK_TAB, 'q', 'q', 'w', 'w', 'e', 'e', 'r', 'r', 't', 't', 'y', 'y', 
 	'u', 'u', 'i', 'i', 'o', 'o', 'p', 'p', '[', '[', ']', ']', '\\', '\\', '`', '`' ,
