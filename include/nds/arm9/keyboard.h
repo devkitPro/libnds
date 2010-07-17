@@ -97,6 +97,31 @@ typedef struct Keyboard {
 	KeyChangeCallback OnKeyReleased;	/*!< will be called on key release */
 }Keyboard;
 
+
+/*!	\brief enum values for the keyboard control keys.
+	negative values are keys with no sensible ascii representation.
+	numbers are chosen to mimic ascii control sequences.
+*/
+typedef enum
+{
+	NOKEY         = -1,     //!< will be returned if no key was pressed.
+	DVK_FOLD      = -23,	//!< will be returned if the fold key was pressed (topleft on the default keyboard).
+	DVK_TAB       =  9,     //!< will be returned if the tab key was pressed.
+	DVK_BACKSPACE =  8,		//!< will be returned if the backspace key was pressed.
+	DVK_CAPS      = -15,    //!< will be returned if the caps key was pressed.
+	DVK_SHIFT     = -14,	//!< will be returned if the shift key was pressed.
+	DVK_SPACE     =  32,    //!< will be returned if the space key was pressed.
+	DVK_MENU      = -5,		//!< will be returned if the menu key was pressed.
+	DVK_ENTER     =  10,    //!< will be returned if the enter key was pressed.
+	DVK_CTRL      = -16,	//!< will be returned if the ctrl key was pressed.
+	DVK_UP        = -17,    //!< will be returned if the up key was pressed.
+	DVK_RIGHT     = -18,	//!< will be returned if the right key was pressed.
+	DVK_DOWN      = -19,    //!< will be returned if the down key was pressed.
+	DVK_LEFT      = -20,	//!< will be returned if the left key was pressed.
+	DVK_ALT       = -26		//!< will be returned if the alt key was pressed.
+} Keys;
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
