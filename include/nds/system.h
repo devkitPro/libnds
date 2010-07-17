@@ -268,83 +268,87 @@ typedef enum {
 	\brief User's DS settings.
 	Defines the structure the DS firmware uses for transfer
 	of the user's settings to the booted program.
+
+	Theme/Color values:
+	- 0 = Gray
+	- 1 = Brown
+	- 2 = Red
+	- 3 = Pink
+	- 4 = Orange
+	- 5 = Yellow
+	- 6 = Yellow/Green-ish
+	- 7 = Green
+	- 8 = Dark Green
+	- 9 = Green/Blue-ish
+	- 10 = Light Blue
+	- 11 = Blue
+	- 12 = Dark Blue
+	- 13 = Dark Purple
+	- 14 = Purple
+	- 15 = Purple/Red-ish
+
+	Language values:
+	- 0 = Japanese
+	- 1 = English
+	- 2 = French
+	- 3 = German
+	- 4 = Italian
+	- 5 = Spanish
+	- 6 = Chinese(?)
+	- 7 = Unknown/Reserved
 */
-typedef struct tPERSONAL_DATA {
-  u8 RESERVED0[2];			//!<	??? (0x05 0x00).
+typedef struct tPERSONAL_DATA
+{
+	u8 RESERVED0[2];			//	??? (0x05 0x00). (version according to gbatek)
 
-  u8 theme;					//!<	The user's theme color (0-15).
-  u8 birthMonth;			//!<	The user's birth month (1-12).
-  u8 birthDay;				//!<	The user's birth day (1-31).
+	u8 theme;					//!<	The user's theme color (0-15).
+	u8 birthMonth;				//!<	The user's birth month (1-12).
+	u8 birthDay;				//!<	The user's birth day (1-31).
 
-  u8 RESERVED1[1];			//!<	???
+	u8 RESERVED1[1];			//	???
 
-  s16 name[10];				//!<	The user's name in UTF-16 format.
-  u16 nameLen;				//!<	The length of the user's name in characters.
+	s16 name[10];				//!<	The user's name in UTF-16 format.
+	u16 nameLen;				//!<	The length of the user's name in characters.
 
-  s16 message[26];			//!<	The user's message.
-  u16 messageLen;			//!<	The length of the user's message in characters.
+	s16 message[26];			//!<	The user's message.
+	u16 messageLen;				//!<	The length of the user's message in characters.
 
-  u8 alarmHour;				//!<	What hour the alarm clock is set to (0-23).
-  u8 alarmMinute;			//!<	What minute the alarm clock is set to (0-59).
-            //0x02FFFCD3  alarm minute
+	u8 alarmHour;				//!<	What hour the alarm clock is set to (0-23).
+	u8 alarmMinute;				//!<	What minute the alarm clock is set to (0-59).
+	//0x02FFFCD3  alarm minute
 
-  u8 RESERVED2[4];			//!<	???
-           //0x02FFFCD4  ??
+	u8 RESERVED2[4];			//	??? 0x02FFFCD4  ??
 
-  u16 calX1;				//!<	Touchscreen calibration: first X touch
-  u16 calY1;				//!<	Touchscreen calibration: first Y touch
-  u8 calX1px;				//!<	Touchscreen calibration: first X touch pixel
-  u8 calY1px;				//!<	Touchscreen calibration: first X touch pixel
 
-  u16 calX2;				//!<	Touchscreen calibration: second X touch
-  u16 calY2;				//!<	Touchscreen calibration: second Y touch
-  u8 calX2px;				//!<	Touchscreen calibration: second X touch pixel
-  u8 calY2px;				//!<	Touchscreen calibration: second Y touch pixel
+	u16 calX1;				//!<	Touchscreen calibration: first X touch
+	u16 calY1;				//!<	Touchscreen calibration: first Y touch
+	u8 calX1px;				//!<	Touchscreen calibration: first X touch pixel
+	u8 calY1px;				//!<	Touchscreen calibration: first X touch pixel
 
-  packed_struct {
-    unsigned language			: 3;	//!<	User's language.
-    unsigned gbaScreen			: 1;	//!<	GBA screen selection (lower screen if set, otherwise upper screen).
-    unsigned defaultBrightness	: 2;	//!<	Brightness level at power on, dslite.
-    unsigned autoMode			: 1;	//!<	The DS should boot from the DS cart or GBA cart automatically if one is inserted.
-    unsigned RESERVED1			: 2;	//!<	???
-	unsigned settingsLost		: 1;	//!<	User Settings Lost (0=Normal, 1=Prompt/Settings Lost)
-	unsigned RESERVED2			: 6;	//!<	???
-  } _user_data;
+	u16 calX2;				//!<	Touchscreen calibration: second X touch
+	u16 calY2;				//!<	Touchscreen calibration: second Y touch
+	u8 calX2px;				//!<	Touchscreen calibration: second X touch pixel
+	u8 calY2px;				//!<	Touchscreen calibration: second Y touch pixel
 
-  u16	RESERVED3;			//!<	???
-  u32	rtcOffset;			//!<	Real Time Clock offset.
-  u32	RESERVED4;			//!<	???
+	PACKED struct
+	{
+		unsigned int language			: 3;	//!<	User's language.
+		unsigned int gbaScreen			: 1;	//!<	GBA screen selection (lower screen if set, otherwise upper screen).
+		unsigned int defaultBrightness	: 2;	//!<	Brightness level at power on, dslite.
+		unsigned int autoMode			: 1;	//!<	The DS should boot from the DS cart or GBA cart automatically if one is inserted.
+		unsigned int RESERVED5			: 2;	//	???
+		unsigned int settingsLost		: 1;	//!<	User Settings Lost (0=Normal, 1=Prompt/Settings Lost)
+		unsigned int RESERVED6			: 6;	//	???
+	};
+
+	u16	RESERVED3;			//	???
+	u32	rtcOffset;			//!<	Real Time Clock offset.
+	u32	RESERVED4;			//	???
 } PACKED PERSONAL_DATA ;
 
 //!	Default location for the user's personal data (see %PERSONAL_DATA).
 #define PersonalData ((PERSONAL_DATA*)0x2FFFC80)
 
-// argv struct magic number
-#define ARGV_MAGIC 0x5f617267
-
-/*!
-	\brief argv structure.
-	structure used to set up argc/argv on the DS
-*/
-struct __argv {
-	int argvMagic;		//!< argv magic number, set to 0x5f617267 ('_arg') if valid
-	char *commandLine;	//!< base address of command line, set of null terminated strings
-	int length;			//!< total length of command line
-	int argc;			//!< internal use, number of arguments
-	char **argv;		//!< internal use, argv pointer
-};
-
-//!	Default location for the libnds argv structure.
-#define __system_argv		((struct __argv *)0x02FFFE70)
-
-#define BOOTSIG	0x62757473746F6F62ULL
-
-struct __bootstub {
-	u64	bootsig;
-	VoidFn arm9reboot;
-	VoidFn arm7reboot;
-	u32 bootsize;
-};
 
 //! struct containing time and day of the real time clock.
 typedef	struct {
@@ -357,6 +361,41 @@ typedef	struct {
 	u8 minutes;	//!< 0 to 59
 	u8 seconds;	//!< 0 to 59
 } RTCtime;
+
+
+
+// argv struct magic number
+#define ARGV_MAGIC 0x5f617267
+
+//structure used to set up argc/argv on the DS
+struct __argv {
+	int argvMagic;		// argv magic number, set to 0x5f617267 ('_arg') if valid
+	char *commandLine;	// base address of command line, set of null terminated strings
+	int length;			// total length of command line
+	int argc;			// internal use, number of arguments
+	char **argv;		// internal use, argv pointer
+};
+
+#define __system_argv		((struct __argv *)0x02FFFE70)
+
+static inline
+//! returns the same argc that is given to the main function.
+int getArgc(void) { return __system_argv->argc; }
+
+static inline
+//! returns the same argv that is given to the main function.
+const char** getArgv(void) { return (const char**)__system_argv->argv; }
+
+
+
+#define BOOTSIG	0x62757473746F6F62ULL
+
+struct __bootstub {
+	u64	bootsig;
+	VoidFn arm9reboot;
+	VoidFn arm7reboot;
+	u32 bootsize;
+};
 
 
 #ifdef ARM9
