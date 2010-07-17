@@ -4,7 +4,7 @@ background.c -- DS Background Control
 
 Copyright (C) 2007
 Dave Murphy (WinterMute)
-Jason Rogers (Dovoto) 
+Jason Rogers (Dovoto)
 
 This software is provided 'as-is', without any express or implied
 warranty.  In no event will the authors be held liable for any
@@ -32,7 +32,7 @@ distribution.
 
 #include <string.h>
 
-//const char* BgUsage = 
+//const char* BgUsage =
 //"______________________________\n"
 //"|Mode | BG0 | BG1 | BG2 | BG3 |\n"
 //"|  0  |  T  |  T  |  T  |  T  |\n"
@@ -46,7 +46,7 @@ distribution.
 //"R = Rotation\n"
 //"E = Extended Rotation (Bitmap or tiled)\n";
 
-//look up tables for smoothing register access between the two 
+//look up tables for smoothing register access between the two
 //displays
 vu16* bgControl[8] = {
 	&REG_BG0CNT,
@@ -112,19 +112,19 @@ void bgUpdate(void) {
 	{
 		if(!bgState[i].dirty) continue;
 
-		if(bgIsTextLut[i]) 
+		if(bgIsTextLut[i])
 		{
 
 			bgScrollTable[i]->x = bgState[i].scrollX >> 8;
 			bgScrollTable[i]->y = bgState[i].scrollY >> 8;
 
-		} 
-		else 
+		}
+		else
 		{
 			s16 angleSin;
 			s16 angleCos;
 
-			s32 pa, pb, pc, pd; 
+			s32 pa, pb, pc, pd;
 
 			// Compute sin and cos
 			angleSin = sinLerp(bgState[i].angle);
@@ -155,12 +155,12 @@ void bgUpdate(void) {
 //returns an id which must be supplied to the remainder of the background functions
 int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase) {
 
-	BGCTRL[layer] = BG_MAP_BASE(mapBase) | BG_TILE_BASE(tileBase) 
+	BGCTRL[layer] = BG_MAP_BASE(mapBase) | BG_TILE_BASE(tileBase)
 		| size | ((type == BgType_Text8bpp) ? BG_COLOR_256 : 0);
 
 	memset(&bgState[layer], 0, sizeof(BgState) );
 
-	if(type != BgType_Text8bpp && type != BgType_Text4bpp) {		
+	if(type != BgType_Text8bpp && type != BgType_Text4bpp) {
 		bgSetScale(layer, 1 << 8, 1 << 8);
 		bgRotate(layer, 0);
 	}
@@ -182,14 +182,14 @@ int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase) 
 
 int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBase) {
 
-	BGCTRL_SUB[layer] = BG_MAP_BASE(mapBase) | BG_TILE_BASE(tileBase) 
+	BGCTRL_SUB[layer] = BG_MAP_BASE(mapBase) | BG_TILE_BASE(tileBase)
 		| size | ((type == BgType_Text8bpp) ? BG_COLOR_256 : 0) ;
 
 	memset(&bgState[layer + 4], 0, sizeof(BgState) );
 
-	if(type != BgType_Text8bpp && type != BgType_Text4bpp) {		
+	if(type != BgType_Text8bpp && type != BgType_Text4bpp) {
 		bgSetScale(layer + 4, 1 << 8, 1 << 8);
-		bgRotate(layer, 0);
+		bgRotate(layer + 4, 0);
 	}
 
 	bgState[layer + 4].type = type;
@@ -203,5 +203,5 @@ int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBas
 	bgUpdate();
 
 	return layer + 4;
-} 
+}
 
