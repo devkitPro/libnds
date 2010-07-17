@@ -30,45 +30,69 @@
 
 #include <nds/arm9/sassert.h>
 //---------------------------------------------------------------------------------
-void timerStart(int channel, ClockDivider divider, u16 ticks, fp callback){
+void timerStart(uint timer, ClockDivider divider, u16 ticks, VoidFn callback){
 //---------------------------------------------------------------------------------
-	
-	TIMER_DATA(channel) = ticks;
-	
+	sassert(timer < 3, "timer must be in range 0 - 2");
+	TIMER_DATA(timer) = ticks;
+
 	if(callback)
 	{
-		irqSet(IRQ_TIMER(channel), callback);
-		irqEnable(IRQ_TIMER(channel));
-		TIMER_CR(channel) = TIMER_IRQ_REQ | divider | TIMER_ENABLE;
+		irqSet(IRQ_TIMER(timer), callback);
+		irqEnable(IRQ_TIMER(timer));
+		TIMER_CR(timer) = TIMER_IRQ_REQ | divider | TIMER_ENABLE;
 	}
 	else
 	{
-		TIMER_CR(channel) = divider | TIMER_ENABLE;
+		TIMER_CR(timer) = divider | TIMER_ENABLE;
 	}
-	
-	
-	
 }
 
-u16 elapsed[4] = {0};
-//---------------------------------------------------------------------------------
-u16 timerElapsed(int channel){
-//---------------------------------------------------------------------------------
-	u16 time = TIMER_DATA(channel);
 
-	s32 result = (s32)elapsed[channel] - (s32)time;
+u16 elapsed[4] = {0, 0, 0, 0};
 
-	//overflow...this will only be accurate if it has overflowed 
-	//no more than once
+//---------------------------------------------------------------------------------
+u16 timerElapsed(uint timer)
+//---------------------------------------------------------------------------------
+{
+	sassert(timer < 3, "timer must be in range 0 - 2");
+	u16 time = TIMER_DATA(timer);
+
+	s32 result = (s32)time - (s32)elapsed[timer];
+
+	//overflow...this will only be accurate if it has overflowed no more than once.
 	if(result < 0)
 	{
-		result = time + (0x10000 - elapsed[channel]);
+		result = time + (0x10000 - elapsed[timer]);
 	}
 
-	elapsed[channel] = time;
+	elapsed[timer] = time;
 
 	return (u16) result;
 }
+
+
+//---------------------------------------------------------------------------------
+u16 timerPause(uint timer)
+//---------------------------------------------------------------------------------
+{
+	TIMER_CR(timer) &= ~TIMER_ENABLE;
+	u16 temp = timerElapsed(timer);
+	elapsed[timer] = 0;
+	return temp;
+}
+
+//---------------------------------------------------------------------------------
+u16 timerStop(uint timer)
+//---------------------------------------------------------------------------------
+{
+	TIMER_CR(timer) = 0;
+	u16 temp = timerElapsed(timer);
+	elapsed[timer] = 0;
+	return temp;
+}
+
+
+
 
 
 /*
@@ -77,11 +101,10 @@ u16 timerElapsed(int channel){
   original Source by eKid
   adapted by Ryouarashi and Weirdfox
 */
-
-static int localTimer = 0;
+static uint localTimer = 0;
 
 //---------------------------------------------------------------------------------
-void cpuStartTiming(u32 timer) {
+void cpuStartTiming(uint timer) {
 //---------------------------------------------------------------------------------
 	sassert(timer < 3, "timer must be in range 0 - 2");
 	localTimer = timer;
@@ -94,6 +117,13 @@ void cpuStartTiming(u32 timer) {
 
     TIMER_CR(timer+1) = TIMER_CASCADE | TIMER_ENABLE;
     TIMER_CR(timer) = TIMER_ENABLE;
+}
+
+//---------------------------------------------------------------------------------
+u32 cpuGetTiming()
+//---------------------------------------------------------------------------------
+{
+	return ( (TIMER_DATA(localTimer) | (TIMER_DATA(localTimer+1)<<16) ));
 }
 
 //---------------------------------------------------------------------------------
