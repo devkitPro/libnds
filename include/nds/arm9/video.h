@@ -578,6 +578,38 @@ void videoBgDisableSub(int number) {REG_DISPCNT_SUB &= ~(1 << (DISPLAY_ENABLE_SH
 */
 void setBrightness(int screen, int level);
 
+
+static inline
+/**
+    \brief sets the backdrop color of the main engine.
+
+    the backdrop color is displayed when all pixels at a given location are transparent
+    (no sprite or background is visible there).
+
+    \param color the color that the backdrop of the main engine should display.
+*/
+void setBackdropColor(const u16 color)
+{
+    BG_PALETTE[0] = color;
+}
+
+static inline
+/**
+    \brief sets the backdrop color of the sub engine.
+
+    the backdrop color is displayed when all pixels at a given location are transparent
+    (no sprite or background is visible there).
+
+    \param color the color that the backdrop of the sub engine should display.
+*/
+void setBackdropColorSub(const u16 color)
+{
+    BG_PALETTE_SUB[0] = color;
+}
+
+
+
+
 #define REG_MASTER_BRIGHT     (*(vu16*)0x0400006C)
 #define REG_MASTER_BRIGHT_SUB (*(vu16*)0x0400106C)
 
