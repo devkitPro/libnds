@@ -402,6 +402,21 @@ void oamSet(OamState* oam, int id,  int x, int y, int priority, int palette_alph
 */
 void oamClear(OamState *oam, int start, int count);
 
+
+static inline
+/**
+    \brief Hides a single sprite.
+
+    \param oam      the oam engine, must be &oamMain or &oamSub.
+    \param index    the index of the sprite, must be 0-127.
+*/
+void oamClearSprite(OamState *oam, uint index)
+{
+    sassert(index < SPRITE_COUNT, "oamClearSprite() index is out of bounds, must be 0-127");
+    oam->oamMemory[index].attribute[0] = ATTR0_DISABLED;
+}
+
+
 /**
 *    \brief causes oam memory to be updated...must be called during vblank if using oam api
 *    \param oam must be: &oamMain or &oamSub
