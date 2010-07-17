@@ -14,7 +14,7 @@ typedef enum {
    FIFO_SYSTEM	= 2,	/*!< \brief fifo channel reserved for system functions. */
    FIFO_MAXMOD	= 3,	/*!< \brief fifo channel reserved for the maxmod library. */
    FIFO_DSWIFI	= 4,	/*!< \brief fifo channel reserved for the dswifi library. */
-   FIFO_RSDV_01	= 5,	/*!< \brief fifo channel reserved for future use. */
+   FIFO_RSVD_01	= 5,	/*!< \brief fifo channel reserved for future use. */
    FIFO_RSVD_02 = 6,	/*!< \brief fifo channel reserved for future use. */
    FIFO_RSVD_03 = 7,	/*!< \brief fifo channel reserved for future use. */
    FIFO_USER_01	= 8,	/*!< \brief fifo channel available for users. */
