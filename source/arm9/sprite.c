@@ -7,25 +7,25 @@
 #include <nds/dma.h>
 #include <nds/interrupts.h>
 
-#include <stdio.h>	// for NULL 
+#include <stdio.h>	// for NULL
 
 SpriteEntry OamMemorySub[128];
 SpriteEntry OamMemory[128];
 
 OamState oamMain = {
-	-1, 
-	0, 
-	NULL, 
-	32, 
+	-1,
+	0,
+	NULL,
+	32,
 	{OamMemory},
 	SpriteMapping_1D_128
 };
 
 OamState oamSub = {
-	-1, 
-	0, 
-	NULL, 
-	32, 
+	-1,
+	0,
+	NULL,
+	32,
 	{OamMemorySub},
 	SpriteMapping_1D_128
 };
@@ -57,14 +57,14 @@ void oamInit(OamState *oam, SpriteMapping mapping, bool extPalette) {
 
 	if(oam == &oamMain) {
 		dmaCopy(oam->oamMemory, OAM, sizeof(OamMemory));
-		
+
 		REG_DISPCNT &= ~DISPLAY_SPRITE_ATTR_MASK;
-		REG_DISPCNT |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;      
+		REG_DISPCNT |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;
 	} else {
 		dmaCopy(oam->oamMemory, OAM_SUB, sizeof(OamMemory));
 
 		REG_DISPCNT_SUB &= ~DISPLAY_SPRITE_ATTR_MASK;
-		REG_DISPCNT_SUB |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;      
+		REG_DISPCNT_SUB |= DISPLAY_SPR_ACTIVE | (mapping & 0xffffff0) | extPaletteFlag;
 	}
 
 	oamAllocReset(oam);
@@ -130,7 +130,7 @@ unsigned int oamGfxPtrToOffset(OamState *oam, const void* offset) {
 	else
 	{
 		u32 size = (oam->spriteMapping & DISPLAY_SPR_2D_BMP_256);
-		
+
 		u32 toffset = (((u32)offset) & 0xFFFFF) >> 1;
 
 		if (size == DISPLAY_SPR_2D_BMP_256)
@@ -147,7 +147,7 @@ unsigned int oamGfxPtrToOffset(OamState *oam, const void* offset) {
 
 			return (x >> 3)| (y << 4);
 		}
-	
+
 	}
 }
 
@@ -158,7 +158,7 @@ void oamSet(OamState* oam,	int id,  int x, int y, int priority,
  							int palette_alpha, SpriteSize size,SpriteColorFormat format,
  							const void* gfxOffset,
  							int affineIndex,
- 							bool sizeDouble, bool hide, bool hflip, bool vflip, bool mosaic) {  
+ 							bool sizeDouble, bool hide, bool hflip, bool vflip, bool mosaic) {
 //---------------------------------------------------------------------------------
 
 	if(hide) {
@@ -170,12 +170,12 @@ void oamSet(OamState* oam,	int id,  int x, int y, int priority,
 	oam->oamMemory[id].size = SPRITE_SIZE_SIZE(size);
 	oam->oamMemory[id].x = x;
 	oam->oamMemory[id].y = y;
-	oam->oamMemory[id].palette = palette_alpha; 
+	oam->oamMemory[id].palette = palette_alpha;
 	oam->oamMemory[id].priority = priority;
 	oam->oamMemory[id].hFlip = hflip;
 	oam->oamMemory[id].vFlip = vflip;
 	oam->oamMemory[id].isMosaic = mosaic;
-    oam->oamMemory[id].gfxIndex = oamGfxPtrToOffset(oam, gfxOffset); 
+    oam->oamMemory[id].gfxIndex = oamGfxPtrToOffset(oam, gfxOffset);
 
 
     if(affineIndex >= 0 && affineIndex < 32) {
@@ -189,7 +189,7 @@ void oamSet(OamState* oam,	int id,  int x, int y, int priority,
 
 	if(format != SpriteColorFormat_Bmp) {
 		oam->oamMemory[id].colorMode = format;
-	} else {  
+	} else {
         oam->oamMemory[id].blendMode = format;
 	}
 }
@@ -201,7 +201,7 @@ void oamUpdate(OamState* oam) {
 
 	if(oam == &oamMain) {
 		dmaCopy(oam->oamMemory, OAM, sizeof(OamMemory));
-	} else { 
+	} else {
 		dmaCopy(oam->oamMemory, OAM_SUB, sizeof(OamMemory));
 	}
 }
@@ -209,12 +209,12 @@ void oamUpdate(OamState* oam) {
 //---------------------------------------------------------------------------------
 void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy){
 //---------------------------------------------------------------------------------
-	sassert(rotId >= 0 && rotId < 32, "oamAffineTransformation() rotId is out of bounds, must be 0-31");   
+	sassert(rotId >= 0 && rotId < 32, "oamRotateScale() rotId is out of bounds, must be 0-31");
 
 	int ss = sinLerp(angle);
 	int cc = cosLerp(angle);
 
-	oam->oamRotationMemory[rotId].hdx = cc*sx>>12; 
+	oam->oamRotationMemory[rotId].hdx = cc*sx>>12;
 	oam->oamRotationMemory[rotId].hdy =-ss*sx>>12;
 	oam->oamRotationMemory[rotId].vdx = ss*sy>>12;
 	oam->oamRotationMemory[rotId].vdy = cc*sy>>12;
