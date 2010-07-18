@@ -153,7 +153,12 @@
 	\example Graphics/3D/Display_List/source/main.cpp
 
 	<!-- RTC -->
-	\example RealTimeClock/Watch/source/main.cpp
+	\example time/RealTimeClock/source/main.c
+	
+	<!-- Timers -->
+	\example time/stopwatch/source/main.c
+	\example time/timercallback/source/main.c
+	
 
 	<!-- capture -->
 	\example capture/ScreenShot/source/main.cpp
