@@ -487,32 +487,24 @@ PrintConsole* consoleInit(PrintConsole* console, int layer,
 
 	static bool firstConsoleInit = true;
 
-	if(firstConsoleInit)
-	{
+	if(firstConsoleInit) {
 		devoptab_list[STD_OUT] = &dotab_stdout;
-	
-		setvbuf(stdout, NULL , _IONBF, 0);
+		devoptab_list[STD_ERR] = &dotab_stdout;
 		
 		firstConsoleInit = false;
 	}
 	
-	if(console)
-	{
+	if(console) {
 		currentConsole = console;
-	}
-	else
-	{
+	} else {
 		console = currentConsole;	
 	}
 
 	*currentConsole = defaultConsole;
 
-	if(mainDisplay)
-	{
+	if(mainDisplay) {
 		console->bgId = bgInit(layer, type, size, mapBase, tileBase);
-	}
-	else
-	{
+	} else {
 		console->bgId = bgInitSub(layer, type, size, mapBase, tileBase);
 	}	
 	
@@ -551,8 +543,7 @@ void consoleSetFont(PrintConsole* console, ConsoleFont* font){
 void consoleDebugInit(DebugDevice device){
 //---------------------------------------------------------------------------------
 
-	switch(device)
-	{
+	switch(device) {
 	case DebugDevice_NOCASH:
 		devoptab_list[STD_ERR] = &dotab_nocash;
 		break;
@@ -585,8 +576,7 @@ static void newRow() {
 	
 	currentConsole->cursorY ++;
 	
-	if(currentConsole->cursorY  >= currentConsole->windowHeight) 
-	{
+	if(currentConsole->cursorY  >= currentConsole->windowHeight)  {
 		int rowCount;
 		int colCount;
 		
@@ -632,15 +622,11 @@ void consolePrintChar(char c) {
 		case 8:
 			currentConsole->cursorX--;
 			
-			if(currentConsole->cursorX < 0)
-			{			
-				if(currentConsole->cursorY > 0) 
-				{	
+			if(currentConsole->cursorX < 0) {			
+				if(currentConsole->cursorY > 0) {	
 					currentConsole->cursorX = currentConsole->windowX - 1;
 					currentConsole->cursorY--;
-				}
-				else
-				{
+				} else {
 					currentConsole->cursorX = 0;
 				}
 			}
@@ -653,9 +639,7 @@ void consolePrintChar(char c) {
 			currentConsole->cursorX  += currentConsole->tabSize;
 			break;
 		case 10:
-			currentConsole->cursorX  = 0;
 			newRow();
-			break;
 		case 13:
 			currentConsole->cursorX  = 0;
 			break;
