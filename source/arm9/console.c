@@ -490,7 +490,10 @@ PrintConsole* consoleInit(PrintConsole* console, int layer,
 	if(firstConsoleInit) {
 		devoptab_list[STD_OUT] = &dotab_stdout;
 		devoptab_list[STD_ERR] = &dotab_stdout;
-		
+
+		setvbuf(stdout, NULL , _IONBF, 0);
+		setvbuf(stderr, NULL , _IONBF, 0);
+				
 		firstConsoleInit = false;
 	}
 	
