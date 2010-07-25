@@ -66,10 +66,6 @@
 // define libnds types in terms of stdint
 #include <stdint.h>
 
-
-//! an unsigned integer.
-typedef unsigned int uint;
-
 //! 8 bit unsigned integer.
 typedef uint8_t		uint8;
 //! 16 bit unsigned integer.

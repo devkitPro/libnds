@@ -410,7 +410,7 @@ static inline
     \param oam      the oam engine, must be &oamMain or &oamSub.
     \param index    the index of the sprite, must be 0-127.
 */
-void oamClearSprite(OamState *oam, uint index)
+void oamClearSprite(OamState *oam, int index)
 {
     sassert(index < SPRITE_COUNT, "oamClearSprite() index is out of bounds, must be 0-127");
     oam->oamMemory[index].attribute[0] = ATTR0_DISABLED;

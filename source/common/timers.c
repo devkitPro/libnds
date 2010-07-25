@@ -30,7 +30,7 @@
 
 #include <nds/arm9/sassert.h>
 //---------------------------------------------------------------------------------
-void timerStart(uint timer, ClockDivider divider, u16 ticks, VoidFn callback){
+void timerStart(int timer, ClockDivider divider, u16 ticks, VoidFn callback){
 //---------------------------------------------------------------------------------
 	sassert(timer < 3, "timer must be in range 0 - 2");
 	TIMER_DATA(timer) = ticks;
@@ -51,17 +51,15 @@ void timerStart(uint timer, ClockDivider divider, u16 ticks, VoidFn callback){
 u16 elapsed[4] = {0, 0, 0, 0};
 
 //---------------------------------------------------------------------------------
-u16 timerElapsed(uint timer)
+u16 timerElapsed(int timer) {
 //---------------------------------------------------------------------------------
-{
 	sassert(timer < 3, "timer must be in range 0 - 2");
 	u16 time = TIMER_DATA(timer);
 
 	s32 result = (s32)time - (s32)elapsed[timer];
 
 	//overflow...this will only be accurate if it has overflowed no more than once.
-	if(result < 0)
-	{
+	if(result < 0) {
 		result = time + (0x10000 - elapsed[timer]);
 	}
 
@@ -72,9 +70,8 @@ u16 timerElapsed(uint timer)
 
 
 //---------------------------------------------------------------------------------
-u16 timerPause(uint timer)
+u16 timerPause(int timer) {
 //---------------------------------------------------------------------------------
-{
 	TIMER_CR(timer) &= ~TIMER_ENABLE;
 	u16 temp = timerElapsed(timer);
 	elapsed[timer] = 0;
@@ -82,17 +79,13 @@ u16 timerPause(uint timer)
 }
 
 //---------------------------------------------------------------------------------
-u16 timerStop(uint timer)
+u16 timerStop(int timer) {
 //---------------------------------------------------------------------------------
-{
 	TIMER_CR(timer) = 0;
 	u16 temp = timerElapsed(timer);
 	elapsed[timer] = 0;
 	return temp;
 }
-
-
-
 
 
 /*
@@ -101,10 +94,10 @@ u16 timerStop(uint timer)
   original Source by eKid
   adapted by Ryouarashi and Weirdfox
 */
-static uint localTimer = 0;
+static int localTimer = 0;
 
 //---------------------------------------------------------------------------------
-void cpuStartTiming(uint timer) {
+void cpuStartTiming(int timer) {
 //---------------------------------------------------------------------------------
 	sassert(timer < 3, "timer must be in range 0 - 2");
 	localTimer = timer;
@@ -120,9 +113,8 @@ void cpuStartTiming(uint timer) {
 }
 
 //---------------------------------------------------------------------------------
-u32 cpuGetTiming()
+u32 cpuGetTiming() {
 //---------------------------------------------------------------------------------
-{
 	return ( (TIMER_DATA(localTimer) | (TIMER_DATA(localTimer+1)<<16) ));
 }
 
