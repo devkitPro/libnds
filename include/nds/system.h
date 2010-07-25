@@ -378,16 +378,6 @@ struct __argv {
 
 #define __system_argv		((struct __argv *)0x02FFFE70)
 
-static inline
-//! returns the same argc that is given to the main function.
-int getArgc(void) { return __system_argv->argc; }
-
-static inline
-//! returns the same argv that is given to the main function.
-const char** getArgv(void) { return (const char**)__system_argv->argv; }
-
-
-
 #define BOOTSIG	0x62757473746F6F62ULL
 
 struct __bootstub {
