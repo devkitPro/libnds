@@ -342,14 +342,10 @@ typedef _palette _ext_palette[16];
 */
 u32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d);
 
-
-static inline
 /** \brief  Set VRAM banks to basic default.
 	\return the previous settings
 */
-u32 vramDefault() {
-	return vramSetMainBanks(VRAM_A_MAIN_BG, VRAM_B_MAIN_SPRITE, VRAM_C_SUB_BG, VRAM_D_SUB_SPRITE);
-}
+u32 vramDefault();
 
 /** \brief  Restore the main 4 bank modes.
 	\param vramTemp restores the main 4 banks to the value encoded in vramTemp (returned from vramSetMainBanks)

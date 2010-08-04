@@ -65,9 +65,7 @@ void __attribute__((weak)) initSystem(void) {
 	dmaFillWords(0, (void*)0x04001008, 0x56);  
 	videoSetModeSub(0);
 
-	// default VRAM setup
-	// VRAM_A_MAIN_BG, VRAM_B_MAIN_SPRITE, VRAM_C_SUB_BG, VRAM_D_SUB_SPRITE
-	VRAM_CR  = 0x84848281;
+	vramDefault();
 
 	VRAM_E_CR = 0;
 	VRAM_F_CR = 0;

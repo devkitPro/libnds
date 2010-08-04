@@ -65,3 +65,9 @@ void setBrightness( int screen, int level) {
 	if (screen & 2) REG_MASTER_BRIGHT_SUB=(mode | level);
 }
 
+//---------------------------------------------------------------------------------
+u32 __attribute__((weak)) vramDefault() {
+//---------------------------------------------------------------------------------
+	return vramSetMainBanks(VRAM_A_MAIN_BG, VRAM_B_MAIN_SPRITE, VRAM_C_SUB_BG, VRAM_D_SUB_SPRITE);
+}
+
