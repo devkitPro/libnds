@@ -66,6 +66,11 @@ enterException:
 	mrs	r3,cpsr
 	bic	r4,r3,#0x1F
 	and	r2,r2,#0x1F
+
+	// Check for user mode & use system mode instead
+	cmp	r2, #0x10
+	moveq	r2, #0x1F
+
 	orr	r4,r4,r2
 	msr	cpsr,r4
 	ldr	r0,=reg12
