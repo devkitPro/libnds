@@ -110,8 +110,7 @@
 
 static inline
 void SerialWaitBusy() {
-	while (REG_SPICNT & SPI_BUSY)
-		swiDelay(1);
+	while (REG_SPICNT & SPI_BUSY);
 }
 
 
