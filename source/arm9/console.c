@@ -197,19 +197,7 @@ static void consoleClearLine(char mode) {
 //---------------------------------------------------------------------------------
 ssize_t nocash_write(struct _reent *r, int fd, const char *ptr, size_t len) {
 //---------------------------------------------------------------------------------
-	int count = 0;
-
-	if(!ptr || len <= 0) return -1;
-
-	while(count < len)
-	{
-
-		nocashMessage(ptr + count);
-
-		count += (len - count) > 80 ? 80 : len - count;
-
-	}
-
+	nocashWrite(ptr,len);
 	return len;
 }
 
