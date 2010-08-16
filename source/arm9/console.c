@@ -534,9 +534,13 @@ void consoleSetFont(PrintConsole* console, ConsoleFont* font){
 void consoleDebugInit(DebugDevice device){
 //---------------------------------------------------------------------------------
 
+	int buffertype = _IONBF;
+	
 	switch(device) {
+
 	case DebugDevice_NOCASH:
 		devoptab_list[STD_ERR] = &dotab_nocash;
+		buffertype = _IOLBF;
 		break;
 	case DebugDevice_CONSOLE:
 		devoptab_list[STD_ERR] = &dotab_stdout;
@@ -545,7 +549,7 @@ void consoleDebugInit(DebugDevice device){
 		devoptab_list[STD_ERR] = &dotab_null;
 		break;
 	}
-	setvbuf(stderr, NULL , _IONBF, 0);
+	setvbuf(stderr, NULL , buffertype, 0);
 
 }
 
