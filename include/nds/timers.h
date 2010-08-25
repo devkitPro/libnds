@@ -30,6 +30,8 @@
     It also contains a simplified API for timer use and some cpu timing functions.
 
 	The timers are fed with a 33.513982 MHz source on the ARM9 and ARM7.
+
+	\note that dswifi will use timer 3 on the arm9, so don't use that if you use dswifi.
 */
 
 
