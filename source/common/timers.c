@@ -32,7 +32,7 @@
 //---------------------------------------------------------------------------------
 void timerStart(int timer, ClockDivider divider, u16 ticks, VoidFn callback){
 //---------------------------------------------------------------------------------
-	sassert(timer < 3, "timer must be in range 0 - 2");
+	sassert(timer < 4, "timer must be in range 0 - 3");
 	TIMER_DATA(timer) = ticks;
 
 	if(callback)
@@ -53,7 +53,7 @@ u16 elapsed[4] = {0, 0, 0, 0};
 //---------------------------------------------------------------------------------
 u16 timerElapsed(int timer) {
 //---------------------------------------------------------------------------------
-	sassert(timer < 3, "timer must be in range 0 - 2");
+	sassert(timer < 4, "timer must be in range 0 - 3");
 	u16 time = TIMER_DATA(timer);
 
 	s32 result = (s32)time - (s32)elapsed[timer];
@@ -72,6 +72,7 @@ u16 timerElapsed(int timer) {
 //---------------------------------------------------------------------------------
 u16 timerPause(int timer) {
 //---------------------------------------------------------------------------------
+	sassert(timer < 4, "timer must be in range 0 - 3");
 	TIMER_CR(timer) &= ~TIMER_ENABLE;
 	u16 temp = timerElapsed(timer);
 	elapsed[timer] = 0;
@@ -81,6 +82,7 @@ u16 timerPause(int timer) {
 //---------------------------------------------------------------------------------
 u16 timerStop(int timer) {
 //---------------------------------------------------------------------------------
+	sassert(timer < 4, "timer must be in range 0 - 3");
 	TIMER_CR(timer) = 0;
 	u16 temp = timerElapsed(timer);
 	elapsed[timer] = 0;

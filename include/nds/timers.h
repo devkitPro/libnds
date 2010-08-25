@@ -42,7 +42,6 @@ extern "C" {
 
 
 #include <nds/ndstypes.h>
-#include <nds/linkedlist.h>
 
 
 
