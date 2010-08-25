@@ -214,10 +214,14 @@ typedef enum
 #define BG_TILE_RAM(base)		((u16*)(((base)*0x4000) + 0x06000000))
 /*! \brief A macro which returns a u16* pointer to background graphics memory ram (Main Engine) */
 #define BG_BMP_RAM(base)		((u16*)(((base)*0x4000) + 0x06000000))
-/*! \brief A macro which returns a u16* pointer to background tile ram (Main Engine) */
+
+/* A macro which returns a u16* pointer to background tile ram (Main Engine)
+use BG_TILE_RAM unless you really can't */
 #define CHAR_BASE_BLOCK(n)			(((n)*0x4000)+ 0x06000000)
-/*! \brief A macro which returns a u16* pointer to background Map ram (Main Engine) */
+/* A macro which returns a u16* pointer to background Map ram (Main Engine)
+use BG_MAP_RAM unless you really can't*/
 #define SCREEN_BASE_BLOCK(n)		(((n)*0x800) + 0x06000000)
+
 
 /*! \brief Access to all Main screen background control registers via: BGCTRL[x]
 <A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
@@ -314,10 +318,14 @@ struct directly sets background registers.
 #define BG_TILE_RAM_SUB(base)	((u16*)(((base)*0x4000) + 0x06200000))
 /*! \brief A macro which returns a u16* pointer to background graphics ram (Sub Engine) */
 #define BG_BMP_RAM_SUB(base)	((u16*)(((base)*0x4000) + 0x06200000))
-/*! \brief A macro which returns a u16* pointer to background Map ram (Sub Engine) */
+
+/* A macro which returns a u16* pointer to background Map ram (Sub Engine)
+use BG_MAP_RAM_SUB unless you really can't */
 #define SCREEN_BASE_BLOCK_SUB(n)	(((n)*0x800) + 0x06200000)
-/*! \brief A macro which returns a u16* pointer to background tile ram (Sub Engine) */
+/* A macro which returns a u16* pointer to background tile ram (Sub Engine)
+use BG_TILE_RAM_SUB unless you really can't */
 #define CHAR_BASE_BLOCK_SUB(n)		(((n)*0x4000)+ 0x06200000)
+
 
 /*! \brief Access to all Sub screen background control registers via: BGCTRL[x]
 <A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
