@@ -53,31 +53,7 @@ typedef struct LinkedList{
 
 	\return A pointer to the new node, which is also the new front, or NULL if there is not enough memory.
 */
-static inline LinkedList* linkedlistAdd(LinkedList **front, void* data)
-{
-	LinkedList *node = (LinkedList*)malloc(sizeof(LinkedList));
-
-	if(node == NULL)
-		return NULL;
-
-	node->prev = NULL;
-	node->data = data;
-
-	if(*front == NULL)
-	{
-		node->next = NULL;
-
-		*front = node;
-	}
-	else
-	{
-		node->next = *front;
-
-		(*front)->prev = node;
-	}
-
-	return node;
-}
+LinkedList* linkedlistAdd(LinkedList **front, void* data);
 
 /*!
 	\brief Removes a node from a linked list.
@@ -86,22 +62,7 @@ static inline LinkedList* linkedlistAdd(LinkedList **front, void* data)
 
 	\param node The node you want to remove.
 */
-static inline void linkedlistRemove(LinkedList *node)
-{
-	if(node == NULL)
-		return;
+void linkedlistRemove(LinkedList *node);
 
-	if(node->prev != NULL)
-	{
-		node->prev->next = node->next;
-	}
-
-	if(node->next != NULL)
-	{
-		node->next->prev = node->prev;
-	}
-
-	free(node);
-}
 
 #endif
