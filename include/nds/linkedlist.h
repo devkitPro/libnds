@@ -28,10 +28,12 @@
 	\brief A simple doubly linked, unsorted list implementation.
 */
 
-#include <malloc.h>
 
 #ifndef __LINKEDLIST_H__
 #define __LINKEDLIST_H__
+
+#include <malloc.h>
+
 
 //! A node for the linked list.
 typedef struct LinkedList{
@@ -49,32 +51,30 @@ typedef struct LinkedList{
 	\param front A pointer to a pointer to the front of the linked list (or a pointer to NULL if you don't have a linked list yet).
 	\param data A pointer to the data you want to store.
 
-	\return A pointer to the new node, which is also the new front.
+	\return A pointer to the new node, which is also the new front, or NULL if there is not enough memory.
 */
 static inline LinkedList* linkedlistAdd(LinkedList **front, void* data)
 {
 	LinkedList *node = (LinkedList*)malloc(sizeof(LinkedList));
 
-	//TODO: add check to see if malloc has succeeded/node is NULL.
+	if(node == NULL)
+		return NULL;
 
-	node->prev = 0;
+	node->prev = NULL;
+	node->data = data;
 
-	if(*front == 0)
+	if(*front == NULL)
 	{
-		node->next = 0;
-
-		node->data = data;
+		node->next = NULL;
 
 		*front = node;
-
-		return node;
 	}
+	else
+	{
+		node->next = *front;
 
-	node->next = *front;
-
-	(*front)->prev = node;
-
-	//shouldn't the data of the node be set here too?
+		(*front)->prev = node;
+	}
 
 	return node;
 }
@@ -88,14 +88,15 @@ static inline LinkedList* linkedlistAdd(LinkedList **front, void* data)
 */
 static inline void linkedlistRemove(LinkedList *node)
 {
-	if(node == 0) return;
+	if(node == NULL)
+		return;
 
-	if(node->prev)
+	if(node->prev != NULL)
 	{
 		node->prev->next = node->next;
 	}
 
-	if(node->next)
+	if(node->next != NULL)
 	{
 		node->next->prev = node->prev;
 	}
