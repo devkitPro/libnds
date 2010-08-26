@@ -73,23 +73,26 @@ void decompressStream(const void* data, void* dst, DecompressType type, getByteC
 	sassert(type != LZ77 && type != RLE, "LZ77 and RLE do not support streaming, use Vram versions");
 #endif
 
-	decomStream.readByte= readCB;
-	decomStream.getSize = getHeaderCB;
+
+	TDecompressionStream decompresStream =
+	{
+		getHeaderCB,
+		0,
+		readCB
+	}
 
 	switch(type)
 	{
 		case LZ77Vram:
-			swiDecompressLZSSVram((void*)data, (void*)dst, 0, &decomStream);
+			swiDecompressLZSSVram((void*)data, (void*)dst, 0, &decompresStream);
 			break;
 		case HUFF:
-			swiDecompressHuffman((void*)data, (void*)dst, 0, &decomStream);
+			swiDecompressHuffman((void*)data, (void*)dst, 0, &decompresStream);
 			break;
 		case RLEVram:
-			swiDecompressRLEVram((void*)data, (void*)dst, 0, &decomStream);
+			swiDecompressRLEVram((void*)data, (void*)dst, 0, &decompresStream);
 			break;
 		default:
 			break;
 	}
-
-	//shouldn't decomStream.readByte and decomStream.getSize be reset to there original value here?
 }
