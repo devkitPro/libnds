@@ -79,7 +79,7 @@ void decompressStream(const void* data, void* dst, DecompressType type, getByteC
 		getHeaderCB,
 		0,
 		readCB
-	}
+	};
 
 	switch(type)
 	{
