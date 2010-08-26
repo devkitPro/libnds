@@ -1,6 +1,7 @@
 
 
 #include <nds/linkedlist.h>
+#include <stdlib.h>
 
 
 LinkedList* linkedlistAdd(LinkedList **front, void* data)
