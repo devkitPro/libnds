@@ -332,9 +332,14 @@ bool fifoSendValue32(int channel, u32 value32) {
 }
 
 bool fifoSendDatamsg(int channel, int num_bytes, u8 * data_array) {
+  if(num_bytes == 0) {
+    u32 send_first = FIFO_PACK_DATAMSG_HEADER(channel, 0);
+    return fifoInternalSend(send_first, 0, NULL);
+  }
+  
 	if(data_array==NULL) return false;
 	if(channel<0 || channel>=FIFO_NUM_CHANNELS) return false;
-	if(num_bytes<=0 || num_bytes>=FIFO_MAX_DATA_BYTES) return false;
+	if(num_bytes<0 || num_bytes>=FIFO_MAX_DATA_BYTES) return false;
 
 	
 	int num_words = (num_bytes+3)>>2;
