@@ -104,6 +104,7 @@ bool checkIfText(int id) {
 
 	return false;
 }
+
 void bgUpdate(void) {
 
 	int i = 0;
@@ -136,10 +137,10 @@ void bgUpdate(void) {
 			pc = ( angleSin * bgState[i].scaleY ) >> 12;
 			pd = ( angleCos * bgState[i].scaleY ) >> 12;
 
-			bgTransform[i]->xdx = pa;
-			bgTransform[i]->ydx = pb;
-			bgTransform[i]->xdy = pc;
-			bgTransform[i]->ydy = pd;
+			bgTransform[i]->hdx = pa;
+			bgTransform[i]->vdx = pb;
+			bgTransform[i]->hdy = pc;
+			bgTransform[i]->vdy = pd;
 
 			bgTransform[i]->dx  = (bgState[i].scrollX) - ((pa * bgState[i].centerX + pb * bgState[i].centerY) >> 8);
 			bgTransform[i]->dy  = (bgState[i].scrollY) - ((pc * bgState[i].centerX + pd * bgState[i].centerY) >> 8);

@@ -105,12 +105,12 @@ typedef struct bg_scroll {
 
 /*!	\brief register overlay for affine matrix registers */
 typedef struct bg_transform {
-    s16 xdx; /*!< change in x per dx*/
-    s16 ydx; /*!< change in y per dx*/
-    s16 xdy; /*!< change in x per dy*/
-    s16 ydy; /*!< change in y per dy*/
-    s32 dx;  /*!< map x value which corresponds to the screen origin*/
-    s32 dy;  /*!< map y value which corresponds to the screen origin*/
+    s16 hdx; //!< The change in x per horizontal pixel.
+    s16 vdx; //!< The change in x per vertical pixel.
+    s16 hdy; //!< The change in y per horizontal pixel.
+    s16 vdy; //!< The change in x per vertical pixel.
+    s32 dx;  //!< map x value which corresponds to the screen origin
+    s32 dy;  //!< map y value which corresponds to the screen origin
 } bg_transform;
 
 /*!	\brief register overlay for background attribute registers */
@@ -415,7 +415,7 @@ typedef struct BgState
 	s32 scaleY;
 	s32 scrollX;
 	s32 scrollY;
-	int size;
+	int size;//currently isn't used for anything...
 	int type;
 	bool dirty;
 }BgState;
@@ -991,6 +991,40 @@ void bgSetCenter(int id, int x, int y)
 {
 	bgSetCenterf(id, x << 8, y << 8);
 }
+
+
+static inline
+/**	\brief directly sets the affine matrix and scroll registers of a background.
+
+	With this, you have more freedom to set the matrix, but it might be more difficult to use if
+	you're not used to affine transformation matrix.
+	This will ignore (but not erase) any values set using the bg rotating, scaling or center functions.
+
+	\param id		The id returned by bgInit or bgInitSub.
+	\param hdx		The change in x per horizontal pixel.
+	\param vdx		The change in x per vertical pixel.
+	\param hdy		The change in y per horizontal pixel.
+	\param vdy		The change in y per vertical pixel.
+	\param scrollx	The horizontal scroll/offset value of the background.
+	\param scrolly	The vertical scroll/offset value of the background.
+*/
+void bgSetAffineMatrixScroll(int id, int hdx, int vdx, int hdy, int vdy, int scrollx, int scrolly)
+{
+	sassert(!bgIsText(id), "Text Backgrounds have no affine matrix and scroll registers.");
+
+	bgTransform[id]->hdx = hdx;
+	bgTransform[id]->vdx = vdx;
+	bgTransform[id]->hdy = hdy;
+	bgTransform[id]->vdy = vdy;
+
+	bgTransform[id]->dx = scrollx;
+	bgTransform[id]->dy = scrolly;
+
+	bgState[id].dirty = false;
+}
+
+
+
 
 #ifdef __cplusplus
 }
