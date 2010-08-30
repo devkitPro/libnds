@@ -1,7 +1,5 @@
 #include <nds/arm9/sprite.h>
 
-//#include <nds/arm9/input.h>
-//#include <nds/arm9/console.h>
 #include <nds/arm9/trig_lut.h>
 #include <nds/arm9/cache.h>
 #include <nds/dma.h>
@@ -117,7 +115,6 @@ void oamClear(OamState *oam, int start, int count) {
 
 		oam->oamMemory[i].attribute[0] = ATTR0_DISABLED;
 	}
-
 }
 
 //---------------------------------------------------------------------------------
@@ -147,7 +144,6 @@ unsigned int oamGfxPtrToOffset(OamState *oam, const void* offset) {
 
 			return (x >> 3)| (y << 4);
 		}
-
 	}
 }
 
@@ -215,9 +211,9 @@ void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy){
 	int ss = sinLerp(angle);
 	int cc = cosLerp(angle);
 
-	oam->oamRotationMemory[rotId].hdx = cc*sx>>12;
-	oam->oamRotationMemory[rotId].hdy =-ss*sx>>12;
-	oam->oamRotationMemory[rotId].vdx = ss*sy>>12;
-	oam->oamRotationMemory[rotId].vdy = cc*sy>>12;
+	oam->oamRotationMemory[rotId].hdx = ( cc*sx)>>12;
+	oam->oamRotationMemory[rotId].vdx = (-ss*sx)>>12;
+	oam->oamRotationMemory[rotId].hdy = ( ss*sy)>>12;
+	oam->oamRotationMemory[rotId].vdy = ( cc*sy)>>12;
 }
 

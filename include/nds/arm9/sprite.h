@@ -180,7 +180,7 @@ typedef union SpriteEntry
 			u8 palette						:4;	/**< Sprite palette to use in paletted color modes. */
 		};
 
-		u16 attribute3;							/**< Unused! Four of those are used as a sprite rotation matrice */
+		u16 attribute3;							/* Unused! Four of those are used as a sprite rotation matrice */
 	};
 
 	struct {
@@ -195,16 +195,16 @@ typedef union SpriteEntry
 //! A sprite rotation entry.
 typedef struct SpriteRotation
 {
-	uint16 filler1[3];	/**< Unused! Filler for the sprite entry attributes which overlap these */
+	uint16 filler1[3];	/* Unused! Filler for the sprite entry attributes which overlap these */
 	int16 hdx;			/**< The change in x per horizontal pixel */
 
-	uint16 filler2[3];	/**< Unused! Filler for the sprite entry attributes which overlap these */
-	int16 hdy;			/**< The change in y per horizontal pixel */
+	uint16 filler2[3];	/* Unused! Filler for the sprite entry attributes which overlap these */
+	int16 vdx;			/**< The change in y per horizontal pixel */
 
-	uint16 filler3[3];	/**< Unused! Filler for the sprite entry attributes which overlap these */
-	int16 vdx;			/**< The change in x per vertical pixel */
+	uint16 filler3[3];	/* Unused! Filler for the sprite entry attributes which overlap these */
+	int16 hdy;			/**< The change in x per vertical pixel */
 
-	uint16 filler4[3];	/**< Unused! Filler for the sprite entry attributes which overlap these */
+	uint16 filler4[3];	/* Unused! Filler for the sprite entry attributes which overlap these */
 	int16 vdy;			/**< The change in y per vertical pixel */
 } SpriteRotation, * pSpriteRotation;
 
@@ -412,7 +412,7 @@ static inline
 */
 void oamClearSprite(OamState *oam, int index)
 {
-    sassert(index < SPRITE_COUNT, "oamClearSprite() index is out of bounds, must be 0-127");
+    sassert(index >= 0 && index < SPRITE_COUNT, "oamClearSprite() index is out of bounds, must be 0-127");
     oam->oamMemory[index].attribute[0] = ATTR0_DISABLED;
 }
 
@@ -435,25 +435,25 @@ void oamRotateScale(OamState* oam, int rotId, int angle, int sx, int sy);
 
 static inline
 /**
-* @brief allows you to directly sets the affine transformation matrix
+* \brief allows you to directly sets the affine transformation matrix.
 *
 * with this, you have more freedom to set the matrix, but it might be more difficult to use if
 * you're not used to affine transformation matrix. this will erase the previous matrix stored at rotId.
 *
-* @param oam   the oam engine, must be &oamMain or &oamSub
-* @param rotId   the id of the rotscale item you want to change, must be 0-31
-* @param hdx   the horizontal x value?
-* @param hdy   the horizontal y value?
-* @param vdx   the vertical x value?
-* @param vdy   the vertical y value?
+* \param oam	The oam engine, must be &oamMain or &oamSub.
+* \param rotId	The id of the rotscale item you want to change, must be 0-31.
+* \param hdx	The change in x per horizontal pixel.
+* \param hdy	The change in y per horizontal pixel.
+* \param vdx	The change in x per vertical pixel.
+* \param vdy	The change in y per vertical pixel.
 */
 void oamAffineTransformation(OamState* oam, int rotId, int hdx, int hdy, int vdx, int vdy)
 {
 	sassert(rotId >= 0 && rotId < 32, "oamAffineTransformation() rotId is out of bounds, must be 0-31");
 
 	oam->oamRotationMemory[rotId].hdx = hdx;
-	oam->oamRotationMemory[rotId].hdy = hdy;
 	oam->oamRotationMemory[rotId].vdx = vdx;
+	oam->oamRotationMemory[rotId].hdy = hdy;
 	oam->oamRotationMemory[rotId].vdy = vdy;
 }
 
