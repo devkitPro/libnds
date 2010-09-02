@@ -189,7 +189,7 @@ void irqClearAUX(u32 irq);
 */
 void irqInitHandler(VoidFn handler);
 
-/*! \fn irqEnable(uint32 irq)
+/*! \fn irqEnable(u32 irq)
 	\brief Allow the given interrupt to occur.
 	\param irq The set of interrupt masks to enable.
 	\note Specify multiple interrupts to enable by ORing several IRQ_MASKS.
@@ -197,7 +197,7 @@ void irqInitHandler(VoidFn handler);
 void irqEnable(u32 irq);
 void irqEnableAUX(u32 irq);
 
-/*! \fn irqDisable(uint32 irq)
+/*! \fn irqDisable(u32 irq)
 	\brief Prevent the given interrupt from occuring.
 	\param irq The set of interrupt masks to disable.
 	\note Specify multiple interrupts to disable by ORing several IRQ_MASKS.

@@ -151,7 +151,18 @@
 	\example Graphics/3D/nehe/lesson11/source/nehe11.cpp
 	\example Graphics/3D/3D_Both_Screens/source/template.c
 	\example Graphics/3D/Display_List/source/main.cpp
-
+	\example Graphics/3D/Display_List_2/source/main.cpp
+	\example Graphics/3D/Env_Mapping/source/main.cpp
+	\example Graphics/3D/BoxTest/source/main.cpp
+	\example Graphics/3D/Ortho/source/main.cpp
+	\example Graphics/3D/Paletted_Cube/source/main.cpp
+	\example Graphics/3D/Picking/source/main.cpp
+	\example Graphics/3D/Simple_Quad/source/main.cpp
+	\example Graphics/3D/Simple_Tri/source/main.cpp
+	\example Graphics/3D/Textured_Cube/source/main.cpp	
+	\example Graphics/3D/Textured_Quad/source/main.cpp
+	\example Graphics/3D/Toon_Shading/source/main.cpp	
+	
 	<!-- RTC -->
 	\example time/RealTimeClock/source/main.c
 	
