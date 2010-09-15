@@ -336,7 +336,7 @@ bool fifoSendDatamsg(int channel, int num_bytes, u8 * data_array) {
     u32 send_first = FIFO_PACK_DATAMSG_HEADER(channel, 0);
     return fifoInternalSend(send_first, 0, NULL);
   }
-  
+
 	if(data_array==NULL) return false;
 	if(channel<0 || channel>=FIFO_NUM_CHANNELS) return false;
 	if(num_bytes<0 || num_bytes>=FIFO_MAX_DATA_BYTES) return false;
@@ -443,14 +443,14 @@ static void fifoInternalRecvInterrupt() {
 	u32 data, block=FIFO_BUFFER_TERMINATE;
 
 	while( !(REG_IPC_FIFO_CR & IPC_FIFO_RECV_EMPTY) ) {
-		data = REG_IPC_FIFO_RX;
-		
 		
 		REG_IME=0;
 		block=fifo_allocBlock();
 		if (block != FIFO_BUFFER_TERMINATE ) {
-			FIFO_BUFFER_DATA(block)=data;
+			FIFO_BUFFER_DATA(block)=REG_IPC_FIFO_RX;
 			fifo_queueBlock(&fifo_receive_queue,block,block);
+		} else {
+			break;
 		}
 
 		REG_IME=1;
