@@ -42,36 +42,60 @@ int loadPCX(unsigned char* pcx, sImage* image) {
 	int count;
 	int run;
 	int i;
+	int iy;
+	int width, height;
+	int scansize = hdr->bytesPerLine;
+	unsigned char *scanline;
 
-	image->width  = hdr->xmax - hdr->xmin + 1 ;
-	image->height = hdr->ymax - hdr->ymin + 1;
 
-	size = image->width *image->height;
-	
-	image->image.data8 = (unsigned char*)malloc(size);
-	image->palette = (unsigned short*)malloc(256 * 2);
+	width = image->width  = hdr->xmax - hdr->xmin + 1 ;
+	height = image->height = hdr->ymax - hdr->ymin + 1;
+
+	size = image->width * image->height;
 
 	if(hdr->bitsPerPixel != 8)
 		return 0;
 	
+	scanline = image->image.data8 = (unsigned char*)malloc(size);
+	image->palette = (unsigned short*)malloc(256 * 2);
+
 	count = 0;
 
-	while(count < size) {
-		c = *pcx++;
-		
-		if(c < 192) {
-			image->image.data8[count++] = c;
-		} else {
-			run = c - 192;
-		
+	for(iy = 0; iy < height; iy++) {
+		count = 0;
+		while(count < scansize)
+		{
 			c = *pcx++;
 			
-			for(i = 0; i < run; i++)
-				image->image.data8[count++] = c;
+			if(c < 192) {
+				scanline[count++] = c;
+			} else {
+				run = c - 192;
+			
+				c = *pcx++;
+				
+				for(i = 0; i < run && count < scansize; i++)
+					scanline[count++] = c;
+			}
 		}
+		scanline += width;
 	}
-	
-	pal = (RGB_24*)(pcx + 1);
+
+	//check for the palette marker.
+	//I have seen PCX files without this, but the docs don't seem ambiguous--it must be here.
+	//Anyway, the support among other apps is poor, so we're going to reject it.
+	if(*pcx != 0x0C)
+	{
+		free(image->image.data8);
+		image->image.data8 = 0;
+		free(image->palette);
+		image->palette = 0;
+		return 0;
+	}
+
+	pcx++;
+
+	pal = (RGB_24*)(pcx);
 
 	image->bpp = 8;
 
