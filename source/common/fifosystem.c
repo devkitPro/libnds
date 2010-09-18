@@ -22,7 +22,7 @@
 #ifdef ARM9
 #define FIFO_BUFFER_ENTRIES				256
 #else // ARM7
-#define FIFO_BUFFER_ENTRIES				128
+#define FIFO_BUFFER_ENTRIES				256
 #endif
 
 // Note about memory commitments:
@@ -236,7 +236,8 @@ bool fifoSetDatamsgHandler(int channel, FifoDatamsgHandlerFunc newhandler, void 
 	return true;
 }
 
-static inline u32 fifo_allocBlock() {
+static u32 fifo_allocBlock() {
+	if (fifo_freewords == 0) return FIFO_BUFFER_TERMINATE;
 	u32 entry = fifo_buffer_free.head;
 	fifo_buffer_free.head = FIFO_BUFFER_GETNEXT(fifo_buffer_free.head);
 	FIFO_BUFFER_SETCONTROL( entry, FIFO_BUFFER_TERMINATE, FIFO_BUFFERCONTROL_UNUSED, 0 );
@@ -244,10 +245,21 @@ static inline u32 fifo_allocBlock() {
 	return entry;
 }
 
-static inline void fifo_freeBlock(u32 index) {
-	if (index == FIFO_BUFFER_TERMINATE) {
-		asm __volatile__ ("mov r11, r11\n");
-	}
+static u32 fifo_waitBlock() {
+	u32 block;
+	do {
+		block = fifo_allocBlock();
+		if (block == FIFO_BUFFER_TERMINATE) {
+			REG_IPC_FIFO_CR |= IPC_FIFO_SEND_IRQ;
+			REG_IME = 1;
+			swiIntrWait(0,IRQ_FIFO_EMPTY);
+			REG_IME = 0;
+		}
+	} while(block == FIFO_BUFFER_TERMINATE);
+	return block;
+}
+
+static void fifo_freeBlock(u32 index) {
 	FIFO_BUFFER_SETCONTROL( index, FIFO_BUFFER_TERMINATE, FIFO_BUFFERCONTROL_UNUSED, 0 );
 	FIFO_BUFFER_SETCONTROL( fifo_buffer_free.tail, index, FIFO_BUFFERCONTROL_UNUSED, 0 );
 	fifo_buffer_free.tail = index;
@@ -259,35 +271,20 @@ static bool fifoInternalSend(u32 firstword, int extrawordcount, u32 * wordlist) 
 	if(fifo_freewords<extrawordcount+1) return false;
 	if(extrawordcount<0 || extrawordcount>(FIFO_MAX_DATA_BYTES/4)) return false;
 
-	int count = 0, firstwordsent=0;
+	int count = 0;
 	int oldIME = enterCriticalSection();
 
-	if ( fifo_send_queue.head == FIFO_BUFFER_TERMINATE ) {
-
-		if ( !(REG_IPC_FIFO_CR & IPC_FIFO_SEND_FULL) ) {
-		
-			REG_IPC_FIFO_TX = firstword;
-			firstwordsent=1;
-			while( !(REG_IPC_FIFO_CR & IPC_FIFO_SEND_FULL) && count<extrawordcount) {
-				REG_IPC_FIFO_TX = wordlist[count];
-				count++;
-			}
-		}
+	u32 head = fifo_waitBlock();
+	if(fifo_send_queue.head == FIFO_BUFFER_TERMINATE) {
+		fifo_send_queue.head = head;
+	} else {
+		FIFO_BUFFER_SETNEXT(fifo_send_queue.tail,head);		
 	}
-
-	if (!firstwordsent) {
-		u32 head = fifo_allocBlock();
-		if(fifo_send_queue.head == FIFO_BUFFER_TERMINATE) {
-			fifo_send_queue.head = head;
-		} else {
-			FIFO_BUFFER_SETNEXT(fifo_send_queue.tail,head);		
-		}
-		FIFO_BUFFER_DATA(head)=firstword;
-		fifo_send_queue.tail = head;
-	}
+	FIFO_BUFFER_DATA(head)=firstword;
+	fifo_send_queue.tail = head;
 
 	while (count<extrawordcount) {
-		u32 next = fifo_allocBlock();
+		u32 next = fifo_waitBlock();
 		if(fifo_send_queue.head == FIFO_BUFFER_TERMINATE) {
 			fifo_send_queue.head = next;
 		} else {
@@ -298,7 +295,7 @@ static bool fifoInternalSend(u32 firstword, int extrawordcount, u32 * wordlist) 
 		fifo_send_queue.tail = next;
 	}
 
-	if ( fifo_send_queue.head != FIFO_BUFFER_TERMINATE)	REG_IPC_FIFO_CR |= IPC_FIFO_SEND_IRQ;
+	REG_IPC_FIFO_CR |= IPC_FIFO_SEND_IRQ;
 
 	leaveCriticalSection(oldIME);
 	
@@ -449,8 +446,6 @@ static void fifoInternalRecvInterrupt() {
 		if (block != FIFO_BUFFER_TERMINATE ) {
 			FIFO_BUFFER_DATA(block)=REG_IPC_FIFO_RX;
 			fifo_queueBlock(&fifo_receive_queue,block,block);
-		} else {
-			break;
 		}
 
 		REG_IME=1;
