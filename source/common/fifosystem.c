@@ -634,8 +634,8 @@ bool fifoInit() {
 
 	do {
 		their_value = IPC_GetSync();
-		if(their_value == __SYNC_END) break;
-		if(count>=3) break;
+		if(their_value == __SYNC_END && count > 2) break;
+		if(count>3) break;
 		if( ((my_value + 1)&7 ) == their_value ) count++;
 		my_value=(their_value+1)&7;
 		IPC_SendSync(my_value);
