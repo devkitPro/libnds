@@ -40,6 +40,7 @@
 
 #include "nds/dma.h"
 #include "nds/ndstypes.h"
+#include "nds/arm9/sassert.h"
 #include "nds/arm9/video.h"
 #include "nds/arm9/cache.h"
 #include "nds/arm9/trig_lut.h"
@@ -681,6 +682,51 @@ GL_STATIC_INL
 \brief Disables various gl states (blend, alpha test, etc..)
 \param bits bit mask of desired attributes, attributes are enumerated in DISP3DCNT_ENUM */
 void glDisable(int bits) { GFX_CONTROL &= ~bits; }
+
+GL_STATIC_INL
+/*! \fn   void glFogShift(int shift)
+\brief Sets the FOG_SHIFT value 
+\param shift FOG_SHIFT value; each entry of the fog table covers 0x400 >> FOG_SHIFT depth values */
+void glFogShift(int shift) { 
+	sassert(shift>=0 && shift<16,"glFogShift is out of range");
+	GFX_CONTROL = (GFX_CONTROL & 0xF0FF) | (shift<<8);
+}
+
+GL_STATIC_INL
+/*! \fn   void glFogOffset(int shift)
+\brief Sets the FOG_OFFSET value 
+\param shift FOG_OFFSET value; fogging begins at this depth with a density of FOG_TABLE[0]*/
+void glFogOffset(int offset) { 
+	sassert(offset>=0 && offset<0x8000,"glFogOffset is out of range");
+	GFX_FOG_OFFSET = offset;
+}
+
+GL_STATIC_INL
+/*! \fn void glFogColor(uint8 red, uint8 green, uint8 blue, uint8 alpha)
+\brief sets the fog color
+\param red component (0-31)
+\param green component (0-31)
+\param blue component (0-31)
+\param alpha from 0(clear) to 31(opaque)*/
+void glFogColor(uint8 red, uint8 green, uint8 blue, uint8 alpha) {
+	sassert(red<32,"glFogColor red is out of range");
+	sassert(green<32,"glFogColor green is out of range");
+	sassert(blue<32,"glFogColor blue is out of range");
+	sassert(alpha<32,"glFogColor alpha is out of range");
+	GFX_FOG_COLOR = RGB15(red,green,blue) | (alpha << 16);
+}
+
+GL_STATIC_INL
+/*! \fn void glFogDensity(int index, int density)
+\brief sets the fog density at a given index
+\param index fog table index to operate on (0 to 31)
+\param density fog density from 0 (none) to 127 (opaque)*/
+void glFogDensity(int index, int density) {
+	sassert(index>= 0 && index<32,"glFogDensity index is out of range");
+	sassert(index>= 0 && density<128,"glFogDensity density is out of range");
+	GFX_FOG_TABLE[index] = density;
+}
+
 
 GL_STATIC_INL
 /*! \fn  void glLoadMatrix4x4(const m4x4 *m)
