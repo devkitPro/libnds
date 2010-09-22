@@ -2,7 +2,7 @@
 
 	Touch screen control for the ARM7
 
-	Copyright (C) 2005
+	Copyright (C) 2005 - 2010
 		Michael Noland (joat)
 		Jason Rogers (dovoto)
 		Dave Murphy (WinterMute)
@@ -29,6 +29,7 @@
 #include <nds/ndstypes.h>
 #include <nds/system.h>
 #include <nds/arm7/touch.h>
+#include <nds/arm7/input.h>
 #include <nds/interrupts.h>
 
 #include <stdlib.h>
@@ -39,6 +40,69 @@ static u8 range_counter_1 = 0;
 static u8 range_counter_2 = 0;
 static u8 range = 20;
 static u8 min_range = 20;
+
+bool __dsimode = false;
+
+//---------------------------------------------------------------------------------
+u32 readTSCReg(u32 reg) {
+//---------------------------------------------------------------------------------
+ 
+	REG_SPICNT = SPI_ENABLE | SPI_BAUD_4MHz | SPI_DEVICE_TOUCH | SPI_CONTINUOUS;
+	REG_SPIDATA = ((reg<<1) | 1) & 0xFF;
+ 
+	while(REG_SPICNT & 0x80);
+ 
+	REG_SPIDATA = 0;
+ 
+	while(REG_SPICNT & 0x80);
+
+	REG_SPICNT = 0;
+
+	return REG_SPIDATA;
+}
+
+//---------------------------------------------------------------------------------
+void readTSCRegArray(u32 reg, void *buffer, int size) {
+//---------------------------------------------------------------------------------
+ 
+	REG_SPICNT = SPI_ENABLE | SPI_BAUD_4MHz | SPI_DEVICE_TOUCH | SPI_CONTINUOUS;
+	REG_SPIDATA = ((reg<<1) | 1) & 0xFF;
+
+	char *buf = (char*)buffer;
+	while(REG_SPICNT & 0x80);
+	int count = 0;
+	while(count<size) {
+		REG_SPIDATA = 0;
+ 
+		while(REG_SPICNT & 0x80);
+
+
+		buf[count++] = REG_SPIDATA;
+		
+	}
+	REG_SPICNT = 0;
+
+}
+
+
+//---------------------------------------------------------------------------------
+u32 writeTSCReg(u32 reg, u32 value) {
+//---------------------------------------------------------------------------------
+ 
+	REG_SPICNT = SPI_ENABLE | SPI_BAUD_4MHz | SPI_DEVICE_TOUCH | SPI_CONTINUOUS;
+	REG_SPIDATA = ((reg<<1)) & 0xFF;
+ 
+	while(REG_SPICNT & 0x80);
+ 
+	REG_SPIDATA = value;
+ 
+	while(REG_SPICNT & 0x80);
+
+	REG_SPICNT = 0;
+
+	return REG_SPIDATA;
+}
+
 
 //---------------------------------------------------------------------------------
 u8 CheckStylus(){
@@ -271,23 +335,11 @@ void UpdateRange(uint8 *this_range, int16 last_dist_max, u8 data_error, u8 tsc_t
 }
 
 //---------------------------------------------------------------------------------
-// reading pixel position:
-//---------------------------------------------------------------------------------
-void touchReadXY(touchPosition *touchPos) {
+void touchReadDSMode(touchPosition *touchPos) {
 //---------------------------------------------------------------------------------
 
 	int16 dist_max_y, dist_max_x, dist_max;
 	u8 error, error_where, first_check, i;
-
-	if ( !touchInit ) {
-
-		xscale = ((PersonalData->calX2px - PersonalData->calX1px) << 19) / ((PersonalData->calX2) - (PersonalData->calX1));
-		yscale = ((PersonalData->calY2px - PersonalData->calY1px) << 19) / ((PersonalData->calY2) - (PersonalData->calY1));
-
-		xoffset = ((PersonalData->calX1 + PersonalData->calX2) * xscale  - ((PersonalData->calX1px + PersonalData->calX2px) << 19) ) / 2;
-		yoffset = ((PersonalData->calY1 + PersonalData->calY2) * yscale  - ((PersonalData->calY1px + PersonalData->calY2px) << 19) ) / 2;
-		touchInit = true;
-	}
 
 	uint32 oldIME = REG_IME;
 
@@ -340,18 +392,6 @@ void touchReadXY(touchPosition *touchPos) {
 			break;
 		}
 
-		s16 px = ( touchPos->rawx * xscale - xoffset + xscale/2 ) >>19;
-		s16 py = ( touchPos->rawy * yscale - yoffset + yscale/2 ) >>19;
-
-		if ( px < 0) px = 0;
-		if ( py < 0) py = 0;
-		if ( px > (SCREEN_WIDTH -1)) px = SCREEN_WIDTH -1;
-		if ( py > (SCREEN_HEIGHT -1)) py = SCREEN_HEIGHT -1;
-
-		touchPos->px = px;
-		touchPos->py = py;
-
-
 	}else{
 		error_where = 3;
 		touchPos->rawx = 0;
@@ -365,3 +405,82 @@ void touchReadXY(touchPosition *touchPos) {
 
 }
 
+//---------------------------------------------------------------------------------
+bool touchPenDown() {
+//---------------------------------------------------------------------------------
+	bool down;
+	if (__dsimode) {
+
+		int oldIME = enterCriticalSection();
+		writeTSCReg(0,3);
+
+		down = (!(readTSCReg(9)&0x40) && !(readTSCReg(14)&3));
+		leaveCriticalSection(oldIME);
+		
+	} else {
+		down = !(REG_KEYXY & (1<<6));
+	}
+	return down;
+}
+
+//---------------------------------------------------------------------------------
+void touchReadDSiMode(touchPosition *touchPos) {
+//---------------------------------------------------------------------------------
+	u8 touchdata[20];
+	int i, rawx = 0, rawy = 0, x, y;
+
+	int oldIME = enterCriticalSection();
+
+	writeTSCReg(0,252);
+	readTSCRegArray(1,touchdata,20);
+
+	for (i=0;i<10;i+=2) {
+		x = (touchdata[i]<<8) + touchdata[i+1];
+		y = (touchdata[i+10]<<8) + touchdata[i+11];
+		if ((x & 0xf000) || (y & 0xf000)) break;
+		rawx += x;
+		rawy += y;
+	}
+
+	if (i!=10) {
+		rawx = 0; rawy= 0;
+	} else {
+		touchPos->rawx = rawx/5;
+		touchPos->rawy = rawy/5;
+	}
+	
+	leaveCriticalSection(oldIME);
+}
+
+//---------------------------------------------------------------------------------
+// reading pixel position:
+//---------------------------------------------------------------------------------
+void touchReadXY(touchPosition *touchPos) {
+//---------------------------------------------------------------------------------
+	if ( !touchInit ) {
+
+		xscale = ((PersonalData->calX2px - PersonalData->calX1px) << 19) / ((PersonalData->calX2) - (PersonalData->calX1));
+		yscale = ((PersonalData->calY2px - PersonalData->calY1px) << 19) / ((PersonalData->calY2) - (PersonalData->calY1));
+
+		xoffset = ((PersonalData->calX1 + PersonalData->calX2) * xscale  - ((PersonalData->calX1px + PersonalData->calX2px) << 19) ) / 2;
+		yoffset = ((PersonalData->calY1 + PersonalData->calY2) * yscale  - ((PersonalData->calY1px + PersonalData->calY2px) << 19) ) / 2;
+		touchInit = true;
+	}
+
+	if (__dsimode) {
+		touchReadDSiMode(touchPos);
+	} else {
+		touchReadDSMode(touchPos);
+	}
+
+	s16 px = ( touchPos->rawx * xscale - xoffset + xscale/2 ) >>19;
+	s16 py = ( touchPos->rawy * yscale - yoffset + yscale/2 ) >>19;
+
+	if ( px < 0) px = 0;
+	if ( py < 0) py = 0;
+	if ( px > (SCREEN_WIDTH -1)) px = SCREEN_WIDTH -1;
+	if ( py > (SCREEN_HEIGHT -1)) py = SCREEN_HEIGHT -1;
+
+	touchPos->px = px;
+	touchPos->py = py;
+}

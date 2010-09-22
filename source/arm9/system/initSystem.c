@@ -79,6 +79,9 @@ void __attribute__((weak)) initSystem(void) {
 	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
 	fifoSetDatamsgHandler(FIFO_SYSTEM, systemMsgHandler, 0);
 
+	if(REG_DSIMODE) {
+		fifoSendValue32(FIFO_PM,PM_DSI_HACK);
+	}
 	__transferRegion()->buttons = 0xffff;
 
 	punixTime = (time_t*)memUncached((void *)&__transferRegion()->unixTime);

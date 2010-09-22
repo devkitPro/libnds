@@ -22,32 +22,30 @@ void inputGetAndSend(void){
 
 	u16 keys= REG_KEYXY;
 
+
+	if(!touchPenDown()) {
+		keys |= KEY_TOUCH;
+  	} else {
+		keys &= ~KEY_TOUCH;
+	}
+
 	msg.SystemInput.keys = keys;
 
-	if(keys & KEY_TOUCH)
-	{
+	if(keys & KEY_TOUCH) {
 		penDown = false;	
-	}
-	else
-	{
+	} else {
 		msg.SystemInput.keys |= KEY_TOUCH;
 
-		if(penDown)
-		{
+		if(penDown) {
 			touchReadXY(&tempPos);	
 			
-			if(tempPos.rawx && tempPos.rawy)
-			{
+			if(tempPos.rawx && tempPos.rawy) {
 				msg.SystemInput.keys &= ~KEY_TOUCH;
 				msg.SystemInput.touch = tempPos;
-			}
-			else
-			{
+			} else {
 				penDown = false;
 			}
-		}
-		else
-		{
+		} else {
 			penDown = true;
 		}
 	}	

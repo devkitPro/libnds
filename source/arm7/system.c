@@ -31,6 +31,7 @@
 #include <nds/arm7/clock.h>
 
 bool sleepIsEnabled = true;
+extern bool __dsimode;
 
 //---------------------------------------------------------------------------------
 void powerValueHandler(u32 value, void* user_data) {
@@ -99,6 +100,9 @@ void powerValueHandler(u32 value, void* user_data) {
 		backlight = readPowerManagement(PM_BACKLIGHT_LEVEL);
 		if (backlight & (1<<6)) battery += backlight & (1<<3)<<12;
 		fifoSendValue32(FIFO_SYSTEM, battery);
+		break;
+	case PM_DSI_HACK:
+		__dsimode = true;
 		break;
 	}
 }

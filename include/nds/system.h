@@ -68,7 +68,7 @@ typedef enum
 */
 #define	REG_POWERCNT	*(vu16*)0x4000304
 
-
+#define REG_DSIMODE		*(vu32*)0x4004000
 static inline
 /*!
 	\brief sets the Y trigger(?)
