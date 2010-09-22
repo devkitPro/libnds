@@ -49,6 +49,7 @@ typedef enum {
 	SYS_REQ_TOUCH,
 	SYS_REQ_KEYS,
 	SYS_REQ_TIME,
+	SYS_SET_TIME,
 } FifoSystemCommands;
 
 
@@ -59,7 +60,8 @@ typedef enum {
 	PM_REQ_LED  = (3<<16),
 	PM_REQ_SLEEP  = (4<<16),
 	PM_REQ_SLEEP_DISABLE  = (5<<16),
-	PM_REQ_SLEEP_ENABLE  = (6<<16)
+	PM_REQ_SLEEP_ENABLE  = (6<<16),
+	PM_REQ_BATTERY = (7<<16)
 }FifoPMCommands;
 
 //! Enum values for the fifo wifi commands.

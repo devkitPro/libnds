@@ -97,5 +97,13 @@ void powerOff(int bits) {
 //---------------------------------------------------------------------------------
 void ledBlink(int bm) {
 //---------------------------------------------------------------------------------
-   fifoSendValue32(FIFO_PM, PM_REQ_LED | bm);
+	fifoSendValue32(FIFO_PM, PM_REQ_LED | bm);
+}
+
+//---------------------------------------------------------------------------------
+u32 getBatteryLevel() {
+//---------------------------------------------------------------------------------
+	fifoSendValue32(FIFO_PM, PM_REQ_BATTERY);
+	while(!fifoCheckValue32(FIFO_SYSTEM)); //swiIntrWait(1,IRQ_FIFO_NOT_EMPTY);
+	return fifoGetValue32(FIFO_SYSTEM);
 }

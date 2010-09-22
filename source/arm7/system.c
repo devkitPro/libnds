@@ -32,10 +32,13 @@
 
 bool sleepIsEnabled = true;
 
+//---------------------------------------------------------------------------------
 void powerValueHandler(u32 value, void* user_data) {
+//---------------------------------------------------------------------------------
 	u32 temp;
 	u32 ie_save;
-	
+	int battery, backlight, power;
+
 	switch(value & 0xFFFF0000) {
 		//power control
 	case PM_REQ_LED:
@@ -59,7 +62,7 @@ void powerValueHandler(u32 value, void* user_data) {
 		// Turn the speaker down.
 		swiChangeSoundBias(0,0x400);
 		// Save current power state.
-		int power = readPowerManagement(PM_CONTROL_REG);
+		power = readPowerManagement(PM_CONTROL_REG);
 		// Set sleep LED.
 		writePowerManagement(PM_CONTROL_REG, PM_LED_CONTROL(1));
 		// Register for the lid interrupt.
@@ -91,20 +94,32 @@ void powerValueHandler(u32 value, void* user_data) {
 	case PM_REQ_SLEEP_ENABLE:
 		sleepIsEnabled = true;
 		break;
+	case PM_REQ_BATTERY:
+		battery = readPowerManagement(PM_BATTERY_REG) & 1;
+		backlight = readPowerManagement(PM_BACKLIGHT_LEVEL);
+		if (backlight & (1<<6)) battery += backlight & (1<<3)<<12;
+		fifoSendValue32(FIFO_SYSTEM, battery);
+		break;
 	}
 }
 
+//---------------------------------------------------------------------------------
 void systemSleep(void) {
+//---------------------------------------------------------------------------------
 	if(!sleepIsEnabled) return;
 	//puts arm9 to sleep which then notifies arm7 above (which causes arm7 to sleep)
 	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP);
 }
 
+//---------------------------------------------------------------------------------
 int sleepEnabled(void) {
+//---------------------------------------------------------------------------------
 	return sleepIsEnabled;
 }
 
+//---------------------------------------------------------------------------------
 void installSystemFIFO(void) {
+//---------------------------------------------------------------------------------
 	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
 }
 
