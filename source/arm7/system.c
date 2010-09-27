@@ -98,7 +98,7 @@ void powerValueHandler(u32 value, void* user_data) {
 	case PM_REQ_BATTERY:
 		battery = readPowerManagement(PM_BATTERY_REG) & 1;
 		backlight = readPowerManagement(PM_BACKLIGHT_LEVEL);
-		if (backlight & (1<<6)) battery += backlight & (1<<3)<<12;
+		if (backlight & (1<<6)) battery += (backlight & (1<<3))<<12;
 		fifoSendValue32(FIFO_SYSTEM, battery);
 		break;
 	case PM_DSI_HACK:
