@@ -499,6 +499,7 @@ static void fifoInternalRecvInterrupt() {
 				if (FIFO_UNPACK_VALUE32_NEEDEXTRA(data)) {
 					int next = FIFO_BUFFER_GETNEXT(block);
 					if (next==FIFO_BUFFER_TERMINATE) break;
+					fifo_freeBlock(block);
 					block = next;
 					value32 = FIFO_BUFFER_DATA(block);
 					
