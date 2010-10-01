@@ -76,7 +76,7 @@ extern "C" {
 	%TIMER_DATA(n) when set will latch that value into the counter.  Everytime the
 	counter rolls over %TIMER_DATA(0) will return to the latched value.  This allows
 	you to control the frequency of the timer using the following formula:\n
-		%TIMER_DATA(x) = -(0x2000000/(freq * divider));
+		%TIMER_DATA(x) = -(BUS_CLOCK/(freq * divider));
 
 	<b>Example Usage:</b>
 	%TIMER_DATA(0) = value;  were 0 can be 0 through 3 and value is 16 bits.
@@ -95,7 +95,7 @@ extern "C" {
 
 
 //! the speed in which the timer ticks in hertz.
-#define TIMER_HZ (33513982)
+#define BUS_CLOCK (33513982)
 
 
 //!	Enables the timer.
@@ -142,7 +142,7 @@ typedef enum {
 
 	\note Use the appropriate macro depending on the used clock divider.
 */
-#define TIMER_FREQ(n)    (-0x2000000/(n))
+#define TIMER_FREQ(n)    (-BUS_CLOCK/(n))
 
 
 /*!	\brief A macro that calculates %TIMER_DATA(n) settings for a given frequency of n.
@@ -160,7 +160,7 @@ typedef enum {
 
 	\note Use the appropriate macro depending on the used clock divider.
 */
-#define TIMER_FREQ_64(n)  (-(0x2000000>>6)/(n))
+#define TIMER_FREQ_64(n)  (-(BUS_CLOCK>>6)/(n))
 
 
 /*!	\brief A macro that calculates %TIMER_DATA(n) settings for a given frequency of n.
@@ -178,7 +178,7 @@ typedef enum {
 
 	\note Use the appropriate macro depending on the used clock divider.
 */
-#define TIMER_FREQ_256(n) (-(0x2000000>>8)/(n))
+#define TIMER_FREQ_256(n) (-(BUS_CLOCK>>8)/(n))
 
 
 /*!	\brief A macro that calculates %TIMER_DATA(n) settings for a given frequency of n.
@@ -196,7 +196,7 @@ typedef enum {
 
 	\note Use the appropriate macro depending on the used clock divider.
 */
-#define TIMER_FREQ_1024(n) (-(0x2000000>>10)/(n))
+#define TIMER_FREQ_1024(n) (-(BUS_CLOCK>>10)/(n))
 
 
 
@@ -276,10 +276,10 @@ u32 cpuEndTiming();
 
 
 //use the macro versions...
-static inline u16 timerFreqToTicks_1(int freq) {return -0x2000000 / freq;}
-static inline u16 timerFreqToTicks_64(int freq) {return (-0x2000000 >> 6) / freq;}
-static inline u16 timerFreqToTicks_256(int freq) {return (-0x2000000 >> 8) / freq;}
-static inline u16 timerFreqToTicks_1024(int freq) {return (-0x2000000 >> 10) / freq;}
+static inline u16 timerFreqToTicks_1(int freq) {return -BUS_CLOCK / freq;}
+static inline u16 timerFreqToTicks_64(int freq) {return (-BUS_CLOCK >> 6) / freq;}
+static inline u16 timerFreqToTicks_256(int freq) {return (-BUS_CLOCK >> 8) / freq;}
+static inline u16 timerFreqToTicks_1024(int freq) {return (-BUS_CLOCK >> 10) / freq;}
 
 
 
