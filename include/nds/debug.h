@@ -38,10 +38,10 @@ On the ARM 9 this functionality is best accessed via the console studio integrat
 #ifndef NDS_DEBUG_INCLUDE
 #define NDS_DEBUG_INCLUDE
 
+void nocashWrite(const char *message, int len);
 /*! \brief Send a message to the no$gba debug window 
 \param message The message to send
 */
-void nocashWrite(const char *message, int len);
 void nocashMessage(const char *message);
 
 #endif // NDS_DEBUG_INCLUDE
