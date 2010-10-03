@@ -27,33 +27,62 @@ distribution.
 #include <stdlib.h> //for bsearch()
 
 
-#define VIRTUAL_SIN_LOG2_SIZE 9
-#define VIRTUAL_SIN_SIZE (1<<VIRTUAL_SIN_LOG2_SIZE)
-//#define VIRTUAL_SIN_F32_MASK ((VIRTUAL_SIN_SIZE<<12) - 1)
+/*
+as far as the luts are concerned, an angle has 512 degrees (9 bits long) with an range of [0-511] (512 is the same as 0).
+the luts then implement a quarter of a circle, cause its enough to calculate the rest with it.
+*/
 
-#define VIRTUAL_TAN_LOG2_SIZE 8
-#define VIRTUAL_TAN_SIZE (1<<VIRTUAL_TAN_LOG2_SIZE)
-//#define VIRTUAL_TAN_F32_MASK ((VIRTUAL_TAN_SIZE<<12) - 1)
+#define LUT_ANGLE_BITS			9
+#define LUT_ANGLE				(1<<LUT_ANGLE_BITS)
+#define LUT_ANGLE_MASK			(LUT_ANGLE-1)
 
-
-
-#define LUT_LOG2_SIZE 7
-#define LUT_SIZE (1<<LUT_LOG2_SIZE)
-//#define LUT_MASK (LUT_SIZE - 1)
-
+#define LUT_QUARTER_ANGLE_BITS	7
+#define LUT_QUARTER_ANGLE		(1<<LUT_QUARTER_ANGLE_BITS)
+#define LUT_QUARTER_ANGLE_MASK	(LUT_QUARTER_ANGLE-1)
 
 
+#define LUT_SIZE		LUT_QUARTER_ANGLE
 
-#define ANG_BITSFRACTION (15 - VIRTUAL_SIN_LOG2_SIZE)
+//a libnds angle has 32768 degrees (16 bits long, signed) with an range of [-32768 - 32767]
+//(32768, 0 and -32768 al describe the same angle)
+#define LIBNDS_ANGLE_BITS		15
+#define LIBNDS_ANGLE			(1<<LIBNDS_ANGLE_BITS)
+#define LIBNDS_ANGLE_MASK		(LIBNDS_ANGLE-1)
 
+
+//the number of bits that is used by a libnds angle but gets chopped off with a lut angle.
+#define ANGLE_FRACTION_BITS (LIBNDS_ANGLE_BITS - LUT_ANGLE_BITS)
+#define ANGLE_FRACTION		(1<<ANGLE_FRACTION_BITS)
+#define ANGLE_FRACTION_MASK	(ANGLE_FRACTION-1)
+
+
+#define LIBNDS_QUARTER_ANGLE (LUT_QUARTER_ANGLE << ANGLE_FRACTION_BITS)
+
+
+/*
+when getting an libnds angle, you should first convert it to a 15 bit unsigned number,
+so you only have a positive angle and it doesn't affect the outcome (-270 degree == 90 degree)
+*/
+#define TO_POSITIVE_ANGLE(angle)	(((angle) < 0) ? (LIBNDS_ANGLE + (angle)) : (angle))
+
+/*
+to convert a libnds angle to a lut angle, you must shift it right so it fits in a lut angle and mask of any bits that doesn't fit:
+*/
+#define LIBNDS_TO_LUT_ANGLE(angle)	 (((angle) >> ANGLE_FRACTION_BITS) & LUT_ANGLE_MASK)
+
+
+//the number of bits used for the fractional part.
 #define SIN_BITSFRACTION 15
 #define TAN_BITSFRACTION 16
 
-#define QUARTER_CIRCLE (intToFixed(VIRTUAL_SIN_SIZE >> 2, ANG_BITSFRACTION))
 
 //maximum tangent value = tan(89 + 63/64 degrees) << TAN_BITSFRACTION
 #define MAX_TAN (400 << TAN_BITSFRACTION)
 
+
+
+//the size of the luts are one bigger than normal for the compare functions used by bsearch.
+//a 1.15 fixed point LUT
 const u16 SIN_LUT[LUT_SIZE+1] = {
 	0,	402,	804,	1206,	1607,	2009,	2410,	2811,	3211,
 	3611,	4011,	4409,	4808,	5205,	5602,	5997,	6392,	6786,
@@ -72,6 +101,8 @@ const u16 SIN_LUT[LUT_SIZE+1] = {
 	32758,	32765,	32768
 };
 
+
+//a 16.16 fixed point LUT
 const s32 TAN_LUT[LUT_SIZE+1] = {
 	0,	804,	1608,	2413,	3219,	4026,	4834,	5643,	6454,
 	7267,	8083,	8900,	9721,	10544,	11371,	12201,	13035,	13874,
@@ -90,39 +121,50 @@ const s32 TAN_LUT[LUT_SIZE+1] = {
 	2669640,	5340085, MAX_TAN
 };
 
+
+
 s32 sinLutLookup(int i)
 {
-	i = (i >> ANG_BITSFRACTION) & 511;
+	//i = (i >> ANGLE_FRACTION_BITS) & 511;
+	i = LIBNDS_TO_LUT_ANGLE(i);
 
-	int lutVal = i & 127;
+	int lutVal = i & LUT_QUARTER_ANGLE_MASK;
 
-	if(i < 128) return SIN_LUT[lutVal];
-	if(i < 256) return SIN_LUT[LUT_SIZE - lutVal];
-	if(i < 384) return -SIN_LUT[lutVal];
-	return -SIN_LUT[LUT_SIZE - lutVal];
+	if(i < 128) return SIN_LUT[lutVal];				//first quarter
+	if(i < 256) return SIN_LUT[LUT_SIZE - lutVal];	//second quarter
+	if(i < 384) return -SIN_LUT[lutVal];			//thirth quarter
+	return -SIN_LUT[LUT_SIZE - lutVal];				//fourth quarter
 }
 
 
 s16 sinLerp(s16 angle)
 {
-	s32 prev = sinLutLookup(angle);
-	s32 next = sinLutLookup(angle + intToFixed(1, ANG_BITSFRACTION));
-	s32 interp = angle & ((1 << ANG_BITSFRACTION) - 1);
+	angle = TO_POSITIVE_ANGLE(angle);
 
-	return (prev + (((next-prev) * interp) >> ANG_BITSFRACTION)) >> (SIN_BITSFRACTION - 12);
+	s32 prev = sinLutLookup(angle);
+	s32 next = sinLutLookup(angle + ANGLE_FRACTION);
+	s32 interp = angle & ANGLE_FRACTION_MASK;
+
+	int diff = next-prev;
+	int interpolationresult = ((diff * interp) >> ANGLE_FRACTION_BITS);
+	int result = prev + interpolationresult;
+
+	//convert from .15 to .12 fixed point
+	return result >> (SIN_BITSFRACTION - 12);
 }
 
 
 s16 cosLerp(s16 angle)
 {
-	return sinLerp(angle + QUARTER_CIRCLE); // Cos/sin symmetry
+	return sinLerp(angle + LIBNDS_QUARTER_ANGLE); // Cos/sin symmetry
 }
 
 s32 tanLutLookup(int i)
 {
-	i = (i >> ANG_BITSFRACTION) & 255;
+	//convert from libnds to lut angle, and making sure the angle is in the first half of the circle
+	i = (i >> ANGLE_FRACTION_BITS) & 255;
 
- 	int lutVal = i & 127;
+ 	int lutVal = i & LUT_QUARTER_ANGLE_MASK;
 
 	if(i == 128) return MAX_TAN;
 
@@ -134,24 +176,24 @@ s32 tanLutLookup(int i)
 
 s32 tanLerp(s16 angle)
 {
-	s32 prev;
+	angle = TO_POSITIVE_ANGLE(angle);
+	//s32 lut_val = (angle >> ANGLE_FRACTION_BITS) & 511;
+	int lutVal = LIBNDS_TO_LUT_ANGLE(angle);
 
-	s32 lut_val = (angle >> ANG_BITSFRACTION) & 511;
+	s32 prev = ((lutVal == 128 || lutVal == 384) ? -MAX_TAN: tanLutLookup(angle));
+	s32 next = tanLutLookup(angle + ANGLE_FRACTION);
+	s32 interp = angle & ANGLE_FRACTION_MASK;
 
-	if(lut_val == 128 || lut_val == 384) {
-		prev = -MAX_TAN;
-	} else {
-		prev = tanLutLookup(angle);
-	}
 
-	s32 next = tanLutLookup(angle + intToFixed(1, ANG_BITSFRACTION));
-	s32 interp = angle & ((1 << ANG_BITSFRACTION) - 1);
+	int diff = next-prev;
+	int interpolationresult = ((diff * interp) >> ANGLE_FRACTION_BITS);
+	int result = prev + interpolationresult;
 
-	return ((prev + (((next-prev) * interp) >> ANG_BITSFRACTION)) >> (TAN_BITSFRACTION - 12));
+	return (result >> (TAN_BITSFRACTION - 12));
 }
 
 
-int aSinComp(const void *a, const void *b)
+int asinComp(const void *a, const void *b)
 {
 	u16 par = (*(u16*)a);
 	u16* lut = (u16*)b;
@@ -171,36 +213,43 @@ int aSinComp(const void *a, const void *b)
 
 s16 asinLerp(s16 par)
 {
-	int neg = 0;
-
-	par = par << (SIN_BITSFRACTION - 12);
+	bool neg = false;
 
 	if(par < 0)
 	{
 		par = -par;
-		neg = 1;
+		neg = true;
 	}
 
-	if(par < (1 << 6)) return 0;
+	//convert from 4.12 to 1.15
+	par = par << (SIN_BITSFRACTION - 12);
 
-	if(par >= SIN_LUT[LUT_SIZE-1])
+	if(par < ANGLE_FRACTION)
+		return 0;
+
+	if(par > SIN_LUT[LUT_SIZE])
 	{
-		return neg ? -intToFixed(128, ANG_BITSFRACTION) : intToFixed(128, ANG_BITSFRACTION);
+		return (neg ? -LIBNDS_QUARTER_ANGLE : LIBNDS_QUARTER_ANGLE);
 	}
 
-	short* as = (short*)bsearch(&par, SIN_LUT, LUT_SIZE, sizeof(short), aSinComp);
+	u16* lutIndexPointer = (u16*)bsearch(&par, SIN_LUT, LUT_SIZE, sizeof(u16), asinComp);
 
-	short angle = intToFixed(as - (short*)SIN_LUT + 1, ANG_BITSFRACTION);
+	if(lutIndexPointer == NULL)
+		return 0;
 
-	return neg ? -angle : angle;
+	int index = (int) (lutIndexPointer-SIN_LUT);
+	//index is in (0, 256)
+
+	int angle = intToFixed(index, ANGLE_FRACTION_BITS);
+
+	return (neg ? -angle : angle);
 }
 
 
 s16 acosLerp(s16 par)
 {
-	s16 aSin = asinLerp(par); /* Uses the identity sin(x) = cos(90 - x) => asin(x) = 90 - acos(x) */
-
-	return intToFixed(128, ANG_BITSFRACTION) - aSin; /* returns a value in [0, 256] */
+	//Uses the identity sin(x) = cos(90 - x) => asin(x) = 90 - acos(x)
+	return LIBNDS_QUARTER_ANGLE - asinLerp(par); // returns a value in [0, 256]
 }
 
 
@@ -224,41 +273,53 @@ int atanComp(const void *a, const void *b)
 
 
 //todo: implement and test
-	//inline f32 arcTanLerp(f32 par){
-	//	int neg = 0;
-	//	if(par < 0){
-	//		par = -par;
-	//		neg = 1;
-	//	}
 
-	//	/* If the parameter is less than the second value in the LUT, we can be
-	//	assured the binary search will return the first, which is zero. This
-	//	zero will cause a divide by zero later, so this saves the trouble of
-	//	dealing with that. */
-	//	if(par < TAN_LUT[1]){
-	//		return 0;
-	//	}
+//#define inttof32(a) intToFixed((a), 12)
 
-	//	/* If the parameter is greater than the maximum value the LUT supports,
-	//	we can be assured the binary search may crap out on us as arcTanComp
-	//	doesn't run bounds checking. It is faster to add this than fix that
-	//	(in terms of runtime speed, I'm not just being lazy). */
-	//	if(par >= TAN_LUT[LUT_SIZE-1]){
-	//		return inttof32(128);
-	//	}
+/*
+s32 atanLerp(s32 par)
+{
+	bool neg = false;
+	if(par < 0)
+	{
+		par = -par;
+		neg = true;
+	}
 
-	//	f32* at = (f32*)bsearch(&par, TAN_LUT, LUT_SIZE, sizeof(f32), aTanComp);
+	/ *
+	If the parameter is less than the second value in the LUT, we can be
+	assured the binary search will return the first, which is zero. This
+	zero will cause a divide by zero later, so this saves the trouble of
+	dealing with that.
+	// * /
+	if(par < TAN_LUT[1])
+	{
+		return 0;
+	}
 
-	//	if(!at){
-	//		at = TAN_LUT+LUT_SIZE;
-	//		neg = !neg;
-	//	}
+	/ *
+	If the parameter is greater than the maximum value the LUT supports,
+	we can be assured the binary search may crap out on us as atanComp
+	doesn't run bounds checking. It is faster to add this than fix that
+	(in terms of runtime speed, I'm not just being lazy).
+	* /
+	if(par >= TAN_LUT[LUT_SIZE])
+	{
+		return inttof32(128);
+	}
 
-	//	f32 angle = divf32(mulf32(inttof32(at - TAN_LUT), par), (*at));
+	s32* at = (s32*)bsearch(&par, TAN_LUT, LUT_SIZE, sizeof(s32), atanComp);
 
-	//	if(neg){
-	//		return -angle;
-	//	}
+	if(at == NULL)
+	{
+		at = TAN_LUT+LUT_SIZE;
+		neg = !neg;
+	}
 
-	//	return angle; // returns a value in [-128, 128]
-	//}
+	s32 angle = divf32(mulf32(inttof32(at - TAN_LUT), par), (*at));
+
+
+	// returns a value in [-128, 128]
+	return (neg ? -angle :angle);
+}
+//*/

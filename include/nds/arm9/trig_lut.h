@@ -100,11 +100,7 @@ extern "C" {
 #define angleToDegrees(angle)   ((angle) * 360 / DEGREES_IN_CIRCLE)
 
 
-/*! \brief fixed point cosine
-	\param angle (-32768 to 32767)
-	\return 4.12 fixed point number with the range [-1, 1]
-*/
-s16 cosLerp(s16 angle);
+
 
 /*! \brief fixed point sine
 	\param angle (-32768 to 32767)
@@ -112,23 +108,32 @@ s16 cosLerp(s16 angle);
 */
 s16 sinLerp(s16 angle);
 
+/*! \brief fixed point cosine
+	\param angle (-32768 to 32767)
+	\return 4.12 fixed point number with the range [-1, 1]
+*/
+s16 cosLerp(s16 angle);
+
 /*! \brief fixed point tangent
 	\param angle (-32768 to 32767)
 	\return 20.12 fixed point number with the range [-81.483, 524287.999]
 */
 s32 tanLerp(s16 angle);
 
+
+/*! \brief fixed point arcsin
+	\param par 4.12 fixed point number with the range [-1, 1]
+	\return s16 angle (-32768 to 32767)
+*/
+s16 asinLerp(s16 par);
+
 /*! \brief fixed point arccos
-	\param par parameter
+	\param par 4.12 fixed point number with the range [-1, 1]
 	\return s16 angle (-32768 to 32767)
 */
 s16 acosLerp(s16 par);
 
-/*! \brief fixed point arcsin
-	\param par parameter
-	\return s16 angle (-32768 to 32767)
-*/
-s16 asinLerp(s16 par);
+
 
 
 
