@@ -68,10 +68,9 @@ bool DynamicArraySet(DynamicArray *v, unsigned int index, void* item)
 		unsigned int newSize = (v->cur_size * 2 > index ? v->cur_size * 2: index + 1);
 
 		void** temp = (void**)realloc(v->data, sizeof(void*) * newSize);
-		if(temp == NULL)
-		{
-			return false;
-		}
+
+		if(temp == NULL) return false;
+		v->data = temp;
 		memset(v->data + v->cur_size, 0, sizeof(void*) * (newSize - v->cur_size));
 		v->cur_size = newSize;
 	}
