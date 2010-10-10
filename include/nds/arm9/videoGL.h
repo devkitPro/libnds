@@ -45,7 +45,7 @@
 #include "nds/arm9/cache.h"
 #include "nds/arm9/trig_lut.h"
 #include "nds/arm9/math.h"
-#include "nds/dynamicArray.h"
+#include "nds/arm9/dynamicArray.h"
 
 
 // for some reason doxygen doesn't like "static inline" but is fine with "GL_STATIC_INL"

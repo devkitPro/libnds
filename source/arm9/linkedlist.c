@@ -1,6 +1,6 @@
 
 
-#include <nds/linkedlist.h>
+#include <nds/arm9/linkedlist.h>
 #include <stdlib.h>
 
 

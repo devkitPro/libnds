@@ -239,13 +239,12 @@ extern "C" {
 #include "nds/touch.h"
 #include "nds/input.h"
 
-#include "nds/dynamicArray.h"
-#include "nds/linkedlist.h"
 
 //---------------------------------------------------------------------------------
 #ifdef ARM9
 //---------------------------------------------------------------------------------
-
+#include "nds/arm9/dynamicArray.h"
+#include "nds/arm9/linkedlist.h"
 #include "nds/arm9/background.h"
 #include "nds/arm9/boxtest.h"
 #include "nds/arm9/cache.h"
