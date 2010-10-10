@@ -47,7 +47,7 @@ dist-src:
 #-------------------------------------------------------------------------------
 dist-bin: all
 #-------------------------------------------------------------------------------
-	@tar --exclude=*CVS* --exclude=.svn -cjf libnds-$(VERSION).tar.bz2 include lib icon.bmp libnds_license.txt
+	@tar --exclude=*CVS* --exclude=.svn -cjf libnds-$(VERSION).tar.bz2 include lib icon.bmp libnds_license.txt libnds.dox
 
 dist: dist-bin dist-src
 
