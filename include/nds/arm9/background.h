@@ -872,7 +872,7 @@ static inline
 */
 int bgGetTileBase(int id)
 {
-	return (*bgControl[id] >> TILE_BASE_SHIFT) & 31;
+	return (*bgControl[id] >> TILE_BASE_SHIFT) & 15;
 }
 
 static inline
