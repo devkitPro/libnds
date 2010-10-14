@@ -654,7 +654,11 @@ If you want to do this really fast then write your own code that that does this 
 There is sometimes a problem when you pack the GFX_END command into a list, so don't. GFX_END is a dummy command and never needs called<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dgeometrycommands">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dgeometrycommands</A> */
 void glCallList(const u32* list) {
+	sassert(list != NULL,"glCallList received a null display list pointer");
+
 	u32 count = *list++;
+
+	sassert(count != NULL,"glCallList received a display list of size 0");
 
 	// flush the area that we are going to DMA
 	DC_FlushRange(list, count*4);
