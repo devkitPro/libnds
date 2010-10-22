@@ -658,7 +658,7 @@ void glCallList(const u32* list) {
 
 	u32 count = *list++;
 
-	sassert(count != NULL,"glCallList received a display list of size 0");
+	sassert(count != 0,"glCallList received a display list of size 0");
 
 	// flush the area that we are going to DMA
 	DC_FlushRange(list, count*4);
