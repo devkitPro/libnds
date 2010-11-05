@@ -489,7 +489,7 @@ GL_STATIC_INL
 \param z the z component for the vertex */
  void glVertex3v16(v16 x, v16 y, v16 z) {
 	GFX_VERTEX16 = (y << 16) | (x & 0xFFFF);
-	GFX_VERTEX16 = ((u32)(u16)z);
+	GFX_VERTEX16 = z;
 }
 
 GL_STATIC_INL
