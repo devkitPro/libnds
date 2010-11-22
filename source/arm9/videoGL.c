@@ -417,6 +417,8 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 			// We do GL_RGB as GL_RGBA, but we set each alpha bit to 1 during the copy
 			u16 * src = (u16*)texture;
 			u16 * dest = (u16*)addr;
+			// divide by 2, as we copy in shorts
+			size >>= 1;
 
 			while (size--) {
 				*dest++ = *src | (1 << 15);
