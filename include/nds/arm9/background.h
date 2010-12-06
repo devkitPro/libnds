@@ -427,7 +427,7 @@ extern bg_scroll* bgScrollTable[8];
 extern bg_transform* bgTransform[8];
 extern BgState bgState[8];
 
-//! Allowed background types, used in bgInitMain and bgInitSub.
+//! Allowed background types, used in bgInit and bgInitSub.
 typedef enum
 {
 	BgType_Text8bpp, 	//!< 8bpp Tiled background with 16 bit tile indexes and no allowed rotation or scaling
