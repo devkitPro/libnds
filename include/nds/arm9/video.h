@@ -144,6 +144,7 @@ extern u16 mosaicShadowSub;
 #define VRAM_B_CR		(*(vu8*)0x04000241)
 #define VRAM_C_CR		(*(vu8*)0x04000242)
 #define VRAM_D_CR		(*(vu8*)0x04000243)
+#define VRAM_EFG_CR		(*(vu32*)0x04000244)
 #define VRAM_E_CR		(*(vu8*)0x04000244)
 #define VRAM_F_CR		(*(vu8*)0x04000245)
 #define VRAM_G_CR		(*(vu8*)0x04000246)
@@ -342,6 +343,14 @@ typedef _palette _ext_palette[16];
 */
 u32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d);
 
+/** \brief  Set E,F,G bank modes.
+*    \param e mapping mode of VRAM_E
+*    \param f mapping mode of VRAM_F
+*    \param g mapping mode of VRAM_G
+*    \return the previous mode
+*/
+u32 vramSetBanks_EFG(VRAM_E_TYPE e, VRAM_F_TYPE f, VRAM_G_TYPE g);
+
 /** \brief  Set VRAM banks to basic default.
 	\return the previous settings
 */
@@ -351,6 +360,11 @@ u32 vramDefault();
 	\param vramTemp restores the main 4 banks to the value encoded in vramTemp (returned from vramSetMainBanks)
 */
 void vramRestoreMainBanks(u32 vramTemp);
+
+/** \brief  Restore the E,F,G bank modes.
+	\param vramTemp restores the E,F,G bank modes to the value encoded in vramTemp (returned from vramSetBanks_EFG)
+*/
+void vramRestoreBanks_EFG(u32 vramTemp);
 
 static inline
 /** \brief  Set bank A to the indicated mapping.
