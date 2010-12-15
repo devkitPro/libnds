@@ -31,7 +31,7 @@
     \brief nds stdio support.
 
 <div class="fileHeader">
-Provides studio integration for printing to the DS screen as well as debug print
+Provides stdio integration for printing to the DS screen as well as debug print
 functionality provided by stderr.
 
 General usage is to initialize the console by:
@@ -92,7 +92,7 @@ typedef struct ConsoleFont
 
 /** \brief console structure used to store the state of a console render context.
 
-Default values from consolNew():
+Default values from consoleGetDefault();
 <div class="fixedFont"><pre>
 PrintConsole defaultConsole =
 {
@@ -179,14 +179,14 @@ typedef enum
 	DebugDevice_CONSOLE = 0x02	//!< Directs stderr debug statements to DS console window
 }DebugDevice;
 
-/*!	\brief Loads the font into the current console
-	\param console pointer to the print console to update
+/*!	\brief Loads the font into the console
+	\param console pointer to the console to update, if NULL it will update the current console
 	\param font the font to load
 */
 void consoleSetFont(PrintConsole* console, ConsoleFont* font);
 
 /*!	\brief Sets the print window
-	\param console console to set, if NULL will set current console window
+	\param console console to set, if NULL it will set the current console window
 	\param x x location of the window
 	\param y y location of the window
 	\param width width of the window
@@ -194,8 +194,9 @@ void consoleSetFont(PrintConsole* console, ConsoleFont* font);
 */
 void consoleSetWindow(PrintConsole* console, int x, int y, int width, int height);
 
-/*!	\brief Gets a pointer to the default console (this should only be used when using a single console, other wise use consoleNew(PrintsConsole* console)
-	\return A pointer to the default console
+/*!	\brief Gets a pointer to the console with the default values
+	this should only be used when using a single console or without changing the console that is returned, other wise use consoleInit()
+	\return A pointer to the console with the default values
 */
 PrintConsole* consoleGetDefault(void);
 
@@ -205,7 +206,7 @@ PrintConsole* consoleGetDefault(void);
 void consoleSelect(PrintConsole* console);
 
 /*!	\brief Initialise the console.
-	\param console A pointer to the console initialze data (if null default console will be used)
+	\param console A pointer to the console data to initialze (if it's NULL, the default console will be used)
 	\param layer background layer to use
 	\param type the type of the background
 	\param size the size of the background
@@ -225,7 +226,7 @@ PrintConsole* consoleInit(PrintConsole* console, int layer, BgType type, BgSize 
 */
 PrintConsole* consoleDemoInit(void);
 
-//! Clears the screan by iprintf("\x1b[2J");
+//! Clears the screan by using iprintf("\x1b[2J");
 void consoleClear(void);
 
 /*!	\brief Initializes debug console output on stderr to the specified device

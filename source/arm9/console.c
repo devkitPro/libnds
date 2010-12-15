@@ -37,7 +37,7 @@ distribution.
 #include <sys/iosupport.h>
 
 
-PrintConsole defaultConsole = 
+PrintConsole defaultConsole =
 {
 	//Font:
 	{
@@ -49,7 +49,7 @@ PrintConsole defaultConsole =
 		128, //number of characters in the font set
 		true //convert single color
 	},
-	0, //font background map 
+	0, //font background map
 	0, //font background gfx
 	22, //map base
 	3, //char base
@@ -94,13 +94,13 @@ static void consoleCls(char mode) {
 			colTemp = currentConsole->cursorX ;
 			rowTemp = currentConsole->cursorY ;
 
-			while(i++ < ((currentConsole->windowHeight * currentConsole->windowWidth) - (rowTemp * currentConsole->consoleWidth + colTemp))) 
+			while(i++ < ((currentConsole->windowHeight * currentConsole->windowWidth) - (rowTemp * currentConsole->consoleWidth + colTemp)))
 				consolePrintChar(' ');
 
 			currentConsole->cursorX  = colTemp;
 			currentConsole->cursorY  = rowTemp;
 			break;
-		}	
+		}
 	case '1':
 		{
 			colTemp = currentConsole->cursorX ;
@@ -109,25 +109,25 @@ static void consoleCls(char mode) {
 			currentConsole->cursorY  = 0;
 			currentConsole->cursorX  = 0;
 
-			while (i++ < (rowTemp * currentConsole->windowWidth + colTemp)) 
+			while (i++ < (rowTemp * currentConsole->windowWidth + colTemp))
 				consolePrintChar(' ');
 
 			currentConsole->cursorX  = colTemp;
 			currentConsole->cursorY  = rowTemp;
 			break;
-		}	
+		}
 	case '2':
 		{
 			currentConsole->cursorY  = 0;
 			currentConsole->cursorX  = 0;
 
-			while(i++ < currentConsole->windowHeight * currentConsole->windowWidth) 
+			while(i++ < currentConsole->windowHeight * currentConsole->windowWidth)
 				consolePrintChar(' ');
 
 			currentConsole->cursorY  = 0;
 			currentConsole->cursorX  = 0;
 			break;
-		}	
+		}
 	}
 }
 //---------------------------------------------------------------------------------
@@ -150,7 +150,7 @@ static void consoleClearLine(char mode) {
 			currentConsole->cursorX  = colTemp;
 
 			break;
-		}	
+		}
 	case '1':
 		{
 			colTemp = currentConsole->cursorX ;
@@ -164,7 +164,7 @@ static void consoleClearLine(char mode) {
 			currentConsole->cursorX  = colTemp;
 
 			break;
-		}	
+		}
 	case '2':
 		{
 			colTemp = currentConsole->cursorX ;
@@ -300,13 +300,13 @@ ssize_t con_write(struct _reent *r,int fd,const char *ptr, size_t len) {
 						siscanf(escapeseq,"[%d;%dm", &parameter, &intensity);
 
 						//only handle 30-37,39 and intensity for the color changes
-						parameter -= 30; 
+						parameter -= 30;
 
 						//39 is the reset code
 						if(parameter == 9){
 							parameter = 15;
 						}
-						else if(parameter > 8){ 
+						else if(parameter > 8){
 							parameter -= 2;
 						}
 						else if(intensity){
@@ -374,7 +374,7 @@ void consoleLoadFont(PrintConsole* console) {
 	if(console->fontBgGfx < BG_GFX_SUB){
 			palette = BG_PALETTE;
 	}
-	
+
 	if(console->font.bpp == 4) {
 
 		if(!console->font.convertSingleColor) {
@@ -383,7 +383,7 @@ void consoleLoadFont(PrintConsole* console) {
 				dmaCopy(console->font.gfx, console->fontBgGfx, console->font.numChars * 64 / 2);
 			if(console->font.pal)
 				dmaCopy(console->font.pal, palette + console->fontCurPal * 16, console->font.numColors*2);
-			
+
 			console->fontCurPal <<= 12;
 		} else {
 			console->fontCurPal = 15 << 12;
@@ -403,13 +403,13 @@ void consoleLoadFont(PrintConsole* console) {
 				console->fontBgGfx[i] = temp;
 			}
 
-		
+
 
 			//set up the palette for color printing
 			palette[1 * 16 - 1] = RGB15(0,0,0); //30 normal black
-			palette[2 * 16 - 1] = RGB15(15,0,0); //31 normal red	 
-			palette[3 * 16 - 1] = RGB15(0,15,0); //32 normal green	
-			palette[4 * 16 - 1] = RGB15(15,15,0); //33 normal yellow	
+			palette[2 * 16 - 1] = RGB15(15,0,0); //31 normal red
+			palette[3 * 16 - 1] = RGB15(0,15,0); //32 normal green
+			palette[4 * 16 - 1] = RGB15(15,15,0); //33 normal yellow
 
 			palette[5 * 16 - 1] = RGB15(0,0,15); //34 normal blue
 			palette[6 * 16 - 1] = RGB15(15,0,15); //35 normal magenta
@@ -454,7 +454,7 @@ void consoleLoadFont(PrintConsole* console) {
 				((u32*)console->fontBgGfx)[i] = temp;
 
 			}
-			
+
 			palette[255] = RGB15(31,31,31);
 		}
 
@@ -481,14 +481,14 @@ PrintConsole* consoleInit(PrintConsole* console, int layer,
 
 		setvbuf(stdout, NULL , _IONBF, 0);
 		setvbuf(stderr, NULL , _IONBF, 0);
-				
+
 		firstConsoleInit = false;
 	}
-	
+
 	if(console) {
 		currentConsole = console;
 	} else {
-		console = currentConsole;	
+		console = currentConsole;
 	}
 
 	*currentConsole = defaultConsole;
@@ -497,16 +497,16 @@ PrintConsole* consoleInit(PrintConsole* console, int layer,
 		console->bgId = bgInit(layer, type, size, mapBase, tileBase);
 	} else {
 		console->bgId = bgInitSub(layer, type, size, mapBase, tileBase);
-	}	
-	
+	}
+
 	console->fontBgGfx = (u16*)bgGetGfxPtr(console->bgId);
 	console->fontBgMap = (u16*)bgGetMapPtr(console->bgId);
 
 	console->consoleInitialised = 1;
-	
+
 	consoleCls('2');
 
-	if(loadGraphics) 
+	if(loadGraphics)
 		consoleLoadFont(console);
 
 	return currentConsole;
@@ -523,6 +523,8 @@ void consoleSelect(PrintConsole* console){
 void consoleSetFont(PrintConsole* console, ConsoleFont* font){
 //---------------------------------------------------------------------------------
 
+	if(!console) console = currentConsole;
+
 	console->font = *font;
 
 	consoleLoadFont(console);
@@ -535,7 +537,7 @@ void consoleDebugInit(DebugDevice device){
 //---------------------------------------------------------------------------------
 
 	int buffertype = _IONBF;
-	
+
 	switch(device) {
 
 	case DebugDevice_NOCASH:
@@ -554,12 +556,12 @@ void consoleDebugInit(DebugDevice device){
 }
 
 //---------------------------------------------------------------------------------
-// Places the console in a default mode using bg0 of the sub display, and vram c for 
+// Places the console in a default mode using bg0 of the sub display, and vram c for
 // font and map..this is provided for rapid prototyping and nothing more
 PrintConsole* consoleDemoInit(void) {
 //---------------------------------------------------------------------------------
 	videoSetModeSub(MODE_0_2D);
-	vramSetBankC(VRAM_C_SUB_BG); 
+	vramSetBankC(VRAM_C_SUB_BG);
 
 	return consoleInit(NULL, defaultConsole.bgLayer, BgType_Text4bpp, BgSize_T_256x256, defaultConsole.mapBase, defaultConsole.gfxBase, false, true);
 }
@@ -567,25 +569,25 @@ PrintConsole* consoleDemoInit(void) {
 //---------------------------------------------------------------------------------
 static void newRow() {
 //---------------------------------------------------------------------------------
-	
-	
+
+
 	currentConsole->cursorY ++;
-	
+
 	if(currentConsole->cursorY  >= currentConsole->windowHeight)  {
 		int rowCount;
 		int colCount;
-		
+
 		currentConsole->cursorY --;
 
 		for(rowCount = 0; rowCount < currentConsole->windowHeight - 1; rowCount++)
 			for(colCount = 0; colCount < currentConsole->windowWidth; colCount++)
 				currentConsole->fontBgMap[(colCount + currentConsole->windowX) + (rowCount + currentConsole->windowY) * currentConsole->consoleWidth] =
 					currentConsole->fontBgMap[(colCount + currentConsole->windowX) + (rowCount + currentConsole->windowY + 1) * currentConsole->consoleWidth];
-		
+
 		for(colCount = 0; colCount < currentConsole->windowWidth; colCount++)
 			currentConsole->fontBgMap[(colCount + currentConsole->windowX) + (rowCount + currentConsole->windowY) * currentConsole->consoleWidth] =
 				(' ' + currentConsole->fontCharOffset - currentConsole->font.asciiOffset);
-	
+
 	}
 }
 
@@ -594,7 +596,7 @@ static void newRow() {
 void consolePrintChar(char c) {
 //---------------------------------------------------------------------------------
 
-	if(currentConsole->PrintChar) 
+	if(currentConsole->PrintChar)
 		if(currentConsole->PrintChar(currentConsole, c))
 			return;
 
@@ -616,9 +618,9 @@ void consolePrintChar(char c) {
 		*/
 		case 8:
 			currentConsole->cursorX--;
-			
-			if(currentConsole->cursorX < 0) {			
-				if(currentConsole->cursorY > 0) {	
+
+			if(currentConsole->cursorX < 0) {
+				if(currentConsole->cursorY > 0) {
 					currentConsole->cursorX = currentConsole->windowX - 1;
 					currentConsole->cursorY--;
 				} else {
@@ -627,7 +629,7 @@ void consolePrintChar(char c) {
 			}
 
 			currentConsole->fontBgMap[currentConsole->cursorX + currentConsole->windowX + (currentConsole->cursorY + currentConsole->windowY) * currentConsole->consoleWidth] = currentConsole->fontCurPal | (u16)(' ' + currentConsole->fontCharOffset - currentConsole->font.asciiOffset);
-			
+
 			break;
 
 		case 9:
@@ -654,14 +656,14 @@ void consoleClear(void) {
 //---------------------------------------------------------------------------------
 void consoleSetWindow(PrintConsole* console, int x, int y, int width, int height){
 //---------------------------------------------------------------------------------
-	
+
 	if(!console) console = currentConsole;
 
 	console->windowWidth = width;
 	console->windowHeight = height;
 	console->windowX = x;
 	console->windowY = y;
-	
+
 	console->cursorX = 0;
 	console->cursorY = 0;
 
