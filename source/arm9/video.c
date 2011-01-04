@@ -29,7 +29,7 @@
 
 
 //---------------------------------------------------------------------------------
-u32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d) {
+u32 vramSetPrimaryBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d) {
 //---------------------------------------------------------------------------------
 	uint32 vramTemp = VRAM_CR;
 
@@ -41,6 +41,11 @@ u32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d)
 	return vramTemp;
 }
 
+//---------------------------------------------------------------------------------
+u32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d) {
+//---------------------------------------------------------------------------------
+	return vramSetPrimaryBanks(a,b,c,d);
+}
 
 //---------------------------------------------------------------------------------
 u32 vramSetBanks_EFG(VRAM_E_TYPE e, VRAM_F_TYPE f, VRAM_G_TYPE g) {
@@ -85,6 +90,6 @@ void setBrightness( int screen, int level) {
 //---------------------------------------------------------------------------------
 u32 __attribute__((weak)) vramDefault() {
 //---------------------------------------------------------------------------------
-	return vramSetMainBanks(VRAM_A_MAIN_BG, VRAM_B_MAIN_SPRITE, VRAM_C_SUB_BG, VRAM_D_SUB_SPRITE);
+	return vramSetPrimaryBanks(VRAM_A_MAIN_BG, VRAM_B_MAIN_SPRITE, VRAM_C_SUB_BG, VRAM_D_SUB_SPRITE);
 }
 
