@@ -431,7 +431,7 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 		}
 	}
 	
-	vramRestoreMainBanks(vramTemp);
+	vramRestorePrimaryBanks(vramTemp);
 	
 	return 1;
 }

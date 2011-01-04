@@ -361,7 +361,9 @@ u32 vramDefault();
 /** \brief  Restore the main 4 bank modes.
 	\param vramTemp restores the main 4 banks to the value encoded in vramTemp (returned from vramSetMainBanks)
 */
-void vramRestoreMainBanks(u32 vramTemp);
+void vramRestorePrimaryBanks(u32 vramTemp);
+
+__attribute__ ((deprecated)) void vramRestoreMainBanks(u32 vramTemp);
 
 /** \brief  Restore the E,F,G bank modes.
 	\param vramTemp restores the E,F,G bank modes to the value encoded in vramTemp (returned from vramSetBanks_EFG)
