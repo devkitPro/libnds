@@ -461,8 +461,9 @@ void consoleLoadFont(PrintConsole* console) {
 	}
 
 	palette[0] = RGB15(0,0,0);
-
+	PrintConsole* tmp = consoleSelect(console);
 	consoleCls('2');
+	consoleSelect(tmp);
 
 }
 
@@ -513,10 +514,11 @@ PrintConsole* consoleInit(PrintConsole* console, int layer,
 
 }
 //---------------------------------------------------------------------------------
-void consoleSelect(PrintConsole* console){
+PrintConsole *consoleSelect(PrintConsole* console){
 //---------------------------------------------------------------------------------
-
+	PrintConsole *tmp = currentConsole;
 	currentConsole = console;
+	return tmp;
 }
 
 //---------------------------------------------------------------------------------
@@ -529,7 +531,6 @@ void consoleSetFont(PrintConsole* console, ConsoleFont* font){
 
 	consoleLoadFont(console);
 
-	consoleSelect(console);
 }
 
 //---------------------------------------------------------------------------------

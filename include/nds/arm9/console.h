@@ -202,8 +202,9 @@ PrintConsole* consoleGetDefault(void);
 
 /*!	\brief Make the specified console the render target
 	\param console A pointer to the console struct (must have been initialized with consoleInit(PrintConsole* console)
+	\return a pointer to the previous console
 */
-void consoleSelect(PrintConsole* console);
+PrintConsole *consoleSelect(PrintConsole* console);
 
 /*!	\brief Initialise the console.
 	\param console A pointer to the console data to initialze (if it's NULL, the default console will be used)
