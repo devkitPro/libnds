@@ -410,6 +410,13 @@ Keyboard* keyboardInit(Keyboard* keyboard, int layer, BgType type, BgSize size, 
 	keyboard->offset_x = 0;
 	keyboard->offset_y = -192 + map->height * keyboard->grid_height;
 
+	
+	keyboard->visible = 0;
+
+	bgHide(keyboard->background);
+
+	bgUpdate();
+	
 	devoptab_list[STD_IN] = &std_in;
 
 	return keyboard;
