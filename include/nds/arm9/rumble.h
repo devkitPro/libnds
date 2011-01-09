@@ -1,5 +1,4 @@
 /*---------------------------------------------------------------------------------
-	$Id: rumble.h,v 1.4 2007-02-07 16:38:11 wntrmute Exp $
 
 	Copyright (C) 2005
 		Michael Noland (joat)
@@ -21,13 +20,6 @@
      must not be misrepresented as being the original software.
   3. This notice may not be removed or altered from any source
      distribution.
-	$Log: not supported by cvs2svn $
-	Revision 1.3  2005/11/27 07:47:07  joatski
-	Fixed multiple linebreaks.
-	Moved cart bus control functions and GBA header to memory.h
-
-	Revision 1.2  2005/11/02 07:06:20  bigredpimp
-	Added revision comment block
 
 ---------------------------------------------------------------------------------*/
 /*! \file rumble.h
