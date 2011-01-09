@@ -84,6 +84,7 @@
  \section peripheral_api Custom Peripherals
  - \ref rumble.h "Rumble Pack"
  - \ref ndsmotion.h "DS Motion Pack"
+ - \ref piano.h "DS Easy Piano Controller"
 
  \section debug_api Debugging
  - \ref console.h "Debug via printf to DS screen or NO$GBA"
@@ -256,6 +257,7 @@ extern "C" {
 #include "nds/arm9/keyboard.h"
 #include "nds/arm9/math.h"
 #include "nds/arm9/pcx.h"
+#include "nds/arm9/piano.h"
 #include "nds/arm9/rumble.h"
 #include "nds/arm9/sassert.h"
 #include "nds/arm9/sound.h"
