@@ -57,16 +57,16 @@ extern "C" {
 	\see TIMER_CASCADE
 	\see ClockDivider
 */
-#define TIMER_CR(n) (*(vuint16*)(0x04000102+((n)<<2)))
+#define TIMER_CR(n) (*(vu16*)(0x04000102+((n)<<2)))
 
 //!	Same as %TIMER_CR(0).
-#define TIMER0_CR   (*(vuint16*)0x04000102)
+#define TIMER0_CR   (*(vu16*)0x04000102)
 //!	Same as %TIMER_CR(1).
-#define TIMER1_CR   (*(vuint16*)0x04000106)
+#define TIMER1_CR   (*(vu16*)0x04000106)
 //!	Same as %TIMER_CR(2).
-#define TIMER2_CR   (*(vuint16*)0x0400010A)
+#define TIMER2_CR   (*(vu16*)0x0400010A)
 //!	Same as %TIMER_CR(3).
-#define TIMER3_CR   (*(vuint16*)0x0400010E)
+#define TIMER3_CR   (*(vu16*)0x0400010E)
 
 
 //!	Returns a dereferenced pointer to the data register for timer number "n".
@@ -81,16 +81,16 @@ extern "C" {
 	<b>Example Usage:</b>
 	%TIMER_DATA(0) = value;  were 0 can be 0 through 3 and value is 16 bits.
 */
-#define TIMER_DATA(n)  (*(vuint16*)(0x04000100+((n)<<2)))
+#define TIMER_DATA(n)  (*(vu16*)(0x04000100+((n)<<2)))
 
 //!	Same as %TIMER_DATA(0).
-#define TIMER0_DATA    (*(vuint16*)0x04000100)
+#define TIMER0_DATA    (*(vu16*)0x04000100)
 //!	Same as %TIMER_DATA(1).
-#define TIMER1_DATA    (*(vuint16*)0x04000104)
+#define TIMER1_DATA    (*(vu16*)0x04000104)
 //!	Same as %TIMER_DATA(2).
-#define TIMER2_DATA    (*(vuint16*)0x04000108)
+#define TIMER2_DATA    (*(vu16*)0x04000108)
 //!	Same as %TIMER_DATA(3).
-#define TIMER3_DATA    (*(vuint16*)0x0400010C)
+#define TIMER3_DATA    (*(vu16*)0x0400010C)
 
 
 
@@ -223,8 +223,7 @@ static inline
 	\param timer The hardware timer to use (0 - 3).
 	\return the raw ticks of the specified timer data register.
 */
-u16 timerTick(int timer)
-{
+u16 timerTick(int timer) {
 	return TIMER_DATA(timer);
 }
 
@@ -240,8 +239,7 @@ static inline
 /*!	\brief unpauses the specified timer.
 	\param timer The hardware timer to use (0 - 3).
 */
-void timerUnpause(int timer)
-{
+void timerUnpause(int timer) {
 	TIMER_CR(timer) |= TIMER_ENABLE;
 }
 
@@ -251,10 +249,6 @@ void timerUnpause(int timer)
 	\return The number of ticks which have elapsed since the last callto timerElapsed().
 */
 u16 timerStop(int timer);
-
-
-
-
 
 /*!	\brief begins cpu Timing using two timers for 32bit resolution.
 	\param timer The base hardware timer to use (0 - 2).
@@ -267,13 +261,19 @@ void cpuStartTiming(int timer);
 */
 u32 cpuGetTiming();
 
-
 /*!	\brief ends cpu Timing.
 	\return The number of ticks which have elapsed since cpuStartTiming.
 */
 u32 cpuEndTiming();
 
-
+static inline
+u32 timerTicks2usec(u32 ticks) {
+	return (((u64)ticks)*1000000)/BUS_CLOCK;
+}
+static inline
+u32 timerTicks2msec(u32 ticks) {
+	return (((u64)ticks)*1000)/BUS_CLOCK;
+}
 
 //use the macro versions...
 static inline u16 timerFreqToTicks_1(int freq) {return -BUS_CLOCK / freq;}
