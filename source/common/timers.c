@@ -2,7 +2,7 @@
 
 	Timer API
 
-  Copyright (C) 2008 - 2009
+  Copyright (C) 2008 - 2010
 			Jason Rogers (dovoto)
 			Mukunda Johnson (eKid)
 
@@ -35,14 +35,11 @@ void timerStart(int timer, ClockDivider divider, u16 ticks, VoidFn callback){
 	sassert(timer < 4, "timer must be in range 0 - 3");
 	TIMER_DATA(timer) = ticks;
 
-	if(callback)
-	{
+	if(callback) {
 		irqSet(IRQ_TIMER(timer), callback);
 		irqEnable(IRQ_TIMER(timer));
 		TIMER_CR(timer) = TIMER_IRQ_REQ | divider | TIMER_ENABLE;
-	}
-	else
-	{
+	} else {
 		TIMER_CR(timer) = divider | TIMER_ENABLE;
 	}
 }
@@ -117,7 +114,15 @@ void cpuStartTiming(int timer) {
 //---------------------------------------------------------------------------------
 u32 cpuGetTiming() {
 //---------------------------------------------------------------------------------
-	return ( (TIMER_DATA(localTimer) | (TIMER_DATA(localTimer+1)<<16) ));
+	int lo = TIMER_DATA(localTimer);
+	int hi = TIMER_DATA(localTimer);
+	int lo2 = TIMER_DATA(localTimer);
+	int hi2 = TIMER_DATA(localTimer);
+
+	if (lo2 < lo) {
+		lo = lo2, hi = hi2;
+	}
+	return ( lo | hi<<16 );
 }
 
 //---------------------------------------------------------------------------------
