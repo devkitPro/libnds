@@ -48,7 +48,7 @@ extern "C" {
 #define PIANO_B     BIT(13)
 #define PIANO_C2    BIT(14)
 
-/*! \fn bool isPianoInserted()
+/*! \fn bool pianoIsInserted()
     \brief Check for piano option pack.
     \return true if the cart in the GBA slot is the piano option pack.
 */
