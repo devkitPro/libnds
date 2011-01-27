@@ -27,10 +27,11 @@
 #include "nds/card.h"
 #include "nds/dma.h"
 #include "nds/memory.h"
+#include "nds/bios.h"
 
 
 //---------------------------------------------------------------------------------
-void cardWriteCommand(const uint8 *command) {
+void cardWriteCommand(const u8 *command) {
 //---------------------------------------------------------------------------------
 	int index;
 
@@ -43,12 +44,12 @@ void cardWriteCommand(const uint8 *command) {
 
 
 //---------------------------------------------------------------------------------
-void cardPolledTransfer(uint32 flags, uint32 *destination, uint32 length, const uint8 *command) {
+void cardPolledTransfer(u32 flags, u32 *destination, u32 length, const u8 *command) {
 //---------------------------------------------------------------------------------
 	u32 data;
 	cardWriteCommand(command);
 	REG_ROMCTRL = flags;
-	uint32 * target = destination + length;
+	u32 * target = destination + length;
 	do {
 		// Read data if available
 		if (REG_ROMCTRL & CARD_DATA_READY) {
@@ -62,13 +63,13 @@ void cardPolledTransfer(uint32 flags, uint32 *destination, uint32 length, const 
 
 
 //---------------------------------------------------------------------------------
-void cardStartTransfer(const uint8 *command, uint32 *destination, int channel, uint32 flags) {
+void cardStartTransfer(const u8 *command, u32 *destination, int channel, u32 flags) {
 //---------------------------------------------------------------------------------
 	cardWriteCommand(command);
 
 	// Set up a DMA channel to transfer a word every time the card makes one
-	DMA_SRC(channel) = (uint32)&CARD_DATA_RD;
-	DMA_DEST(channel) = (uint32)destination;
+	DMA_SRC(channel) = (u32)&CARD_DATA_RD;
+	DMA_DEST(channel) = (u32)destination;
 	DMA_CR(channel) = DMA_ENABLE | DMA_START_CARD | DMA_32_BIT | DMA_REPEAT | DMA_SRC_FIX | 0x0001;
 
 	REG_ROMCTRL = flags;
@@ -76,7 +77,7 @@ void cardStartTransfer(const uint8 *command, uint32 *destination, int channel, u
 
 
 //---------------------------------------------------------------------------------
-uint32 cardWriteAndRead(const uint8 * command, uint32 flags) {
+u32 cardWriteAndRead(const u8 *command, u32 flags) {
 //---------------------------------------------------------------------------------
 	cardWriteCommand(command);
 	REG_ROMCTRL = flags | CARD_ACTIVATE | CARD_nRESET | CARD_BLK_SIZE(7);
@@ -85,7 +86,7 @@ uint32 cardWriteAndRead(const uint8 * command, uint32 flags) {
 }
 
 //---------------------------------------------------------------------------------
-void cardParamCommand (uint8 command, uint32 parameter, uint32 flags, uint32 *destination, uint32 length) {
+void cardParamCommand (u8 command, u32 parameter, u32 flags, u32 *destination, u32 length) {
 //---------------------------------------------------------------------------------
 	u8 cmdData[8];
 	
@@ -102,19 +103,46 @@ void cardParamCommand (uint8 command, uint32 parameter, uint32 flags, uint32 *de
 }
 
 //---------------------------------------------------------------------------------
-void cardReadHeader(uint8 *header) {
+void cardReadHeader(u8 *header) {
 //---------------------------------------------------------------------------------
-	cardParamCommand(CARD_CMD_HEADER_READ, 0,
-		CARD_ACTIVATE | CARD_nRESET | CARD_CLK_SLOW | CARD_BLK_SIZE(1) | CARD_DELAY1(0x1FFF) | CARD_DELAY2(0x3F),
-		(uint32 *)header, 512/4);
+	REG_ROMCTRL=0;
+	REG_AUXSPICNTH=0;
+	swiDelay(167550);
+	REG_AUXSPICNTH=CARD_CR1_ENABLE|CARD_CR1_IRQ;
+	REG_ROMCTRL=CARD_nRESET|CARD_SEC_SEED;
+	while(REG_ROMCTRL&CARD_BUSY) ;
+	cardReset();
+	while(REG_ROMCTRL&CARD_BUSY) ;
+	
+	cardParamCommand(CARD_CMD_HEADER_READ,0,CARD_ACTIVATE|CARD_nRESET|CARD_CLK_SLOW|CARD_BLK_SIZE(1)|CARD_DELAY1(0x1FFF)|CARD_DELAY2(0x3F),(u32*)header,512/4);
 }
 
 
 //---------------------------------------------------------------------------------
-uint32 cardReadID(uint32 flags) {
+u32 cardReadID(u32 flags) {
 //---------------------------------------------------------------------------------
-	const uint8 command[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, CARD_CMD_HEADER_CHIPID};
+	const u8 command[8] = {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, CARD_CMD_HEADER_CHIPID};
 	return cardWriteAndRead(command, flags);
+}
+
+
+//---------------------------------------------------------------------------------
+void cardReset() {
+//---------------------------------------------------------------------------------
+	const u8 cmdData[8]={0,0,0,0,0,0,0,CARD_CMD_DUMMY};
+	cardWriteCommand(cmdData);
+	REG_ROMCTRL=CARD_ACTIVATE|CARD_nRESET|CARD_CLK_SLOW|CARD_BLK_SIZE(5)|CARD_DELAY2(0x18);
+	u32 read=0;
+
+	do {
+		if(REG_ROMCTRL&CARD_DATA_READY) {
+			if(read<0x2000) {
+				u32 data=CARD_DATA_RD;
+				(void)data;
+				read+=4;
+			}
+		}
+	} while(REG_ROMCTRL&CARD_BUSY);
 }
 
 

@@ -106,6 +106,7 @@ void cardParamCommand (u8 command, u32 parameter, u32 flags, u32 *destination, u
 // needs to eject and reinsert the cart or they will return random data.
 void cardReadHeader(u8 *header);
 u32 cardReadID(u32 flags);
+void cardReset();
 
 // Reads from the EEPROM
 void cardReadEeprom(u32 address, u8 *data, u32 length, u32 addrtype);
