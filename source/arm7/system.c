@@ -23,12 +23,14 @@
       distribution.
 
 ---------------------------------------------------------------------------------*/
+#include <nds/ndstypes.h>
 #include <nds/system.h>
 #include <nds/fifocommon.h>
-#include <nds/ndstypes.h>
+#include <nds/fifomessages.h>
 #include <nds/interrupts.h>
 #include <nds/bios.h>
 #include <nds/arm7/clock.h>
+#include <nds/arm7/sdmmc.h>
 
 bool sleepIsEnabled = true;
 extern bool __dsimode;
@@ -122,9 +124,54 @@ int sleepEnabled(void) {
 }
 
 //---------------------------------------------------------------------------------
+void systemMsgHandler(int bytes, void *user_data) {
+//---------------------------------------------------------------------------------
+	FifoMessage msg;
+
+	fifoGetDatamsg(FIFO_SYSTEM, bytes, (u8*)&msg);
+	
+	switch (msg.type) {
+
+	case SYS_SD_READ_SECTORS:
+		sdmmc_sdcard_readsectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
+		fifoSendValue32(FIFO_SYSTEM, 0);
+		break;
+	case SYS_SD_WRITE_SECTORS:
+		fifoSendValue32(FIFO_SYSTEM, 1);
+		break;
+	
+	}
+}
+
+//---------------------------------------------------------------------------------
+void systemValueHandler(u32 value, void* user_data) {
+//---------------------------------------------------------------------------------
+	int result;
+	
+	switch(value) {
+
+	case SYS_SD_START:
+		result = sdmmc_sdcard_init();
+		fifoSendValue32(FIFO_SYSTEM, result);
+		break;
+
+	case SYS_SD_IS_INSERTED:
+		result = sdmmc_cardinserted();
+		fifoSendValue32(FIFO_SYSTEM, result);
+		break;
+
+	case SYS_SD_STOP:
+		break;
+
+	}
+}
+
+//---------------------------------------------------------------------------------
 void installSystemFIFO(void) {
 //---------------------------------------------------------------------------------
 	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
+	fifoSetValue32Handler(FIFO_SYSTEM, systemValueHandler, 0);
+	fifoSetDatamsgHandler(FIFO_SYSTEM, systemMsgHandler, 0);
 }
 
 

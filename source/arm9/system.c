@@ -107,3 +107,4 @@ u32 getBatteryLevel() {
 	while(!fifoCheckValue32(FIFO_SYSTEM)); //swiIntrWait(1,IRQ_FIFO_NOT_EMPTY);
 	return fifoGetValue32(FIFO_SYSTEM);
 }
+

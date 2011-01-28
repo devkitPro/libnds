@@ -37,6 +37,7 @@
 #define FEATURE_SLOT_GBA			0x00000010
 #define FEATURE_SLOT_NDS			0x00000020
 
+#define DEVICE_TYPE_DSI_SD ('i') | ('_' << 8) | ('S' << 16) | ('D' << 24)
 typedef uint32_t sec_t;
 
 typedef bool (* FN_MEDIUM_STARTUP)(void) ;
@@ -58,5 +59,7 @@ struct DISC_INTERFACE_STRUCT {
 } ;
 
 typedef struct DISC_INTERFACE_STRUCT DISC_INTERFACE ;
+
+extern const DISC_INTERFACE __io_dsisd;
 
 #endif	// define NDS_DISC_IO_INCLUDE

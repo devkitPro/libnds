@@ -34,12 +34,14 @@
 
 typedef enum {
 	SOUND_PLAY_MESSAGE = 0x1234,
-	SOUND_PSG_MESSAGE = 0x1235,
-	SOUND_NOISE_MESSAGE = 0x1236,
-	MIC_RECORD_MESSAGE = 0x1237,
-	MIC_BUFFER_FULL_MESSAGE = 0x1238,
-	SYS_INPUT_MESSAGE = 0x1239
-}FifoMessageType;
+	SOUND_PSG_MESSAGE,
+	SOUND_NOISE_MESSAGE,
+	MIC_RECORD_MESSAGE,
+	MIC_BUFFER_FULL_MESSAGE,
+	SYS_INPUT_MESSAGE,
+	SYS_SD_READ_SECTORS,
+	SYS_SD_WRITE_SECTORS
+} FifoMessageType;
 
 typedef struct FifoMessage {
 	u16 type;
@@ -82,6 +84,12 @@ typedef struct FifoMessage {
 			touchPosition touch;
 			u16 keys;
 		} SystemInput;
+		
+		struct{
+			void *buffer;
+			u32 startsector;
+			u32	numsectors;
+		} sdParams;
 	};
 
 } ALIGN(4) FifoMessage;

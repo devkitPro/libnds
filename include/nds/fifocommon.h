@@ -50,6 +50,9 @@ typedef enum {
 	SYS_REQ_KEYS,
 	SYS_REQ_TIME,
 	SYS_SET_TIME,
+	SYS_SD_START,
+	SYS_SD_IS_INSERTED,
+	SYS_SD_STOP
 } FifoSystemCommands;
 
 
