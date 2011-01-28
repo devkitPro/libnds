@@ -1,11 +1,13 @@
 #include <nds/disc_io.h>
 #include <nds/fifocommon.h>
 #include <nds/fifomessages.h>
+#include <nds/system.h>
 #include <nds/arm9/cache.h>
 
 //---------------------------------------------------------------------------------
 bool sdio_Startup() {
 //---------------------------------------------------------------------------------
+	if (!REG_DSIMODE) return false;
 
 	// calling arm7 init code makes the SD fail
 	// this means non SDHC only support for now
@@ -20,12 +22,14 @@ bool sdio_Startup() {
 //---------------------------------------------------------------------------------
 bool sdio_IsInserted() {
 //---------------------------------------------------------------------------------
+	if (!REG_DSIMODE) return false;
 	return true;
 }
  
 //---------------------------------------------------------------------------------
 bool sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 //---------------------------------------------------------------------------------
+	if (!REG_DSIMODE) return false;
 	FifoMessage msg;
 
 	DC_InvalidateRange(buffer,numSectors * 512);
@@ -40,13 +44,14 @@ bool sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	while(!fifoCheckValue32(FIFO_SYSTEM));
 
 	int result = fifoGetValue32(FIFO_SYSTEM);
-	
+
 	return result == 0;
 }
 
 //---------------------------------------------------------------------------------
 bool sdio_WriteSectors(sec_t sector, sec_t numSectors,const void* buffer) {
 //---------------------------------------------------------------------------------
+	if (!REG_DSIMODE) return false;
 	FifoMessage msg;
 
 	msg.type = SYS_SD_WRITE_SECTORS;
@@ -67,12 +72,14 @@ bool sdio_WriteSectors(sec_t sector, sec_t numSectors,const void* buffer) {
 //---------------------------------------------------------------------------------
 bool sdio_ClearStatus() {
 //---------------------------------------------------------------------------------
+	if (!REG_DSIMODE) return false;
 	return true;
 }
 
 //---------------------------------------------------------------------------------
 bool sdio_Shutdown() {
 //---------------------------------------------------------------------------------
+	if (!REG_DSIMODE) return false;
 	return true;
 }
 
