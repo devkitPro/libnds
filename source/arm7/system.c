@@ -151,6 +151,7 @@ void systemValueHandler(u32 value, void* user_data) {
 	switch(value) {
 
 	case SYS_SD_START:
+		sdmmc_controller_init();
 		result = sdmmc_sdcard_init();
 		fifoSendValue32(FIFO_SYSTEM, result);
 		break;
