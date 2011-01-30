@@ -41,7 +41,7 @@ static uint16 keys = 0;
 static uint16 keysold = 0;
 static uint16 keysrepeat = 0;
 
-static u8 delay = 60, repeat = 30, count = 60;
+static u8 delay = 30, repeat = 15, count = 30;
 
 //------------------------------------------------------------------------------
 void scanKeys(void) {
