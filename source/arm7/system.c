@@ -150,6 +150,11 @@ void systemValueHandler(u32 value, void* user_data) {
 	
 	switch(value) {
 
+	case SYS_HAVE_SD:
+		result = sdmmc_read16(REG_SDSTATUS0);
+		fifoSendValue32(FIFO_SYSTEM, result);
+		break;
+
 	case SYS_SD_START:
 		if (sdmmc_read16(REG_SDSTATUS0) == 0) {
 			result = 1;

@@ -9,6 +9,9 @@ bool sdio_Startup() {
 //---------------------------------------------------------------------------------
 	if (!REG_DSIMODE) return false;
 
+	fifoSendValue32(FIFO_SYSTEM,SYS_HAVE_SD);
+	if (!fifoGetValue32(FIFO_SYSTEM)) return false;
+
 	// calling arm7 init code makes the SD fail
 	// this means non SDHC only support for now
 	return true;
