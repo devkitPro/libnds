@@ -1,7 +1,7 @@
 #ifndef __SDMMC_H__
 #define __SDMMC_H__
 
-#include <nds.h>
+#include <nds/ndstypes.h>
 
 #define SDMMC_BASE	0x04004800
 #define DISPSTAT_CHK_VBLANK   (1<<0)
@@ -71,5 +71,26 @@ void sdmmc_sdcard_writesectors(u32 sector_no, int numsectors, void *in);
 
 extern u32 sdmmc_cid[];
 extern int sdmmc_curdevice;
+
+//---------------------------------------------------------------------------------
+static inline u16 sdmmc_read16(u16 reg) {
+//---------------------------------------------------------------------------------
+	return *(vu16*)(SDMMC_BASE + reg);
+}
+
+//---------------------------------------------------------------------------------
+static inline void sdmmc_write16(u16 reg, u16 val) {
+//---------------------------------------------------------------------------------
+	*(vu16*)(SDMMC_BASE + reg) = val;
+}
+
+//---------------------------------------------------------------------------------
+static inline void sdmmc_mask16(u16 reg, u16 clear, u16 set) {
+//---------------------------------------------------------------------------------
+	u16 val = sdmmc_read16(reg);
+	val &= ~clear;
+	val |= set;
+	sdmmc_write16(reg, val);
+}
 
 #endif

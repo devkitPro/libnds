@@ -1,4 +1,5 @@
-#include <nds.h>
+#include <nds/system.h>
+#include <nds/bios.h>
 #include <nds/arm7/sdmmc.h>
 
 int sdmmc_curdevice = -1;
@@ -8,27 +9,6 @@ vu32 sdmmc_cardready = 0;
 static int sdmmc_timeout = 0;
 static int sdmmc_gotcmd8reply = 0;
 static int sdmmc_sdhc = 0;
-
-//---------------------------------------------------------------------------------
-inline u16 sdmmc_read16(u16 reg) {
-//---------------------------------------------------------------------------------
-	return *(vu16*)(SDMMC_BASE + reg);
-}
-
-//---------------------------------------------------------------------------------
-inline void sdmmc_write16(u16 reg, u16 val) {
-//---------------------------------------------------------------------------------
-	*(vu16*)(SDMMC_BASE + reg) = val;
-}
-
-//---------------------------------------------------------------------------------
-inline void sdmmc_mask16(u16 reg, u16 clear, u16 set) {
-//---------------------------------------------------------------------------------
-	u16 val = sdmmc_read16(reg);
-	val &= ~clear;
-	val |= set;
-	sdmmc_write16(reg, val);
-}
 
 //---------------------------------------------------------------------------------
 int sdmmc_send_command(u16 cmd, u16 arg0, u16 arg1) {
