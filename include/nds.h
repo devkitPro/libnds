@@ -244,6 +244,7 @@ extern "C" {
 //---------------------------------------------------------------------------------
 #ifdef ARM9
 //---------------------------------------------------------------------------------
+
 #include "nds/arm9/dynamicArray.h"
 #include "nds/arm9/linkedlist.h"
 #include "nds/arm9/background.h"
@@ -252,10 +253,12 @@ extern "C" {
 #include "nds/arm9/console.h"
 #include "nds/arm9/decompress.h"
 #include "nds/arm9/exceptions.h"
+#include "nds/arm9/guitarGrip.h"
 #include "nds/arm9/image.h"
 #include "nds/arm9/input.h"
 #include "nds/arm9/keyboard.h"
 #include "nds/arm9/math.h"
+#include "nds/arm9/paddle.h"
 #include "nds/arm9/pcx.h"
 #include "nds/arm9/piano.h"
 #include "nds/arm9/rumble.h"
@@ -265,8 +268,6 @@ extern "C" {
 #include "nds/arm9/trig_lut.h"
 #include "nds/arm9/video.h"
 #include "nds/arm9/videoGL.h"
-
-
 
 //---------------------------------------------------------------------------------
 #endif // #ifdef ARM9
@@ -286,12 +287,9 @@ extern "C" {
 #endif // #ifdef ARM7
 //---------------------------------------------------------------------------------
 
-
 #ifdef __cplusplus
 }
 #endif
-
-
 #endif // NDS_INCLUDE
 
 
