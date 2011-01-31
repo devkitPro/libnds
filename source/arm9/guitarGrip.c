@@ -7,7 +7,9 @@ static u8 guitar_keys_old = 0;
 //------------------------------------------------------------------------------
 static void guitarGripSetBus() {
 //------------------------------------------------------------------------------
-	sysSetCartOwner(BUS_OWNER_ARM9);
+	//setting the bus owner is not sufficient, as we need to ensure that the bus speeds are adequately slowed.
+	//this magic number contains the appropriate timings.
+	REG_EXMEMCNT = 0x000C;
 }
 
 //------------------------------------------------------------------------------
