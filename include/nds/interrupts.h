@@ -71,7 +71,7 @@ typedef enum IRQ_MASKS IRQ_MASK;
 
 //! values allowed for REG_AUXIE and REG_AUXIF
 enum IRQ_MASKSAUX {
-	IRQ_POWER	=	BIT(6)	/*!< Power Button interrupt mask (DSi ARM7)*/
+	IRQ_I2C	=	BIT(6)	/*!< I2C interrupt mask (DSi ARM7)*/
 };
 
 /*!
