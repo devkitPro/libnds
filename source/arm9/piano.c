@@ -1,4 +1,5 @@
 #include <nds/memory.h>
+#include <nds/system.h>
 #include <nds/arm9/piano.h>
 
 static u16 piano_keys = 0;
@@ -8,6 +9,8 @@ static u16 piano_keys_old = 0;
 //------------------------------------------------------------------------------
 bool pianoIsInserted() {
 //------------------------------------------------------------------------------
+	if (REG_DSIMODE) return false;
+
 	sysSetCartOwner(BUS_OWNER_ARM9);
 	
 	// This is 0x96h is a GBA game is inserted

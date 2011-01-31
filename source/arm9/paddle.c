@@ -1,5 +1,5 @@
-#include <nds.h>
 #include <nds/memory.h>
+#include <nds/system.h>
 
 #define EXMEMCNT_MASK_SLOT2_ARM7 (1<<7)
 #define EXMEMCNT_MASK_SLOT2_SRAM_TIME (3)
@@ -21,6 +21,8 @@ static void paddleSetBus() {
 //------------------------------------------------------------------------------
 bool paddleIsInserted() {
 //------------------------------------------------------------------------------
+	if(REG_DSIMODE) return false;
+
 	paddleSetBus();
 
 	//This is 0x96h is a GBA game is inserted
@@ -38,7 +40,7 @@ bool paddleIsInserted() {
 //------------------------------------------------------------------------------
 u16 paddleRead() {
 //------------------------------------------------------------------------------
-  paddleSetBus();
+ 	paddleSetBus();
 	return (*(vu8*)0x0A000000) | ((*(vu8*)0x0A000001)<<8);
 }
 

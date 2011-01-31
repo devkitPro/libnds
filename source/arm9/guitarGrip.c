@@ -1,5 +1,5 @@
-#include <nds.h>
 #include <nds/memory.h>
+#include <nds/system.h>
 
 static u8 guitar_keys = 0;
 static u8 guitar_keys_old = 0;
@@ -15,6 +15,8 @@ static void guitarGripSetBus() {
 //------------------------------------------------------------------------------
 bool guitarGripIsInserted() {
 //------------------------------------------------------------------------------
+	if(REG_DSIMODE) return false;
+
 	guitarGripSetBus();
 
 	//This is 0x96h is a GBA game is inserted
@@ -29,7 +31,7 @@ bool guitarGripIsInserted() {
 //------------------------------------------------------------------------------
 void guitarGripScanKeys() {
 //------------------------------------------------------------------------------
-  guitarGripSetBus();
+	guitarGripSetBus();
 	guitar_keys_old = guitar_keys;
 	guitar_keys = ~(*(vu8*)0x0A000000);
 }
