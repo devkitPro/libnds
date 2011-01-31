@@ -115,7 +115,7 @@ int sdmmc_sdcard_init() {
 
 	sdmmc_write16(REG_SDCLKCTL, 0x20);
 	sdmmc_write16(REG_SDOPT, 0x40EA); // XXX: document me!
-	sdmmc_write16(REG_SDDEVICE, SDMMC_DEVICE_SDCARD);
+	sdmmc_write16(0x02, 0x400);
 	sdmmc_curdevice = 0;
 
 	sdmmc_mask16(REG_SDCLKCTL, 0, 0x100);

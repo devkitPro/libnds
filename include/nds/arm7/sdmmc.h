@@ -6,10 +6,7 @@
 #define SDMMC_BASE	0x04004800
 #define DISPSTAT_CHK_VBLANK   (1<<0)
 
-#define SDMMC_DEVICE_NAND	  0x401
-#define SDMMC_DEVICE_SDCARD 0x400 
 
-#define REG_SDDEVICE    0x02
 #define REG_SDSTATUS0	  0x1c
 #define REG_SDSTATUS1	  0x1e
 #define REG_SDRESET     0xe0
