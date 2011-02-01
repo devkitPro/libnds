@@ -10,14 +10,17 @@ bool sdio_Startup() {
 	if (!REG_DSIMODE) return false;
 
 	fifoSendValue32(FIFO_SYSTEM,SYS_HAVE_SD);
-	if (!fifoGetValue32(FIFO_SYSTEM)) return false;
+	while(!fifoCheckValue32(FIFO_SYSTEM));
+	int result = fifoGetValue32(FIFO_SYSTEM);
 
+	if(result==0) return false;
+	
 	// calling arm7 init code makes the SD fail
 	// this means non SDHC only support for now
 	return true;
 
 	fifoSendValue32(FIFO_SYSTEM,SYS_SD_START);
-	int result = fifoGetValue32(FIFO_SYSTEM);
+	result = fifoGetValue32(FIFO_SYSTEM);
 	
 	return result == 0;
 }
@@ -47,7 +50,7 @@ bool sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	while(!fifoCheckValue32(FIFO_SYSTEM));
 
 	int result = fifoGetValue32(FIFO_SYSTEM);
-
+	
 	return result == 0;
 }
 
