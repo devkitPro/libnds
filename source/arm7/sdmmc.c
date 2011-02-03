@@ -235,6 +235,13 @@ void sdmmc_clkdelay0() {
 }
 
 //---------------------------------------------------------------------------------
+void sdmmc_clkdelay1() {
+//---------------------------------------------------------------------------------
+	// 4200 works, 3150 fails, 3675 fails in exit to menu reload
+	swiDelay(4000);
+}
+
+//---------------------------------------------------------------------------------
 void sdmmc_clkdelay() {
 //---------------------------------------------------------------------------------
 	swiDelay(1330);
@@ -267,8 +274,7 @@ void sdmmc_sdcard_readsector(u32 sector_no, void *out) {
 
 	resp0 = sdmmc_read16(REG_SDSTATUS1);
 	
-	while( (REG_DISPSTAT & DISPSTAT_CHK_VBLANK) == 0 );
-	while( (REG_DISPSTAT & DISPSTAT_CHK_VBLANK) != 0 );
+	sdmmc_clkdelay1();
 
 	sdmmc_mask16(REG_SDSTATUS1, 1, 0);
 	
@@ -309,8 +315,7 @@ void sdmmc_sdcard_readsectors(u32 sector_no, int numsectors, void *out) {
 
 	resp0 = sdmmc_read16(REG_SDSTATUS1);
 	
-	while( (REG_DISPSTAT & DISPSTAT_CHK_VBLANK) == 0 );
-	while( (REG_DISPSTAT & DISPSTAT_CHK_VBLANK) != 0 );
+	sdmmc_clkdelay1();
 
 	sdmmc_mask16(REG_SDSTATUS1, 1, 0);
 	
