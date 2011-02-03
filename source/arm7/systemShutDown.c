@@ -1,6 +1,6 @@
 /*---------------------------------------------------------------------------------
 
-  Copyright (C) 2005 - 2010
+  Copyright (C) 2005 - 2011
     Michael Noland (joat)
 	Jason Rogers (Dovoto)
 	Dave Murphy (WinterMute)
@@ -25,9 +25,17 @@
 ---------------------------------------------------------------------------------*/
 #include <nds/ndstypes.h>
 #include <nds/system.h>
+#include <nds/arm7/i2c.h>
+
+extern bool __dsimode;
 
 //---------------------------------------------------------------------------------
 void systemShutDown() {
 //---------------------------------------------------------------------------------
-	writePowerManagement(PM_CONTROL_REG,PM_SYSTEM_PWR);
+	if (!__dsimode) {
+		writePowerManagement(PM_CONTROL_REG,PM_SYSTEM_PWR);
+	} else {
+		i2cWriteRegister(I2C_PM, I2CREGPM_RESETFLAG, 1);
+		i2cWriteRegister(I2C_PM, I2CREGPM_PWRCNT, 1);
+	}
 }
