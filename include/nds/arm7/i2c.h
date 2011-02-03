@@ -46,8 +46,18 @@ enum i2cDevices {
 	I2C_UNK2	= 0xE0,
 	I2C_PM		= 0x4A,
 	I2C_UNK3	= 0x40,
-	I2C_UNK4	= 0x90
+	I2C_GPIO	= 0x90
 };
+
+// Registers for Power Management (I2C_PM)
+#define I2CREGPM_BATUNK		0x00
+#define I2CREGPM_PWRIF		0x10
+#define I2CREGPM_PWRCNT		0x11
+#define I2CREGPM_MMCPWR		0x12
+#define I2CREGPM_BATTERY	0x20
+#define I2CREGPM_CAMLED		0x31
+#define I2CREGPM_VOL		0x40
+#define I2CREGPM_RESETFLAG	0x70
 
 u8 i2cWriteRegister(u8 device, u8 reg, u8 data);
 u8 i2cReadRegister(u8 device, u8 reg);
