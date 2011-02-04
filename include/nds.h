@@ -97,7 +97,7 @@
  - <a href="http://www.devkitpro.org/">devkitPro</a>
  - <a href="http://wiki.devkitpro.org/index.php/Main_Page">devkitPro wiki</a>
  - <a href="http://sourceforge.net/projects/devkitpro/">devkitPro sourceforge page</a>
- - <a href="http://nocash.emubase.de/gbatek.htm">gbatek, gba and nds hardware documentation.</a> (<a href="http://www.daftcode.net/gbatek">V2.6a</a> | <a href="http://forum.gbadev.org/viewtopic.php?t=16867">V2.6a download</a>)
+ - <a href="http://nocash.emubase.de/gbatek.htm">gbatek, gba and nds hardware documentation.</a> (<a href="http://forum.gbadev.org/viewtopic.php?t=16867">V2.6a download</a>)
 
 */
 
