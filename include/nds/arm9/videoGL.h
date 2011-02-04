@@ -82,8 +82,8 @@
 typedef uint16 fixed12d3; /*!< \brief Used for depth (glClearDepth, glCutoffDepth) */
 
 
-#define int_to_12d3(n)    ((n) << 3) /*!< \brief convert int to fixed12d3 */
-#define float_to_12d3(n)  ((fixed12d3)((n) * (1 << 3))) /*!< \brief convert float to fixed12d3 */
+#define intto12d3(n)    ((n) << 3) /*!< \brief convert int to fixed12d3 */
+#define floatto12d3(n)  ((fixed12d3)((n) * (1 << 3))) /*!< \brief convert float to fixed12d3 */
 #define GL_MAX_DEPTH      0x7FFF /*!< \brief the maximum value for type fixed12d3 */
 
 //////////////////////////////////////////////////////////////////////
