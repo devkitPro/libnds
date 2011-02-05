@@ -38,7 +38,7 @@ bool sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	if (!REG_DSIMODE) return false;
 	FifoMessage msg;
 
-	DC_InvalidateRange(buffer,numSectors * 512);
+	DC_FlushRange(buffer,numSectors * 512);
 
 	msg.type = SYS_SD_READ_SECTORS;
 	msg.sdParams.startsector = sector;
@@ -59,6 +59,8 @@ bool sdio_WriteSectors(sec_t sector, sec_t numSectors,const void* buffer) {
 //---------------------------------------------------------------------------------
 	if (!REG_DSIMODE) return false;
 	FifoMessage msg;
+
+	DC_FlushRange(buffer,numSectors * 512);
 
 	msg.type = SYS_SD_WRITE_SECTORS;
 	msg.sdParams.startsector = sector;
