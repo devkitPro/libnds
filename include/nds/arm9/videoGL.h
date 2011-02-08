@@ -278,27 +278,86 @@ enum GLFLUSH_ENUM {
 };
 
 
+/*-----------------------------------------
+Structures specific to allocating and 
+deallocating video RAM in videoGL
+-----------------------------------------*/
+
+
+typedef struct s_SingleBlock {
+	uint32 indexOut;
+	uint8 *AddrSet;
+	struct s_SingleBlock *node[ 4 ]; // 0-1 ~ prev/next memory block, 2-3 ~ prev/next empty/alloc block
+	uint32 blockSize;
+} s_SingleBlock;
+
+typedef struct s_vramBlock {
+	uint8 *startAddr, *endAddr;
+	struct s_SingleBlock *firstBlock;
+	struct s_SingleBlock *firstEmpty;
+	struct s_SingleBlock *firstAlloc;
+
+	struct s_SingleBlock *lastExamined;
+	uint8 *lastExaminedAddr;
+	uint32 lastExaminedSize;
+
+	DynamicArray blockPtrs;
+	DynamicArray deallocBlocks;
+
+	uint32 blockCount;
+	uint32 deallocCount;
+} s_vramBlock;
+
+typedef struct gl_texture_data {
+	void* vramAddr;			// Address to the texture loaded into VRAM
+	uint32 texIndex;		// The index in the Memory Block
+	uint32 texIndexExt;		// The secondary index in the Memory block (only for GL_COMPRESSED textures)
+	int palIndex;			// The palette index 
+	uint32 texFormat;		// Specifications of how the texture is displayed
+	uint32 texSize;			// The size (in blocks) of the texture
+} gl_texture_data;
+
+typedef struct gl_palette_data {
+	void* vramAddr;			// Address to the palette loaded into VRAM
+	uint32 palIndex;		// The index in the Memory Block
+	uint16 addr;			// The offset address for texture palettes in VRAM
+	uint16 palSize;			// The length of the palette
+	uint32 connectCount;	// The number of textures currently using this palette
+} gl_palette_data;
+
+
+
 /*---------------------------------------------------------------------------------
 This struct hold hidden globals for videoGL. The structure is initialized in the
 .c file and returned by glGetGlobals() so that it can be used across compilation
 units without problem. This is automatically done by glInit() so don't worry too
 much about it. This is only an issue because of hte mix of inlined/real functions.
 ---------------------------------------------------------------------------------*/
+
 typedef struct gl_hidden_globals {
 	GL_MATRIX_MODE_ENUM matrixMode; // holds the current Matrix Mode
+	s_vramBlock *vramBlocks[ 2 ];		// Two classe instances, one for textures, and one for palettes
+	
+	// texture globals
+	DynamicArray texturePtrs;		// Pointers to each individual texture
+	DynamicArray palettePtrs;		// Pointers to each individual palette
 
+	DynamicArray deallocTex;		// Preserves deleted texture names for later use with glGenTextures
+	DynamicArray deallocPal;		// Preserves deleted palette names
+	uint32 deallocTexSize;			// Preserved number of deleted texture names
+	uint32 deallocPalSize;			// Preserved number of deleted palette names
+
+	int activeTexture;				// The current active texture name
+	int activePalette;				// The current active palette name
+	int texCount;
+	int palCount;
+	
 	// holds the current state of the clear color register
 	u32 clearColor; // state of clear color register
 
-	// texture globals
-	u32 textures[MAX_TEXTURES];
-	DynamicArray texturePtrs;
-	u32 activeTexture;
-	u32* nextBlock;
-	u32 nextPBlock;
-	int nameCount;
-
+	uint8 isActive;					// Has this been called before?
 } gl_hidden_globals;
+
 
 // Pointer to global data for videoGL
 extern gl_hidden_globals glGlobalData;
@@ -368,28 +427,24 @@ void glRotatef32i(int angle, int x, int y, int z);
 \param texture pointer to the texture data to load */
 int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, int param, const void* texture);
 
-/*! \brief Loads a palette into the specified texture addr
-\param pal pointer to the palette to load
-\param count the size of the palette
-\param addr the offset in VRAM to load the palette */
-void glTexLoadPal(const u16* pal, u16 count, u32 addr );
+/*! \brief nglColorTableEXT loads a 15-bit color format palette into palette memory, and sets it to the currently bound texture (can be used to remove also)
+\param target ignored, only here for OpenGL compatability
+\param empty1 ignored, only here for OpenGL compatability
+\param width the length of the palette (if 0, then palette is removed from currently bound texture)
+\param empty2 ignored, only here for OpenGL compatability
+\param empty3 ignored, only here for OpenGL compatability
+\param table pointer to the palette data to load (if NULL, then palette is removed from currently bound texture)*/
+void glColorTableEXT(int target, int empty1, uint16 width, int empty2, int empty3, const uint16* table);
 
-/*! \brief Loads a palette into the next available palette slot, returns the addr on success or -1
-\param pal pointer to the palette to load
-\param count the size of the palette
-\param format the format of the texture */
-int gluTexLoadPal(const u16* pal, u16 count, uint8 format);
+/*! \brief nglAssignColorTable sets the active texture with a palette set with another texture
+\param target ignored, only here for OpenGL compatability (not really, since this isn't in OpenGL)
+\param name the name(int value) of the texture to load a palette from */
+void glAssignColorTable(int target, int name);
 
 /*! \brief Set parameters for the current texture. Although named the same as its gl counterpart, it is not compatible. Effort may be made in the future to make it so.
-\param sizeX the horizontal size of the texture; valid sizes are enumerated in GL_TEXTURE_TYPE_ENUM
-\param sizeY the vertical size of the texture; valid sizes are enumerated in GL_TEXTURE_TYPE_ENUM
-\param addr offset into VRAM where you put the texture
-\param mode the type of texture
+\param target not used, just here for OpenGL compatibility
 \param param paramaters for the texture */
-void glTexParameter(	uint8 sizeX, uint8 sizeY,
-						const u32* addr,
-						GL_TEXTURE_TYPE_ENUM mode,
-						GL_TEXTURE_PARAM_ENUM param) ;
+void glTexParameter(int target, int param);
 
 /*! \brief Returns the active texture parameter (constructed from internal call to glTexParameter) */
 u32 glGetTexParameter(void);
@@ -403,15 +458,17 @@ void* glGetTexturePointer(	int name);
 \param name the name(int value) to set to the current texture */
 void glBindTexture(int target, int name);
 
-/*! \brief glColorTable establishes the location of the current palette. Roughly follows glColorTableEXT. Association of palettes with named textures is left to the application. */
-void glColorTable(uint8 format, u32 addr);
-
 /*! \brief Creates room for the specified number of textures
 \param n the number of textures to generate
 \param names pointer to the names array to fill */
 int glGenTextures(int n, int *names);
 
-/*! \brief Resets the gl texture state freeing all texture memory */
+/*! \brief Deletes the specified number of textures (and associated palettes)
+\param n the number of textures to delete
+\param names pointer to the names array to empty */
+int glDeleteTextures(int n, int *names);
+
+/*! \brief Resets the gl texture state freeing all texture and texture palette memory */
 void glResetTextures(void);
 
 /*! \brief Sets texture coordinates for following vertices<BR>
@@ -1226,12 +1283,16 @@ void glGetInt(GL_GET_ENUM param, int* i) {
 		case GL_GET_VERTEX_RAM_COUNT:
 			*i = GFX_VERTEX_RAM_USAGE;
 			break;
-		case GL_GET_TEXTURE_WIDTH:
-			*i = 8 << (((glGlob->textures[glGlob->activeTexture]) >> 20) & 7);
-			break;
-		case GL_GET_TEXTURE_HEIGHT:
-			*i = 8 << (((glGlob->textures[glGlob->activeTexture]) >> 23) & 7);
-			break;
+		case GL_GET_TEXTURE_WIDTH: {
+			gl_texture_data *tex = (gl_texture_data*)DynamicArrayGet( &glGlob->texturePtrs, glGlob->activeTexture );
+			if( tex )
+				*i = 8 << ((tex->texFormat >> 20 ) & 7 );			
+			break; }
+		case GL_GET_TEXTURE_HEIGHT: {
+			gl_texture_data *tex = (gl_texture_data*)DynamicArrayGet( &glGlob->texturePtrs, glGlob->activeTexture );
+			if( tex )
+				*i = 8 << ((tex->texFormat >> 23 ) & 7 );
+			break; }
 		default:
 			break;
 	}
@@ -1427,10 +1488,12 @@ GL_STATIC_INL
 \param s S(a.k.a. U) texture coordinate (0.0 - 1.0)
 \param t T(a.k.a. V) texture coordinate (0.0 - 1.0)*/
  void glTexCoord2f(float s, float t) {
-	int x = ((glGlob->textures[glGlob->activeTexture]) >> 20) & 7;
-	int y = ((glGlob->textures[glGlob->activeTexture]) >> 23) & 7;
-
-	glTexCoord2t16(floattot16(s*(8 << x)), floattot16(t*(8<<y)));
+	gl_texture_data *tex = (gl_texture_data*)DynamicArrayGet( &glGlob->texturePtrs, glGlob->activeTexture );
+	if( tex ) {
+		int x = (tex->texFormat >> 20) & 7;
+		int y = (tex->texFormat >> 23) & 7;
+		glTexCoord2t16(floattot16(s*(8 << x)), floattot16(t*(8<<y)));
+	}
 }
 
 
