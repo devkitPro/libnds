@@ -12,9 +12,12 @@ bool pianoIsInserted() {
 	if (REG_DSIMODE) return false;
 
 	sysSetCartOwner(BUS_OWNER_ARM9);
-	
+
 	// This is 0x96h is a GBA game is inserted
 	if(GBA_HEADER.is96h == 0x96) return 0;
+
+	//piano signifies itself this way
+	if(*(vu16*)0x08000000 != 0xE7FF) return false;
 
 	// When reading from GBA cart space without a GBA cart inserted
 	// the values you read are 16-bit unsigned integers containing
