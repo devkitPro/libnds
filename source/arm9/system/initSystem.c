@@ -42,6 +42,7 @@ distribution.
 #include <sys/iosupport.h>
 void __libnds_exit(int rc);
 extern time_t *punixTime;
+bool __dsimode;
 
 //---------------------------------------------------------------------------------
 // Reset the DS registers to sensible defaults
@@ -81,6 +82,7 @@ void __attribute__((weak)) initSystem(void) {
 
 	if(REG_DSIMODE) {
 		fifoSendValue32(FIFO_PM,PM_DSI_HACK);
+		__dsimode = true;
 	}
 	__transferRegion()->buttons = 0xffff;
 

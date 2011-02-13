@@ -238,6 +238,9 @@ void swiDecompressLZSSWram(void * source, void * destination);
 */
 int swiDecompressLZSSVram(void * source, void * destination, uint32 toGetSize, TDecompressionStream * stream);
 
+int swiDecompressLZSSVramNTR(void * source, void * destination, uint32 toGetSize, TDecompressionStream * stream);
+int swiDecompressLZSSVramTWL(void * source, void * destination, uint32 toGetSize, TDecompressionStream * stream);
+
 
 /*!	\brief Decompresses Huffman compressed data.
 
