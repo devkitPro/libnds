@@ -25,6 +25,9 @@
 #include <nds/interrupts.h>
 #include <nds/system.h>
 #include <nds/ipc.h>
+#ifdef ARM7
+#include <nds/arm7/i2c.h>
+#endif
 
 void IntrMain();	// Prototype for assembly interrupt dispatcher
 
@@ -42,6 +45,36 @@ void irqDummy(void) {}
 struct IntTable irqTable[MAX_INTERRUPTS] INT_TABLE_SECTION;
 #ifdef ARM7
 struct IntTable irqTableAUX[MAX_INTERRUPTS] INT_TABLE_SECTION;
+
+static VoidFn __powerbuttonCB = (VoidFn)0;
+
+//---------------------------------------------------------------------------------
+void i2cIRQHandler() {
+//---------------------------------------------------------------------------------
+	int cause = (i2cReadRegister(I2C_PM, I2CREGPM_PWRIF) & 0x3) | (i2cReadRegister(I2C_GPIO, 0x02)<<2);
+
+	switch (cause & 3) {
+	case 1:
+		if (__powerbuttonCB) {
+			__powerbuttonCB();
+		} else {
+			i2cWriteRegister(I2C_PM, I2CREGPM_RESETFLAG, 1);
+			i2cWriteRegister(I2C_PM, I2CREGPM_PWRCNT, 1);
+		}
+		break;
+	case 2:
+		writePowerManagement(PM_CONTROL_REG,PM_SYSTEM_PWR);
+		break;
+	}
+}
+
+//---------------------------------------------------------------------------------
+VoidFn setPowerButtonCB(VoidFn CB) {
+//---------------------------------------------------------------------------------
+	VoidFn tmp = __powerbuttonCB;
+	__powerbuttonCB = CB;
+	return tmp;
+}
 #endif
 
 //---------------------------------------------------------------------------------
@@ -88,6 +121,10 @@ void irqInit() {
 
 	IRQ_HANDLER = IntrMain;
 
+#ifdef ARM7
+	irqSetAUX(IRQ_I2C, i2cIRQHandler);
+	irqEnableAUX(IRQ_I2C);
+#endif
 	REG_IF	= IRQ_ALL;		// clear all pending interrupts
 	REG_IME = 1;			// enable global interrupt
 

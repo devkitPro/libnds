@@ -227,6 +227,16 @@ void swiIntrWait(u32 waitForSet, uint32 flags);
 */
 void swiWaitForVBlank(void);
 
+/*! \fn  VoidFn setPowerButtonCB(VoidFn CB);
+	\brief set callback for DSi Powerbutton press
+
+	\param CB
+		function to call when power button pressed
+	\return
+		the previously set callback
+*/
+VoidFn setPowerButtonCB(VoidFn CB);
+
 static inline int enterCriticalSection() {
 	int oldIME = REG_IME;
 	REG_IME = 0;
