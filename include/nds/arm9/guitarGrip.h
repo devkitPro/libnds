@@ -41,7 +41,7 @@ extern "C" {
 */
 bool guitarGripIsInserted();
 
-/*! \fn void guitarGrip()
+/*! \fn void guitarGripScanKeys()
     \brief Obtain the current guitar grip state.
     Call this function once per main loop to use the guitarGrip functions.
 */
