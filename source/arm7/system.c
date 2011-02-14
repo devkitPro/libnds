@@ -31,6 +31,7 @@
 #include <nds/bios.h>
 #include <nds/arm7/clock.h>
 #include <nds/arm7/sdmmc.h>
+#include <nds/arm7/i2c.h>
 
 bool sleepIsEnabled = true;
 extern bool __dsimode;
@@ -98,9 +99,13 @@ void powerValueHandler(u32 value, void* user_data) {
 		sleepIsEnabled = true;
 		break;
 	case PM_REQ_BATTERY:
-		battery = readPowerManagement(PM_BATTERY_REG) & 1;
-		backlight = readPowerManagement(PM_BACKLIGHT_LEVEL);
-		if (backlight & (1<<6)) battery += (backlight & (1<<3))<<12;
+		if (!__dsimode) {
+			battery = (readPowerManagement(PM_BATTERY_REG) & 1)?3:15;
+			backlight = readPowerManagement(PM_BACKLIGHT_LEVEL);
+			if (backlight & (1<<6)) battery += (backlight & (1<<3))<<4;
+		} else {
+			battery = i2cReadRegister(I2C_PM,I2CREGPM_BATTERY);
+		}
 		fifoSendValue32(FIFO_SYSTEM, battery);
 		break;
 	case PM_DSI_HACK:
