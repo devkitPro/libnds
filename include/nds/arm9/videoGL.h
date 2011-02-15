@@ -427,7 +427,7 @@ void glRotatef32i(int angle, int x, int y, int z);
 \param texture pointer to the texture data to load */
 int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, int param, const void* texture);
 
-/*! \brief nglColorTableEXT loads a 15-bit color format palette into palette memory, and sets it to the currently bound texture (can be used to remove also)
+/*! \brief glColorTableEXT loads a 15-bit color format palette into palette memory, and sets it to the currently bound texture (can be used to remove also)
 \param target ignored, only here for OpenGL compatability
 \param empty1 ignored, only here for OpenGL compatability
 \param width the length of the palette (if 0, then palette is removed from currently bound texture)
@@ -436,7 +436,7 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 \param table pointer to the palette data to load (if NULL, then palette is removed from currently bound texture)*/
 void glColorTableEXT(int target, int empty1, uint16 width, int empty2, int empty3, const uint16* table);
 
-/*! \brief nglAssignColorTable sets the active texture with a palette set with another texture
+/*! \brief glAssignColorTable sets the active texture with a palette set with another texture
 \param target ignored, only here for OpenGL compatability (not really, since this isn't in OpenGL)
 \param name the name(int value) of the texture to load a palette from */
 void glAssignColorTable(int target, int name);
