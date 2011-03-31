@@ -90,6 +90,12 @@
 #define CARD_CMD_DATA_READ      0xB7
 #define CARD_CMD_DATA_CHIPID    0xB8
 
+#define CARD_ENABLE			(1<<15)
+#define CARD_SPI_BUSY		(1<<7)
+#define CARD_SPI_HOLD		(1<<6)
+
+#define CARD_SPICNTH_ENABLE  (1<<7)  // in byte 1, i.e. 0x8000
+#define CARD_SPICNTH_IRQ     (1<<6)  // in byte 1, i.e. 0x4000
 
 #ifdef __cplusplus
 extern "C" {
@@ -107,6 +113,12 @@ void cardParamCommand (u8 command, u32 parameter, u32 flags, u32 *destination, u
 void cardReadHeader(u8 *header);
 u32 cardReadID(u32 flags);
 void cardReset();
+
+//---------------------------------------------------------------------------------
+static inline void eepromWaitBusy() {
+//---------------------------------------------------------------------------------
+	while (REG_AUXSPICNT & CARD_SPI_BUSY);
+}
 
 // Reads from the EEPROM
 void cardReadEeprom(u32 address, u8 *data, u32 length, u32 addrtype);
