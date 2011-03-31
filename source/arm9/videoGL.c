@@ -286,9 +286,9 @@ vramBlock__deallocateBlock( s_vramBlock *mb, struct s_SingleBlock *block ) {
 				block->AddrSet = testBlock[ 2 ]->AddrSet;
 				if( testBlock[ 2 ] == *first )
 					*first = block;
-				if( testBlock[ 2 ] == *empty )
-					*empty = block;
 			}
+			if( testBlock[ i + 2 ] == *empty )
+					*empty = block;
 			free( testBlock[ i + 2 ] );
 		}
 	}
