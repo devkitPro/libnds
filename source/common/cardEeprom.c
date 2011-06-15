@@ -122,24 +122,34 @@ uint32 cardEepromGetSize() {
 
 		device = id & 0xffff;
 		
-		if ( ((id >> 16) & 0xff) == 0x20 ) {
+		if ( ((id >> 16) & 0xff) == 0x20 ) { // ST
 			
-		
-			if( device == 0x4014)
+			switch(device) {
+
+			case 0x4014:
 				return 1024*1024;		//	8Mbit(1 meg)
-
-			if( device == 0x4013)
+				break;
+			case 0x4013:
+			case 0x8013:				// M25PE40
 				return 512*1024;		//	4Mbit(512KByte)
-
-			if( device == 0x2017)
+				break;
+			case 0x2017:
 				return 8*1024*1024;		//	64Mbit(8 meg)
+				break;
+			}
 		}
 
-		if ( ((id >> 16) & 0xff) == 0x62 ) {
+		if ( ((id >> 16) & 0xff) == 0x62 ) { // Sanyo
 			
 			if (device == 0x1100)
 				return 512*1024;		//	4Mbit(512KByte)
 
+		}
+
+		if ( ((id >> 16) & 0xff) == 0xC2 ) { // Macronix
+			
+			if (device == 0x2211)
+				return 128*1024;		//	1Mbit(128KByte) - MX25L1021E
 		}
 		
 
@@ -151,7 +161,7 @@ uint32 cardEepromGetSize() {
 
 
 //---------------------------------------------------------------------------------
-void cardReadEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype) {
+void cardReadEeprom(u32 address, u8 *data, u32 length, u32 addrtype) {
 //---------------------------------------------------------------------------------
 
 	REG_AUXSPICNT = /*E*/0x8000 | /*SEL*/0x2000 | /*MODE*/0x40;
