@@ -6,7 +6,7 @@ export TOPDIR	:=	$(CURDIR)
 
 export LIBNDS_MAJOR	:= 1
 export LIBNDS_MINOR	:= 5
-export LIBNDS_PATCH	:= 0
+export LIBNDS_PATCH	:= 1
 
 
 VERSION	:=	$(LIBNDS_MAJOR).$(LIBNDS_MINOR).$(LIBNDS_PATCH)
@@ -42,12 +42,12 @@ clean:
 #-------------------------------------------------------------------------------
 dist-src:
 #-------------------------------------------------------------------------------
-	@tar --exclude=*CVS* --exclude=.svn -cjf libnds-src-$(VERSION).tar.bz2 arm7/Makefile arm9/Makefile source include icon.bmp Makefile libnds_license.txt 
+	@tar --exclude=*CVS* --exclude=.svn -cjf libnds-src-$(VERSION).tar.bz2 arm7/Makefile arm9/Makefile source include icon.bmp Makefile libnds_license.txt libnds.dox
 
 #-------------------------------------------------------------------------------
 dist-bin: all
 #-------------------------------------------------------------------------------
-	@tar --exclude=*CVS* --exclude=.svn -cjf libnds-$(VERSION).tar.bz2 include lib icon.bmp libnds_license.txt libnds.dox
+	@tar --exclude=*CVS* --exclude=.svn -cjf libnds-$(VERSION).tar.bz2 include lib icon.bmp libnds_license.txt
 
 dist: dist-bin dist-src
 
