@@ -216,7 +216,7 @@ ssize_t con_write(struct _reent *r,int fd,const char *ptr, size_t len) {
 
 	i = 0;
 
-	while(*tmp!='\0' && i<len) {
+	while(i<len) {
 
 		chr = *(tmp++);
 		i++; count++;
@@ -596,6 +596,7 @@ static void newRow() {
 //---------------------------------------------------------------------------------
 void consolePrintChar(char c) {
 //---------------------------------------------------------------------------------
+	if (c==0) return;
 
 	if(currentConsole->PrintChar)
 		if(currentConsole->PrintChar(currentConsole, c))
