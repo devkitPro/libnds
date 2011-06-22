@@ -115,9 +115,9 @@ void cpuStartTiming(int timer) {
 u32 cpuGetTiming() {
 //---------------------------------------------------------------------------------
 	int lo = TIMER_DATA(localTimer);
-	int hi = TIMER_DATA(localTimer);
+	int hi = TIMER_DATA(localTimer+1);
 	int lo2 = TIMER_DATA(localTimer);
-	int hi2 = TIMER_DATA(localTimer);
+	int hi2 = TIMER_DATA(localTimer+1);
 
 	if (lo2 < lo) {
 		lo = lo2, hi = hi2;
