@@ -635,7 +635,7 @@ void consolePrintChar(char c) {
 			break;
 
 		case 9:
-			currentConsole->cursorX  += currentConsole->tabSize;
+			currentConsole->cursorX  += currentConsole->tabSize - ((currentConsole->cursorX)%(currentConsole->tabSize));
 			break;
 		case 10:
 			newRow();
