@@ -214,25 +214,27 @@ int asinComp(const void *a, const void *b)
 s16 asinLerp(s16 par)
 {
 	bool neg = false;
+	u16 param;
 
-	if(par < 0)
-	{
-		par = -par;
+	if(par < 0) {
+		param = -par;
 		neg = true;
+	} else {
+		param = par;
 	}
 
 	//convert from 4.12 to 1.15
-	par = par << (SIN_BITSFRACTION - 12);
+	param = param << (SIN_BITSFRACTION - 12);
 
-	if(par < ANGLE_FRACTION)
+	if(param < ANGLE_FRACTION)
 		return 0;
 
-	if(par > SIN_LUT[LUT_SIZE])
+	if(param > SIN_LUT[LUT_SIZE])
 	{
 		return (neg ? -LIBNDS_QUARTER_ANGLE : LIBNDS_QUARTER_ANGLE);
 	}
 
-	u16* lutIndexPointer = (u16*)bsearch(&par, SIN_LUT, LUT_SIZE, sizeof(u16), asinComp);
+	u16* lutIndexPointer = (u16*)bsearch(&param, SIN_LUT, LUT_SIZE + 1, sizeof(u16), asinComp);
 
 	if(lutIndexPointer == NULL)
 		return 0;
