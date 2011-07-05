@@ -2,9 +2,10 @@
 
 	Timer API
 
-  Copyright (C) 2008 - 2010
+  Copyright (C) 2008 - 2011
 			Jason Rogers (dovoto)
 			Mukunda Johnson (eKid)
+			Dave Murphy (WinterMute)
 
   This software is provided 'as-is', without any express or implied
   warranty.  In no event will the authors be held liable for any
@@ -128,9 +129,19 @@ u32 cpuGetTiming() {
 //---------------------------------------------------------------------------------
 u32 cpuEndTiming() {
 //---------------------------------------------------------------------------------
-    TIMER_CR(localTimer) = 0;
-    TIMER_CR(localTimer+1) = 0;
+	int lo = TIMER_DATA(localTimer);
+	int hi = TIMER_DATA(localTimer+1);
+	int lo2 = TIMER_DATA(localTimer);
+	int hi2 = TIMER_DATA(localTimer+1);
 
-    return ( (TIMER_DATA(localTimer) | (TIMER_DATA(localTimer+1)<<16) ));
+	if (lo2 < lo) {
+		lo = lo2, hi = hi2;
+	}
+
+	TIMER_CR(localTimer) = 0;
+	TIMER_CR(localTimer+1) = 0;
+
+	return ( lo | hi<<16 );
+
 }
 
