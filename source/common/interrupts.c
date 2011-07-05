@@ -96,6 +96,7 @@ static void __irqSet(u32 mask, IntFn handler, struct IntTable irqTable[] ) {
 //---------------------------------------------------------------------------------
 void irqSet(u32 mask, IntFn handler) {
 //---------------------------------------------------------------------------------
+	int oldIME = enterCriticalSection();
 	__irqSet(mask,handler,irqTable);
 	if(mask & IRQ_VBLANK)
 		REG_DISPSTAT |= DISP_VBLANK_IRQ ;
@@ -103,6 +104,7 @@ void irqSet(u32 mask, IntFn handler) {
 		REG_DISPSTAT |= DISP_HBLANK_IRQ ;
 	if(mask & IRQ_IPC_SYNC)
 		REG_IPC_SYNC |= IPC_SYNC_IRQ_ENABLE;
+	leaveCriticalSection(oldIME);
 }
 
 //---------------------------------------------------------------------------------
@@ -150,6 +152,7 @@ void irqInitHandler(IntFn handler) {
 //---------------------------------------------------------------------------------
 void irqEnable(uint32 irq) {
 //---------------------------------------------------------------------------------
+	int oldIME = enterCriticalSection();
 	if (irq & IRQ_VBLANK)
 		REG_DISPSTAT |= DISP_VBLANK_IRQ ;
 	if (irq & IRQ_HBLANK)
@@ -160,11 +163,13 @@ void irqEnable(uint32 irq) {
 		REG_IPC_SYNC |= IPC_SYNC_IRQ_ENABLE;
 
 	REG_IE |= irq;
+	leaveCriticalSection(oldIME);
 }
 
 //---------------------------------------------------------------------------------
 void irqDisable(uint32 irq) {
 //---------------------------------------------------------------------------------
+	int oldIME = enterCriticalSection();
 	if (irq & IRQ_VBLANK)
 		REG_DISPSTAT &= ~DISP_VBLANK_IRQ ;
 	if (irq & IRQ_HBLANK)
@@ -175,6 +180,7 @@ void irqDisable(uint32 irq) {
 		REG_IPC_SYNC &= ~IPC_SYNC_IRQ_ENABLE;
 
 	REG_IE &= ~irq;
+	leaveCriticalSection(oldIME);
 }
 
 //---------------------------------------------------------------------------------
@@ -193,33 +199,43 @@ static void __irqClear(u32 mask, struct IntTable irqTable[]) {
 //---------------------------------------------------------------------------------
 void irqClear(u32 mask) {
 //---------------------------------------------------------------------------------
+	int oldIME = enterCriticalSection();
 	__irqClear(mask,irqTable);
 	irqDisable( mask);
+	leaveCriticalSection(oldIME);
 }
 
 #ifdef ARM7
 //---------------------------------------------------------------------------------
 void irqSetAUX(u32 mask, IntFn handler) {
 //---------------------------------------------------------------------------------
+	int oldIME = enterCriticalSection();
 	__irqSet(mask,handler,irqTableAUX);
+	leaveCriticalSection(oldIME);
 }
 
 //---------------------------------------------------------------------------------
 void irqClearAUX(u32 mask) {
 //---------------------------------------------------------------------------------
+	int oldIME = enterCriticalSection();
 	__irqClear(mask,irqTableAUX);
 	irqDisable( mask);
+	leaveCriticalSection(oldIME);
 }
 
 //---------------------------------------------------------------------------------
 void irqDisableAUX(uint32 irq) {
 //---------------------------------------------------------------------------------
+	int oldIME = enterCriticalSection();
 	REG_AUXIE &= ~irq;
+	leaveCriticalSection(oldIME);
 }
 
 //---------------------------------------------------------------------------------
 void irqEnableAUX(uint32 irq) {
 //---------------------------------------------------------------------------------
+	int oldIME = enterCriticalSection();
 	REG_AUXIE |= irq;
+	leaveCriticalSection(oldIME);
 }
 #endif
