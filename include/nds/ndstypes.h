@@ -33,7 +33,9 @@
 #ifndef _NDSTYPES_INCLUDE
 #define _NDSTYPES_INCLUDE
 //---------------------------------------------------------------------------------
-
+// define libnds types in terms of stdint
+#include <stdint.h>
+#include <stdbool.h>
 
 //---------------------------------------------------------------------------------
 // libgba compatible section macros
@@ -62,9 +64,6 @@
 	\brief returns a number with the nth bit set.
 */
 #define BIT(n) (1 << (n))
-
-// define libnds types in terms of stdint
-#include <stdint.h>
 
 //! 8 bit unsigned integer.
 typedef uint8_t		uint8;
@@ -159,22 +158,11 @@ typedef volatile s64          vs64;
 #endif
 
 
-#ifndef __cplusplus
-//isn't it easier to just #include <stdbool.h>
-//it is part of the c standard...
-/*!
-	\brief C++ compatible bool for C
-*/
-typedef enum { false, true } bool;
-#endif
-
-
-
 // Handy function pointer typedefs
 //! a function pointer that takes no arguments and doesn't return anything.
 typedef void (* VoidFn)(void);
 
-typedef void (* IntFn)(void);//doesn't return an int???
+typedef void (* IntFn)(void);
 typedef void (* fp)(void);
 
 //---------------------------------------------------------------------------------
