@@ -39,6 +39,7 @@ int sdmmc_send_command(u16 cmd, u16 arg0, u16 arg1) {
 		if (cmd != 0x5016) {
 			while((sdmmc_read16(REG_SDSTATUS0) & 5) == 0) {
 				if(sdmmc_read16(REG_SDSTATUS1) & 0x40) {
+					sdmmc_mask16(REG_SDSTATUS1, 0x40, 0);
 					sdmmc_timeout = 1;
 					break;
 				}
@@ -248,7 +249,7 @@ void sdmmc_clkdelay() {
 }
 
 //---------------------------------------------------------------------------------
-void sdmmc_sdcard_readsector(u32 sector_no, void *out) {
+int sdmmc_sdcard_readsector(u32 sector_no, void *out) {
 //---------------------------------------------------------------------------------
 	u16 *out16 = (u16*)out;
 	u16 resp0, resp1;
@@ -257,13 +258,18 @@ void sdmmc_sdcard_readsector(u32 sector_no, void *out) {
 	if(!sdmmc_sdhc)
 		sector_no *= 512;
 
-	sdmmc_clkdelay0();
 	sdmmc_mask16(REG_SDCLKCTL, 0, 0x100);
 	sdmmc_clkdelay();
 	sdmmc_write16(REG_SDBLKLEN, 0x200);
 	
 	// CMD17 - read single block
 	sdmmc_send_command(17, sector_no & 0xffff, (sector_no >> 16));
+	if(sdmmc_timeout) {
+		sdmmc_clkdelay1();
+		sdmmc_clkdelay0();
+		sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
+		return 1;
+	}
 
 	resp0 = sdmmc_read16(REG_SDRESP0);
 	resp1 = sdmmc_read16(REG_SDRESP1);	
@@ -284,11 +290,12 @@ void sdmmc_sdcard_readsector(u32 sector_no, void *out) {
 
 	sdmmc_clkdelay0();
 	sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
-	sdmmc_clkdelay();
+
+	return 0;
 }
 
 //---------------------------------------------------------------------------------
-void sdmmc_sdcard_readsectors(u32 sector_no, int numsectors, void *out) {
+int sdmmc_sdcard_readsectors(u32 sector_no, int numsectors, void *out) {
 //---------------------------------------------------------------------------------
 	u16 *out16 = (u16*)out;
 	u16 resp0, resp1;
@@ -299,13 +306,18 @@ void sdmmc_sdcard_readsectors(u32 sector_no, int numsectors, void *out) {
 
 	sdmmc_write16(REG_SDSTOP, 0x100);
 	sdmmc_write16(REG_SDBLKCOUNT, numsectors);
-	sdmmc_clkdelay0();
 	sdmmc_mask16(REG_SDCLKCTL, 0, 0x100);
 	sdmmc_clkdelay();
 	sdmmc_write16(REG_SDBLKLEN, 0x200);	
 	
 	// CMD18 - read multiple blocks
 	sdmmc_send_command(18, sector_no & 0xffff, (sector_no >> 16));
+	if(sdmmc_timeout) {
+		sdmmc_clkdelay1();
+		sdmmc_clkdelay0();
+		sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
+		return 1;
+	}
 
 	resp0 = sdmmc_read16(REG_SDRESP0);
 	resp1 = sdmmc_read16(REG_SDRESP1);	
@@ -323,9 +335,10 @@ void sdmmc_sdcard_readsectors(u32 sector_no, int numsectors, void *out) {
 		out16[i] = sdmmc_read16(REG_SDFIFO);
 	}
 
-	sdmmc_clkdelay();
+	sdmmc_clkdelay0();
 	sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
-	sdmmc_clkdelay();
+
+	return 0;
 }
 
 //---------------------------------------------------------------------------------
@@ -336,7 +349,7 @@ void sdmmc_sdcard_readsectors(u32 sector_no, int numsectors, void *out) {
 //---------------------------------------------------------------------------------
 #ifdef ENABLEWR
 //---------------------------------------------------------------------------------
-void sdmmc_sdcard_writesector(u32 sector_no, void *in) {
+int sdmmc_sdcard_writesector(u32 sector_no, void *in) {
 //---------------------------------------------------------------------------------
 	u16 *in16 = (u16*)in;
 	u16 resp0, resp1;
@@ -351,6 +364,12 @@ void sdmmc_sdcard_writesector(u32 sector_no, void *in) {
 	
 	// CMD24 - write single block
 	sdmmc_send_command(24, sector_no & 0xffff, (sector_no >> 16));
+	if(sdmmc_timeout) {
+		sdmmc_clkdelay1();
+		sdmmc_clkdelay0();
+		sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
+		return 1;
+	}
 
 	resp0 = sdmmc_read16(REG_SDRESP0);
 	resp1 = sdmmc_read16(REG_SDRESP1);	
@@ -360,9 +379,8 @@ void sdmmc_sdcard_writesector(u32 sector_no, void *in) {
 	while (!(sdmmc_read16(REG_SDSTATUS1) & 0x200));
 
 	resp0 = sdmmc_read16(REG_SDSTATUS1);
-	
-	while( (REG_DISPSTAT & DISPSTAT_CHK_VBLANK) == 0 );
-	while( (REG_DISPSTAT & DISPSTAT_CHK_VBLANK) != 0 );
+
+	sdmmc_clkdelay1();
 
 	sdmmc_mask16(REG_SDSTATUS1, 1, 0);
 	
@@ -372,11 +390,12 @@ void sdmmc_sdcard_writesector(u32 sector_no, void *in) {
 
 	sdmmc_clkdelay0();
 	sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
-	sdmmc_clkdelay();
+
+	return 0;
 }
 
 //---------------------------------------------------------------------------------
-void sdmmc_sdcard_writesectors(u32 sector_no, int numsectors, void *in) {
+int sdmmc_sdcard_writesectors(u32 sector_no, int numsectors, void *in) {
 //---------------------------------------------------------------------------------
 	u16 *in16 = (u16*)in;
 	u16 resp0, resp1;
@@ -387,13 +406,18 @@ void sdmmc_sdcard_writesectors(u32 sector_no, int numsectors, void *in) {
 
 	sdmmc_write16(REG_SDSTOP, 0x100);
 	sdmmc_write16(REG_SDBLKCOUNT, numsectors);
-	sdmmc_clkdelay0();
 	sdmmc_mask16(REG_SDCLKCTL, 0, 0x100);
 	sdmmc_clkdelay();
 	sdmmc_write16(REG_SDBLKLEN, 0x200);	
 	
 	// CMD25 - write multiple blocks
 	sdmmc_send_command(25, sector_no & 0xffff, (sector_no >> 16));
+	if(sdmmc_timeout) {
+		sdmmc_clkdelay1();
+		sdmmc_clkdelay0();
+		sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
+		return 1;
+	}
 
 	resp0 = sdmmc_read16(REG_SDRESP0);
 	resp1 = sdmmc_read16(REG_SDRESP1);	
@@ -411,7 +435,8 @@ void sdmmc_sdcard_writesectors(u32 sector_no, int numsectors, void *in) {
 
 	sdmmc_clkdelay0();
 	sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
-	sdmmc_clkdelay();
+
+	return 0;
 }
 #endif
 

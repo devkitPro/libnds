@@ -132,14 +132,15 @@ int sleepEnabled(void) {
 void systemMsgHandler(int bytes, void *user_data) {
 //---------------------------------------------------------------------------------
 	FifoMessage msg;
+	int retval;
 
 	fifoGetDatamsg(FIFO_SYSTEM, bytes, (u8*)&msg);
 	
 	switch (msg.type) {
 
 	case SYS_SD_READ_SECTORS:
-		sdmmc_sdcard_readsectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
-		fifoSendValue32(FIFO_SYSTEM, 0);
+		retval = sdmmc_sdcard_readsectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
+		fifoSendValue32(FIFO_SYSTEM, retval);
 		break;
 	case SYS_SD_WRITE_SECTORS:
 		fifoSendValue32(FIFO_SYSTEM, 1);
