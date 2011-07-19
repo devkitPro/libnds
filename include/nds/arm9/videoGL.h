@@ -227,6 +227,7 @@ typedef enum  {
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureformats">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureformats</A><BR>
 related functions: glTexImage2d(), glTexParameter() */
 typedef enum {
+	GL_NOTEXTURE  = 0, /*!< no texture is used - useful for making palettes */
 	GL_RGB32_A3   = 1, /*!< 32 color palette, 3 bits of alpha */
 	GL_RGB4       = 2, /*!< 4 color palette */
 	GL_RGB16      = 3, /*!< 16 color palette */

@@ -642,7 +642,8 @@ int glDeleteTextures( int n, int *names ) {
 				if( texture->texIndex ) {
 					if( texture->texIndexExt )	// Delete extra texture for GL_COMPRESSED, if exists
 						vramBlock_deallocateBlock( glGlob->vramBlocks[ 0 ], texture->texIndexExt );
-					vramBlock_deallocateBlock( glGlob->vramBlocks[ 0 ], texture->texIndex );
+					if( texture->texIndex )
+						vramBlock_deallocateBlock( glGlob->vramBlocks[ 0 ], texture->texIndex );
 				}
 				// Clear out the palette (if this texture name is the last using it)
 				if( texture->palIndex )
@@ -729,7 +730,9 @@ void glColorTableEXT( int target, int empty1, uint16 width, int empty2, int empt
 			return;
 
 		// Allocate new palette block based on the texture's format
-		uint32 colFormatVal = ((( texture->texFormat >> 26 ) & 0x7 ) == GL_RGB4 ? 3 : 4 );
+		uint32 colFormat = (( texture->texFormat >> 26 ) & 0x7 );
+		
+		uint32 colFormatVal = (( colFormat == GL_RGB4 || ( colFormat == GL_NOTEXTURE && width <= 4 )) ? 3 : 4 );
 		uint8* checkAddr = vramBlock_examineSpecial( glGlob->vramBlocks[ 1 ], (uint8*)VRAM_E, width << 1, colFormatVal );
 		
 		if( checkAddr ) {
@@ -873,6 +876,9 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 			break;
 	}
 	if( !size ) return 0;
+	
+	if( type == GL_NOTEXTURE )
+		size = 0;
 
 	gl_texture_data *tex = (gl_texture_data*)DynamicArrayGet( &glGlob->texturePtrs, glGlob->activeTexture );
 
@@ -880,7 +886,8 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 	if( tex && ( tex->texSize != size || (( tex->texFormat >> 26 ) & 0x07 ) != type )) {
 		if( tex->texIndexExt )
 			vramBlock_deallocateBlock( glGlob->vramBlocks[ 0 ], tex->texIndexExt );
-		vramBlock_deallocateBlock( glGlob->vramBlocks[ 0 ], tex->texIndex );
+		if( tex->texIndex )
+			vramBlock_deallocateBlock( glGlob->vramBlocks[ 0 ], tex->texIndex );
 		tex->texIndex = tex->texIndexExt = 0;
 		tex->vramAddr = NULL;
 	} 
@@ -890,51 +897,51 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 	
 	// Allocate a new space for the texture in VRAM
 	if( !tex->texIndex ) {
-		if( type != GL_COMPRESSED ) {
-			tex->texIndex = vramBlock_allocateBlock( glGlob->vramBlocks[ 0 ], tex->texSize, 3 );
-		}
-		else {
-			uint8 *vramBAddr = (uint8*)VRAM_B;
-			uint8 *vramACAddr = NULL;
-			uint8 *vramBFound, *vramACFound;
-			if(( VRAM_B_CR & 0x83 )  != 0x83 )
-				return 0;
-			
-			// Process of finding a valid spot for compressed textures is as follows...
-			//		Examine first available spot in VRAM_B for the header data
-			//		Extrapulate where the tile data would go in VRAM_A or VRAM_C if the spot in VRAM_B were used
-			//		Check the extrapulated area to see if it is an empty spot
-			//			If not, then adjust the header spot in VRAM_B by a ratio amount found by the tile spot
-			while ( 1 ) {
-				// Check designated opening, and return available spot
-				vramBFound = vramBlock_examineSpecial( glGlob->vramBlocks[ 0 ], vramBAddr, tex->texSize >> 1, 2 );
-				// Make sure that the space found in VRAM_B is completely in it, and not extending out of it
-				if( vramGetBank( (uint16*)vramBFound ) != VRAM_B || vramGetBank( (uint16*)( vramBFound + ( tex->texSize >> 1 )) - 1 ) != VRAM_B ) {
+		if( type != GL_NOTEXTURE ) {
+			if( type != GL_COMPRESSED ) {
+				tex->texIndex = vramBlock_allocateBlock( glGlob->vramBlocks[ 0 ], tex->texSize, 3 );
+			}
+			else {
+				uint8 *vramBAddr = (uint8*)VRAM_B;
+				uint8 *vramACAddr = NULL;
+				uint8 *vramBFound, *vramACFound;
+				if(( VRAM_B_CR & 0x83 )  != 0x83 )
 					return 0;
+			
+				// Process of finding a valid spot for compressed textures is as follows...
+				//		Examine first available spot in VRAM_B for the header data
+				//		Extrapulate where the tile data would go in VRAM_A or VRAM_C if the spot in VRAM_B were used
+				//		Check the extrapulated area to see if it is an empty spot
+				//			If not, then adjust the header spot in VRAM_B by a ratio amount found by the tile spot
+				while ( 1 ) {
+					// Check designated opening, and return available spot
+					vramBFound = vramBlock_examineSpecial( glGlob->vramBlocks[ 0 ], vramBAddr, tex->texSize >> 1, 2 );
+					// Make sure that the space found in VRAM_B is completely in it, and not extending out of it
+					if( vramGetBank( (uint16*)vramBFound ) != VRAM_B || vramGetBank( (uint16*)( vramBFound + ( tex->texSize >> 1 )) - 1 ) != VRAM_B ) {
+						return 0;
+					}
+					// Make sure it is completely on either half of VRAM_B
+					if(((uint32)vramBFound - (uint32)VRAM_B < 0x10000 ) && ((uint32)vramBFound - (uint32)VRAM_B + ( tex->texSize >> 1 ) > 0x10000 )) {
+						vramBAddr = (uint8*)VRAM_B + 0x10000;
+						continue;
+					}
+					// Retrieve the tile location in VRAM_A or VRAM_C
+					uint32 offset = ((uint32)vramBFound - (uint32)VRAM_B );
+					vramACAddr = (uint8*)( offset >= 0x10000 ? VRAM_B : VRAM_A ) + ( offset << 1 );
+					vramACFound = vramBlock_examineSpecial( glGlob->vramBlocks[ 0 ], vramACAddr, size, 3 );
+					if( vramACAddr != vramACFound ) {
+						// Adjust the spot in VRAM_B by the difference found with VRAM_A/VRAM_C, divided by 2
+						vramBAddr += (((uint32)vramACFound - (uint32)vramACAddr ) >> 1 );
+						continue;
+					} else {
+						// Spot found, setting up spots
+						tex->texIndex = vramBlock_allocateSpecial( glGlob->vramBlocks[ 0 ], vramACFound, size );
+						tex->texIndexExt = vramBlock_allocateSpecial( glGlob->vramBlocks[ 0 ], vramBlock_examineSpecial( glGlob->vramBlocks[ 0 ], vramBFound, size, 2 ), size );
+						break;
+					}				
 				}
-				// Make sure it is completely on either half of VRAM_B
-				if(((uint32)vramBFound - (uint32)VRAM_B < 0x10000 ) && ((uint32)vramBFound - (uint32)VRAM_B + ( tex->texSize >> 1 ) > 0x10000 )) {
-					
-					vramBAddr = (uint8*)VRAM_B + 0x10000;
-					continue;
-				}
-				// Retrieve the tile location in VRAM_A or VRAM_C
-				uint32 offset = ((uint32)vramBFound - (uint32)VRAM_B );
-				vramACAddr = (uint8*)( offset >= 0x10000 ? VRAM_B : VRAM_A ) + ( offset << 1 );
-				vramACFound = vramBlock_examineSpecial( glGlob->vramBlocks[ 0 ], vramACAddr, size, 3 );
-				if( vramACAddr != vramACFound ) {
-					// Adjust the spot in VRAM_B by the difference found with VRAM_A/VRAM_C, divided by 2
-					vramBAddr += (((uint32)vramACFound - (uint32)vramACAddr ) >> 1 );
-					continue;
-				} else {
-					// Spot found, setting up spots
-					tex->texIndex = vramBlock_allocateSpecial( glGlob->vramBlocks[ 0 ], vramACFound, size );
-					tex->texIndexExt = vramBlock_allocateSpecial( glGlob->vramBlocks[ 0 ], vramBlock_examineSpecial( glGlob->vramBlocks[ 0 ], vramBFound, size, 2 ), size );
-					break;
-				}				
 			}
 		}
-
 		if( tex->texIndex ) {
 			tex->vramAddr = vramBlock_getAddr( glGlob->vramBlocks[ 0 ], tex->texIndex );
 			tex->texFormat = (sizeX << 20) | (sizeY << 23) | ((type == GL_RGB ? GL_RGBA : type ) << 26) | (( (uint32)tex->vramAddr >> 3 ) & 0xFFFF );
@@ -944,13 +951,13 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 			return 0;
 		}
 	}
-	else
+	else		
 		tex->texFormat = (sizeX << 20) | (sizeY << 23) | ((type == GL_RGB ? GL_RGBA : type ) << 26) | ( tex->texFormat & 0xFFFF );
-
+	
 	glTexParameter( target, param );
-
+	
 	// Copy the texture data into either VRAM or main memory
-	if( texture ) {
+	if( !type && texture ) {
 		uint32 vramTemp = vramSetPrimaryBanks(VRAM_A_LCD,VRAM_B_LCD,VRAM_C_LCD,VRAM_D_LCD);
 		if( type == GL_RGB ) {
 			uint16 *src = (uint16*)texture;
@@ -964,10 +971,8 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 			swiCopy( texture, tex->vramAddr, ( tex->texSize >> 2 ) | COPY_MODE_WORD );
 			if( type == GL_COMPRESSED )
 				swiCopy( texture + tex->texSize, vramBlock_getAddr( glGlob->vramBlocks[ 0 ], tex->texIndexExt ), ( tex->texSize >> 3 ) | COPY_MODE_WORD );
-				
 		}
-		vramRestorePrimaryBanks(vramTemp);
-		
+		vramRestorePrimaryBanks(vramTemp);		
 	}
 
 	return 1;
