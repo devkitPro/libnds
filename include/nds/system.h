@@ -85,8 +85,8 @@ typedef enum
 {
 	PM_SOUND_AMP		= BIT(0),		//!< Power the sound hardware (needed to hear stuff in GBA mode too).
 	PM_SOUND_MUTE		= BIT(1),		//!< Mute the main speakers, headphone output will still work.
-	PM_BACKLIGHT_BOTTOM	= BIT(2),		//!< Enable the top backlight if set.
-	PM_BACKLIGHT_TOP	= BIT(3),		//!< Enable the bottom backlight if set.
+	PM_BACKLIGHT_BOTTOM	= BIT(2),		//!< Enable the bottom backlight if set.
+	PM_BACKLIGHT_TOP	= BIT(3),		//!< Enable the top backlight if set.
 	PM_SYSTEM_PWR		= BIT(6),		//!< Turn the power *off* if set.
 
 	POWER_LCD		= PM_ARM9_DIRECT | BIT(0),		//!<	Controls the power for both LCD screens.
