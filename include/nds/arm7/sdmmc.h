@@ -62,9 +62,9 @@ int sdmmc_cardinserted();
 
 int sdmmc_sdcard_init();
 int sdmmc_sdcard_readsector(u32 sector_no, void *out);
-int sdmmc_sdcard_readsectors(u32 sector_no, int numsectors, void *out);
+int sdmmc_sdcard_readsectors(u32 sector_no, u32 numsectors, void *out);
 int sdmmc_sdcard_writesector(u32 sector_no, void *in);
-int sdmmc_sdcard_writesectors(u32 sector_no, int numsectors, void *in);
+int sdmmc_sdcard_writesectors(u32 sector_no, u32 numsectors, void *in);
 
 extern u32 sdmmc_cid[];
 extern int sdmmc_curdevice;
