@@ -957,7 +957,7 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 	glTexParameter( target, param );
 	
 	// Copy the texture data into either VRAM or main memory
-	if( !type && texture ) {
+	if( type != GL_NOTEXTURE && texture ) {
 		uint32 vramTemp = vramSetPrimaryBanks(VRAM_A_LCD,VRAM_B_LCD,VRAM_C_LCD,VRAM_D_LCD);
 		if( type == GL_RGB ) {
 			uint16 *src = (uint16*)texture;
