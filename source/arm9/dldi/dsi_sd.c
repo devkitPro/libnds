@@ -30,7 +30,7 @@ bool sdio_IsInserted() {
 	fifoSendValue32(FIFO_SYSTEM,SYS_SD_IS_INSERTED);
 	while(!fifoCheckValue32(FIFO_SYSTEM));
 	int result = fifoGetValue32(FIFO_SYSTEM);
-	return result == 0;
+	return result == 1;
 }
 
 //---------------------------------------------------------------------------------
