@@ -4,8 +4,6 @@
 #include <nds/ndstypes.h>
 
 #define SDMMC_BASE	0x04004800
-#define DISPSTAT_CHK_VBLANK   (1<<0)
-
 
 #define REG_SDSTATUS0	  0x1c
 #define REG_SDSTATUS1	  0x1e

@@ -143,7 +143,8 @@ void systemMsgHandler(int bytes, void *user_data) {
 		fifoSendValue32(FIFO_SYSTEM, retval);
 		break;
 	case SYS_SD_WRITE_SECTORS:
-		fifoSendValue32(FIFO_SYSTEM, 1);
+		retval = sdmmc_sdcard_writesectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
+		fifoSendValue32(FIFO_SYSTEM, retval);
 		break;
 	
 	}
@@ -165,8 +166,9 @@ void systemValueHandler(u32 value, void* user_data) {
 		if (sdmmc_read16(REG_SDSTATUS0) == 0) {
 			result = 1;
 		} else {
+			result = 0;
 			sdmmc_controller_init();
-			result = sdmmc_sdcard_init();
+			//result = sdmmc_sdcard_init();
 		}
 		fifoSendValue32(FIFO_SYSTEM, result);
 		break;

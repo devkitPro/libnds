@@ -14,12 +14,9 @@ bool sdio_Startup() {
 	int result = fifoGetValue32(FIFO_SYSTEM);
 
 	if(result==0) return false;
-	
-	// calling arm7 init code makes the SD fail
-	// this means non SDHC only support for now
-	return true;
 
 	fifoSendValue32(FIFO_SYSTEM,SYS_SD_START);
+	while(!fifoCheckValue32(FIFO_SYSTEM));
 	result = fifoGetValue32(FIFO_SYSTEM);
 	
 	return result == 0;
@@ -29,9 +26,13 @@ bool sdio_Startup() {
 bool sdio_IsInserted() {
 //---------------------------------------------------------------------------------
 	if (!REG_DSIMODE) return false;
-	return true;
+
+	fifoSendValue32(FIFO_SYSTEM,SYS_SD_IS_INSERTED);
+	while(!fifoCheckValue32(FIFO_SYSTEM));
+	int result = fifoGetValue32(FIFO_SYSTEM);
+	return result == 0;
 }
- 
+
 //---------------------------------------------------------------------------------
 bool sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 //---------------------------------------------------------------------------------
@@ -93,7 +94,7 @@ bool sdio_Shutdown() {
 
 const DISC_INTERFACE __io_dsisd = {
 	DEVICE_TYPE_DSI_SD,
-	FEATURE_MEDIUM_CANREAD,
+	FEATURE_MEDIUM_CANREAD | FEATURE_MEDIUM_CANWRITE,
 	(FN_MEDIUM_STARTUP)&sdio_Startup,
 	(FN_MEDIUM_ISINSERTED)&sdio_IsInserted,
 	(FN_MEDIUM_READSECTORS)&sdio_ReadSectors,

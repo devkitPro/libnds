@@ -71,7 +71,8 @@ typedef enum IRQ_MASKS IRQ_MASK;
 
 //! values allowed for REG_AUXIE and REG_AUXIF
 enum IRQ_MASKSAUX {
-	IRQ_I2C	=	BIT(6)	/*!< I2C interrupt mask (DSi ARM7)*/
+	IRQ_I2C	=	BIT(6),	/*!< I2C interrupt mask (DSi ARM7)*/
+	IRQ_SDMMC = 	BIT(8)  /*!< Sdmmc interrupt mask (DSi ARM7)*/
 };
 
 /*!
