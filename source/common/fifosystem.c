@@ -491,6 +491,7 @@ static void fifoInternalRecvInterrupt() {
 					FIFO_BUFFER_DATA(block)=(u32)address;
 					fifo_queueBlock(&fifo_address_queue[channel],block,block);
 				}
+				REG_IME=1;
 
 			} else if(FIFO_IS_VALUE32(data)) {
 
@@ -516,6 +517,7 @@ static void fifoInternalRecvInterrupt() {
 					FIFO_BUFFER_DATA(block)=value32;
 					fifo_queueBlock(&fifo_value32_queue[channel],block,block);
 				}
+				REG_IME=1;
 
 			} else if(FIFO_IS_DATA(data)) {
 
@@ -549,7 +551,7 @@ static void fifoInternalRecvInterrupt() {
 					fifo_datamsg_func[channel](n_bytes, fifo_datamsg_data[channel]);
 					if (block == fifo_data_queue[channel].head) fifoGetDatamsg(channel,0,0);
 				}
-				
+				REG_IME=1;
 
 			} else {
 
