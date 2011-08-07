@@ -65,18 +65,6 @@ void __attribute__((weak)) initSystem(void) {
 	dmaFillWords(0, (void*)0x04000000, 0x56);
 	dmaFillWords(0, (void*)0x04001008, 0x56);
 
-	// map all VRAM banks to lcdc mode
-	VRAM_CR = 0x80808080;
-	VRAM_E_CR = 0x80;
-	VRAM_F_CR = 0x80;
-	VRAM_G_CR = 0x80;
-	VRAM_H_CR = 0x80;
-	VRAM_I_CR = 0x80;
-
-	dmaFillWords(0, BG_PALETTE, (2*1024));	// clear main and sub palette
-	dmaFillWords(0, OAM, 2*1024);			// clear main and sub OAM
-	dmaFillWords(0, VRAM, 656*1024);		// clear all VRAM
-
 	videoSetModeSub(0);
 
 	vramDefault();

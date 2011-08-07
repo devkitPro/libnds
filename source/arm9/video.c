@@ -26,6 +26,7 @@
 
 #include <nds/ndstypes.h>
 #include <nds/arm9/video.h>
+#include <nds/dma.h>
 
 
 //---------------------------------------------------------------------------------
@@ -96,6 +97,20 @@ void setBrightness( int screen, int level) {
 //---------------------------------------------------------------------------------
 u32 __attribute__((weak)) vramDefault() {
 //---------------------------------------------------------------------------------
+
+	// map all VRAM banks to lcdc mode
+	VRAM_CR = 0x80808080;
+	VRAM_E_CR = 0x80;
+	VRAM_F_CR = 0x80;
+	VRAM_G_CR = 0x80;
+	VRAM_H_CR = 0x80;
+	VRAM_I_CR = 0x80;
+
+	dmaFillWords(0, BG_PALETTE, (2*1024));	// clear main and sub palette
+	dmaFillWords(0, OAM, 2*1024);			// clear main and sub OAM
+	dmaFillWords(0, VRAM, 656*1024);		// clear all VRAM
+
+
 	return vramSetPrimaryBanks(VRAM_A_MAIN_BG, VRAM_B_MAIN_SPRITE, VRAM_C_SUB_BG, VRAM_D_SUB_SPRITE);
 }
 
