@@ -2,6 +2,8 @@
 #include <nds/bios.h>
 #include <nds/arm7/sdmmc.h>
 #include <nds/interrupts.h>
+#include <nds/fifocommon.h>
+#include <nds/fifomessages.h>
 
 u32 sdmmc_cid[4];
 vu32 sdmmc_cardready = 0;
@@ -86,9 +88,9 @@ int sdmmc_cardinserted() {
 //---------------------------------------------------------------------------------
 void sdmmc_init_irq() {
 //---------------------------------------------------------------------------------
+	set_irqhandler(0, 0, 0);
 	irqSetAUX(IRQ_SDMMC, sdmmc_irqhandler);
 	irqEnableAUX(IRQ_SDMMC);
-	set_irqhandler(0, 0, 0);
 }
 
 //---------------------------------------------------------------------------------
@@ -163,6 +165,8 @@ static void sdmmc_irqhandler() {
 		sdmmcirq_transfer = 0;
 		sdmmcirq_bufpos = 0;
 		sdmmcirq_abort = 1;
+		sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
+		fifoSendValue32(FIFO_SDMMC, 1);
 		return;
 	}
 
@@ -178,7 +182,8 @@ static void sdmmc_irqhandler() {
 			if((sdmmc_read16(0x22) & 0x100)==0)sdmmc_mask16(0x22, 0, 0x100);
 			if((sdmmc_read16(0x22) & 0x200)==0)sdmmc_mask16(0x22, 0, 0x200);
 		}
-
+		sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
+		fifoSendValue32(FIFO_SDMMC, 0);
 		return;
 	}
 
@@ -351,10 +356,10 @@ int sdmmc_sdcard_init() {
 }
 
 //---------------------------------------------------------------------------------
-int sdmmc_sdcard_readsector(u32 sector_no, void *out) {
+void sdmmc_sdcard_readsector(u32 sector_no, void *out) {
 //---------------------------------------------------------------------------------
 	u16 *out16 = (u16*)out;
-	int ret;
+//	int ret;
 
 	if(!sdmmc_sdhc)
 		sector_no *= 512;
@@ -371,21 +376,15 @@ int sdmmc_sdcard_readsector(u32 sector_no, void *out) {
 	sdmmc_send_command(17, sector_no & 0xffff, (sector_no >> 16));
 	if(sdmmc_timeout) {
 		sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
-		return 1;
+		fifoSendValue32(FIFO_SDMMC, 1);
 	}
-
-	ret = wait_irqhandlerfinish();
-
-	sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
-
-	return ret;
 }
 
 //---------------------------------------------------------------------------------
-int sdmmc_sdcard_readsectors(u32 sector_no, u32 numsectors, void *out) {
+void sdmmc_sdcard_readsectors(u32 sector_no, u32 numsectors, void *out) {
 //---------------------------------------------------------------------------------
 	u16 *out16 = (u16*)out;
-	int ret;
+//	int ret;
 
 	if(numsectors==1) {
 		return sdmmc_sdcard_readsector(sector_no, out);
@@ -408,21 +407,15 @@ int sdmmc_sdcard_readsectors(u32 sector_no, u32 numsectors, void *out) {
 	sdmmc_send_command(18, sector_no & 0xffff, (sector_no >> 16));
 	if(sdmmc_timeout) {
 		sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
-		return 1;
+		fifoSendValue32(FIFO_SDMMC, 1);
 	}
-
-	ret = wait_irqhandlerfinish();
-
-	sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
-
-	return ret;
 }
 
 //---------------------------------------------------------------------------------
-int sdmmc_sdcard_writesector(u32 sector_no, void *in) {
+void sdmmc_sdcard_writesector(u32 sector_no, void *in) {
 //---------------------------------------------------------------------------------
 	u16 *in16 = (u16*)in;
-	int ret;
+//	int ret;
 
 	if(!sdmmc_sdhc)
 		sector_no *= 512;
@@ -439,21 +432,15 @@ int sdmmc_sdcard_writesector(u32 sector_no, void *in) {
 	sdmmc_send_command(24, sector_no & 0xffff, (sector_no >> 16));
 	if(sdmmc_timeout) {
 		sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
-		return 1;
+		fifoSendValue32(FIFO_SDMMC, 1);
 	}
 
-	ret = wait_irqhandlerfinish();
-
-	sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
-
-	return ret;
 }
 
 //---------------------------------------------------------------------------------
-int sdmmc_sdcard_writesectors(u32 sector_no, u32 numsectors, void *in) {
+void sdmmc_sdcard_writesectors(u32 sector_no, u32 numsectors, void *in) {
 //---------------------------------------------------------------------------------
 	u16 *in16 = (u16*)in;
-	int ret;
 
 	if(numsectors==1) {
 		return sdmmc_sdcard_writesector(sector_no, in);
@@ -476,13 +463,61 @@ int sdmmc_sdcard_writesectors(u32 sector_no, u32 numsectors, void *in) {
 	sdmmc_send_command(25, sector_no & 0xffff, (sector_no >> 16));
 	if(sdmmc_timeout) {
 		sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
-		return 1;
+		fifoSendValue32(FIFO_SDMMC, 1);
 	}
-
-	ret = wait_irqhandlerfinish();
-
-	sdmmc_mask16(REG_SDCLKCTL, 0x100, 0);
-
-	return ret;
 }
+
+//---------------------------------------------------------------------------------
+void sdmmcMsgHandler(int bytes, void *user_data) {
+//---------------------------------------------------------------------------------
+	FifoMessage msg;
+	int retval;
+
+	fifoGetDatamsg(FIFO_SDMMC, bytes, (u8*)&msg);
+	
+	switch (msg.type) {
+
+	case SDMMC_SD_READ_SECTORS:
+		sdmmc_sdcard_readsectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
+		break;
+	case SDMMC_SD_WRITE_SECTORS:
+		sdmmc_sdcard_writesectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
+		break;
+	
+	}
+}
+
+//---------------------------------------------------------------------------------
+void sdmmcValueHandler(u32 value, void* user_data) {
+//---------------------------------------------------------------------------------
+	int result;
+	
+	switch(value) {
+
+	case SDMMC_HAVE_SD:
+		result = sdmmc_read16(REG_SDSTATUS0);
+		fifoSendValue32(FIFO_SDMMC, result);
+		break;
+
+	case SDMMC_SD_START:
+		if (sdmmc_read16(REG_SDSTATUS0) == 0) {
+			result = 1;
+		} else {
+			sdmmc_controller_init();
+			result = sdmmc_sdcard_init();
+		}
+		fifoSendValue32(FIFO_SDMMC, result);
+		break;
+
+	case SDMMC_SD_IS_INSERTED:
+		result = sdmmc_cardinserted();
+		fifoSendValue32(FIFO_SDMMC, result);
+		break;
+
+	case SDMMC_SD_STOP:
+		break;
+
+	}
+}
+
 

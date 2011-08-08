@@ -14,9 +14,9 @@ typedef enum {
    FIFO_SYSTEM	= 2,	/*!< \brief fifo channel reserved for system functions. */
    FIFO_MAXMOD	= 3,	/*!< \brief fifo channel reserved for the maxmod library. */
    FIFO_DSWIFI	= 4,	/*!< \brief fifo channel reserved for the dswifi library. */
-   FIFO_RSVD_01	= 5,	/*!< \brief fifo channel reserved for future use. */
-   FIFO_RSVD_02 = 6,	/*!< \brief fifo channel reserved for future use. */
-   FIFO_RSVD_03 = 7,	/*!< \brief fifo channel reserved for future use. */
+   FIFO_SDMMC	= 5,	/*!< \brief fifo channel reserved for dsi sdmmc control. */
+   FIFO_RSVD_01 = 6,	/*!< \brief fifo channel reserved for future use. */
+   FIFO_RSVD_02 = 7,	/*!< \brief fifo channel reserved for future use. */
    FIFO_USER_01	= 8,	/*!< \brief fifo channel available for users. */
    FIFO_USER_02	= 9,	/*!< \brief fifo channel available for users. */
    FIFO_USER_03	= 10,	/*!< \brief fifo channel available for users. */
@@ -49,13 +49,15 @@ typedef enum {
 	SYS_REQ_TOUCH,
 	SYS_REQ_KEYS,
 	SYS_REQ_TIME,
-	SYS_SET_TIME,
-	SYS_HAVE_SD,
-	SYS_SD_START,
-	SYS_SD_IS_INSERTED,
-	SYS_SD_STOP
+	SYS_SET_TIME
 } FifoSystemCommands;
 
+typedef enum {
+	SDMMC_HAVE_SD,
+	SDMMC_SD_START,
+	SDMMC_SD_IS_INSERTED,
+	SDMMC_SD_STOP
+} FifoSdmmcCommands;
 
 //! Enum values for the fifo power management commands.
 typedef enum {

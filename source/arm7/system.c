@@ -128,67 +128,15 @@ int sleepEnabled(void) {
 	return sleepIsEnabled;
 }
 
-//---------------------------------------------------------------------------------
-void systemMsgHandler(int bytes, void *user_data) {
-//---------------------------------------------------------------------------------
-	FifoMessage msg;
-	int retval;
-
-	fifoGetDatamsg(FIFO_SYSTEM, bytes, (u8*)&msg);
-	
-	switch (msg.type) {
-
-	case SYS_SD_READ_SECTORS:
-		retval = sdmmc_sdcard_readsectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
-		fifoSendValue32(FIFO_SYSTEM, retval);
-		break;
-	case SYS_SD_WRITE_SECTORS:
-		retval = sdmmc_sdcard_writesectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
-		fifoSendValue32(FIFO_SYSTEM, retval);
-		break;
-	
-	}
-}
-
-//---------------------------------------------------------------------------------
-void systemValueHandler(u32 value, void* user_data) {
-//---------------------------------------------------------------------------------
-	int result;
-	
-	switch(value) {
-
-	case SYS_HAVE_SD:
-		result = sdmmc_read16(REG_SDSTATUS0);
-		fifoSendValue32(FIFO_SYSTEM, result);
-		break;
-
-	case SYS_SD_START:
-		if (sdmmc_read16(REG_SDSTATUS0) == 0) {
-			result = 1;
-		} else {
-			sdmmc_controller_init();
-			result = sdmmc_sdcard_init();
-		}
-		fifoSendValue32(FIFO_SYSTEM, result);
-		break;
-
-	case SYS_SD_IS_INSERTED:
-		result = sdmmc_cardinserted();
-		fifoSendValue32(FIFO_SYSTEM, result);
-		break;
-
-	case SYS_SD_STOP:
-		break;
-
-	}
-}
+void sdmmcMsgHandler(int bytes, void *user_data);
+void sdmmcValueHandler(u32 value, void* user_data);
 
 //---------------------------------------------------------------------------------
 void installSystemFIFO(void) {
 //---------------------------------------------------------------------------------
 	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
-	fifoSetValue32Handler(FIFO_SYSTEM, systemValueHandler, 0);
-	fifoSetDatamsgHandler(FIFO_SYSTEM, systemMsgHandler, 0);
+	fifoSetValue32Handler(FIFO_SDMMC, sdmmcValueHandler, 0);
+	fifoSetDatamsgHandler(FIFO_SDMMC, sdmmcMsgHandler, 0);
 }
 
 

@@ -9,15 +9,15 @@ bool sdio_Startup() {
 //---------------------------------------------------------------------------------
 	if (!REG_DSIMODE) return false;
 
-	fifoSendValue32(FIFO_SYSTEM,SYS_HAVE_SD);
-	while(!fifoCheckValue32(FIFO_SYSTEM));
-	int result = fifoGetValue32(FIFO_SYSTEM);
+	fifoSendValue32(FIFO_SDMMC,SDMMC_HAVE_SD);
+	while(!fifoCheckValue32(FIFO_SDMMC));
+	int result = fifoGetValue32(FIFO_SDMMC);
 
 	if(result==0) return false;
 
-	fifoSendValue32(FIFO_SYSTEM,SYS_SD_START);
-	while(!fifoCheckValue32(FIFO_SYSTEM));
-	result = fifoGetValue32(FIFO_SYSTEM);
+	fifoSendValue32(FIFO_SDMMC,SDMMC_SD_START);
+	while(!fifoCheckValue32(FIFO_SDMMC));
+	result = fifoGetValue32(FIFO_SDMMC);
 	
 	return result == 0;
 }
@@ -27,9 +27,9 @@ bool sdio_IsInserted() {
 //---------------------------------------------------------------------------------
 	if (!REG_DSIMODE) return false;
 
-	fifoSendValue32(FIFO_SYSTEM,SYS_SD_IS_INSERTED);
-	while(!fifoCheckValue32(FIFO_SYSTEM));
-	int result = fifoGetValue32(FIFO_SYSTEM);
+	fifoSendValue32(FIFO_SDMMC,SDMMC_SD_IS_INSERTED);
+	while(!fifoCheckValue32(FIFO_SDMMC));
+	int result = fifoGetValue32(FIFO_SDMMC);
 	return result == 1;
 }
 
@@ -41,16 +41,16 @@ bool sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 
 	DC_FlushRange(buffer,numSectors * 512);
 
-	msg.type = SYS_SD_READ_SECTORS;
+	msg.type = SDMMC_SD_READ_SECTORS;
 	msg.sdParams.startsector = sector;
 	msg.sdParams.numsectors = numSectors;
 	msg.sdParams.buffer = buffer;
 	
-	fifoSendDatamsg(FIFO_SYSTEM, sizeof(msg), (u8*)&msg);
+	fifoSendDatamsg(FIFO_SDMMC, sizeof(msg), (u8*)&msg);
 
-	while(!fifoCheckValue32(FIFO_SYSTEM));
+	while(!fifoCheckValue32(FIFO_SDMMC));
 
-	int result = fifoGetValue32(FIFO_SYSTEM);
+	int result = fifoGetValue32(FIFO_SDMMC);
 	
 	return result == 0;
 }
@@ -63,16 +63,16 @@ bool sdio_WriteSectors(sec_t sector, sec_t numSectors,const void* buffer) {
 
 	DC_FlushRange(buffer,numSectors * 512);
 
-	msg.type = SYS_SD_WRITE_SECTORS;
+	msg.type = SDMMC_SD_WRITE_SECTORS;
 	msg.sdParams.startsector = sector;
 	msg.sdParams.numsectors = numSectors;
 	msg.sdParams.buffer = (void*)buffer;
 	
-	fifoSendDatamsg(FIFO_SYSTEM, sizeof(msg), (u8*)&msg);
+	fifoSendDatamsg(FIFO_SDMMC, sizeof(msg), (u8*)&msg);
 
-	while(!fifoCheckValue32(FIFO_SYSTEM));
+	while(!fifoCheckValue32(FIFO_SDMMC));
 
-	int result = fifoGetValue32(FIFO_SYSTEM);
+	int result = fifoGetValue32(FIFO_SDMMC);
 	
 	return result == 0;
 }
