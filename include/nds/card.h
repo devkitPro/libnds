@@ -57,7 +57,7 @@
 #define EEPROM_WREN	0x06
 #define EEPROM_RDID 0x9f
 
-// ROMCTRL register:
+// REG_ROMCTRL:
 
 #define CARD_ACTIVATE     (1<<31)           // when writing, get the ball rolling
 #define CARD_WR           (1<<30)           // Card write enable
@@ -90,7 +90,9 @@
 #define CARD_CMD_DATA_READ      0xB7
 #define CARD_CMD_DATA_CHIPID    0xB8
 
+//REG_AUXSPICNT
 #define CARD_ENABLE			(1<<15)
+#define CARD_SPI_ENABLE		(1<<13)
 #define CARD_SPI_BUSY		(1<<7)
 #define CARD_SPI_HOLD		(1<<6)
 
