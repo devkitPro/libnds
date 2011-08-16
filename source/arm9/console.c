@@ -597,6 +597,7 @@ static void newRow() {
 void consolePrintChar(char c) {
 //---------------------------------------------------------------------------------
 	if (c==0) return;
+	if(currentConsole->fontBgMap == 0) return;
 
 	if(currentConsole->PrintChar)
 		if(currentConsole->PrintChar(currentConsole, c))
