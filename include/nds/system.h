@@ -182,6 +182,14 @@ typedef struct sysVectors_t {
 
 extern sysVectors SystemVectors;
 
+// Helper functions for heap size
+//! returns current start of heap space
+u8* getHeapStart();
+//! returns current end of heap space
+u8* getHeapEnd();
+//! returns current heap limit
+u8* getHeapLimit();
+
 #endif //ARM9
 
 //--------------------------------------------------------------
