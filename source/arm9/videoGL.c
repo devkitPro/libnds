@@ -822,7 +822,7 @@ void glColorTableEXT( int target, int empty1, uint16 width, int empty2, int empt
 			
 			// copy straight to VRAM, and assign a palette name
 			uint32 tempVRAM = vramSetBanks_EFG( VRAM_E_LCD, VRAM_F_LCD, VRAM_G_LCD );
-			swiCopy( table, palette->vramAddr, ( width >> 1 ) | COPY_MODE_WORD );
+			swiCopy( table, palette->vramAddr, width | COPY_MODE_HWORD );
 			vramRestoreBanks_EFG( tempVRAM );
 
 			if( glGlob->deallocPalSize )
@@ -838,6 +838,35 @@ void glColorTableEXT( int target, int empty1, uint16 width, int empty2, int empt
 	}
 }
 
+//---------------------------------------------------------------------------------
+// glColorSubTableEXT loads a 15-bit color
+//  format palette into a specific spot in
+//  a currently bound texture's existing palette
+//---------------------------------------------------------------------------------
+void glColorSubTableEXT( int target, int start, int count, int empty1, int empty2, const uint16* data ) {
+	if( count > 0 && glGlob->activePalette ) {
+		gl_palette_data *palette = (gl_palette_data*)DynamicArrayGet( &glGlob->palettePtrs, glGlob->activePalette );
+		if( start >= 0 && ( start + count ) <= ( palette->palSize >> 1 ) ) {
+			uint32 tempVRAM = vramSetBanks_EFG( VRAM_E_LCD, VRAM_F_LCD, VRAM_G_LCD );
+			swiCopy( data, palette->vramAddr + ( start << 1 ), count | COPY_MODE_HWORD );
+			vramRestoreBanks_EFG( tempVRAM );
+		}
+	}
+}
+
+//---------------------------------------------------------------------------------
+// glGetColorTableEXT retrieves a 15-bit color
+//  format palette from the palette memory
+//  of the currently bound texture
+//---------------------------------------------------------------------------------
+void glGetColorTableEXT( int target, int empty1, int empty2, uint16* table ) {
+	if( glGlob->activePalette ) {
+		gl_palette_data *palette = (gl_palette_data*)DynamicArrayGet( &glGlob->palettePtrs, glGlob->activePalette );
+		uint32 tempVRAM = vramSetBanks_EFG( VRAM_E_LCD, VRAM_F_LCD, VRAM_G_LCD );
+		swiCopy( palette->vramAddr, table, palette->palSize >> 1 | COPY_MODE_HWORD );
+		vramRestoreBanks_EFG( tempVRAM );
+	}
+}
  
 //---------------------------------------------------------------------------------
 // nglAssignColorTable sets the active texture
@@ -895,6 +924,8 @@ void* glGetTexturePointer(	int name ) {
 }
 
 //---------------------------------------------------------------------------------
+//glGetTexParameter retrieves the currently bound texture's format
+//---------------------------------------------------------------------------------
 u32 glGetTexParameter() {
 //---------------------------------------------------------------------------------
 	if( glGlob->activeTexture ) {
@@ -904,6 +935,24 @@ u32 glGetTexParameter() {
 	return 0;
 }
 
+//---------------------------------------------------------------------------------
+//glGetColorTableParameterEXT retrieves information
+//  pertaining to the currently bound texture's palette
+//---------------------------------------------------------------------------------
+void glGetColorTableParameterEXT( int target, int pname, int * params ) {
+//---------------------------------------------------------------------------------
+	if( glGlob->activePalette ) {
+		gl_palette_data *pal = (gl_palette_data*)DynamicArrayGet( &glGlob->palettePtrs, glGlob->activePalette );
+		if( pname == GL_COLOR_TABLE_FORMAT_EXT )
+			*params =  pal->addr;
+		else if( pname == GL_COLOR_TABLE_WIDTH_EXT )
+			*params = pal->palSize >> 1;
+		else
+			*params = -1;
+	} else
+		*params = -1;
+
+}
 
 //---------------------------------------------------------------------------------
 // Similer to glTextImage2D from gl it takes a pointer to data

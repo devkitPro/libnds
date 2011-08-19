@@ -238,6 +238,13 @@ typedef enum {
 	GL_RGB        = 8  /*!< 15 bit direct color, manually sets alpha bit to 1 */
 } GL_TEXTURE_TYPE_ENUM;
 
+/*! \brief Enums for texture palette data retrieval
+related functions: glGetColorTableParameterEXT() */
+enum GL_TEXTURE_PALETTE_PARAM_ENUM {
+	GL_COLOR_TABLE_FORMAT_EXT	= 0, /*!< Retrieve the palette address in memory */
+	GL_COLOR_TABLE_WIDTH_EXT	= 1  /*!< Retrieve the size of the palette */
+};
+
 /*! \brief 3D Display Control Register Enums<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A><BR>
 related functions: glEnable(), glDisable(), glInit() */
@@ -437,6 +444,22 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 \param table pointer to the palette data to load (if NULL, then palette is removed from currently bound texture)*/
 void glColorTableEXT(int target, int empty1, uint16 width, int empty2, int empty3, const uint16* table);
 
+/*! \brief glColorSubTableEXT loads a 15-bit color format palette into a specific spot in a currently bound texture's existing palette
+\param target ignored, only here for OpenGL compatability
+\param start the starting index that new palette data will be written to
+\param count the number of entries to write
+\param empty1 ignored, only here for OpenGL compatability
+\param empty2 ignored, only here for OpenGL compatability
+\param data pointer to the palette data to load */
+void glColorSubTableEXT( int target, int start, int count, int empty1, int empty2, const uint16* data );
+
+/*! \brief glGetColorTableEXT retrieves a 15-bit color format palette from the palette memory of the currently bound texture
+\param target ignored, only here for OpenGL compatability
+\param empty1 ignored, only here for OpenGL compatability
+\param empty2 ignored, only here for OpenGL compatability
+\param table pointer to where palette data will be written to */
+void glGetColorTableEXT( int target, int empty1, int empty2, uint16* table );
+
 /*! \brief glAssignColorTable sets the active texture with a palette set with another texture
 \param target ignored, only here for OpenGL compatability (not really, since this isn't in OpenGL)
 \param name the name(int value) of the texture to load a palette from */
@@ -449,6 +472,12 @@ void glTexParameter(int target, int param);
 
 /*! \brief Returns the active texture parameter (constructed from internal call to glTexParameter) */
 u32 glGetTexParameter(void);
+
+/* \brief glGetColorTableParameterEXT retrieves information pertaining to the currently bound texture's palette
+\param target ignored, only here for OpenGL compatibility
+\param pname a parameter of type GL_TEXTURE_PALETTE_PARAM_ENUM, used to read a specific attribute into params
+\param params the destination for the attribute to read into */
+void glGetColorTableParameterEXT( int target, int pname, int * params );
 
 /*! \brief returns the address alocated to the texure named by name
 \param name the name of the texture to get a pointer to */
