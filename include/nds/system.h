@@ -107,6 +107,10 @@ typedef enum
 */
 void systemSleep(void);
 
+/*!	Set the LED blink mode
+	\param bm What to power on.
+*/
+void ledBlink(int bm);
 
 
 //--------------------------------------------------------------
@@ -129,12 +133,6 @@ void powerOn(int bits);
 	\param bits What to power on.
 */
 void powerOff(int bits);
-
-//!	Set the LED blink mode
-/*!	Arm9 only
-	\param bm What to power on.
-*/
-void ledBlink(int bm);
 
 //internal fifo handlers
 void systemMsgHandler(int bytes, void* user_data);

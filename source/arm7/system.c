@@ -46,10 +46,7 @@ void powerValueHandler(u32 value, void* user_data) {
 	switch(value & 0xFFFF0000) {
 		//power control
 	case PM_REQ_LED:
-		temp = readPowerManagement(PM_CONTROL_REG);
-		temp &= ~(3 << 4); //clear led bits
-		temp |= value & 0xFF;
-		writePowerManagement(PM_CONTROL_REG, temp);
+		ledBlink(value);
 		break;
 	case PM_REQ_ON:
 		temp = readPowerManagement(PM_CONTROL_REG);
@@ -134,6 +131,7 @@ void sdmmcValueHandler(u32 value, void* user_data);
 //---------------------------------------------------------------------------------
 void installSystemFIFO(void) {
 //---------------------------------------------------------------------------------
+
 	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
 	fifoSetValue32Handler(FIFO_SDMMC, sdmmcValueHandler, 0);
 	fifoSetDatamsgHandler(FIFO_SDMMC, sdmmcMsgHandler, 0);

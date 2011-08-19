@@ -82,9 +82,9 @@ typedef enum {
 
 //! Power Management LED blink mode control bits.
 typedef enum {
-	PM_LED_ON		=(0<<4),	/*!< \brief  Steady on */
-	PM_LED_SLEEP	=(1<<4),	/*!< \brief Blinking, mostly off */
-	PM_LED_BLINK	=(3<<4),	/*!< \brief Blinking, mostly on */
+	PM_LED_ON		=0,	/*!< \brief  Steady on */
+	PM_LED_SLEEP	=1,	/*!< \brief Blinking, mostly off */
+	PM_LED_BLINK	=3,	/*!< \brief Blinking, mostly on */
 }PM_LedBlinkMode;
 
 

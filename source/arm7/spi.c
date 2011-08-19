@@ -25,6 +25,7 @@
 
 #include <nds/arm7/serial.h>
 #include <nds/interrupts.h>
+#include <nds/system.h>
 
 //---------------------------------------------------------------------------------
 int writePowerManagement(int reg, int command) {
@@ -77,5 +78,14 @@ void readFirmware(u32 address, void * destination, u32 size) {
 
 	REG_SPICNT = 0;
 	leaveCriticalSection(oldIME);
+}
+
+//---------------------------------------------------------------------------------
+void ledBlink(int value) {
+//---------------------------------------------------------------------------------
+	u32 temp = readPowerManagement(PM_CONTROL_REG);
+	temp &= ~(3 << 4); //clear led bits
+	temp |= ((value & 3)<<4);
+	writePowerManagement(PM_CONTROL_REG, temp);
 }
 
