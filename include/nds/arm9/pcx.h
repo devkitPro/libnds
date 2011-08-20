@@ -59,6 +59,7 @@ extern "C" {
 /*! \brief Loads an image structure with data from PCX formatted data
 	\param pcx a pointer to the pcx file loaded into memory
 	\param image the image structure to fill in (the loader will allocate room for the palette and pixel data)
+	\return 1 on success, 0 on failure
 */
 int loadPCX(const unsigned char* pcx, sImage* image);
 

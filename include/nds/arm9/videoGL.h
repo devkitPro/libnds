@@ -432,7 +432,8 @@ void glRotatef32i(int angle, int x, int y, int z);
 \param sizeY the vertical size of the texture; valid sizes are enumerated in GL_TEXTURE_TYPE_ENUM
 \param empty2 not used, just here for OpenGL compatibility
 \param param parameters for the texture
-\param texture pointer to the texture data to load */
+\param texture pointer to the texture data to load
+\return 1 on success, 0 on failure*/
 int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, int param, const void* texture);
 
 /*! \brief glColorTableEXT loads a 15-bit color format palette into palette memory, and sets it to the currently bound texture (can be used to remove also)
@@ -490,12 +491,14 @@ void glBindTexture(int target, int name);
 
 /*! \brief Creates room for the specified number of textures
 \param n the number of textures to generate
-\param names pointer to the names array to fill */
+\param names pointer to the names array to fill
+\return 1 on success, 0 on failure*/
 int glGenTextures(int n, int *names);
 
 /*! \brief Deletes the specified number of textures (and associated palettes)
 \param n the number of textures to delete
-\param names pointer to the names array to empty */
+\param names pointer to the names array to empty
+\return 1 on success, 0 on failure*/
 int glDeleteTextures(int n, int *names);
 
 /*! \brief Resets the gl texture state freeing all texture and texture palette memory */
@@ -525,16 +528,19 @@ gl_hidden_globals* glGetGlobals();
 
 
 GL_STATIC_INL
-/*! \fn  u32 POLY_ALPHA(int n)
+/*! \fn  u32 POLY_ALPHA(u32 n)
 \brief used in glPolyFmt() to set the alpha level for the following polygons, set to 0 for wireframe mode
-\param n the level of alpha (0-31) */
- u32 POLY_ALPHA(int n) { return (u32)((n) << 16); };
+\param n the level of alpha (0-31)
+\return value for hw register*/
+ u32 POLY_ALPHA(u32 n) { return (u32)((n) << 16); };
 
 GL_STATIC_INL
-/*! \fn  int POLY_ID(int n)
+/*! \fn  u32 POLY_ID(u32 n)
 \brief used in glPolyFmt() to set the Polygon ID for the following polygons
-\param n the ID to set for following polygons (0-63) */
- u32 POLY_ID(int n) { return (u32)((n)<<24); };
+\param n the ID to set for following polygons (0-63)
+\return value for hw register
+*/
+ u32 POLY_ID(u32 n) { return (u32)((n)<<24); };
 
 GL_STATIC_INL
 /*! \fn  void glBegin(GL_GLBEGIN_ENUM mode)

@@ -683,7 +683,7 @@ int glGenTextures(int n, int *names) {
 //	glDeleteTextures deletes integer names from your table
 //	takes n as the number of textures to delete and 
 //	a pointer to the names array that it needs to remove.
-//  Returns 1 if succesful and 0 if out of texture names
+//  Returns 1 if successful and 0 if out of texture names
 //---------------------------------------------------------------------------------
 
 int glDeleteTextures( int n, int *names ) {

@@ -44,7 +44,7 @@ typedef struct RGB_24
 	unsigned char r;	//!< 8 bits for the red value.
 	unsigned char g;	//!< 8 bits for the green value.
 	unsigned char b;	//!< 8 bits for the blue value.
-}__attribute__ ((packed)) RGB_24;
+} __attribute__ ((packed)) RGB_24;
 
 
 
