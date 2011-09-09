@@ -493,7 +493,15 @@ typedef enum
 	MODE_FB2	 = (0x000A0000), /**< \brief  video display directly from VRAM_C in LCD mode */
 	MODE_FB3	 = (0x000E0000)  /**< \brief  video display directly from VRAM_D in LCD mode */
 }VideoMode;
+/** \enum  ExtPaletteType
+* \brief The allowed external palette types <br>
 
+*/
+typedef enum
+{
+  EXT_PALETTE_BG = (1 << 30),/**< \brief  Used to enable/disable extended background palettes */
+  EXT_PALETTE_SPR = (1 << 31) /**< \brief   Used to enable/disable extended sprite palettes */
+}ExtPaletteType;
 // main display only
 
 #define DISPLAY_SPR_HBLANK			(1 << 23)
@@ -622,7 +630,113 @@ void setBackdropColorSub(const u16 color)
 }
 
 
+static inline
+/** \brief  Enable extended palettes
+  
+  When extended palettes are enabled all tiled backgrounds which utilize 
+  16 bit map entries will use extended palettes.  Everything else will continue
+  to use standard palette memory.
 
+  Each tile on the screen may chose one of 16 256-color palettes.  Each background 
+  has its own set of 16 palettes meaning you can have 4*16*256 colors on screen 
+
+  Each background uses 8K of palette memory starting at the base of the vram bank
+  you allocate (which bank is up to you within limits, see the vram usage table
+  to determine which banks can be mapped for textures).  These 8K blocks are often
+  refered to as "slots" with each background getting its own slot.  
+
+   By default, Background 0 uses slot 0 ... Background 3 uses slot 3.  It is possible
+   to assign Background 0 to slot 2 and Background 1 to slot 3 (only these two are configurable)
+  
+  For more information: <a href="http://nocash.emubase.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
+  
+	\param paletteType the extended palette to enable, may be either EXT_PALETTE_BG or EXT_PALETTE_SPR (or both ORed together)
+*/
+void paletteExtEnable(ExtPaletteType palette) 
+{ 
+  REG_DISPCNT |= palette; 
+}
+
+static inline
+/** \brief  Enable extended palettes
+ 
+  When extended palettes are enabled all tiled backgrounds which utilize 
+  16 bit map entries will use extended palettes.  Everything else will continue
+  to use standard palette memory.
+
+  Each tile on the screen may chose one of 16 256-color palettes.  Each background 
+  has its own set of 16 palettes meaning you can have 4*16*256 colors on screen 
+
+  Each background uses 8K of palette memory starting at the base of the vram bank
+  you allocate (which bank is up to you within limits, see the vram usage table
+  to determine which banks can be mapped for textures).  These 8K blocks are often
+  refered to as "slots" with each background getting its own slot.  
+
+   By default, Background 0 uses slot 0 ... Background 3 uses slot 3.  It is possible
+   to assign Background 0 to slot 2 and Background 1 to slot 3 (only these two are configurable)
+  
+  For more information: <a href="http://nocash.emubase.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
+
+	\param paletteType the extended palette to enable, may be either EXT_PALETTE_BG or EXT_PALETTE_SPR (or both ORed together)
+*/
+void paletteExtEnableSub(ExtPaletteType palette) 
+{ 
+  REG_DISPCNT_SUB |= palette; 
+}
+
+static inline
+/** \brief  Disable extended palettes
+ 
+  When extended palettes are enabled all tiled backgrounds which utilize 
+  16 bit map entries will use extended palettes.  Everything else will continue
+  to use standard palette memory.
+
+  Each tile on the screen may chose one of 16 256-color palettes.  Each background 
+  has its own set of 16 palettes meaning you can have 4*16*256 colors on screen 
+
+  Each background uses 8K of palette memory starting at the base of the vram bank
+  you allocate (which bank is up to you within limits, see the vram usage table
+  to determine which banks can be mapped for textures).  These 8K blocks are often
+  refered to as "slots" with each background getting its own slot.  
+
+   By default, Background 0 uses slot 0 ... Background 3 uses slot 3.  It is possible
+   to assign Background 0 to slot 2 and Background 1 to slot 3 (only these two are configurable)
+  
+  For more information: <a href="http://nocash.emubase.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
+
+\param paletteType the extended palette to enable, may be either EXT_PALETTE_BG or EXT_PALETTE_SPR (or both ORed together)
+*/
+void paletteExtDisable(ExtPaletteType palette) 
+{ 
+  REG_DISPCNT &= ~palette; 
+}
+
+static inline
+/** \brief  Disable extended palettes
+ 
+  When extended palettes are enabled all tiled backgrounds which utilize 
+  16 bit map entries will use extended palettes.  Everything else will continue
+  to use standard palette memory.
+
+  Each tile on the screen may chose one of 16 256-color palettes.  Each background 
+  has its own set of 16 palettes meaning you can have 4*16*256 colors on screen 
+
+  Each background uses 8K of palette memory starting at the base of the vram bank
+  you allocate (which bank is up to you within limits, see the vram usage table
+  to determine which banks can be mapped for textures).  These 8K blocks are often
+  refered to as "slots" with each background getting its own slot.  
+
+   By default, Background 0 uses slot 0 ... Background 3 uses slot 3.  It is possible
+   to assign Background 0 to slot 2 and Background 1 to slot 3 (only these two are configurable)
+  
+  For more information: <a href="http://nocash.emubase.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
+
+\param paletteType the extended palette to enable, may be either EXT_PALETTE_BG or EXT_PALETTE_SPR (or both ORed together)
+*/
+void paletteExtDisableSub(ExtPaletteType palette) 
+{ 
+  REG_DISPCNT_SUB &= ~palette; 
+}
 
 #define REG_MASTER_BRIGHT     (*(vu16*)0x0400006C)
 #define REG_MASTER_BRIGHT_SUB (*(vu16*)0x0400106C)
