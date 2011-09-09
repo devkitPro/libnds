@@ -1023,7 +1023,108 @@ void bgSetAffineMatrixScroll(int id, int hdx, int vdx, int hdy, int vdy, int scr
 	bgState[id].dirty = false;
 }
 
+static inline
+/** \brief  Enable extended palettes
+  
+  When extended palettes are enabled all tiled backgrounds which utilize 
+  16 bit map entries will use extended palettes.  Everything else will continue
+  to use standard palette memory.
 
+  Each tile on the screen may chose one of 16 256-color palettes.  Each background 
+  has its own set of 16 palettes meaning you can have 4*16*256 colors on screen 
+
+  Each background uses 8K of palette memory starting at the base of the vram bank
+  you allocate (which bank is up to you within limits, see the vram usage table
+  to determine which banks can be mapped for textures).  These 8K blocks are often
+  refered to as "slots" with each background getting its own slot.  
+
+   By default, Background 0 uses slot 0 ... Background 3 uses slot 3.  It is possible
+   to assign Background 0 to slot 2 and Background 1 to slot 3 (only these two are configurable)
+  
+  For more information: <a href="http://nocash.emubase.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
+ */
+void bgExtPaletteEnable(void) 
+{ 
+  REG_DISPCNT |= DISPLAY_BG_EXT_PALETTE; 
+}
+
+static inline
+/** \brief  Enable extended palettes
+ 
+  When extended palettes are enabled all tiled backgrounds which utilize 
+  16 bit map entries will use extended palettes.  Everything else will continue
+  to use standard palette memory.
+
+  Each tile on the screen may chose one of 16 256-color palettes.  Each background 
+  has its own set of 16 palettes meaning you can have 4*16*256 colors on screen 
+
+  Each background uses 8K of palette memory starting at the base of the vram bank
+  you allocate (which bank is up to you within limits, see the vram usage table
+  to determine which banks can be mapped for textures).  These 8K blocks are often
+  refered to as "slots" with each background getting its own slot.  
+
+   By default, Background 0 uses slot 0 ... Background 3 uses slot 3.  It is possible
+   to assign Background 0 to slot 2 and Background 1 to slot 3 (only these two are configurable)
+  
+  For more information: <a href="http://nocash.emubase.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
+
+*/
+void bgExtPaletteEnableSub(void) 
+{ 
+  REG_DISPCNT_SUB |= DISPLAY_BG_EXT_PALETTE; 
+}
+
+static inline
+/** \brief  Disable extended palettes
+ 
+  When extended palettes are enabled all tiled backgrounds which utilize 
+  16 bit map entries will use extended palettes.  Everything else will continue
+  to use standard palette memory.
+
+  Each tile on the screen may chose one of 16 256-color palettes.  Each background 
+  has its own set of 16 palettes meaning you can have 4*16*256 colors on screen 
+
+  Each background uses 8K of palette memory starting at the base of the vram bank
+  you allocate (which bank is up to you within limits, see the vram usage table
+  to determine which banks can be mapped for textures).  These 8K blocks are often
+  refered to as "slots" with each background getting its own slot.  
+
+   By default, Background 0 uses slot 0 ... Background 3 uses slot 3.  It is possible
+   to assign Background 0 to slot 2 and Background 1 to slot 3 (only these two are configurable)
+  
+  For more information: <a href="http://nocash.emubase.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
+
+*/
+void bgExtPaletteDisable(void) 
+{ 
+  REG_DISPCNT &= ~DISPLAY_BG_EXT_PALETTE; 
+}
+
+static inline
+/** \brief  Disable extended palettes
+ 
+  When extended palettes are enabled all tiled backgrounds which utilize 
+  16 bit map entries will use extended palettes.  Everything else will continue
+  to use standard palette memory.
+
+  Each tile on the screen may chose one of 16 256-color palettes.  Each background 
+  has its own set of 16 palettes meaning you can have 4*16*256 colors on screen 
+
+  Each background uses 8K of palette memory starting at the base of the vram bank
+  you allocate (which bank is up to you within limits, see the vram usage table
+  to determine which banks can be mapped for textures).  These 8K blocks are often
+  refered to as "slots" with each background getting its own slot.  
+
+   By default, Background 0 uses slot 0 ... Background 3 uses slot 3.  It is possible
+   to assign Background 0 to slot 2 and Background 1 to slot 3 (only these two are configurable)
+  
+  For more information: <a href="http://nocash.emubase.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
+
+*/
+void bgExtPaletteDisableSub(void) 
+{ 
+  REG_DISPCNT_SUB &= ~DISPLAY_BG_EXT_PALETTE; 
+}
 
 
 #ifdef __cplusplus
