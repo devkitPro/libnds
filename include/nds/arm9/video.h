@@ -720,8 +720,8 @@ void setBackdropColorSub(const u16 color)
 #define DCAP_SIZE_256x192 (3)
 #define DCAP_BANK_VRAM_A (0)
 #define DCAP_BANK_VRAM_B (1)
-#define DCAP_BANK_VRAM_C (1)
-#define DCAP_BANK_VRAM_D (2)
+#define DCAP_BANK_VRAM_C (2)
+#define DCAP_BANK_VRAM_D (3)
 
 
 // 3D core control
