@@ -78,7 +78,7 @@ void __attribute__((weak)) initSystem(void) {
 	irqInit();
 	fifoInit();
 
-	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
+	fifoSetValue32Handler(FIFO_SYSTEM, systemValueHandler, 0);
 	fifoSetDatamsgHandler(FIFO_SYSTEM, systemMsgHandler, 0);
 
 	if(REG_DSIMODE) {

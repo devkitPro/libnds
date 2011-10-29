@@ -61,7 +61,7 @@ void powerValueHandler(u32 value, void* user_data) {
 			
 		ie_save = REG_IE;
 		// Turn the speaker down.
-		swiChangeSoundBias(0,0x400);
+		if (REG_POWERCNT & 1) swiChangeSoundBias(0,0x400);
 		// Save current power state.
 		power = readPowerManagement(PM_CONTROL_REG);
 		// Set sleep LED.
@@ -82,7 +82,7 @@ void powerValueHandler(u32 value, void* user_data) {
 		writePowerManagement(PM_CONTROL_REG, power);
 
 		// Turn the speaker up.
-		swiChangeSoundBias(1,0x400); 
+		if (REG_POWERCNT & 1) swiChangeSoundBias(1,0x400); 
 
 		// update clock tracking
 		resyncClock();
@@ -116,7 +116,7 @@ void systemSleep(void) {
 //---------------------------------------------------------------------------------
 	if(!sleepIsEnabled) return;
 	//puts arm9 to sleep which then notifies arm7 above (which causes arm7 to sleep)
-	fifoSendValue32(FIFO_PM, PM_REQ_SLEEP);
+	fifoSendValue32(FIFO_SYSTEM, PM_REQ_SLEEP);
 }
 
 //---------------------------------------------------------------------------------
