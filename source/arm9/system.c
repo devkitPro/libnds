@@ -40,15 +40,28 @@ distribution.
 //todo document
 //
 
+static void(*SDcallback)(int)=NULL;
+
+//---------------------------------------------------------------------------------
+void setSDcallback(void(*callback)(int)) {
+//---------------------------------------------------------------------------------
+	SDcallback = callback;
+}
 
 //---------------------------------------------------------------------------------
 // Handle system requests from the arm7
 //---------------------------------------------------------------------------------
-void powerValueHandler(u32 value, void* data){
+void systemValueHandler(u32 value, void* data){
 //---------------------------------------------------------------------------------
 	switch(value) {
 	case PM_REQ_SLEEP:
 		systemSleep();
+		break;
+	case SDMMC_INSERT:
+		if(SDcallback) SDcallback(1);
+		break;
+	case SDMMC_REMOVE:
+		if(SDcallback) SDcallback(0);
 		break;
 	}
 }

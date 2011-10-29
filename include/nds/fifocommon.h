@@ -49,7 +49,9 @@ typedef enum {
 	SYS_REQ_TOUCH,
 	SYS_REQ_KEYS,
 	SYS_REQ_TIME,
-	SYS_SET_TIME
+	SYS_SET_TIME,
+	SDMMC_INSERT,
+	SDMMC_REMOVE
 } FifoSystemCommands;
 
 typedef enum {

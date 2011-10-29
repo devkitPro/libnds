@@ -136,7 +136,7 @@ void powerOff(int bits);
 
 //internal fifo handlers
 void systemMsgHandler(int bytes, void* user_data);
-void powerValueHandler(u32 value, void* data);
+void systemValueHandler(u32 value, void* data);
 
 //!	Switches the screens.
 static inline void lcdSwap(void) { REG_POWERCNT ^= POWER_SWAP_LCDS; }
@@ -181,6 +181,7 @@ typedef struct sysVectors_t {
 
 
 extern sysVectors SystemVectors;
+void setSDcallback(void(*callback)(int));
 
 // Helper functions for heap size
 //! returns current start of heap space
