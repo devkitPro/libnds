@@ -42,7 +42,7 @@
 	.arm
 
 	.global	__libnds_mpu_setup
-
+	.type	__libnds_mpu_setup STT_FUNC
 @---------------------------------------------------------------------------------
 __libnds_mpu_setup:
 @---------------------------------------------------------------------------------
@@ -211,8 +211,8 @@ dsimasks:
 
 masks:	.word	dsmasks
 
-	.global memCached, memUncached
-
+	.global memCached
+	.type	memCached STT_FUNC
 memCached:
 	ldr	r1,masks
 	ldr	r2,[r1],#4
@@ -221,6 +221,8 @@ memCached:
 	orr	r0,r0,r2
 	bx	lr
 
+	.global	memUncached
+	.type	memUncached STT_FUNC
 memUncached:
 	ldr	r1,masks
 	ldr	r2,[r1],#8

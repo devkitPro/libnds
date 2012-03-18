@@ -5,10 +5,10 @@
 @---------------------------------------------------------------------------------
 .equ FEATURE_MEDIUM_CANREAD,		0x00000001
 .equ FEATURE_MEDIUM_CANWRITE,		0x00000002
-.equ FEATURE_SLOT_GBA,				0x00000010
-.equ FEATURE_SLOT_NDS,				0x00000020
+.equ FEATURE_SLOT_GBA,			0x00000010
+.equ FEATURE_SLOT_NDS,			0x00000020
 
-.equ DLDI_ALLOCATED_SPACE,			32768
+.equ DLDI_ALLOCATED_SPACE,		32768
 
 _io_dldi_stub:
 
@@ -42,8 +42,8 @@ dldi_start:
 
 @---------------------------------------------------------------------------------
 @ DISC_INTERFACE data -- 32 bytes
-	.ascii	"DLDI"					@ ioType
-	.word	0x00000000				@ Features
+	.ascii	"DLDI"				@ ioType
+	.word	0x00000000			@ Features
 	.word	_DLDI_startup			@ 
 	.word	_DLDI_isInserted		@ 
 	.word	_DLDI_readSectors		@   Function pointers to standard device driver functions
