@@ -105,7 +105,7 @@ typedef short int v16;       /*!< \brief vertex 4.12 fixed format */
 #define f32tov16(n)          (n) /*!< \brief f32 to v16 */
 #define v16toint(n)          ((n) >> 12) /*!< \brief convert v16 to int */
 #define floattov16(n)        ((v16)((n) * (1 << 12))) /*!< \brief convert float to v16 */
-#define VERTEX_PACK(x,y)     (((x) & 0xFFFF) | ((y) << 16)) /*!< \brief Pack to v16 values into one 32bit value */
+#define VERTEX_PACK(x,y)     (u32)(((x) & 0xFFFF) | ((y) << 16)) /*!< \brief Pack to v16 values into one 32bit value */
 
 typedef short int v10;       /*!< \brief normal .10 fixed point, NOT USED FOR 10bit VERTEXES!!!*/
 #define inttov10(n)          ((n) << 9) /*!< \brief convert int to v10 */
