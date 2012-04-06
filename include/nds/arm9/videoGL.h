@@ -112,7 +112,7 @@ typedef short int v10;       /*!< \brief normal .10 fixed point, NOT USED FOR 10
 #define f32tov10(n)          ((v10)(n >> 3)) /*!< \brief convert f32 to v10 */
 #define v10toint(n)          ((n) >> 9) /*!< \brief convert v10 to int */
 #define floattov10(n)        ((n>.998) ? 0x1FF : ((v10)((n)*(1<<9)))) /*!< \brief convert float to v10 */
-#define NORMAL_PACK(x,y,z)   (((x) & 0x3FF) | (((y) & 0x3FF) << 10) | ((z) << 20)) /*!< \brief Pack 3 v10 normals into a 32bit value */
+#define NORMAL_PACK(x,y,z)   (u32)(((x) & 0x3FF) | (((y) & 0x3FF) << 10) | ((z) << 20)) /*!< \brief Pack 3 v10 normals into a 32bit value */
 
 //////////////////////////////////////////////////////////////////////
 
