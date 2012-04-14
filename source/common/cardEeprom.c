@@ -76,7 +76,7 @@ int cardEepromGetType(void) {
 	int sr = cardEepromCommand(EEPROM_RDSR);
 	int id = cardEepromReadID();
 	
-	if ( sr == 0xff && id == 0xffffff ) return -1;
+	if (( sr == 0xff && id == 0xffffff) || ( sr == 0 && id == 0 )) return -1;
 	if ( sr == 0xf0 && id == 0xffffff ) return 1;
 	if ( sr == 0x00 && id == 0xffffff ) return 2;
 	if ( id != 0xffffff) return 3;
