@@ -774,10 +774,10 @@ void setBackdropColorSub(const u16 color)
 
 #define GFX_BUSY (GFX_STATUS & BIT(27))
 
-#define GFX_VERTEX_RAM_USAGE	(*(u16*)  0x04000606)
-#define GFX_POLYGON_RAM_USAGE	(*(u16*)  0x04000604)
+#define GFX_VERTEX_RAM_USAGE	(*(vu16*)  0x04000606)
+#define GFX_POLYGON_RAM_USAGE	(*(vu16*)  0x04000604)
 
-#define GFX_CUTOFF_DEPTH		(*(u16*)0x04000610)
+#define GFX_CUTOFF_DEPTH		(*(vu16*)0x04000610)
 
 // Matrix processor control
 
