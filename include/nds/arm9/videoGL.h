@@ -580,9 +580,12 @@ GL_STATIC_INL
 \param x the x component for the vertex
 \param y the y component for the vertex
 \param z the z component for the vertex */
- void glVertex3v16(v16 x, v16 y, v16 z) {
+void glVertex3v16(v16 x, v16 y, v16 z) {
+	__asm volatile( "" ::: "memory" );
 	GFX_VERTEX16 = (y << 16) | (x & 0xFFFF);
+	__asm volatile( "" ::: "memory" );
 	GFX_VERTEX16 = z;
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -626,9 +629,13 @@ GL_STATIC_INL
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \param v the vector to translate by */
  void glScalev(const GLvector* v) {
+	__asm volatile( "" ::: "memory" );
 	MATRIX_SCALE = v->x;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_SCALE = v->y;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_SCALE = v->z;
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -637,9 +644,13 @@ GL_STATIC_INL
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \param v the vector to translate by */
  void glTranslatev(const GLvector* v) {
+	__asm volatile( "" ::: "memory" );
 	MATRIX_TRANSLATE = v->x;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_TRANSLATE = v->y;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_TRANSLATE = v->z;
+	__asm volatile( "" ::: "memory" );
 }
 
 // map old name to new name
@@ -653,9 +664,13 @@ GL_STATIC_INL
 \param y translation on the y axis
 \param z translation on the z axis */
  void glTranslatef32(int x, int y, int z) {
+	__asm volatile( "" ::: "memory" );
 	MATRIX_TRANSLATE = x;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_TRANSLATE = y;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_TRANSLATE = z;
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -666,9 +681,13 @@ GL_STATIC_INL
 \param y scaling on the y axis
 \param z scaling on the z axis */
  void glScalef32(int x, int y, int z) {
+	__asm volatile( "" ::: "memory" );
 	MATRIX_SCALE = x;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_SCALE = y;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_SCALE = z;
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -682,8 +701,11 @@ GL_STATIC_INL
 \param z the z component of the lights directional vector. Direction must be normalized */
  void glLight(int id, rgb color, v10 x, v10 y, v10 z) {
 	id = (id & 3) << 30;
+	__asm volatile( "" ::: "memory" );
 	GFX_LIGHT_VECTOR = id | ((z & 0x3FF) << 20) | ((y & 0x3FF) << 10) | (x & 0x3FF);
+	__asm volatile( "" ::: "memory" );
 	GFX_LIGHT_COLOR = id | color;
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -721,7 +743,7 @@ GL_STATIC_INL
 \brief Waits for a Vblank and swaps the buffers(like swiWaitForVBlank), but lets you specify some 3D options<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
 \param mode flags from GLFLUSH_ENUM for enabling Y-sorting of translucent polygons and W-Buffering of all vertices*/
-void glFlush(u32 mode) { GFX_FLUSH = mode; }
+void glFlush(u32 mode) { asm volatile("" ::: "memory"); GFX_FLUSH = mode; }
 
 GL_STATIC_INL
 /*! \fn  void glMaterialShinyness(void)
@@ -771,19 +793,31 @@ GL_STATIC_INL
 \brief Set the parameters for polygons rendered on the current frame<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes</A>
 \param params the paramters to set for the polygons for the current frame. valid paramters are enumerated in GL_POLY_FORMAT_ENUM and in the functions POLY_ALPHA() and POLY_ID() */
-void glPolyFmt(u32 params) { GFX_POLY_FORMAT = params; }
+void glPolyFmt(u32 params) {
+	__asm volatile( "" ::: "memory" );
+	GFX_POLY_FORMAT = params;
+	__asm volatile( "" ::: "memory" );
+}
 
 GL_STATIC_INL
 /*! \fn  void glEnable(int bits)
 \brief Enables various gl states (blend, alpha test, etc..)
 \param bits bit mask of desired attributes, attributes are enumerated in DISP3DCNT_ENUM */
-void glEnable(int bits) { GFX_CONTROL |= bits; }
+void glEnable(int bits) {
+	__asm volatile( "" ::: "memory" );
+	GFX_CONTROL |= bits;
+	__asm volatile( "" ::: "memory" );
+}
 
 GL_STATIC_INL
 /*! \fn   void glDisable(int bits)
 \brief Disables various gl states (blend, alpha test, etc..)
 \param bits bit mask of desired attributes, attributes are enumerated in DISP3DCNT_ENUM */
-void glDisable(int bits) { GFX_CONTROL &= ~bits; }
+void glDisable(int bits) {
+	__asm volatile( "" ::: "memory" );
+	GFX_CONTROL &= ~bits;
+	__asm volatile( "" ::: "memory" );
+}
 
 GL_STATIC_INL
 /*! \fn   void glFogShift(int shift)
@@ -791,7 +825,9 @@ GL_STATIC_INL
 \param shift FOG_SHIFT value; each entry of the fog table covers 0x400 >> FOG_SHIFT depth values */
 void glFogShift(int shift) { 
 	sassert(shift>=0 && shift<16,"glFogShift is out of range");
+	__asm volatile( "" ::: "memory" );
 	GFX_CONTROL = (GFX_CONTROL & 0xF0FF) | (shift<<8);
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -800,7 +836,9 @@ GL_STATIC_INL
 \param shift FOG_OFFSET value; fogging begins at this depth with a density of FOG_TABLE[0]*/
 void glFogOffset(int offset) { 
 	sassert(offset>=0 && offset<0x8000,"glFogOffset is out of range");
+	__asm volatile( "" ::: "memory" );
 	GFX_FOG_OFFSET = offset;
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -815,7 +853,9 @@ void glFogColor(uint8 red, uint8 green, uint8 blue, uint8 alpha) {
 	sassert(green<32,"glFogColor green is out of range");
 	sassert(blue<32,"glFogColor blue is out of range");
 	sassert(alpha<32,"glFogColor alpha is out of range");
+	__asm volatile( "" ::: "memory" );
 	GFX_FOG_COLOR = RGB15(red,green,blue) | (alpha << 16);
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -826,7 +866,9 @@ GL_STATIC_INL
 void glFogDensity(int index, int density) {
 	sassert(index>= 0 && index<32,"glFogDensity index is out of range");
 	sassert(index>= 0 && density<128,"glFogDensity density is out of range");
+	__asm volatile( "" ::: "memory" );
 	GFX_FOG_TABLE[index] = density;
+	__asm volatile( "" ::: "memory" );
 }
 
 
@@ -835,25 +877,42 @@ GL_STATIC_INL
 \brief Loads a 4x4 matrix into the current matrix
 \param m pointer to a 4x4 matrix */
 void glLoadMatrix4x4(const m4x4 *m) {
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x4 = m->m[0];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x4 = m->m[1];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x4 = m->m[2];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x4 = m->m[3];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_LOAD4x4 = m->m[4];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x4 = m->m[5];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x4 = m->m[6];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x4 = m->m[7];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_LOAD4x4 = m->m[8];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x4 = m->m[9];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x4 = m->m[10];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x4 = m->m[11];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_LOAD4x4 = m->m[12];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x4 = m->m[13];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x4 = m->m[14];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x4 = m->m[15];
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -861,20 +920,33 @@ GL_STATIC_INL
 \brief Loads a 4x3 matrix into the current matrix
 \param m pointer to a 4x4 matrix */
 void glLoadMatrix4x3(const m4x3 * m) {
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x3 = m->m[0];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x3 = m->m[1];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x3 = m->m[2];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x3 = m->m[3];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_LOAD4x3 = m->m[4];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x3 = m->m[5];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x3 = m->m[6];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x3 = m->m[7];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_LOAD4x3 = m->m[8];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x3 = m->m[9];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x3 = m->m[10];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_LOAD4x3 = m->m[11];
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -882,25 +954,42 @@ GL_STATIC_INL
 \brief Multiplies the current matrix by m
 \param m pointer to a 4x4 matrix */
 void glMultMatrix4x4(const m4x4 * m) {
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = m->m[0];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = m->m[1];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = m->m[2];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = m->m[3];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT4x4 = m->m[4];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = m->m[5];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = m->m[6];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = m->m[7];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT4x4 = m->m[8];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = m->m[9];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = m->m[10];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = m->m[11];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT4x4 = m->m[12];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = m->m[13];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = m->m[14];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = m->m[15];
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -908,20 +997,33 @@ GL_STATIC_INL
 \brief multiplies the current matrix by
 \param m pointer to a 4x3 matrix */
 void glMultMatrix4x3(const m4x3 * m) {
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = m->m[0];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = m->m[1];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = m->m[2];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = m->m[3];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT4x3 = m->m[4];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = m->m[5];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = m->m[6];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = m->m[7];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT4x3 = m->m[8];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = m->m[9];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = m->m[10];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = m->m[11];
+	__asm volatile( "" ::: "memory" );
 
 }
 
@@ -930,17 +1032,27 @@ GL_STATIC_INL
 \brief multiplies the current matrix by m
 \param m pointer to a 3x3 matrix */
 void glMultMatrix3x3(const m3x3 * m) {
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = m->m[0];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = m->m[1];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = m->m[2];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT3x3 = m->m[3];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = m->m[4];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = m->m[5];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT3x3 = m->m[6];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = m->m[7];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = m->m[8];
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -951,17 +1063,27 @@ void glRotateXi(int angle) {
 	int sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
 	int cosine = cosLerp(angle);//COS[angle & LUT_MASK];
 
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = inttof32(1);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = 0;
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT3x3 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = cosine;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = sine;
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT3x3 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = -sine;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = cosine;
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -972,17 +1094,27 @@ GL_STATIC_INL
 	int sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
 	int cosine = cosLerp(angle);//COS[angle & LUT_MASK];
 
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = cosine;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = -sine;
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT3x3 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = inttof32(1);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = 0;
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT3x3 = sine;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = cosine;
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -993,17 +1125,27 @@ void glRotateZi(int angle) {
 	int sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
 	int cosine = cosLerp(angle);//COS[angle & LUT_MASK];
 
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = cosine;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = sine;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = 0;
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT3x3 = - sine;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = cosine;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = 0;
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT3x3 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT3x3 = inttof32(1);
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -1016,25 +1158,42 @@ GL_STATIC_INL
 \param zNear near clipping plane
 \param zFar far clipping plane */
 void glOrthof32(int left, int right, int bottom, int top, int zNear, int zFar) {
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = divf32(inttof32(2), right - left);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = divf32(inttof32(2), top - bottom);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = divf32(inttof32(-2), zFar - zNear);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT4x4 = -divf32(right + left, right - left);//0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = -divf32(top + bottom, top - bottom); //0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = -divf32(zFar + zNear, zFar - zNear);//0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = floattof32(1.0F);
+	__asm volatile( "" ::: "memory" );
 }
 GL_STATIC_INL
 /*!  \fn void gluLookAtf32(int eyex, int eyey, int eyez, int lookAtx, int lookAty, int lookAtz, int upx, int upy, int upz)
@@ -1074,22 +1233,35 @@ void gluLookAtf32(int eyex, int eyey, int eyez, int lookAtx, int lookAty, int lo
 	glMatrixMode(GL_MODELVIEW);
 
 
+	__asm volatile( "" ::: "memory" );
 	// should we use MATRIX_MULT4x3?
 	MATRIX_MULT4x3 = side[0];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = up[0];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = forward[0];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT4x3 = side[1];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = up[1];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = forward[1];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT4x3 = side[2];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = up[2];
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = forward[2];
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT4x3 = -dotf32(eye,side);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = -dotf32(eye,up);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x3 = -dotf32(eye,forward);
+	__asm volatile( "" ::: "memory" );
 
 }
 
@@ -1104,25 +1276,42 @@ GL_STATIC_INL
 \param far Location of a the far clipping plane (parallel to viewing window) */
 void glFrustumf32(int left, int right, int bottom, int top, int near, int far) {
 
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = divf32(2*near, right - left);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = divf32(2*near, top - bottom);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT4x4 = divf32(right + left, right - left);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = divf32(top + bottom, top - bottom);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = -divf32(far + near, far - near);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = floattof32(-1.0F);
+	__asm volatile( "" ::: "memory" );
 
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = -divf32(2 * mulf32(far, near), far - near);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -1153,22 +1342,39 @@ GL_STATIC_INL
 \param height height in pixels of the window (3 or 4 is a good number)
 \param viewport the current viewport (normally {0, 0, 255, 191}) */
 void gluPickMatrix(int x, int y, int width, int height, const int viewport[4]) {
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = inttof32(viewport[2]) / width;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = inttof32(viewport[3]) / height;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = inttof32(1);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = inttof32(viewport[2] + ((viewport[0] - x)<<1)) / width;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = inttof32(viewport[3] + ((viewport[1] - y)<<1)) / height;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = 0;
+	__asm volatile( "" ::: "memory" );
 	MATRIX_MULT4x4 = inttof32(1);
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -1203,7 +1409,11 @@ GL_STATIC_INL
 \brief Specifies an edge color for polygons
 \param id which outline color to set (0-7)
 \param color the 15bit color to set */
-void glSetOutlineColor(int id, rgb color) { GFX_EDGE_TABLE[id] = color; }
+void glSetOutlineColor(int id, rgb color) {
+	__asm volatile( "" ::: "memory" );
+	GFX_EDGE_TABLE[id] = color;
+	__asm volatile( "" ::: "memory" );
+}
 
 GL_STATIC_INL
 /*! \fn void glSetToonTable(const uint16 *table)
@@ -1271,14 +1481,22 @@ GL_STATIC_INL
 \brief set the minimum alpha value that will be used<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
 \param alphaThreshold minimum alpha value that will be used (0-15) */
-void glAlphaFunc(int alphaThreshold) { GFX_ALPHA_TEST = alphaThreshold; }
+void glAlphaFunc(int alphaThreshold) {
+	__asm volatile( "" ::: "memory" );
+	GFX_ALPHA_TEST = alphaThreshold;
+	__asm volatile( "" ::: "memory" );
+}
 
 GL_STATIC_INL
 /*!  \fn  void glCutoffDepth(fixed12d3 wVal)
 \brief Stop the drawing of polygons that are a certain distance from the camera.<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
 \param wVal polygons that are beyond this W-value(distance from camera) will not be drawn; 15bit value. */
-void glCutoffDepth(fixed12d3 wVal) { GFX_CUTOFF_DEPTH = wVal; }
+void glCutoffDepth(fixed12d3 wVal) {
+	__asm volatile( "" ::: "memory" );
+	GFX_CUTOFF_DEPTH = wVal;
+	__asm volatile( "" ::: "memory" );
+}
 
 GL_STATIC_INL
 /*! \fn void glInit()
@@ -1295,7 +1513,9 @@ GL_STATIC_INL
 \param blue component (0-31)
 \param alpha from 0(clear) to 31(opaque)*/
 void glClearColor(uint8 red, uint8 green, uint8 blue, uint8 alpha) {
+	__asm volatile( "" ::: "memory" );
 	GFX_CLEAR_COLOR = glGlob->clearColor = ( glGlob->clearColor & 0xFFE08000) | (0x7FFF & RGB15(red, green, blue)) | ((alpha & 0x1F) << 16);
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -1303,7 +1523,9 @@ GL_STATIC_INL
 \brief sets the polygon ID of the rear-plane(a.k.a. Clear/Color Plane), useful for antialiasing and edge coloring
 \param ID the polygon ID to give the rear-plane */
 void glClearPolyID(uint8 ID) {
+	__asm volatile( "" ::: "memory" );
 	GFX_CLEAR_COLOR = glGlob->clearColor = ( glGlob->clearColor & 0xC0FFFFFF) | (( ID & 0x3F ) << 24 );
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -1395,9 +1617,13 @@ GL_STATIC_INL
 \param y scaling on the y axis
 \param z scaling on the z axis */
 void glScalef(float x, float y, float z) {
+	__asm volatile( "" ::: "memory" );
 	MATRIX_SCALE = floattof32(x);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_SCALE = floattof32(y);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_SCALE = floattof32(z);
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
@@ -1409,9 +1635,13 @@ GL_STATIC_INL
 \param y translation on the y axis
 \param z translation on the z axis */
 void glTranslatef(float x, float y, float z) {
+	__asm volatile( "" ::: "memory" );
 	MATRIX_TRANSLATE = floattof32(x);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_TRANSLATE = floattof32(y);
+	__asm volatile( "" ::: "memory" );
 	MATRIX_TRANSLATE = floattof32(z);
+	__asm volatile( "" ::: "memory" );
 }
 
 GL_STATIC_INL
