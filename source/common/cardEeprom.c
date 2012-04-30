@@ -54,7 +54,7 @@ u32 cardEepromReadID() {
 
 	REG_AUXSPICNT = /*E*/0x8000 | /*SEL*/0x2000 | /*MODE*/0x40;
 
-	REG_AUXSPIDATA = EEPROM_RDID;
+	REG_AUXSPIDATA = SPI_EEPROM_RDID;
 
 	eepromWaitBusy();
 	u32 id = 0;
@@ -73,7 +73,7 @@ u32 cardEepromReadID() {
 //---------------------------------------------------------------------------------
 int cardEepromGetType(void) {
 //---------------------------------------------------------------------------------
-	int sr = cardEepromCommand(EEPROM_RDSR);
+	int sr = cardEepromCommand(SPI_EEPROM_RDSR);
 	int id = cardEepromReadID();
 	
 	if (( sr == 0xff && id == 0xffffff) || ( sr == 0 && id == 0 )) return -1;

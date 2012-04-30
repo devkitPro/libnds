@@ -51,13 +51,17 @@
 #define CARD_CR1_IRQ     0x40  // in byte 1, i.e. 0x4000
 
 // SPI EEPROM COMMANDS
-#define EEPROM_WRSR	0x01
-#define EEPROM_WRDI	0x04
-#define EEPROM_RDSR	0x05
-#define EEPROM_WREN	0x06
-#define EEPROM_RDID 0x9f
-
-// REG_ROMCTRL:
+#define SPI_EEPROM_WRSR   0x01
+#define SPI_EEPROM_PP     0x02	// Page Program
+#define SPI_EEPROM_READ   0x03
+#define SPI_EEPROM_WRDI   0x04  // Write disable
+#define SPI_EEPROM_RDSR   0x05  // Read status register
+#define SPI_EEPROM_WREN   0x06  // Write enable
+#define SPI_EEPROM_PW     0x0a	// Page Write
+#define SPI_EEPROM_FAST   0x0b	// Fast Read
+#define SPI_EEPROM_RDID   0x9f
+#define SPI_EEPROM_RDP    0xab	// Release from deep power down
+#define SPI_EEPROM_DPD    0xb9  // Deep power down
 
 #define CARD_ACTIVATE     (1<<31)           // when writing, get the ball rolling
 #define CARD_WR           (1<<30)           // Card write enable
