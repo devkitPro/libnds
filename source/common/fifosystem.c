@@ -414,6 +414,14 @@ bool fifoCheckDatamsg(int channel) {
 	return fifo_data_queue[channel].head != FIFO_BUFFER_TERMINATE;
 }
 
+int fifoCheckDatamsgLength(int channel) {
+	if(channel<0 || channel>=FIFO_NUM_CHANNELS) return -1;
+	if(!fifoCheckDatamsg(channel)) return -1;
+
+	int block = fifo_data_queue[channel].head;
+	return FIFO_UNPACK_DATALENGTH(FIFO_BUFFER_DATA(block));
+}
+
 bool fifoCheckValue32(int channel) {
 	if(channel<0 || channel>=FIFO_NUM_CHANNELS) return false;
 	return fifo_value32_queue[channel].head != FIFO_BUFFER_TERMINATE;
