@@ -419,7 +419,7 @@ int fifoCheckDatamsgLength(int channel) {
 	if(!fifoCheckDatamsg(channel)) return -1;
 
 	int block = fifo_data_queue[channel].head;
-	return FIFO_UNPACK_DATALENGTH(FIFO_BUFFER_DATA(block));
+	return FIFO_BUFFER_GETEXTRA(block);
 }
 
 bool fifoCheckValue32(int channel) {
