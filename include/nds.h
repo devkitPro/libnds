@@ -118,7 +118,7 @@
 	\example Graphics/Backgrounds/256_color_bmp/source/main.cpp
 	\example Graphics/Backgrounds/Double_Buffer/source/main.cpp
 	\example Graphics/Backgrounds/rotation/source/main.cpp
-
+	
     <!-- sprites -->
     \example Graphics/Sprites/allocation_test/source/main.c
 	\example Graphics/Sprites/animate_simple/source/template.c
@@ -127,6 +127,9 @@
 	\example Graphics/Sprites/simple/source/template.c
 	\example Graphics/Sprites/sprite_extended_palettes/source/template.c
 	\example Graphics/Sprites/sprite_rotate/source/template.c
+	
+	<!-- Graphics Effects -->
+	\example Graphics/Effects/windows/source/template.c
 
 	<!-- keyboard -->
 	\example input/keyboard/keyboard_stdin/source/keymain.c
@@ -265,6 +268,7 @@ extern "C" {
 #include "nds/arm9/sassert.h"
 #include "nds/arm9/sound.h"
 #include "nds/arm9/sprite.h"
+#include "nds/arm9/window.h"
 #include "nds/arm9/trig_lut.h"
 #include "nds/arm9/video.h"
 #include "nds/arm9/videoGL.h"
