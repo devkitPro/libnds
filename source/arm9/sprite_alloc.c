@@ -37,24 +37,32 @@ static AllocHeader* getAllocHeader(OamState *oam, int index)
 	return &oam->allocBuffer[index];
 }
 
-void oamAllocReset(OamState *oam)
+static void oamAllocPrepare(OamState *oam)
 {
 	//allocate the buffer if null
 	if(oam->allocBuffer == NULL)
 	{
 		oam->allocBuffer = (AllocHeader*)malloc(sizeof(AllocHeader) * oam->allocBufferSize);
+		AH(0)->nextFree = 1024;
+		AH(0)->size = 1024;
 	}
+}
 
-	AH(0)->nextFree = 1024;
-	AH(0)->size = 1024;
+void oamAllocReset(OamState *oam)
+{
+	//free the buffer if not null & reset size
+	if(oam->allocBuffer != NULL)
+	{
+		free(oam->allocBuffer);
+		oam->allocBuffer = NULL;
+		oam->allocBufferSize = 32;
+		oam->firstFree = 0;
+	}
 }
 
 static int simpleAlloc(OamState *oam, int size)
 {
-	if(oam->allocBuffer == NULL)
-	{
-		oamAllocReset(oam);
-	}
+	oamAllocPrepare(oam);
 
 	u16 curOffset = oam->firstFree;
 
@@ -244,6 +252,11 @@ int oamCountFragments(OamState *oam)
 	int frags = 1;
 
 	int curOffset;
+
+	if(oam->allocBuffer == NULL)
+	{
+		return 0;
+	}
 
 	AllocHeader *next = getAllocHeader(oam, oam->firstFree);
 
