@@ -142,6 +142,19 @@ typedef struct bg_attribute {
 /*! \brief The vertical flip bit for a 16 bit tile index  */
 #define TILE_FLIP_V BIT(11)
 
+/*! \brief Overlay for 8-bit tile map entries */
+typedef struct TileMapEntry8 {
+  u8 index;
+} TileMapEntry8;
+
+/*! \brief Overlay for 16-bit tile map entries */
+typedef struct TileMapEntry16 {
+  u16 index:10;
+  u16 hflip:1;
+  u16 vflip:1;
+  u16 palette:4;
+} PACKED TileMapEntry16;
+
 /*!	\brief Bit defines for the background control registers */
 typedef enum
 {
