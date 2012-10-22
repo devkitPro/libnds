@@ -302,6 +302,13 @@ extern OamState oamMain;
 extern OamState oamSub;
 
 /**
+*    \brief convert a VRAM address to an oam offset
+*    \param oam must be: &oamMain or &oamSub
+*    \param offset the video memory address of the sprite graphics (not an offset)
+*/
+unsigned int oamGfxPtrToOffset(OamState *oam, const void* offset);
+
+/**
 *    \brief Initializes the 2D sprite engine  In order to mix tiled and bitmap sprites
             use SpriteMapping_Bmp_1D_128 or SpriteMapping_Bmp_1D_256.  This will set mapping for both
             to 1D and give same sized boundaries so the sprite gfx allocation will function.  VBlank IRQ must
@@ -394,6 +401,169 @@ void oamSetMosaicSub(unsigned int dx, unsigned int dy){
 */
 void oamSet(OamState* oam, int id,  int x, int y, int priority, int palette_alpha, SpriteSize size, SpriteColorFormat format, const void* gfxOffset, int affineIndex, bool sizeDouble, bool hide, bool hflip, bool vflip, bool mosaic);
 
+static inline
+/**
+*    \brief sets an oam entry to the supplied x,y position
+*    \param oam must be: &oamMain or &oamSub
+*    \param id the oam number to be set [0-127]
+*    \param x the x location of the sprite in pixels
+*    \param y the y location of the sprite in pixels
+*/
+void oamSetXY(OamState* oam, int id, int x, int y)
+{
+    sassert(oam == &oamMain || oam == &oamSub, "oamSetXY() oam must be &oamMain or &oamSub");
+    sassert(id >= 0 && id < SPRITE_COUNT, "oamSetXY() index is out of bounds, must be 0-127");
+    oam->oamMemory[id].x = x;
+    oam->oamMemory[id].y = y;
+}
+
+static inline
+/**
+*    \brief sets an oam entry to the supplied priority
+*    \param oam must be: &oamMain or &oamSub
+*    \param id the oam number to be set [0-127]
+*    \param priority The sprite priority [0-3]
+*/
+void oamSetPriority(OamState* oam, int id, int priority)
+{
+    sassert(oam == &oamMain || oam == &oamSub, "oamSetPriority() oam must be &oamMain or &oamSub");
+    sassert(id >= 0 && id < SPRITE_COUNT, "oamSetPriority() index is out of bounds, must be 0-127");
+    sassert(priority >= 0 && priority < 4, "oamSetPriority() priority is out of bounds, must be 0-3");
+    oam->oamMemory[id].priority = (ObjPriority)priority;
+}
+
+static inline
+/**
+*    \brief sets a paletted oam entry to the supplied palette
+*    \param oam must be: &oamMain or &oamSub
+*    \param id the oam number to be set [0-127]
+*    \param palette the palette number for 4bpp and 8bpp (extended palette mode) sprites [0-15]
+*/
+void oamSetPalette(OamState* oam, int id, int palette)
+{
+    sassert(oam == &oamMain || oam == &oamSub, "oamSetPalette() oam must be &oamMain or &oamSub");
+    sassert(id >= 0 && id < SPRITE_COUNT, "oamSetPalette() index is out of bounds, must be 0-127");
+    sassert(palette >= 0 && palette < 16, "oamSetPalette() palette is out of bounds, must be 0-15");
+    sassert(oam->oamMemory[id].blendMode != (ObjBlendMode)SpriteColorFormat_Bmp,
+            "oamSetPalette() cannot set palette on a bitmapped sprite");
+    oam->oamMemory[id].palette = palette;
+}
+
+static inline
+/**
+*    \brief sets a bitmapped oam entry to the supplied transparency
+*    \param oam must be: &oamMain or &oamSub
+*    \param id the oam number to be set [0-127]
+*    \param alpha the alpha value for bitmap sprites (bitmap sprites must specify a value > 0 to display) [0-15]
+*/
+void oamSetAlpha(OamState* oam, int id, int alpha)
+{
+    sassert(oam == &oamMain || oam == &oamSub, "oamSetAlpha() oam must be &oamMain or &oamSub");
+    sassert(id >= 0 && id < SPRITE_COUNT, "oamSetAlpha() index is out of bounds, must be 0-127");
+    sassert(alpha >= 0 && alpha < 16, "oamSetAlpha() alpha is out of bounds, must be 0-15");
+    sassert(oam->oamMemory[id].blendMode == (ObjBlendMode)SpriteColorFormat_Bmp,
+            "oamSetAlpha() cannot set alpha on a paletted sprite");
+    oam->oamMemory[id].palette = alpha;
+}
+
+static inline
+/**
+*    \brief sets an oam entry to the supplied shape/size/pointer
+*    \param oam must be: &oamMain or &oamSub
+*    \param id the oam number to be set [0-127]
+*    \param size the size of the sprite
+*    \param format the color format of the sprite
+*    \param gfxOffset the video memory address of the sprite graphics (not an offset)
+*/
+void oamSetGfx(OamState* oam, int id, SpriteSize size, SpriteColorFormat format, const void* gfxOffset)
+{
+    sassert(oam == &oamMain || oam == &oamSub, "oamSetGfx() oam must be &oamMain or &oamSub");
+    sassert(id >= 0 && id < SPRITE_COUNT, "oamSetGfx() index is out of bounds, must be 0-127");
+    oam->oamMemory[id].shape    = (ObjShape)SPRITE_SIZE_SHAPE(size);
+    oam->oamMemory[id].size     = (ObjSize)SPRITE_SIZE_SIZE(size);
+    oam->oamMemory[id].gfxIndex = oamGfxPtrToOffset(oam, gfxOffset);
+
+    if(format != SpriteColorFormat_Bmp)
+        oam->oamMemory[id].colorMode = (ObjColMode)format;
+    else
+    {
+        oam->oamMemory[id].blendMode = (ObjBlendMode)format;
+        oam->oamMemory[id].colorMode = (ObjColMode)0;
+    }
+}
+
+static inline
+/**
+*    \brief sets an oam entry to the supplied affine index
+*    \param oam must be: &oamMain or &oamSub
+*    \param id the oam number to be set [0-127]
+*    \param affineIndex affine index to use (if < 0 or > 31 the sprite will be unrotated)
+*    \param sizeDouble if affineIndex >= 0 and < 32 this will be used to double the sprite size for rotation
+*/
+void oamSetAffineIndex(OamState* oam, int id, int affineIndex, bool sizeDouble)
+{
+    sassert(oam == &oamMain || oam == &oamSub, "oamSetAffineIndex() oam must be &oamMain or &oamSub");
+    sassert(id >= 0 && id < SPRITE_COUNT, "oamSetAffineIndex() index is out of bounds, must be 0-127");
+
+    if(affineIndex >= 0 && affineIndex < 32)
+    {
+        oam->oamMemory[id].rotationIndex = affineIndex;
+        oam->oamMemory[id].isSizeDouble  = sizeDouble;
+        oam->oamMemory[id].isRotateScale = true;
+    }
+    else
+    {
+        oam->oamMemory[id].isSizeDouble  = false;
+        oam->oamMemory[id].isRotateScale = false;
+    }
+}
+
+static inline
+/**
+*    \brief sets an oam entry to the supplied hidden state
+*    \param oam must be: &oamMain or &oamSub
+*    \param id the oam number to be set [0-127]
+*    \param hide if non zero (true) the sprite will be hidden
+*/
+void oamSetHidden(OamState* oam, int id, bool hide)
+{
+    sassert(oam == &oamMain || oam == &oamSub, "oamSetHidden() oam must be &oamMain or &oamSub");
+    sassert(id >= 0 && id < SPRITE_COUNT, "oamSetHidden() index is out of bounds, must be 0-127");
+    sassert(!oam->oamMemory[id].isRotateScale, "oamSetHidden() cannot set hide on a RotateScale sprite");
+    oam->oamMemory[id].isHidden = hide ? true : false;
+}
+
+static inline
+/**
+*    \brief sets an oam entry to the supplied flipping
+*    \param oam must be: &oamMain or &oamSub
+*    \param id the oam number to be set [0-127]
+*    \param hflip flip the sprite horizontally
+*    \param vflip flip the sprite vertically
+*/
+void oamSetFlip(OamState* oam, int id, bool hflip, bool vflip)
+{
+    sassert(oam == &oamMain || oam == &oamSub, "oamSetFlip() oam must be &oamMain or &oamSub");
+    sassert(id >= 0 && id < SPRITE_COUNT, "oamSetFlip() index is out of bounds, must be 0-127");
+    sassert(!oam->oamMemory[id].isRotateScale, "oamSetFlip() cannot set flip on a RotateScale sprite");
+    oam->oamMemory[id].hFlip = hflip ? true : false;
+    oam->oamMemory[id].vFlip = vflip ? true : false;
+}
+
+static inline
+/**
+*    \brief sets an oam entry to enable or disable mosaic
+*    \param oam must be: &oamMain or &oamSub
+*    \param id the oam number to be set [0-127]
+*    \param mosaic if true mosaic will be applied to the sprite
+*/
+void oamSetMosaicEnabled(OamState* oam, int id, bool mosaic)
+{
+    sassert(oam == &oamMain || oam == &oamSub, "oamSetMosaicEnabled() oam must be &oamMain or &oamSub");
+    sassert(id >= 0 && id < SPRITE_COUNT, "oamSetMosaicEnabled() index is out of bounds, must be 0-127");
+    oam->oamMemory[id].isMosaic = mosaic ? true : false;
+}
+
 /**
 *    \brief Hides the sprites in the supplied range: if count is zero all 128 sprites will be hidden
 *    \param oam must be: &oamMain or &oamSub
@@ -467,8 +637,6 @@ int oamCountFragments(OamState *oam);
 
 
 void oamAllocReset(OamState *oam);
-
-unsigned int oamGfxPtrToOffset(OamState *oam, const void* offset);
 
 
 #ifdef __cplusplus
