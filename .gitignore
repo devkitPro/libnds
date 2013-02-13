@@ -4,4 +4,6 @@ arm9/debug
 arm9/release
 include/nds/libversion.h
 lib
+docs
+warn.log
 *.bz2
