@@ -103,7 +103,7 @@ void powerValueHandler(u32 value, void* user_data) {
 		} else {
 			battery = i2cReadRegister(I2C_PM,I2CREGPM_BATTERY);
 		}
-		fifoSendValue32(FIFO_SYSTEM, battery);
+		fifoSendValue32(FIFO_PM, battery);
 		break;
 	case PM_DSI_HACK:
 		__dsimode = true;
