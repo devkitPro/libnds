@@ -282,7 +282,7 @@ enum GLFLUSH_ENUM {
 
 
 /*-----------------------------------------
-Structures specific to allocating and 
+Structures specific to allocating and
 deallocating video RAM in videoGL
 -----------------------------------------*/
 
@@ -315,7 +315,7 @@ typedef struct gl_texture_data {
 	void* vramAddr;			// Address to the texture loaded into VRAM
 	uint32 texIndex;		// The index in the Memory Block
 	uint32 texIndexExt;		// The secondary index in the Memory block (only for GL_COMPRESSED textures)
-	int palIndex;			// The palette index 
+	int palIndex;			// The palette index
 	uint32 texFormat;		// Specifications of how the texture is displayed
 	uint32 texSize;			// The size (in blocks) of the texture
 } gl_texture_data;
@@ -340,7 +340,8 @@ much about it. This is only an issue because of hte mix of inlined/real function
 typedef struct gl_hidden_globals {
 	GL_MATRIX_MODE_ENUM matrixMode; // holds the current Matrix Mode
 	s_vramBlock *vramBlocks[ 2 ];		// Two classe instances, one for textures, and one for palettes
-	
+	int vramLock[ 2 ];				// Holds the current lock state of the VRAM banks
+
 	// texture globals
 	DynamicArray texturePtrs;		// Pointers to each individual texture
 	DynamicArray palettePtrs;		// Pointers to each individual palette
@@ -354,7 +355,7 @@ typedef struct gl_hidden_globals {
 	int activePalette;				// The current active palette name
 	int texCount;
 	int palCount;
-	
+
 	// holds the current state of the clear color register
 	u32 clearColor; // state of clear color register
 
@@ -498,6 +499,17 @@ int glDeleteTextures(int n, int *names);
 
 /*! \brief Resets the gl texture state freeing all texture and texture palette memory */
 void glResetTextures(void);
+
+/* \brief Locks a designated vram bank to prevent consideration of the bank when allocating
+\param addr the address associated with the vram bank selected
+\return 1 on success, 0 on failure */
+int glLockVRAMBank( uint16 *addr );
+
+
+/* \brief Unlocks a designated vram bank to allow consideration of the bank when allocating
+\param addr the address associated with the vram bank selected
+\return 1 on success, 0 on failure */
+int glUnlockVRAMBank( uint16 *addr );
 
 /*! \brief Sets texture coordinates for following vertices<BR>
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A>
@@ -788,18 +800,18 @@ void glDisable(int bits) {
 
 GL_STATIC_INL
 /*! \fn   void glFogShift(int shift)
-\brief Sets the FOG_SHIFT value 
+\brief Sets the FOG_SHIFT value
 \param shift FOG_SHIFT value; each entry of the fog table covers 0x400 >> FOG_SHIFT depth values */
-void glFogShift(int shift) { 
+void glFogShift(int shift) {
 	sassert(shift>=0 && shift<16,"glFogShift is out of range");
 	GFX_CONTROL = (GFX_CONTROL & 0xF0FF) | (shift<<8);
 }
 
 GL_STATIC_INL
 /*! \fn   void glFogOffset(int shift)
-\brief Sets the FOG_OFFSET value 
+\brief Sets the FOG_OFFSET value
 \param shift FOG_OFFSET value; fogging begins at this depth with a density of FOG_TABLE[0]*/
-void glFogOffset(int offset) { 
+void glFogOffset(int offset) {
 	sassert(offset>=0 && offset<0x8000,"glFogOffset is out of range");
 	GFX_FOG_OFFSET = offset;
 }
@@ -1329,7 +1341,7 @@ void glGetInt(GL_GET_ENUM param, int* i) {
 		case GL_GET_TEXTURE_WIDTH: {
 			gl_texture_data *tex = (gl_texture_data*)DynamicArrayGet( &glGlob->texturePtrs, glGlob->activeTexture );
 			if( tex )
-				*i = 8 << ((tex->texFormat >> 20 ) & 7 );			
+				*i = 8 << ((tex->texFormat >> 20 ) & 7 );
 			break; }
 		case GL_GET_TEXTURE_HEIGHT: {
 			gl_texture_data *tex = (gl_texture_data*)DynamicArrayGet( &glGlob->texturePtrs, glGlob->activeTexture );
