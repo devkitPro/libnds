@@ -340,8 +340,7 @@ typedef struct tPERSONAL_DATA
 	u8 calX2px;				//!<	Touchscreen calibration: second X touch pixel
 	u8 calY2px;				//!<	Touchscreen calibration: second Y touch pixel
 
-	PACKED struct
-	{
+	struct {
 		unsigned int language			: 3;	//!<	User's language.
 		unsigned int gbaScreen			: 1;	//!<	GBA screen selection (lower screen if set, otherwise upper screen).
 		unsigned int defaultBrightness	: 2;	//!<	Brightness level at power on, dslite.
@@ -349,7 +348,7 @@ typedef struct tPERSONAL_DATA
 		unsigned int RESERVED5			: 2;	//	???
 		unsigned int settingsLost		: 1;	//!<	User Settings Lost (0=Normal, 1=Prompt/Settings Lost)
 		unsigned int RESERVED6			: 6;	//	???
-	};
+	} PACKED;
 
 	u16	RESERVED3;			//	???
 	u32	rtcOffset;			//!<	Real Time Clock offset.
