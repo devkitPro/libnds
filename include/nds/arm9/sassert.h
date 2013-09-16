@@ -2,9 +2,10 @@
 
 	sassert.h -- definitons for DS assertions
 
-	Copyright (C) 2007
+	Copyright (C) 2013
 		Dave Murphy (WinterMute)
 		Jason Rogers (Dovoto)
+		Michael Theall (mtheall)
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any
@@ -41,15 +42,16 @@ extern "C" {
 
 #undef sassert
 
-#ifdef NDEBUG           /* required by ANSI standard */
-#define sassert(e,s)  	((void)0)
+#ifdef NDEBUG            /* required by ANSI standard */
+#define sassert(e,s,...) ((void)0)
 #else
 //! Causes a blue screen of death if e is not true with the msg "msg" displayed
-#define sassert(e,msg)       ((e) ? (void)0 : __sassert(__FILE__, __LINE__, #e, msg))
+#define sassert(e,fmt,...) ((e) ? (void)0 : __sassert (__FILE__, __LINE__, #e, fmt, ##__VA_ARGS__))
 
 #endif /* NDEBUG */
 
-void __sassert(const char *fileName, int lineNumber, const char* conditionString, const char* message);
+void __sassert(const char *fileName, int lineNumber, const char* conditionString, const char* format, ...)
+__attribute__((format(printf,4,5)));
 
 #ifdef __cplusplus
 }

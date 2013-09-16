@@ -2,8 +2,9 @@
 
 	sassert.c -- definitons for DS assertions
 
-	Copyright (C) 2007
-		Jason Rogers (Dovoto) 
+	Copyright (C) 2013
+		Jason Rogers (Dovoto)
+		Michael Theall (mtheall)
 
 	This software is provided 'as-is', without any express or implied
 	warranty.  In no event will the authors be held liable for any
@@ -28,14 +29,28 @@
 #include <nds/arm9/console.h>
 
 #include <stdio.h>
+#include <stdarg.h>
 
-
-void __sassert(const char *fileName, int lineNumber, const char* conditionString, const char* message)
+void __sassert(const char *fileName, int lineNumber, const char* conditionString, const char* format, ...)
 {
+    va_list ap;
+
     consoleDemoInit();
-    iprintf("\x1b[j\x1b[42mAssertion!\n\x1b[39mFile: \n%s\n\nLine: %d\n\nCondition:\n%s\n\n\x1b[41m%s",fileName, lineNumber, conditionString, message);
+
+    iprintf("\x1b[j"               /* clear screen */
+            "\x1b[42mAssertion!\n" /* print in green? */
+            "\x1b[39mFile: \n"     /* print in default color */
+            "%s\n\n"               /* print filename */
+            "Line: %d\n\n"         /* print line number */
+            "Condition:\n"
+            "%s\n\n"               /* print condition message */
+            "\x1b[41m",            /* change font color to red */
+            fileName, lineNumber, conditionString);
+
+    va_start(ap, format);
+    viprintf(format, ap);
+    va_end(ap);
 
     //todo: exit properly
-	while(1);  
+    while(1);
 }
- 
