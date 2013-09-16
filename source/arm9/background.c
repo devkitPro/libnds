@@ -161,6 +161,8 @@ int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase) 
 
 	memset(&bgState[layer], 0, sizeof(BgState) );
 
+	bgIsTextLut[layer] = checkIfText(layer);
+
 	if(type != BgType_Text8bpp && type != BgType_Text4bpp) {
 		bgSetScale(layer, 1 << 8, 1 << 8);
 		bgRotate(layer, 0);
@@ -170,8 +172,6 @@ int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase) 
 	bgState[layer].size = size;
 
 	videoBgEnable(layer);
-
-	bgIsTextLut[layer] = checkIfText(layer);
 
 	bgState[layer].dirty = true;
 
@@ -188,6 +188,8 @@ int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBas
 
 	memset(&bgState[layer + 4], 0, sizeof(BgState) );
 
+	bgIsTextLut[layer + 4] = checkIfText(layer + 4);
+
 	if(type != BgType_Text8bpp && type != BgType_Text4bpp) {
 		bgSetScale(layer + 4, 1 << 8, 1 << 8);
 		bgRotate(layer + 4, 0);
@@ -197,7 +199,6 @@ int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBas
 	bgState[layer + 4].size = size;
 
 	videoBgEnableSub(layer);
-	bgIsTextLut[layer + 4] = checkIfText(layer + 4);
 
 	bgState[layer + 4].dirty = true;
 
