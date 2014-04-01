@@ -97,22 +97,24 @@ uint32 cardEepromGetSize() {
 	if(type == 1)
 		return 512;
 	if(type == 2) {
-		static const uint32 offset0 = (8*1024-1);		 //		 8KB
-		static const uint32 offset1 = (2*8*1024-1);		 //		 16KB
-		u8 buf1;	 //		 +0k data		 read -> write
-		u8 buf2;	 //		 +8k data		 read -> read
-		u8 buf3;	 //		 +0k ~data			write
-		u8 buf4;	 //		 +8k data new	 comp buf2
-		cardReadEeprom(offset0,&buf1,1,type);
-		cardReadEeprom(offset1,&buf2,1,type);
-		buf3=~buf1;
-		cardWriteEeprom(offset0,&buf3,1,type);
-		cardReadEeprom (offset1,&buf4,1,type);
-		cardWriteEeprom(offset0,&buf1,1,type);
-		if(buf4!=buf2)		//		+8k
-			return 8*1024;	//		 8KB(64kbit)
-		else
-			return 64*1024; //		64KB(512kbit)
+		u32 buf1,buf2,buf3;
+		cardReadEeprom(0,(u8*)&buf1,4,type);
+		if ( !(buf1 != 0 || buf1 != 0xffffffff) ) {
+			buf3 = ~buf1;
+			cardWriteEeprom(0,(u8*)&buf3,4,type);
+		} else {
+			buf3 = buf1;
+		}
+		int size = 8192;
+		while (1) {	 
+			cardReadEeprom(size,(u8*)&buf2,4,type);
+			if ( buf2 == buf3 ) break;
+			size += 8192;
+		};
+
+		if ( buf1 != buf3 ) cardWriteEeprom(0,(u8*)&buf1,4,type);
+
+		return size;
 	}
 
 	int device;
