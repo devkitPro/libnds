@@ -418,7 +418,7 @@ extern "C" {
 \param x X component of the unit vector axis.
 \param y Y component of the unit vector axis.
 \param z Z component of the unit vector axis. */
-void glRotatef32i(int angle, int x, int y, int z);
+void glRotatef32i(int angle, int32 x, int32 y, int32 z);
 
 /*! \brief Loads a 2D texture into texture memory and sets the currently bound texture ID to the attributes specified
 \param target not used, just here for OpenGL compatibility
@@ -515,7 +515,7 @@ int glUnlockVRAMBank( uint16 *addr );
 <A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A>
 \param u U(a.k.a. S) texture coordinate (0.0 - 1.0)
 \param v V(a.k.a. T) texture coordinate (0.0 - 1.0)*/
-void glTexCoord2f32(int u, int v);
+void glTexCoord2f32(int32 u, int32 v);
 
 /*! \brief specify the material properties to be used in rendering lit polygons
 \param mode which material property to change
@@ -1062,7 +1062,7 @@ GL_STATIC_INL
 \param upy <upx, upy, upz> Unit vector describing which direction is up for the camera.
 \param upz <upx, upy, upz> Unit vector describing which direction is up for the camera. */
 void gluLookAtf32(int eyex, int eyey, int eyez, int lookAtx, int lookAty, int lookAtz, int upx, int upy, int upz) {
-	int side[3], forward[3], up[3], eye[3];
+	int32 side[3], forward[3], up[3], eye[3];
 
 	forward[0] = eyex - lookAtx;
 	forward[1] = eyey - lookAty;
