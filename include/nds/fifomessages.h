@@ -90,6 +90,12 @@ typedef struct FifoMessage {
 			u32 startsector;
 			u32	numsectors;
 		} sdParams;
+
+		struct{
+			void *buffer;
+			u32 address;
+			u32	length;
+		} fwParams;
 	};
 
 } ALIGN(4) FifoMessage;

@@ -153,6 +153,10 @@ void systemShutDown(void) {
 	powerOn(PM_SYSTEM_PWR);
 }
 
+void readFirmware(u32 address, void *buffer, u32 length);
+void writeFirmware(u32 address, void *buffer, u32 length);
+
+
 //! gets the DS Battery level
 u32 getBatteryLevel();
 
@@ -389,7 +393,7 @@ struct __argv {
 
 #define __system_argv		((struct __argv *)0x02FFFE70)
 
-#define BOOTSIG	0x62757473746F6F62ULL
+#define BOOTSIG	0x62757473746F6F62ULL	// 'bootstub'
 
 struct __bootstub {
 	u64	bootsig;

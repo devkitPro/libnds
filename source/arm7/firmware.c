@@ -1,7 +1,6 @@
-/*---------------------------------------------------------------------------------
+﻿/*---------------------------------------------------------------------------------
 
-  Copyright (C) 2005 - 2010
-    Michael Noland (joat)
+  Copyright (C) 2014
 	Dave Murphy (WinterMute)
 
   This software is provided 'as-is', without any express or implied
@@ -22,40 +21,70 @@
       distribution.
 
 ---------------------------------------------------------------------------------*/
-
 #include <nds/arm7/serial.h>
 #include <nds/interrupts.h>
 #include <nds/system.h>
+#include <nds/fifocommon.h>
+#include <nds/fifomessages.h>
 
 //---------------------------------------------------------------------------------
-int writePowerManagement(int reg, int command) {
+void readFirmware(u32 address, void * destination, u32 size) {
 //---------------------------------------------------------------------------------
 	int oldIME=enterCriticalSection();
-	// Write the register / access mode (bit 7 sets access mode)
+	u8 *buffer = destination;
+	// Read command
 	while (REG_SPICNT & SPI_BUSY);
-	REG_SPICNT = SPI_ENABLE | SPI_BAUD_1MHz | SPI_BYTE_MODE | SPI_CONTINUOUS | SPI_DEVICE_POWER;
-	REG_SPIDATA = reg;
+	REG_SPICNT = SPI_ENABLE | SPI_BYTE_MODE | SPI_CONTINUOUS | SPI_DEVICE_FIRMWARE;
+	REG_SPIDATA = FIRMWARE_READ;
+	SerialWaitBusy();
 
-	// Write the command / start a read
-	while (REG_SPICNT & SPI_BUSY);
-	REG_SPICNT = SPI_ENABLE | SPI_BAUD_1MHz | SPI_BYTE_MODE | SPI_DEVICE_POWER;
-	REG_SPIDATA = command;
+	// Set the address
+	REG_SPIDATA = (address>>16) & 0xFF;
+	SerialWaitBusy();
+	REG_SPIDATA = (address>>8) & 0xFF;
+	SerialWaitBusy();
+	REG_SPIDATA = (address) & 0xFF;
+	SerialWaitBusy();
 
-	// Read the result
-	while (REG_SPICNT & SPI_BUSY);
+	u32 i;
+	// Read the data
+	for(i=0;i<size;i++) {
+		REG_SPIDATA = 0;
+		SerialWaitBusy();
+		buffer[i] = (REG_SPIDATA & 0xFF);
+	}
 
+	REG_SPICNT = 0;
 	leaveCriticalSection(oldIME);
-
-	return REG_SPIDATA & 0xFF;
 }
 
+//---------------------------------------------------------------------------------
+int writeFirmware(u32 offset, void * source, u32 size) {
+//---------------------------------------------------------------------------------
+	u8 *buffer = source;
+	buffer[0] = 0;
+	return 0;
+}
 
 //---------------------------------------------------------------------------------
-void ledBlink(int value) {
+void firmwareMsgHandler(int bytes, void *user_data) {
 //---------------------------------------------------------------------------------
-	u32 temp = readPowerManagement(PM_CONTROL_REG);
-	temp &= ~(3 << 4); //clear led bits
-	temp |= ((value & 3)<<4);
-	writePowerManagement(PM_CONTROL_REG, temp);
+
+	FifoMessage msg;
+
+	int response = -1;
+	
+	fifoGetDatamsg(FIFO_FIRMWARE, bytes, (u8*)&msg);
+	
+	switch(msg.type) {
+		case FW_READ:
+			readFirmware(msg.fwParams.address, msg.fwParams.buffer, msg.fwParams.length);
+			response = 0;
+			break;
+		case FW_WRITE:
+			response = writeFirmware(msg.fwParams.address, msg.fwParams.buffer, msg.fwParams.length);
+			break;
+	}
+	fifoSendValue32(FIFO_FIRMWARE,response);
 }
 

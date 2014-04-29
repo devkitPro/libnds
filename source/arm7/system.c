@@ -127,6 +127,7 @@ int sleepEnabled(void) {
 
 void sdmmcMsgHandler(int bytes, void *user_data);
 void sdmmcValueHandler(u32 value, void* user_data);
+void firmwareMsgHandler(int bytes, void *user_data);
 
 //---------------------------------------------------------------------------------
 void installSystemFIFO(void) {
@@ -135,6 +136,8 @@ void installSystemFIFO(void) {
 	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
 	fifoSetValue32Handler(FIFO_SDMMC, sdmmcValueHandler, 0);
 	fifoSetDatamsgHandler(FIFO_SDMMC, sdmmcMsgHandler, 0);
+	fifoSetDatamsgHandler(FIFO_FIRMWARE, firmwareMsgHandler, 0);
+	
 }
 
 

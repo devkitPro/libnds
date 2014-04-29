@@ -9,22 +9,22 @@
 
 //! Enum values for the different fifo channels.
 typedef enum {
-   FIFO_PM		= 0,	/*!< \brief fifo channel reserved for power management. */
-   FIFO_SOUND	= 1,	/*!< \brief fifo channel reserved for sound access. */
-   FIFO_SYSTEM	= 2,	/*!< \brief fifo channel reserved for system functions. */
-   FIFO_MAXMOD	= 3,	/*!< \brief fifo channel reserved for the maxmod library. */
-   FIFO_DSWIFI	= 4,	/*!< \brief fifo channel reserved for the dswifi library. */
-   FIFO_SDMMC	= 5,	/*!< \brief fifo channel reserved for dsi sdmmc control. */
-   FIFO_RSVD_01 = 6,	/*!< \brief fifo channel reserved for future use. */
-   FIFO_RSVD_02 = 7,	/*!< \brief fifo channel reserved for future use. */
-   FIFO_USER_01	= 8,	/*!< \brief fifo channel available for users. */
-   FIFO_USER_02	= 9,	/*!< \brief fifo channel available for users. */
-   FIFO_USER_03	= 10,	/*!< \brief fifo channel available for users. */
-   FIFO_USER_04	= 11,	/*!< \brief fifo channel available for users. */
-   FIFO_USER_05	= 12,	/*!< \brief fifo channel available for users. */
-   FIFO_USER_06	= 13,	/*!< \brief fifo channel available for users. */
-   FIFO_USER_07	= 14,	/*!< \brief fifo channel available for users. */
-   FIFO_USER_08	= 15,	/*!< \brief fifo channel available for users. */
+	FIFO_PM			= 0,	/*!< \brief fifo channel reserved for power management. */
+	FIFO_SOUND		= 1,	/*!< \brief fifo channel reserved for sound access. */
+	FIFO_SYSTEM		= 2,	/*!< \brief fifo channel reserved for system functions. */
+	FIFO_MAXMOD		= 3,	/*!< \brief fifo channel reserved for the maxmod library. */
+	FIFO_DSWIFI		= 4,	/*!< \brief fifo channel reserved for the dswifi library. */
+	FIFO_SDMMC		= 5,	/*!< \brief fifo channel reserved for dsi sdmmc control. */
+	FIFO_FIRMWARE	= 6,	/*!< \brief fifo channel reserved for firmware access. */
+	FIFO_RSVD_01	= 7,	/*!< \brief fifo channel reserved for future use. */
+	FIFO_USER_01	= 8,	/*!< \brief fifo channel available for users. */
+	FIFO_USER_02	= 9,	/*!< \brief fifo channel available for users. */
+	FIFO_USER_03	= 10,	/*!< \brief fifo channel available for users. */
+	FIFO_USER_04	= 11,	/*!< \brief fifo channel available for users. */
+	FIFO_USER_05	= 12,	/*!< \brief fifo channel available for users. */
+	FIFO_USER_06	= 13,	/*!< \brief fifo channel available for users. */
+	FIFO_USER_07	= 14,	/*!< \brief fifo channel available for users. */
+	FIFO_USER_08	= 15,	/*!< \brief fifo channel available for users. */
 } FifoChannels;
 
 
@@ -61,16 +61,21 @@ typedef enum {
 	SDMMC_SD_STOP
 } FifoSdmmcCommands;
 
+typedef enum {
+	FW_READ,
+	FW_WRITE
+} FifoFirmwareCommands;
+
 //! Enum values for the fifo power management commands.
 typedef enum {
-	PM_REQ_ON = (1<<16),
-	PM_REQ_OFF  = (2<<16),
-	PM_REQ_LED  = (3<<16),
-	PM_REQ_SLEEP  = (4<<16),
-	PM_REQ_SLEEP_DISABLE  = (5<<16),
-	PM_REQ_SLEEP_ENABLE  = (6<<16),
-	PM_REQ_BATTERY = (7<<16),
-	PM_DSI_HACK = (8<<16)
+	PM_REQ_ON				= (1<<16),
+	PM_REQ_OFF				= (2<<16),
+	PM_REQ_LED				= (3<<16),
+	PM_REQ_SLEEP			= (4<<16),
+	PM_REQ_SLEEP_DISABLE	= (5<<16),
+	PM_REQ_SLEEP_ENABLE		= (6<<16),
+	PM_REQ_BATTERY			= (7<<16),
+	PM_DSI_HACK				= (8<<16)
 }FifoPMCommands;
 
 //! Enum values for the fifo wifi commands.
@@ -84,9 +89,9 @@ typedef enum {
 
 //! Power Management LED blink mode control bits.
 typedef enum {
-	PM_LED_ON		=0,	/*!< \brief  Steady on */
-	PM_LED_SLEEP	=1,	/*!< \brief Blinking, mostly off */
-	PM_LED_BLINK	=3,	/*!< \brief Blinking, mostly on */
+	PM_LED_ON		= 0,	/*!< \brief  Steady on */
+	PM_LED_SLEEP	= 1,	/*!< \brief Blinking, mostly off */
+	PM_LED_BLINK	= 3,	/*!< \brief Blinking, mostly on */
 }PM_LedBlinkMode;
 
 
