@@ -154,7 +154,7 @@ void systemShutDown(void) {
 }
 
 void readFirmware(u32 address, void *buffer, u32 length);
-void writeFirmware(u32 address, void *buffer, u32 length);
+int writeFirmware(u32 address, void *buffer, u32 length);
 
 
 //! gets the DS Battery level
