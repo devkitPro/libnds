@@ -88,6 +88,10 @@ DC_InvalidateRange:
 	Invalidate a range
 ---------------------------------------------------------------------------------*/
 	add	r1, r1, r0
+	tst	r0, #CACHE_LINE_SIZE - 1
+	mcrne	p15, 0, r0, c7, c10, 1		@ clean D entry
+	tst	r1, #CACHE_LINE_SIZE - 1
+	mcrne	p15, 0, r1, c7, c10, 1		@ clean D entry
 	bic	r0, r0, #CACHE_LINE_SIZE - 1
 .invalidate:
 	mcr	p15, 0, r0, c7, c6, 1
