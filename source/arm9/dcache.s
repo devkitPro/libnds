@@ -48,7 +48,7 @@ inner_loop:
 	add	r1, r1, #0x40000000
 	cmp	r1, #0
 	bne	outer_loop
-	bx	lr
+	b	drainWriteBuffer
 
 //---------------------------------------------------------------------------------
 	.global	DC_FlushRange
@@ -65,6 +65,10 @@ DC_FlushRange:
 	add	r0, r0, #CACHE_LINE_SIZE
 	cmp	r0, r1
 	blt	.flush
+
+drainWriteBuffer:
+	mov     r0, #0
+	mcr     p15, 0, r0, c7, c10, 4		@ drain write buffer
 	bx	lr
 
 //---------------------------------------------------------------------------------
