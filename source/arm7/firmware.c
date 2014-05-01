@@ -26,32 +26,34 @@
 #include <nds/system.h>
 #include <nds/fifocommon.h>
 #include <nds/fifomessages.h>
+#include <string.h>
+
+static u8 readwriteSPI(u8 data) {
+	REG_SPIDATA = data;
+	SerialWaitBusy();
+	return REG_SPIDATA;
+}
 
 //---------------------------------------------------------------------------------
 void readFirmware(u32 address, void * destination, u32 size) {
 //---------------------------------------------------------------------------------
 	int oldIME=enterCriticalSection();
 	u8 *buffer = destination;
+
 	// Read command
-	while (REG_SPICNT & SPI_BUSY);
 	REG_SPICNT = SPI_ENABLE | SPI_BYTE_MODE | SPI_CONTINUOUS | SPI_DEVICE_FIRMWARE;
-	REG_SPIDATA = FIRMWARE_READ;
-	SerialWaitBusy();
+	readwriteSPI(FIRMWARE_READ);
 
 	// Set the address
-	REG_SPIDATA = (address>>16) & 0xFF;
-	SerialWaitBusy();
-	REG_SPIDATA = (address>>8) & 0xFF;
-	SerialWaitBusy();
-	REG_SPIDATA = (address) & 0xFF;
-	SerialWaitBusy();
+	readwriteSPI((address>>16) & 0xFF);
+	readwriteSPI((address>> 8) & 0xFF);
+	readwriteSPI((address) & 0xFF);
 
 	u32 i;
+
 	// Read the data
 	for(i=0;i<size;i++) {
-		REG_SPIDATA = 0;
-		SerialWaitBusy();
-		buffer[i] = (REG_SPIDATA & 0xFF);
+		buffer[i] = readwriteSPI(0);
 	}
 
 	REG_SPICNT = 0;
@@ -59,11 +61,72 @@ void readFirmware(u32 address, void * destination, u32 size) {
 }
 
 //---------------------------------------------------------------------------------
-int writeFirmware(u32 offset, void * source, u32 size) {
+static int writeFirmwarePage(u32 address,u8 *buffer) {
 //---------------------------------------------------------------------------------
+	int i;
+	u8 pagebuffer[256];
+	readFirmware(address, pagebuffer, 256);
+
+	if (memcmp(pagebuffer,buffer,256) == 0) return 0;
+
+	int oldIME=enterCriticalSection();
+
+	//write enable
+	REG_SPICNT = SPI_ENABLE|SPI_CONTINUOUS|SPI_DEVICE_NVRAM;
+	readwriteSPI(FIRMWARE_WREN);
+	REG_SPICNT = 0;
+
+	//Wait for Write Enable Latch to be set
+	REG_SPICNT = SPI_ENABLE|SPI_CONTINUOUS|SPI_DEVICE_NVRAM;
+	readwriteSPI(FIRMWARE_RDSR);
+	while((readwriteSPI(0)&0x02)==0); //Write Enable Latch
+	REG_SPICNT = 0;
+
+	//page write
+	REG_SPICNT = SPI_ENABLE|SPI_CONTINUOUS|SPI_DEVICE_NVRAM;
+	readwriteSPI(FIRMWARE_PW);
+	// Set the address
+	readwriteSPI((address>>16) & 0xFF);
+	readwriteSPI((address>> 8) & 0xFF);
+	readwriteSPI((address) & 0xFF);
+
+	for (i=0; i<256; i++) {
+		readwriteSPI(buffer[i]);
+	}
+
+	REG_SPICNT = 0;
+
+	// wait for programming to finish
+	REG_SPICNT = SPI_ENABLE|SPI_CONTINUOUS|SPI_DEVICE_NVRAM;
+	readwriteSPI(FIRMWARE_RDSR);
+	while(readwriteSPI(0)&0x01);	//Write In Progress
+	REG_SPICNT = 0;
+
+	leaveCriticalSection(oldIME);
+
+	// read it back & verify
+	readFirmware(address, pagebuffer, 256);
+	if (memcmp(pagebuffer,buffer,256) == 0) return 0;
+	return -1;
+}
+
+
+//---------------------------------------------------------------------------------
+int writeFirmware(u32 address, void * source, u32 size) {
+//---------------------------------------------------------------------------------
+	if( ((address & 0xff) != 0) || ((size  & 0xff) != 0)) return -1;
 	u8 *buffer = source;
-	buffer[0] = 0;
-	return 0;
+	memcpy(buffer+1024,buffer,512);
+	int response = -1;
+
+	while (size >0 ) {
+		size -= 256;
+		if (writeFirmwarePage(address+size,buffer+size )) break;
+	}
+
+	if (size == 0 ) response = 0;
+
+	return response;
 }
 
 //---------------------------------------------------------------------------------
