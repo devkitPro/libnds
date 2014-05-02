@@ -89,6 +89,7 @@ static void consoleCls(char mode) {
 
 	switch (mode)
 	{
+	case '[':
 	case '0':
 		{
 			colTemp = currentConsole->cursorX ;
@@ -139,6 +140,7 @@ static void consoleClearLine(char mode) {
 
 	switch (mode)
 	{
+	case '[':
 	case '0':
 		{
 			colTemp = currentConsole->cursorX ;
