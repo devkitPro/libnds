@@ -116,7 +116,6 @@ int writeFirmware(u32 address, void * source, u32 size) {
 //---------------------------------------------------------------------------------
 	if( ((address & 0xff) != 0) || ((size  & 0xff) != 0)) return -1;
 	u8 *buffer = source;
-	memcpy(buffer+1024,buffer,512);
 	int response = -1;
 
 	while (size >0 ) {
