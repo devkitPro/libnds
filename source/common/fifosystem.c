@@ -436,7 +436,6 @@ static void fifo_queueBlock(fifo_queue *queue, int head, int tail) {
 		FIFO_BUFFER_SETNEXT(queue->tail,head);
 		queue->tail = tail;
 	}
-
 }
 
 int processing=0;
@@ -454,6 +453,8 @@ static void fifoInternalRecvInterrupt() {
 		if (block != FIFO_BUFFER_TERMINATE ) {
 			FIFO_BUFFER_DATA(block)=REG_IPC_FIFO_RX;
 			fifo_queueBlock(&fifo_receive_queue,block,block);
+		} else {
+			break;
 		}
 
 		REG_IME=1;
