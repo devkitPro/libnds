@@ -165,7 +165,7 @@ int bgInit_call(int layer, BgType type, BgSize size, int mapBase, int tileBase) 
 
 	if(type != BgType_Text8bpp && type != BgType_Text4bpp) {
 		bgSetScale(layer, 1 << 8, 1 << 8);
-		bgRotate(layer, 0);
+		bgSetRotate(layer, 0);
 	}
 
 	bgState[layer].type = type;
@@ -192,7 +192,7 @@ int bgInitSub_call(int layer, BgType type, BgSize size, int mapBase, int tileBas
 
 	if(type != BgType_Text8bpp && type != BgType_Text4bpp) {
 		bgSetScale(layer + 4, 1 << 8, 1 << 8);
-		bgRotate(layer + 4, 0);
+		bgSetRotate(layer + 4, 0);
 	}
 
 	bgState[layer + 4].type = type;
