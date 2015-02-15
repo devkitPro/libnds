@@ -112,6 +112,7 @@ void systemSleep(void);
 */
 void ledBlink(int bm);
 
+extern bool __dsimode;
 
 //--------------------------------------------------------------
 //    ARM9 section

@@ -34,7 +34,7 @@
 #include <nds/arm7/i2c.h>
 
 bool sleepIsEnabled = true;
-extern bool __dsimode;
+
 
 //---------------------------------------------------------------------------------
 void powerValueHandler(u32 value, void* user_data) {
