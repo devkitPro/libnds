@@ -64,7 +64,7 @@ __libnds_mpu_setup:
 	mcr	p15, 0, r0, c7, c5, 0		@ Instruction cache
 	mcr	p15, 0, r0, c7, c6, 0		@ Data cache
 
-	@ Wait for write buffer to empty 
+	@ Wait for write buffer to empty
 	mcr	p15, 0, r0, c7, c10, 4
 
 	ldr	r0, =__dtcm_start
@@ -81,19 +81,19 @@ __libnds_mpu_setup:
 	@-------------------------------------------------------------------------
 	@ Region 0 - IO registers
 	@-------------------------------------------------------------------------
-	ldr	r0,=( PAGE_64M | 0x04000000 | 1)	
+	ldr	r0,=( PAGE_64M | 0x04000000 | 1)
 	mcr	p15, 0, r0, c6, c0, 0
 
 	@-------------------------------------------------------------------------
 	@ Region 1 - System ROM
 	@-------------------------------------------------------------------------
-	ldr	r0,=( PAGE_32K | 0xFFFF0000 | 1)	
+	ldr	r0,=( PAGE_64K | 0xFFFF0000 | 1)
 	mcr	p15, 0, r0, c6, c1, 0
 
 	@-------------------------------------------------------------------------
 	@ Region 2 - alternate vector base
 	@-------------------------------------------------------------------------
-	ldr	r0,=( PAGE_4K | 0x00000000 | 1)	
+	ldr	r0,=( PAGE_4K | 0x00000000 | 1)
 	mcr	p15, 0, r0, c6, c2, 0
 
 	@-------------------------------------------------------------------------
@@ -119,31 +119,31 @@ __libnds_mpu_setup:
 	ldr	r0,[r0]
 	ands	r0,r0,#0x8000
 	bne	dsi_mode
-	
+
 	swi	0xf0000
 
-	ldr	r1,=( PAGE_128M | 0x08000000 | 1)	
+	ldr	r1,=( PAGE_128M | 0x08000000 | 1)
 	cmp	r0,#0
 	bne	debug_mode
 
-	ldr	r3,=( PAGE_4M | 0x02000000 | 1)	
-	ldr	r2,=( PAGE_16M | 0x02000000 | 1)	
+	ldr	r3,=( PAGE_4M | 0x02000000 | 1)
+	ldr	r2,=( PAGE_16M | 0x02000000 | 1)
 	mov	r8,#0x02400000
 
 	adr	r9,dsmasks
 	b	setregions
 
 debug_mode:
-	ldr	r3,=( PAGE_8M | 0x02000000 | 1)	
-	ldr	r2,=( PAGE_8M | 0x02800000 | 1)	
+	ldr	r3,=( PAGE_8M | 0x02000000 | 1)
+	ldr	r2,=( PAGE_8M | 0x02800000 | 1)
 	mov	r8,#0x02800000
 	adr	r9,debugmasks
 	b	setregions
 
 dsi_mode:
-	ldr	r1,=( PAGE_8M  | 0x03000000 | 1)	
-	ldr	r3,=( PAGE_16M | 0x02000000 | 1)	
-	ldr	r2,=( PAGE_16M | 0x0C000000 | 1)	
+	ldr	r1,=( PAGE_8M  | 0x03000000 | 1)
+	ldr	r3,=( PAGE_16M | 0x02000000 | 1)
+	ldr	r2,=( PAGE_16M | 0x0C000000 | 1)
 	mov	r8,#0x03000000
 	adr	r9,dsimasks
 
@@ -213,7 +213,9 @@ masks:	.word	dsmasks
 
 	.global memCached
 	.type	memCached STT_FUNC
+@---------------------------------------------------------------------------------
 memCached:
+@---------------------------------------------------------------------------------
 	ldr	r1,masks
 	ldr	r2,[r1],#4
 	and	r0,r0,r2
@@ -223,7 +225,9 @@ memCached:
 
 	.global	memUncached
 	.type	memUncached STT_FUNC
+@---------------------------------------------------------------------------------
 memUncached:
+@---------------------------------------------------------------------------------
 	ldr	r1,masks
 	ldr	r2,[r1],#8
 	and	r0,r0,r2
