@@ -40,9 +40,13 @@ distribution.
 #include <libnds_internal.h>
 
 #include <sys/iosupport.h>
+#include <sys/time.h>
+
 void __libnds_exit(int rc);
-extern time_t *punixTime;
 bool __dsimode;
+extern time_t *punixTime;
+
+int __libnds_gtod(struct _reent *ptr, struct timeval *tp, struct timezone *tz);
 
 //---------------------------------------------------------------------------------
 // Reset the DS registers to sensible defaults
@@ -51,7 +55,7 @@ void __attribute__((weak)) initSystem(void) {
 //---------------------------------------------------------------------------------
 	register int i;
 	// stop timers and dma
-	for (i=0; i<4; i++) 
+	for (i=0; i<4; i++)
 	{
 		DMA_CR(i) = 0;
 		DMA_SRC(i) = 0;
@@ -90,6 +94,8 @@ void __attribute__((weak)) initSystem(void) {
 	punixTime = (time_t*)memUncached((void *)&__transferRegion()->unixTime);
 
 	__syscalls.exit = __libnds_exit;
+	__syscalls.gettod_r = __libnds_gtod;
+
 	extern  char *fake_heap_end;
 	__transferRegion()->bootcode = (struct __bootstub *)fake_heap_end;
 	irqEnable(IRQ_VBLANK);
