@@ -137,12 +137,12 @@ void irqInit() {
 void irqInitHandler(IntFn handler) {
 //---------------------------------------------------------------------------------
 	REG_IME = 0;
-	REG_IF = ~0;
 	REG_IE = 0;
+	REG_IF = ~0;
 
 #ifdef ARM7
-	REG_AUXIF = ~0;
 	REG_AUXIE = 0;
+	REG_AUXIF = ~0;
 #endif
 	IRQ_HANDLER = handler;
 
