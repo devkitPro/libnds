@@ -3,7 +3,7 @@
 
 #include <nds/ndstypes.h>
 
-#define DATA32_SUPPORT
+//#define DATA32_SUPPORT
 
 #define SDMMC_BASE	0x04004800
 
