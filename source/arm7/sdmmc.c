@@ -7,6 +7,7 @@
 
 
 static struct mmcdevice deviceSD;
+static struct mmcdevice deviceNAND;
 
 /*mmcdevice *getMMCDevice(int drive) {
     if(drive==0) return &deviceNAND;
@@ -300,6 +301,53 @@ int sdmmc_sdcard_init() {
 
 }
 
+int sdmmc_nand_init() {
+    setTarget(&deviceNAND);
+    swiDelay(0xF000);
+   
+    sdmmc_send_command(&deviceNAND,0,0);
+
+    do {
+        do {
+            sdmmc_send_command(&deviceNAND,0x10701,0x100000);
+        } while ( !(deviceNAND.error & 1) );
+    }
+    while((deviceNAND.ret[0] & 0x80000000) == 0);
+    
+    sdmmc_send_command(&deviceNAND,0x10602,0x0);
+    if((deviceNAND.error & 0x4))return -1;
+        
+    sdmmc_send_command(&deviceNAND,0x10403,deviceNAND.initarg << 0x10);
+    if((deviceNAND.error & 0x4))return -1;
+
+    sdmmc_send_command(&deviceNAND,0x10609,deviceNAND.initarg << 0x10);
+    if((deviceNAND.error & 0x4))return -1;
+
+    deviceNAND.total_size = calcSDSize((uint8_t*)&deviceNAND.ret[0],0);
+    deviceNAND.clk = 1;
+    setckl(1);
+
+    sdmmc_send_command(&deviceNAND,0x10407,deviceNAND.initarg << 0x10);
+    if((deviceNAND.error & 0x4))return -1;
+
+    deviceNAND.SDOPT = 1;
+
+    sdmmc_send_command(&deviceNAND,0x10506,0x3B70100);
+    if((deviceNAND.error & 0x4))return -1;
+
+    sdmmc_send_command(&deviceNAND,0x10506,0x3B90100);
+    if((deviceNAND.error & 0x4))return -1;
+
+    sdmmc_send_command(&deviceNAND,0x1040D,deviceNAND.initarg << 0x10);
+    if((deviceNAND.error & 0x4))return -1;
+
+    sdmmc_send_command(&deviceNAND,0x10410,0x200);
+    if((deviceNAND.error & 0x4))return -1;
+
+    deviceNAND.clk |= 0x200; 
+    
+    return 0;
+}
 
 //---------------------------------------------------------------------------------
 int __attribute__((noinline)) sdmmc_sdcard_readsectors(u32 sector_no, u32 numsectors, void *out) {
@@ -341,6 +389,40 @@ int __attribute__((noinline)) sdmmc_sdcard_writesectors(u32 sector_no, u32 numse
 }
 
 //---------------------------------------------------------------------------------
+int  __attribute__((noinline)) sdmmc_nand_readsectors(uint32_t sector_no, uint32_t numsectors, uint8_t *out) {
+//---------------------------------------------------------------------------------
+    if(deviceNAND.isSDHC == 0) sector_no <<= 9;
+    setTarget(&deviceNAND);
+    sdmmc_write16(REG_SDSTOP,0x100);
+#ifdef DATA32_SUPPORT
+    sdmmc_write16(REG_SDBLKCOUNT32,numsectors);
+    sdmmc_write16(REG_SDBLKLEN32,0x200);
+#endif
+    sdmmc_write16(REG_SDBLKCOUNT,numsectors);
+    deviceNAND.data = out;
+    deviceNAND.size = numsectors << 9;
+    sdmmc_send_command(&deviceNAND,0x33C12,sector_no);
+    return geterror(&deviceNAND);
+}
+
+//---------------------------------------------------------------------------------
+int  __attribute__((noinline)) sdmmc_nand_writesectors(uint32_t sector_no, uint32_t numsectors, uint8_t *in) {
+//---------------------------------------------------------------------------------
+    if(deviceNAND.isSDHC == 0) sector_no <<= 9;
+    setTarget(&deviceNAND);
+    sdmmc_write16(REG_SDSTOP,0x100);
+#ifdef DATA32_SUPPORT
+    sdmmc_write16(REG_SDBLKCOUNT32,numsectors);
+    sdmmc_write16(REG_SDBLKLEN32,0x200);
+#endif
+    sdmmc_write16(REG_SDBLKCOUNT,numsectors);
+    deviceNAND.data = in;
+    deviceNAND.size = numsectors << 9;
+    sdmmc_send_command(&deviceNAND,0x52C19,sector_no);
+    return geterror(&deviceNAND);
+}
+
+//---------------------------------------------------------------------------------
 void sdmmcMsgHandler(int bytes, void *user_data) {
 //---------------------------------------------------------------------------------
     FifoMessage msg;
@@ -356,6 +438,11 @@ void sdmmcMsgHandler(int bytes, void *user_data) {
     case SDMMC_SD_WRITE_SECTORS:
         retval = sdmmc_sdcard_writesectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
         break;
+    case SDMMC_NAND_READ_SECTORS:
+        retval = sdmmc_nand_readsectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
+        break;
+    case SDMMC_NAND_WRITE_SECTORS:
+        retval = sdmmc_nand_writesectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
     
     }
 
