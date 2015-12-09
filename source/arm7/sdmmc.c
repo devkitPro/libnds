@@ -479,6 +479,10 @@ void sdmmcValueHandler(u32 value, void* user_data) {
     case SDMMC_SD_STOP:
         break;
 
+    case SDMMC_NAND_START:
+        result = sdmmc_nand_init();
+        fifoSendValue32(FIFO_SDMMC,result);
+        break;
     }
 }
 
