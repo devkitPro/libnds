@@ -135,8 +135,6 @@ void irqInit() {
 		irqTable[i].mask = 0;
 	}
 
-	IRQ_HANDLER = IntrMain;
-
 #ifdef ARM7
 	irqSetAUX(IRQ_I2C, i2cIRQHandler);
 	irqEnableAUX(IRQ_I2C);
