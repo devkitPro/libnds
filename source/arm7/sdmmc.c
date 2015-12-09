@@ -165,6 +165,13 @@ void sdmmc_controller_init() {
     deviceSD.clk = 0x80;
     deviceSD.devicenumber = 0;
 
+    deviceNAND.isSDHC = 0;
+    deviceNAND.SDOPT = 0;
+    deviceNAND.res = 0;
+    deviceNAND.initarg = 1;
+    deviceNAND.clk = 0x80;
+    deviceNAND.devicenumber = 1;
+
     *(vu16*)(SDMMC_BASE + 0x100) &= 0xF7FFu; //SDDATACTL32
     *(vu16*)(SDMMC_BASE + 0x100) &= 0xEFFFu; //SDDATACTL32
 #ifdef DATA32_SUPPORT
@@ -366,6 +373,7 @@ int __attribute__((noinline)) sdmmc_sdcard_readsectors(u32 sector_no, u32 numsec
     deviceSD.data = out;
     deviceSD.size = numsectors << 9;
     sdmmc_send_command(&deviceSD,0x33C12,sector_no);
+    setTarget(&deviceSD);
     return geterror(&deviceSD);
 }
 
@@ -385,6 +393,7 @@ int __attribute__((noinline)) sdmmc_sdcard_writesectors(u32 sector_no, u32 numse
     deviceSD.data = in;
     deviceSD.size = numsectors << 9;
     sdmmc_send_command(&deviceSD,0x52C19,sector_no);
+    setTarget(&deviceSD);
     return geterror(&deviceSD);
 }
 
@@ -402,6 +411,7 @@ int  __attribute__((noinline)) sdmmc_nand_readsectors(uint32_t sector_no, uint32
     deviceNAND.data = out;
     deviceNAND.size = numsectors << 9;
     sdmmc_send_command(&deviceNAND,0x33C12,sector_no);
+    setTarget(&deviceSD);
     return geterror(&deviceNAND);
 }
 
@@ -419,6 +429,7 @@ int  __attribute__((noinline)) sdmmc_nand_writesectors(uint32_t sector_no, uint3
     deviceNAND.data = in;
     deviceNAND.size = numsectors << 9;
     sdmmc_send_command(&deviceNAND,0x52C19,sector_no);
+    setTarget(&deviceSD);
     return geterror(&deviceNAND);
 }
 
