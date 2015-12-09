@@ -108,11 +108,25 @@ void irqSet(u32 mask, IntFn handler) {
 }
 
 //---------------------------------------------------------------------------------
+void irqInitHandler(IntFn handler) {
+//---------------------------------------------------------------------------------
+	REG_IME = 0;
+	REG_IE = 0;
+	REG_IF = ~0;
+
+#ifdef ARM7
+	REG_AUXIE = 0;
+	REG_AUXIF = ~0;
+#endif
+	IRQ_HANDLER = handler;
+}
+
+//---------------------------------------------------------------------------------
 void irqInit() {
 //---------------------------------------------------------------------------------
 	int i;
 
-	REG_IE	= 0;			// disable all interrupts
+	irqInitHandler(IntrMain);
 
 	// Set all interrupts to dummy functions.
 	for(i = 0; i < MAX_INTERRUPTS; i ++)
@@ -127,27 +141,9 @@ void irqInit() {
 	irqSetAUX(IRQ_I2C, i2cIRQHandler);
 	irqEnableAUX(IRQ_I2C);
 #endif
-	REG_IF	= IRQ_ALL;		// clear all pending interrupts
 	REG_IME = 1;			// enable global interrupt
-
 }
 
-
-//---------------------------------------------------------------------------------
-void irqInitHandler(IntFn handler) {
-//---------------------------------------------------------------------------------
-	REG_IME = 0;
-	REG_IE = 0;
-	REG_IF = ~0;
-
-#ifdef ARM7
-	REG_AUXIE = 0;
-	REG_AUXIF = ~0;
-#endif
-	IRQ_HANDLER = handler;
-
-	REG_IME = 1;
-}
 
 //---------------------------------------------------------------------------------
 void irqEnable(uint32 irq) {
