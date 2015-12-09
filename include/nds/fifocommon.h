@@ -2,6 +2,7 @@
 #define FIFOCOMMON_H
 
 #include "ndstypes.h"
+#include "interrupts.h"
 
 /*! \file fifocommon.h
 	\brief low level FIFO API.
@@ -315,6 +316,22 @@ u32 fifoGetValue32(int channel);
 	\warning If your buffer is not big enough, you may lose data! Check the data length first if you're not sure what the size is.
 */
 int fifoGetDatamsg(int channel, int buffersize, u8 * destbuffer);
+
+/*!
+	\brief waits for any data messages in the fifo queue.
+
+	\param channel the channel to check.
+
+*/
+//---------------------------------------------------------------------------------
+static inline void fifoWaitValue32(int channel) {
+//---------------------------------------------------------------------------------
+
+	while(!fifoCheckValue32(channel)) {
+		swiIntrWait(1,IRQ_FIFO_NOT_EMPTY);
+	}
+
+}
 
 
 #ifdef __cplusplus
