@@ -3,7 +3,7 @@
 
 #include <nds/ndstypes.h>
 
-//#define DATA32_SUPPORT
+#define DATA32_SUPPORT
 
 #define SDMMC_BASE	0x04004800
 
@@ -31,7 +31,7 @@
 
 #define REG_SDIRMASK0   0x20
 #define REG_SDIRMASK1   0x22
-#define REG_SDCLKCTL    0x24 
+#define REG_SDCLKCTL    0x24
 
 #define REG_SDBLKLEN    0x26
 #define REG_SDOPT       0x28
