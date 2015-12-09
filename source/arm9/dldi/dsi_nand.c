@@ -39,7 +39,7 @@ bool nand_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	
 	fifoSendDatamsg(FIFO_SDMMC, sizeof(msg), (u8*)&msg);
 
-	while(!fifoCheckValue32(FIFO_SDMMC));
+	fifoWaitValue32(FIFO_SDMMC);
 
 	int result = fifoGetValue32(FIFO_SDMMC);
 	
@@ -61,7 +61,7 @@ bool nand_WriteSectors(sec_t sector, sec_t numSectors,const void* buffer) {
 	
 	fifoSendDatamsg(FIFO_SDMMC, sizeof(msg), (u8*)&msg);
 
-	while(!fifoCheckValue32(FIFO_SDMMC));
+	fifoWaitValue32(FIFO_SDMMC);
 
 	int result = fifoGetValue32(FIFO_SDMMC);
 	

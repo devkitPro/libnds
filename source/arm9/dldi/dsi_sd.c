@@ -16,7 +16,9 @@ bool sdio_Startup() {
 	if(result==0) return false;
 
 	fifoSendValue32(FIFO_SDMMC,SDMMC_SD_START);
-	while(!fifoCheckValue32(FIFO_SDMMC));
+
+	fifoWaitValue32(FIFO_SDMMC);
+
 	result = fifoGetValue32(FIFO_SDMMC);
 	
 	return result == 0;
@@ -28,8 +30,11 @@ bool sdio_IsInserted() {
 	if (!REG_DSIMODE) return false;
 
 	fifoSendValue32(FIFO_SDMMC,SDMMC_SD_IS_INSERTED);
-	while(!fifoCheckValue32(FIFO_SDMMC));
+
+	fifoWaitValue32(FIFO_SDMMC);
+
 	int result = fifoGetValue32(FIFO_SDMMC);
+
 	return result == 1;
 }
 
@@ -48,7 +53,7 @@ bool sdio_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	
 	fifoSendDatamsg(FIFO_SDMMC, sizeof(msg), (u8*)&msg);
 
-	while(!fifoCheckValue32(FIFO_SDMMC));
+	fifoWaitValue32(FIFO_SDMMC);
 
 	int result = fifoGetValue32(FIFO_SDMMC);
 	
@@ -70,7 +75,7 @@ bool sdio_WriteSectors(sec_t sector, sec_t numSectors,const void* buffer) {
 	
 	fifoSendDatamsg(FIFO_SDMMC, sizeof(msg), (u8*)&msg);
 
-	while(!fifoCheckValue32(FIFO_SDMMC));
+	fifoWaitValue32(FIFO_SDMMC);
 
 	int result = fifoGetValue32(FIFO_SDMMC);
 	
