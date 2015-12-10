@@ -455,6 +455,7 @@ void sdmmcMsgHandler(int bytes, void *user_data) {
 
     fifoGetDatamsg(FIFO_SDMMC, bytes, (u8*)&msg);
 
+    int oldIME = enterCriticalSection();
     switch (msg.type) {
 
     case SDMMC_SD_READ_SECTORS:
@@ -471,19 +472,22 @@ void sdmmcMsgHandler(int bytes, void *user_data) {
 
     }
 
+    leaveCriticalSection(oldIME);
+
     fifoSendValue32(FIFO_SDMMC, retval);
 }
 
 //---------------------------------------------------------------------------------
 void sdmmcValueHandler(u32 value, void* user_data) {
 //---------------------------------------------------------------------------------
-    int result;
+    int result = 0;
+
+    int oldIME = enterCriticalSection();
 
     switch(value) {
 
     case SDMMC_HAVE_SD:
         result = sdmmc_read16(REG_SDSTATUS0);
-        fifoSendValue32(FIFO_SDMMC, result);
         break;
 
     case SDMMC_SD_START:
@@ -493,12 +497,10 @@ void sdmmcValueHandler(u32 value, void* user_data) {
             sdmmc_controller_init();
             result = sdmmc_sdcard_init();
         }
-        fifoSendValue32(FIFO_SDMMC, result);
         break;
 
     case SDMMC_SD_IS_INSERTED:
         result = sdmmc_cardinserted();
-        fifoSendValue32(FIFO_SDMMC, result);
         break;
 
     case SDMMC_SD_STOP:
@@ -506,9 +508,12 @@ void sdmmcValueHandler(u32 value, void* user_data) {
 
     case SDMMC_NAND_START:
         result = sdmmc_nand_init();
-        fifoSendValue32(FIFO_SDMMC,result);
         break;
     }
+
+    leaveCriticalSection(oldIME);
+
+    fifoSendValue32(FIFO_SDMMC, result);
 }
 
 
