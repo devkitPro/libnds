@@ -229,7 +229,7 @@ void guruMeditationDump() {
 			exceptionAddress = getExceptionAddress( codeAddress, thumbState);
 		else
 			exceptionAddress = codeAddress;
-			
+
 	} else {
 		if (thumbState)
 			offset = 2;
@@ -240,18 +240,18 @@ void guruMeditationDump() {
 		exceptionAddress = codeAddress;
 	}
 
-	iprintf("  pc: %08X addr: %08X\n\n",codeAddress,exceptionAddress);
+	iprintf("  pc: %08lX addr: %08lX\n\n",codeAddress,exceptionAddress);
 
 	int i;
 	for ( i=0; i < 8; i++ ) {
-		iprintf(	"  %s: %08X   %s: %08X\n",
+		iprintf(	"  %s: %08lX   %s: %08lX\n",
 		registerNames[i], exceptionRegisters[i],
 		registerNames[i+8],exceptionRegisters[i+8]);
 	}
 	iprintf("\n");
 	u32 *stack = (u32 *)exceptionRegisters[13];
 	for ( i=0; i<10; i++ ) {
-		iprintf( "\x1b[%d;2H%08X:  %08X %08X", i + 14, (u32)&stack[i*2],stack[i*2], stack[(i*2)+1] );
+		iprintf( "\x1b[%d;2H%08lX:  %08lX %08lX", i + 14, (u32)&stack[i*2],stack[i*2], stack[(i*2)+1] );
 	}
 }
 
