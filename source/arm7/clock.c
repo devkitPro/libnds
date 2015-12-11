@@ -172,9 +172,9 @@ void rtcGetTimeAndDate(uint8 * time) {
 void rtcSetTimeAndDate(uint8 * time) {
 //---------------------------------------------------------------------------------
 	uint8 command[8];
-	
+
 	int i;
-	for ( i=0; i< 8; i++ ) {
+	for ( i=0; i< 7; i++ ) {
 		command[i+1] = time[i];
 	}
 	command[0] = WRITE_TIME_AND_DATE;
@@ -205,7 +205,7 @@ void rtcGetTime(uint8 * time) {
 void rtcSetTime(uint8 * time) {
 //---------------------------------------------------------------------------------
 	uint8 command[4];
-	
+
 	int i;
 	for ( i=0; i< 3; i++ ) {
 		command[i+1] = time[i];
@@ -266,7 +266,7 @@ void resyncClock() {
 //---------------------------------------------------------------------------------
 	RTCtime dstime;
 	rtcGetTimeAndDate((uint8 *)&dstime);
-	
+
 	__transferRegion()->unixTime = __mktime(&dstime);
 }
 
@@ -286,11 +286,11 @@ void initClockIRQ() {
 	command[0] = WRITE_STATUS_REG2;
 	command[1] = 0x41;
 	rtcTransaction(command, 2, 0, 0);
-	
+
 	command[0] = WRITE_INT_REG1;
 	command[1] = 0x01;
 	rtcTransaction(command, 2, 0, 0);
-	
+
 	command[0] = WRITE_INT_REG2;
 	command[1] = 0x00;
 	command[2] = 0x21;
