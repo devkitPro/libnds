@@ -1,6 +1,7 @@
 #include <sys/time.h>
 
 time_t *punixTime;
+struct _reent;
 
 //---------------------------------------------------------------------------------
 int __libnds_gtod(struct _reent *ptr, struct timeval *tp, struct timezone *tz) {
