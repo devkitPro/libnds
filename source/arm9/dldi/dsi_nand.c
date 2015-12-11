@@ -9,11 +9,7 @@ bool nand_Startup() {
 //---------------------------------------------------------------------------------
 	if (!REG_DSIMODE) return false;
 
-	fifoSendValue32(FIFO_SDMMC,SDMMC_NAND_START);
-
-	while(!fifoCheckValue32(FIFO_SDMMC));
-
-	return fifoGetValue32(FIFO_SDMMC) == 0;
+	return true;
 }
 
 //---------------------------------------------------------------------------------
@@ -36,13 +32,13 @@ bool nand_ReadSectors(sec_t sector, sec_t numSectors,void* buffer) {
 	msg.sdParams.startsector = sector;
 	msg.sdParams.numsectors = numSectors;
 	msg.sdParams.buffer = buffer;
-	
+
 	fifoSendDatamsg(FIFO_SDMMC, sizeof(msg), (u8*)&msg);
 
 	fifoWaitValue32(FIFO_SDMMC);
 
 	int result = fifoGetValue32(FIFO_SDMMC);
-	
+
 	return result == 0;
 }
 
@@ -58,13 +54,13 @@ bool nand_WriteSectors(sec_t sector, sec_t numSectors,const void* buffer) {
 	msg.sdParams.startsector = sector;
 	msg.sdParams.numsectors = numSectors;
 	msg.sdParams.buffer = (void*)buffer;
-	
+
 	fifoSendDatamsg(FIFO_SDMMC, sizeof(msg), (u8*)&msg);
 
 	fifoWaitValue32(FIFO_SDMMC);
 
 	int result = fifoGetValue32(FIFO_SDMMC);
-	
+
 	return result == 0;
 }
 
