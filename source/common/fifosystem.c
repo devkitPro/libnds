@@ -2,6 +2,7 @@
 #include <nds/ipc.h>
 #include <nds/interrupts.h>
 #include <nds/bios.h>
+#include <nds/system.h>
 
 #include <string.h>
 
@@ -152,7 +153,7 @@ typedef struct fifo_queue {
 	vu16 head;
 	vu16 tail;
 } fifo_queue;
-	
+
 fifo_queue	fifo_address_queue[FIFO_NUM_CHANNELS];
 fifo_queue	fifo_data_queue[FIFO_NUM_CHANNELS];
 fifo_queue	fifo_value32_queue[FIFO_NUM_CHANNELS];
@@ -179,7 +180,7 @@ bool fifoSetAddressHandler(int channel, FifoAddressHandlerFunc newhandler, void 
 
 	fifo_address_func[channel] = newhandler;
 	fifo_address_data[channel] = userdata;
-	
+
 	if(newhandler) {
 		while(fifoCheckAddress(channel)) {
 			newhandler( fifoGetAddress(channel), userdata );
@@ -278,7 +279,7 @@ static bool fifoInternalSend(u32 firstword, int extrawordcount, u32 * wordlist) 
 	if(fifo_send_queue.head == FIFO_BUFFER_TERMINATE) {
 		fifo_send_queue.head = head;
 	} else {
-		FIFO_BUFFER_SETNEXT(fifo_send_queue.tail,head);		
+		FIFO_BUFFER_SETNEXT(fifo_send_queue.tail,head);
 	}
 	FIFO_BUFFER_DATA(head)=firstword;
 	fifo_send_queue.tail = head;
@@ -288,7 +289,7 @@ static bool fifoInternalSend(u32 firstword, int extrawordcount, u32 * wordlist) 
 		if(fifo_send_queue.head == FIFO_BUFFER_TERMINATE) {
 			fifo_send_queue.head = next;
 		} else {
-			FIFO_BUFFER_SETNEXT(fifo_send_queue.tail,next);		
+			FIFO_BUFFER_SETNEXT(fifo_send_queue.tail,next);
 		}
 		FIFO_BUFFER_DATA(next)=wordlist[count];
 		count++;
@@ -298,7 +299,7 @@ static bool fifoInternalSend(u32 firstword, int extrawordcount, u32 * wordlist) 
 	REG_IPC_FIFO_CR |= IPC_FIFO_SEND_IRQ;
 
 	leaveCriticalSection(oldIME);
-	
+
 	return true;
 }
 
@@ -338,7 +339,7 @@ bool fifoSendDatamsg(int channel, int num_bytes, u8 * data_array) {
 	if(channel<0 || channel>=FIFO_NUM_CHANNELS) return false;
 	if(num_bytes<0 || num_bytes>=FIFO_MAX_DATA_BYTES) return false;
 
-	
+
 	int num_words = (num_bytes+3)>>2;
 
 	u32 buffer_array[num_words];
@@ -362,7 +363,7 @@ void * fifoGetAddress(int channel) {
 	leaveCriticalSection(oldIME);
 	return address;
 }
-	
+
 u32 fifoGetValue32(int channel) {
 	if(channel<0 || channel>=FIFO_NUM_CHANNELS) return 0;
 	int block = fifo_value32_queue[channel].head;
@@ -401,7 +402,7 @@ int fifoGetDatamsg(int channel, int buffersize, u8 * destbuffer) {
 
 	leaveCriticalSection(oldIME);
 	return num_bytes;
-	
+
 }
 
 bool fifoCheckAddress(int channel) {
@@ -441,13 +442,15 @@ static void fifo_queueBlock(fifo_queue *queue, int head, int tail) {
 int processing=0;
 
 static void fifoInternalRecvInterrupt() {
+	int old_dispstat = REG_DISPSTAT;
+	REG_DISPSTAT &= ~DISP_YTRIGGER_IRQ;
 	REG_IE &= ~IRQ_FIFO_NOT_EMPTY;
 	REG_IME=1;
 
 	u32 data, block=FIFO_BUFFER_TERMINATE;
 
 	while( !(REG_IPC_FIFO_CR & IPC_FIFO_RECV_EMPTY) ) {
-		
+
 		REG_IME=0;
 		block=fifo_allocBlock();
 		if (block != FIFO_BUFFER_TERMINATE ) {
@@ -469,9 +472,9 @@ static void fifoInternalRecvInterrupt() {
 
 		processing = 1;
 		REG_IME=1;
-		
+
 		do {
-		
+
 			block = fifo_receive_queue.head;
 			data = FIFO_BUFFER_DATA(block);
 
@@ -485,7 +488,7 @@ static void fifoInternalRecvInterrupt() {
 					REG_IPC_SYNC = 0;
 					swiSoftReset();
 				}
-				
+
 			} else if (FIFO_IS_ADDRESS(data)) {
 
 				volatile void * address = FIFO_UNPACK_ADDRESS(data);
@@ -512,7 +515,7 @@ static void fifoInternalRecvInterrupt() {
 					fifo_freeBlock(block);
 					block = next;
 					value32 = FIFO_BUFFER_DATA(block);
-					
+
 				} else {
 					value32 = FIFO_UNPACK_VALUE32_NOEXTRA(data);
 				}
@@ -533,7 +536,7 @@ static void fifoInternalRecvInterrupt() {
 				int n_bytes = FIFO_UNPACK_DATALENGTH(data);
 				int n_words = (n_bytes+3)>>2;
 				int count=0;
-				
+
 				int end=block;
 
 				while(count<n_words && FIFO_BUFFER_GETNEXT(end)!=FIFO_BUFFER_TERMINATE){
@@ -544,12 +547,12 @@ static void fifoInternalRecvInterrupt() {
 
 				if (count!=n_words) break;
 				REG_IME=0;
-				
+
 				fifo_receive_queue.head = FIFO_BUFFER_GETNEXT(end);
 
 				int tmp=FIFO_BUFFER_GETNEXT(block);
 				fifo_freeBlock(block);
-				
+
 
 				FIFO_BUFFER_SETCONTROL(tmp, FIFO_BUFFER_GETNEXT(tmp), FIFO_BUFFERCONTROL_DATASTART, n_bytes);
 
@@ -570,10 +573,11 @@ static void fifoInternalRecvInterrupt() {
 			}
 
 		} while( fifo_receive_queue.head != FIFO_BUFFER_TERMINATE);
-		
+
 		REG_IME = 0;
 		processing = 0;
 	}
+	REG_DISPSTAT = old_dispstat;
 }
 
 static void fifoInternalSendInterrupt() {
@@ -596,7 +600,7 @@ static void fifoInternalSendInterrupt() {
 		}
 
 		fifo_send_queue.head = head;
-		
+
 	}
 }
 
@@ -656,7 +660,7 @@ bool fifoInit() {
 
 	irqDisable(IRQ_IPC_SYNC);
 	irqSet(IRQ_VBLANK,0);
-	
+
 	if (__timeout>= __TIMEOUT) {
 		IPC_SendSync(0);
 		return false;
