@@ -1,12 +1,12 @@
 ifeq ($(strip $(DEVKITPRO)),)
 $(error "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to>devkitPro)
 endif
- 
+
 export TOPDIR	:=	$(CURDIR)
 
 export LIBNDS_MAJOR	:= 1
 export LIBNDS_MINOR	:= 5
-export LIBNDS_PATCH	:= 11
+export LIBNDS_PATCH	:= 12
 
 
 VERSION	:=	$(LIBNDS_MAJOR).$(LIBNDS_MINOR).$(LIBNDS_PATCH)
@@ -14,14 +14,14 @@ VERSION	:=	$(LIBNDS_MAJOR).$(LIBNDS_MINOR).$(LIBNDS_PATCH)
 
 .PHONY: release debug clean all docs
 
-all: include/nds/libversion.h release debug 
+all: include/nds/libversion.h release debug
 
 #-------------------------------------------------------------------------------
 release: lib
 #-------------------------------------------------------------------------------
 	$(MAKE) -C arm9 BUILD=release || { exit 1;}
 	$(MAKE) -C arm7 BUILD=release || { exit 1;}
- 
+
 #-------------------------------------------------------------------------------
 debug: lib
 #-------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ debug: lib
 lib:
 #-------------------------------------------------------------------------------
 	mkdir lib
- 
+
 #-------------------------------------------------------------------------------
 clean:
 #-------------------------------------------------------------------------------
