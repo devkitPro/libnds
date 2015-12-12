@@ -16,7 +16,7 @@ static struct mmcdevice deviceNAND;
 }
 */
 //---------------------------------------------------------------------------------
-int __attribute__((noinline)) geterror(struct mmcdevice *ctx) {
+int geterror(struct mmcdevice *ctx) {
 //---------------------------------------------------------------------------------
     //if(ctx->error == 0x4) return -1;
     //else return 0;
@@ -25,7 +25,7 @@ int __attribute__((noinline)) geterror(struct mmcdevice *ctx) {
 
 
 //---------------------------------------------------------------------------------
-void __attribute__((noinline)) setTarget(struct mmcdevice *ctx) {
+void setTarget(struct mmcdevice *ctx) {
 //---------------------------------------------------------------------------------
     sdmmc_mask16(REG_SDPORTSEL,0x3,(u16)ctx->devicenumber);
     setckl(ctx->clk);
@@ -372,10 +372,10 @@ int sdmmc_nand_init() {
 }
 
 //---------------------------------------------------------------------------------
-int __attribute__((noinline)) sdmmc_sdcard_readsectors(u32 sector_no, u32 numsectors, void *out) {
+int sdmmc_readsectors(struct mmcdevice *device, u32 sector_no, u32 numsectors, void *out) {
 //---------------------------------------------------------------------------------
-    if (deviceSD.isSDHC == 0) sector_no <<= 9;
-    setTarget(&deviceSD);
+    if (device->isSDHC == 0) sector_no <<= 9;
+    setTarget(device);
     sdmmc_write16(REG_SDSTOP,0x100);
 
 #ifdef DATA32_SUPPORT
@@ -384,19 +384,19 @@ int __attribute__((noinline)) sdmmc_sdcard_readsectors(u32 sector_no, u32 numsec
 #endif
 
     sdmmc_write16(REG_SDBLKCOUNT,numsectors);
-    deviceSD.data = out;
-    deviceSD.size = numsectors << 9;
-    sdmmc_send_command(&deviceSD,0x33C12,sector_no);
+    device->data = out;
+    device->size = numsectors << 9;
+    sdmmc_send_command(device,0x33C12,sector_no);
     setTarget(&deviceSD);
-    return geterror(&deviceSD);
+    return geterror(device);
 }
 
 //---------------------------------------------------------------------------------
-int __attribute__((noinline)) sdmmc_sdcard_writesectors(u32 sector_no, u32 numsectors, void *in) {
+int sdmmc_writesectors(struct mmcdevice *device, u32 sector_no, u32 numsectors, void *in) {
 //---------------------------------------------------------------------------------
-    if (deviceSD.isSDHC == 0)
+    if (device->isSDHC == 0)
         sector_no <<= 9;
-    setTarget(&deviceSD);
+    setTarget(device);
     sdmmc_write16(REG_SDSTOP,0x100);
 
 #ifdef DATA32_SUPPORT
@@ -405,47 +405,11 @@ int __attribute__((noinline)) sdmmc_sdcard_writesectors(u32 sector_no, u32 numse
 #endif
 
     sdmmc_write16(REG_SDBLKCOUNT,numsectors);
-    deviceSD.data = in;
-    deviceSD.size = numsectors << 9;
-    sdmmc_send_command(&deviceSD,0x52C19,sector_no);
+    device->data = in;
+    device->size = numsectors << 9;
+    sdmmc_send_command(device,0x52C19,sector_no);
     setTarget(&deviceSD);
-    return geterror(&deviceSD);
-}
-
-//---------------------------------------------------------------------------------
-int  __attribute__((noinline)) sdmmc_nand_readsectors(uint32_t sector_no, uint32_t numsectors, uint8_t *out) {
-//---------------------------------------------------------------------------------
-    if(deviceNAND.isSDHC == 0) sector_no <<= 9;
-    setTarget(&deviceNAND);
-    sdmmc_write16(REG_SDSTOP,0x100);
-#ifdef DATA32_SUPPORT
-    sdmmc_write16(REG_SDBLKCOUNT32,numsectors);
-    sdmmc_write16(REG_SDBLKLEN32,0x200);
-#endif
-    sdmmc_write16(REG_SDBLKCOUNT,numsectors);
-    deviceNAND.data = out;
-    deviceNAND.size = numsectors << 9;
-    sdmmc_send_command(&deviceNAND,0x33C12,sector_no);
-    setTarget(&deviceSD);
-    return geterror(&deviceNAND);
-}
-
-//---------------------------------------------------------------------------------
-int  __attribute__((noinline)) sdmmc_nand_writesectors(uint32_t sector_no, uint32_t numsectors, uint8_t *in) {
-//---------------------------------------------------------------------------------
-    if(deviceNAND.isSDHC == 0) sector_no <<= 9;
-    setTarget(&deviceNAND);
-    sdmmc_write16(REG_SDSTOP,0x100);
-#ifdef DATA32_SUPPORT
-    sdmmc_write16(REG_SDBLKCOUNT32,numsectors);
-    sdmmc_write16(REG_SDBLKLEN32,0x200);
-#endif
-    sdmmc_write16(REG_SDBLKCOUNT,numsectors);
-    deviceNAND.data = in;
-    deviceNAND.size = numsectors << 9;
-    sdmmc_send_command(&deviceNAND,0x52C19,sector_no);
-    setTarget(&deviceSD);
-    return geterror(&deviceNAND);
+    return geterror(device);
 }
 
 //---------------------------------------------------------------------------------
@@ -460,16 +424,16 @@ void sdmmcMsgHandler(int bytes, void *user_data) {
     switch (msg.type) {
 
     case SDMMC_SD_READ_SECTORS:
-        retval = sdmmc_sdcard_readsectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
+        retval = sdmmc_readsectors(&deviceSD, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
         break;
     case SDMMC_SD_WRITE_SECTORS:
-        retval = sdmmc_sdcard_writesectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
+        retval = sdmmc_writesectors(&deviceSD, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
         break;
     case SDMMC_NAND_READ_SECTORS:
-        retval = sdmmc_nand_readsectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
+        retval = sdmmc_readsectors(&deviceNAND, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
         break;
     case SDMMC_NAND_WRITE_SECTORS:
-        retval = sdmmc_nand_writesectors(msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
+        retval = sdmmc_writesectors(&deviceNAND, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
 
     }
 
