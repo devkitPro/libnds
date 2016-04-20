@@ -105,8 +105,8 @@ extern "C" {
 #define WRITE_INT_REG1     0x68
 #define READ_INT_REG1      0x69
 
-#define READ_INT_REG2      0x6A
-#define WRITE_INT_REG2     0x6B
+#define WRITE_INT_REG2     0x6A
+#define READ_INT_REG2      0x6B
 
 #define READ_CLOCK_ADJUST_REG  0x6C
 #define WRITE_CLOCK_ADJUST_REG 0x6D
