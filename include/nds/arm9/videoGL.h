@@ -139,7 +139,7 @@ typedef struct GLvector {
 #define GL_TRUE      1
 
 /*! \brief Enums selecting polygon draw mode<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A><BR>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A><BR>
 related functions: glBegin() */
 typedef enum {
 	GL_TRIANGLES      = 0, /*!< draw triangles with each 3 vertices defining a triangle */
@@ -151,7 +151,7 @@ typedef enum {
 } GL_GLBEGIN_ENUM;
 
 /*! \brief Enums selecting matrix mode<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A><BR>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply</A><BR>
 related functions: glMatrixMode() */
 typedef enum {
 	GL_PROJECTION     = 0, /*!< used to set the Projection Matrix */
@@ -161,7 +161,7 @@ typedef enum {
 } GL_MATRIX_MODE_ENUM;
 
 /*! \brief Enums for setting up materials<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A><BR>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters</A><BR>
 related functions: glMaterialf() */
 typedef enum {
 	GL_AMBIENT             = 0x01, /*!< sets the ambient color for the material. The color when the normal is not facing light*/
@@ -173,7 +173,7 @@ typedef enum {
 } GL_MATERIALS_ENUM;
 
 /*! \brief Enums for setting how polygons will be displayed<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes</A><BR>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygonattributes</A><BR>
 related functions: glPolyFmt(), glInit(), POLY_ALPHA(), POLY_ID() */
 enum GL_POLY_FORMAT_ENUM {
 	POLY_FORMAT_LIGHT0   = (1<<0), /*!< enable light number 0 */
@@ -204,7 +204,7 @@ enum GL_TEXTURE_SIZE_ENUM {
 };
 
 /*! \brief Enums for texture parameters, such as texture wrapping and texture coord stuff<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A><BR>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dtextureattributes">GBATEK http://problemkaputt.de/gbatek.htm#ds3dtextureattributes</A><BR>
 related functions: glTexImage2d(), glTexParameter() */
 typedef enum  {
 	GL_TEXTURE_WRAP_S = (1 << 16), /*!< wrap(repeat) texture on S axis */
@@ -219,7 +219,7 @@ typedef enum  {
 }GL_TEXTURE_PARAM_ENUM;
 
 /*! \brief Enums for texture formats<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureformats">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureformats</A><BR>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dtextureformats">GBATEK http://problemkaputt.de/gbatek.htm#ds3dtextureformats</A><BR>
 related functions: glTexImage2d(), glTexParameter() */
 typedef enum {
 	GL_NOTEXTURE  = 0, /*!< no texture is used - useful for making palettes */
@@ -241,7 +241,7 @@ enum GL_TEXTURE_PALETTE_PARAM_ENUM {
 };
 
 /*! \brief 3D Display Control Register Enums<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A><BR>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol</A><BR>
 related functions: glEnable(), glDisable(), glInit() */
 enum DISP3DCNT_ENUM {
 	GL_TEXTURE_2D      = (1<<0),  /*!< enable/disable textures on the geometry engine */
@@ -258,7 +258,7 @@ enum DISP3DCNT_ENUM {
 };
 
 /*! \brief Enums for reading stuff from the geometry engine<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3diomap">http://nocash.emubase.de/gbatek.htm#ds3diomap</A><BR>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3diomap">http://problemkaputt.de/gbatek.htm#ds3diomap</A><BR>
 related functions: glGetInt(), glGetFixed()*/
 typedef enum {
 	GL_GET_VERTEX_RAM_COUNT,    /*!< returns a count of vertexes currently stored in hardware vertex ram. Use glGetInt() to retrieve */
@@ -273,7 +273,7 @@ typedef enum {
 
 
 /*! \brief Enums for glFlush()<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A><BR>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol</A><BR>
 related functions: glEnable(), glDisable(), glInit() */
 enum GLFLUSH_ENUM {
 	GL_TRANS_MANUALSORT = (1<<0), /*!< enable manual sorting of translucent polygons, otherwise uses Y-sorting */
@@ -378,35 +378,35 @@ static gl_hidden_globals* glGlob = &glGlobalData;
 #define REG2ID(r)				(u8)( ( ((u32)(&(r)))-0x04000400 ) >> 2 ) /*!< \brief converts a GFX command for use in a packed command list */
 
 #define FIFO_NOP				REG2ID(GFX_FIFO) /*!< \brief packed command for nothing, just here to pad your command lists */
-#define FIFO_STATUS				REG2ID(GFX_STATUS) /*!< \brief packed command for geometry engine status register<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dstatus">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dstatus</A> */
-#define FIFO_COLOR				REG2ID(GFX_COLOR) /*!< \brief packed command for vertex color directly<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes</A> */
+#define FIFO_STATUS				REG2ID(GFX_STATUS) /*!< \brief packed command for geometry engine status register<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dstatus">GBATEK http://problemkaputt.de/gbatek.htm#ds3dstatus</A> */
+#define FIFO_COLOR				REG2ID(GFX_COLOR) /*!< \brief packed command for vertex color directly<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygonattributes</A> */
 
-#define FIFO_VERTEX16			REG2ID(GFX_VERTEX16) /*!< \brief packed command for a vertex with 3 16bit paramaters (and 16bits of padding)<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A> */
-#define FIFO_VERTEX10			REG2ID(GFX_VERTEX10) /*!< \brief packed command for a vertex with 3 10bit paramaters (and 2bits of padding)<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A> */
-#define FIFO_VERTEX_XY			REG2ID(GFX_VERTEX_XY) /*!< \brief packed command for a vertex with 2 16bit paramaters (reusing current last-set vertex z value)<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A> */
-#define FIFO_VERTEX_XZ			REG2ID(GFX_VERTEX_XZ) /*!< \brief packed command for a vertex with 2 16bit paramaters (reusing current last-set vertex y value)<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A> */
-#define FIFO_VERTEX_YZ			REG2ID(GFX_VERTEX_YZ) /*!< \brief packed command for a vertex with 2 16bit paramaters (reusing current last-set vertex x value)<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A> */
-#define FIFO_TEX_COORD			REG2ID(GFX_TEX_COORD) /*!< \brief packed command for a texture coordinate<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtexturecoordinates">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtexturecoordinates</A> */
-#define FIFO_TEX_FORMAT			REG2ID(GFX_TEX_FORMAT) /*!< \brief packed command for texture format<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureformats">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureformats</A> */
-#define FIFO_PAL_FORMAT			REG2ID(GFX_PAL_FORMAT) /*!< \brief packed command for texture palette attributes<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A> */
+#define FIFO_VERTEX16			REG2ID(GFX_VERTEX16) /*!< \brief packed command for a vertex with 3 16bit paramaters (and 16bits of padding)<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A> */
+#define FIFO_VERTEX10			REG2ID(GFX_VERTEX10) /*!< \brief packed command for a vertex with 3 10bit paramaters (and 2bits of padding)<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A> */
+#define FIFO_VERTEX_XY			REG2ID(GFX_VERTEX_XY) /*!< \brief packed command for a vertex with 2 16bit paramaters (reusing current last-set vertex z value)<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A> */
+#define FIFO_VERTEX_XZ			REG2ID(GFX_VERTEX_XZ) /*!< \brief packed command for a vertex with 2 16bit paramaters (reusing current last-set vertex y value)<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A> */
+#define FIFO_VERTEX_YZ			REG2ID(GFX_VERTEX_YZ) /*!< \brief packed command for a vertex with 2 16bit paramaters (reusing current last-set vertex x value)<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A> */
+#define FIFO_TEX_COORD			REG2ID(GFX_TEX_COORD) /*!< \brief packed command for a texture coordinate<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dtexturecoordinates">GBATEK http://problemkaputt.de/gbatek.htm#ds3dtexturecoordinates</A> */
+#define FIFO_TEX_FORMAT			REG2ID(GFX_TEX_FORMAT) /*!< \brief packed command for texture format<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dtextureformats">GBATEK http://problemkaputt.de/gbatek.htm#ds3dtextureformats</A> */
+#define FIFO_PAL_FORMAT			REG2ID(GFX_PAL_FORMAT) /*!< \brief packed command for texture palette attributes<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dtextureattributes">GBATEK http://problemkaputt.de/gbatek.htm#ds3dtextureattributes</A> */
 
-#define FIFO_CLEAR_COLOR		REG2ID(GFX_CLEAR_COLOR) /*!< \brief packed command for clear color of the rear plane<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3drearplane">GBATEK http://nocash.emubase.de/gbatek.htm#ds3drearplane</A> */
-#define FIFO_CLEAR_DEPTH		REG2ID(GFX_CLEAR_DEPTH) /*!< \brief sets depth of the rear plane<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3drearplane">GBATEK http://nocash.emubase.de/gbatek.htm#ds3drearplane</A> */
+#define FIFO_CLEAR_COLOR		REG2ID(GFX_CLEAR_COLOR) /*!< \brief packed command for clear color of the rear plane<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3drearplane">GBATEK http://problemkaputt.de/gbatek.htm#ds3drearplane</A> */
+#define FIFO_CLEAR_DEPTH		REG2ID(GFX_CLEAR_DEPTH) /*!< \brief sets depth of the rear plane<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3drearplane">GBATEK http://problemkaputt.de/gbatek.htm#ds3drearplane</A> */
 
-#define FIFO_LIGHT_VECTOR		REG2ID(GFX_LIGHT_VECTOR) /*!< \brief packed command for direction of a light source<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A> */
-#define FIFO_LIGHT_COLOR		REG2ID(GFX_LIGHT_COLOR) /*!< \brief packed command for color for a light<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A> */
-#define FIFO_NORMAL				REG2ID(GFX_NORMAL) /*!< \brief packed command for normal for following vertices<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A> */
+#define FIFO_LIGHT_VECTOR		REG2ID(GFX_LIGHT_VECTOR) /*!< \brief packed command for direction of a light source<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters</A> */
+#define FIFO_LIGHT_COLOR		REG2ID(GFX_LIGHT_COLOR) /*!< \brief packed command for color for a light<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters</A> */
+#define FIFO_NORMAL				REG2ID(GFX_NORMAL) /*!< \brief packed command for normal for following vertices<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters</A> */
 
-#define FIFO_DIFFUSE_AMBIENT	REG2ID(GFX_DIFFUSE_AMBIENT) /*!< \brief packed command for setting diffuse and ambient material properties for the following vertices<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A> */
-#define FIFO_SPECULAR_EMISSION	REG2ID(GFX_SPECULAR_EMISSION) /*!< \brief packed command for setting specular and emmissive material properties for the following vertices<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A> */
-#define FIFO_SHININESS			REG2ID(GFX_SHININESS) /*!< \brief packed command for setting the shininess table to be used for the following vertices<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A> */
+#define FIFO_DIFFUSE_AMBIENT	REG2ID(GFX_DIFFUSE_AMBIENT) /*!< \brief packed command for setting diffuse and ambient material properties for the following vertices<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters</A> */
+#define FIFO_SPECULAR_EMISSION	REG2ID(GFX_SPECULAR_EMISSION) /*!< \brief packed command for setting specular and emmissive material properties for the following vertices<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters</A> */
+#define FIFO_SHININESS			REG2ID(GFX_SHININESS) /*!< \brief packed command for setting the shininess table to be used for the following vertices<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters</A> */
 
-#define FIFO_POLY_FORMAT		REG2ID(GFX_POLY_FORMAT) /*!< \brief packed command for setting polygon attributes<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes</A> */
+#define FIFO_POLY_FORMAT		REG2ID(GFX_POLY_FORMAT) /*!< \brief packed command for setting polygon attributes<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygonattributes</A> */
 
-#define FIFO_BEGIN				REG2ID(GFX_BEGIN) /*!< \brief packed command that starts a polygon vertex list<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A>*/
-#define FIFO_END				REG2ID(GFX_END) /*!< \brief packed command that has no discernable effect, it's probably best to never use it since it bloats the size of the list.<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A>*/
-#define FIFO_FLUSH				REG2ID(GFX_FLUSH) /*!< \brief packed command that has the same effect as swiWaitForVBlank()<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A> */
-#define FIFO_VIEWPORT			REG2ID(GFX_VIEWPORT) /*!< \brief packed command for setting viewport<BR><A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A> */
+#define FIFO_BEGIN				REG2ID(GFX_BEGIN) /*!< \brief packed command that starts a polygon vertex list<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A>*/
+#define FIFO_END				REG2ID(GFX_END) /*!< \brief packed command that has no discernable effect, it's probably best to never use it since it bloats the size of the list.<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygondefinitionsbyvertices</A>*/
+#define FIFO_FLUSH				REG2ID(GFX_FLUSH) /*!< \brief packed command that has the same effect as swiWaitForVBlank()<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol</A> */
+#define FIFO_VIEWPORT			REG2ID(GFX_VIEWPORT) /*!< \brief packed command for setting viewport<BR><A HREF="http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol</A> */
 
 
 #ifdef __cplusplus
@@ -512,7 +512,7 @@ int glLockVRAMBank( uint16 *addr );
 int glUnlockVRAMBank( uint16 *addr );
 
 /*! \brief Sets texture coordinates for following vertices<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dtextureattributes">GBATEK http://problemkaputt.de/gbatek.htm#ds3dtextureattributes</A>
 \param u U(a.k.a. S) texture coordinate (0.0 - 1.0)
 \param v V(a.k.a. T) texture coordinate (0.0 - 1.0)*/
 void glTexCoord2f32(int32 u, int32 v);
@@ -563,7 +563,7 @@ GL_STATIC_INL
 GL_STATIC_INL
 /*! \fn  void glClearDepth(fixed12d3 depth)
 \brief reset the depth buffer to this value; generally set this to GL_MAX_DEPTH.<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3drearplane">GBATEK http://nocash.emubase.de/gbatek.htm#ds3drearplane</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3drearplane">GBATEK http://problemkaputt.de/gbatek.htm#ds3drearplane</A>
 \param depth Something to do with the depth buffer, generally set to GL_MAX_DEPTH */
  void glClearDepth(fixed12d3 depth) { GFX_CLEAR_DEPTH = depth; }
 
@@ -595,7 +595,7 @@ void glVertex3v16(v16 x, v16 y, v16 z) {
 GL_STATIC_INL
 /*! \fn  void glTexCoord2t16(t16 u, t16 v)
 \brief Sets texture coordinates for following vertices<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dtextureattributes">GBATEK http://problemkaputt.de/gbatek.htm#ds3dtextureattributes</A>
 \param u U(a.k.a. S) texture coordinate in texels
 \param v V(a.k.a. T) texture coordinate in texels */
  void glTexCoord2t16(t16 u, t16 v) { GFX_TEX_COORD = TEXTURE_PACK(u,v); }
@@ -603,34 +603,34 @@ GL_STATIC_INL
 GL_STATIC_INL
 /*! \fn   void glPushMatrix(void)
 \brief Pushes the current matrix onto the stack<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack</A> */
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dmatrixstack">GBATEK http://problemkaputt.de/gbatek.htm#ds3dmatrixstack</A> */
  void glPushMatrix(void) { MATRIX_PUSH = 0; }
 
 GL_STATIC_INL
 /*! \fn  void glPopMatrix(int num)
 \brief Pops num matrices off the stack<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dmatrixstack">GBATEK http://problemkaputt.de/gbatek.htm#ds3dmatrixstack</A>
 \param num the number to pop down the stack */
  void glPopMatrix(int num) { MATRIX_POP = num; }
 
 GL_STATIC_INL
 /*! \fn  void glRestoreMatrix(int index)
 \brief Restores the current matrix from a location in the stack<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dmatrixstack">GBATEK http://problemkaputt.de/gbatek.htm#ds3dmatrixstack</A>
 \param index the place in the stack to restore to */
  void glRestoreMatrix(int index) { MATRIX_RESTORE = index; }
 
 GL_STATIC_INL
 /*! \fn   void glStoreMatrix(int index)
 \brief Place the current matrix into the stack at a location<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixstack</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dmatrixstack">GBATEK http://problemkaputt.de/gbatek.htm#ds3dmatrixstack</A>
 \param index the place in the stack to put the current matrix */
  void glStoreMatrix(int index) { MATRIX_STORE = index; }
 
 GL_STATIC_INL
 /*! \fn  void glScalev(const GLvector* v)
 \brief multiply the current matrix by a translation matrix<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \param v the vector to translate by */
  void glScalev(const GLvector* v) {
 	MATRIX_SCALE = v->x;
@@ -641,7 +641,7 @@ GL_STATIC_INL
 GL_STATIC_INL
 /*! \fn  void glTranslatev(const GLvector* v)
 \brief multiply the current matrix by a translation matrix<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \param v the vector to translate by */
  void glTranslatev(const GLvector* v) {
 	MATRIX_TRANSLATE = v->x;
@@ -655,7 +655,7 @@ GL_STATIC_INL
 GL_STATIC_INL
 /*! \fn  void glTranslatef32(int x, int y, int z)
 \brief multiply the current matrix by a translation matrix<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \param x translation on the x axis
 \param y translation on the y axis
 \param z translation on the z axis */
@@ -668,7 +668,7 @@ GL_STATIC_INL
 GL_STATIC_INL
 /*! \fn  void glScalef32(int x, int y, int z)
 \brief multiply the current matrix by a scale matrix<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \param x scaling on the x axis
 \param y scaling on the y axis
 \param z scaling on the z axis */
@@ -681,7 +681,7 @@ GL_STATIC_INL
 GL_STATIC_INL
 /*! \fn  void glLight(int id, rgb color, v10 x, v10 y, v10 z)
 \brief set a light up. Only parallel light sources are supported on the DS<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters</A>
 \param id the number of the light to setup
 \param color the color of the light
 \param x the x component of the lights directional vector. Direction must be normalized
@@ -696,7 +696,7 @@ GL_STATIC_INL
 GL_STATIC_INL
 /*! \fn  void glNormal(u32 normal)
 \brief the normal to use for following vertices<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters</A>
 \warning The nature of the format means that you can't represent the following normals exactly (0,0,1), (0,1,0), or (1,0,0)
 \param normal the packed normal(3 * 10bit x, y, z) */
  void glNormal(u32 normal) { GFX_NORMAL = normal; }
@@ -709,14 +709,14 @@ GL_STATIC_INL
 GL_STATIC_INL
 /*! \fn  void glMatrixMode(GL_MATRIX_MODE_ENUM mode)
 \brief change the current matrix mode<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A><BR>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply</A><BR>
 \param mode the mode for the matrix */
  void glMatrixMode(GL_MATRIX_MODE_ENUM mode) { MATRIX_CONTROL = mode; }
 
 GL_STATIC_INL
 /*! \fn   void glViewport(uint8 x1, uint8 y1, uint8 x2, uint8 y2)
 \brief specify the viewport for following drawing, can be set several times per frame.<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol</A>
 \param x1 the left of the viewport
 \param y1 the bottom of the viewport
 \param x2 the right of the viewport
@@ -726,7 +726,7 @@ GL_STATIC_INL
 GL_STATIC_INL
 /*! \fn  void glFlush(u32 mode)
 \brief Waits for a Vblank and swaps the buffers(like swiWaitForVBlank), but lets you specify some 3D options<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol</A>
 \param mode flags from GLFLUSH_ENUM for enabling Y-sorting of translucent polygons and W-Buffering of all vertices*/
 void glFlush(u32 mode) { asm volatile("" ::: "memory"); GFX_FLUSH = mode; }
 
@@ -752,7 +752,7 @@ GL_STATIC_INL
 The first 32bits is the length of the packed command list, followed by a the packed list.<BR>
 If you want to do this really fast then write your own code that that does this synchronously and only flushes the cache when the list is changed<BR>
 There is sometimes a problem when you pack the GFX_END command into a list, so don't. GFX_END is a dummy command and never needs called<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dgeometrycommands">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dgeometrycommands</A> */
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dgeometrycommands">GBATEK http://problemkaputt.de/gbatek.htm#ds3dgeometrycommands</A> */
 void glCallList(const u32* list) {
 	sassert(list != NULL,"glCallList received a null display list pointer");
 
@@ -776,7 +776,7 @@ void glCallList(const u32* list) {
 GL_STATIC_INL
 /*! \fn  void glPolyFmt(u32 params)
 \brief Set the parameters for polygons rendered on the current frame<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonattributes</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygonattributes">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygonattributes</A>
 \param params the paramters to set for the polygons for the current frame. valid paramters are enumerated in GL_POLY_FORMAT_ENUM and in the functions POLY_ALPHA() and POLY_ID() */
 void glPolyFmt(u32 params) {
 	GFX_POLY_FORMAT = params;
@@ -1246,7 +1246,7 @@ GL_STATIC_INL
 /*!  \fn void glGetFixed(const GL_GET_ENUM param, int* f)
 \brief Grabs fixed format of state variables<BR>
 OpenGL's modelview matrix is handled on the DS with two matrices. The combination of the DS's position matrix and directional vector matrix hold the data that is in OpenGL's one modelview matrix. (a.k.a. modelview = postion and vector)<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3diomap">http://nocash.emubase.de/gbatek.htm#ds3diomap</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3diomap">http://problemkaputt.de/gbatek.htm#ds3diomap</A>
 \param param The state variable to retrieve
 \param f pointer with room to hold the requested data */
 void glGetFixed(const GL_GET_ENUM param, int* f) {
@@ -1284,7 +1284,7 @@ void glGetFixed(const GL_GET_ENUM param, int* f) {
 GL_STATIC_INL
 /*!  \fn void glAlphaFunc(int alphaThreshold)
 \brief set the minimum alpha value that will be used<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol</A>
 \param alphaThreshold minimum alpha value that will be used (0-15) */
 void glAlphaFunc(int alphaThreshold) {
 	GFX_ALPHA_TEST = alphaThreshold;
@@ -1293,7 +1293,7 @@ void glAlphaFunc(int alphaThreshold) {
 GL_STATIC_INL
 /*!  \fn  void glCutoffDepth(fixed12d3 wVal)
 \brief Stop the drawing of polygons that are a certain distance from the camera.<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://nocash.emubase.de/gbatek.htm#ds3ddisplaycontrol</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol</A>
 \param wVal polygons that are beyond this W-value(distance from camera) will not be drawn; 15bit value. */
 void glCutoffDepth(fixed12d3 wVal) {
 	GFX_CUTOFF_DEPTH = wVal;
@@ -1408,7 +1408,7 @@ void glColor3f(float r, float g, float b) {
 GL_STATIC_INL
 /*! \fn void glScalef(float x, float y, float z)
 \brief multiply the current matrix by a scale matrix<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \warning FLOAT VERSION!!!! please use glScalev() or glScalef32()
 \param x scaling on the x axis
 \param y scaling on the y axis
@@ -1422,7 +1422,7 @@ void glScalef(float x, float y, float z) {
 GL_STATIC_INL
 /*! \fn void glTranslatef(float x, float y, float z)
 \brief multiply the current matrix by a translation matrix<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dmatrixloadmultiply</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply">GBATEK http://problemkaputt.de/gbatek.htm#ds3dmatrixloadmultiply</A>
 \warning FLOAT VERSION!!!! please use glTranslatef32()
 \param x translation on the x axis
 \param y translation on the y axis
@@ -1436,7 +1436,7 @@ void glTranslatef(float x, float y, float z) {
 GL_STATIC_INL
 /*! \fn void glNormal3f(float x, float y, float z)
 \brief the normal to use for following vertices<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dpolygonlightparameters</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters">GBATEK http://problemkaputt.de/gbatek.htm#ds3dpolygonlightparameters</A>
 \warning FLOAT VERSION!!!! please use glNormal()
 \param x x component of the normal, vector must be normalized
 \param y y component of the normal, vector must be normalized
@@ -1538,7 +1538,7 @@ GL_STATIC_INL
 GL_STATIC_INL
 /*! \fn void glTexCoord2f(float s, float t)
 \brief Sets texture coordinates for following vertices<BR>
-<A HREF="http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes">GBATEK http://nocash.emubase.de/gbatek.htm#ds3dtextureattributes</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#ds3dtextureattributes">GBATEK http://problemkaputt.de/gbatek.htm#ds3dtextureattributes</A>
 \warning FLOAT VERSION!!!! please use glTexCoord2t16()
 \param s S(a.k.a. U) texture coordinate (0.0 - 1.0)
 \param t T(a.k.a. V) texture coordinate (0.0 - 1.0)*/

@@ -237,27 +237,27 @@ use BG_MAP_RAM unless you really can't*/
 
 
 /*! \brief Access to all Main screen background control registers via: BGCTRL[x]
-<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
 */
 #define	BGCTRL			( (vu16*)0x4000008)
 
 /*! \brief Background 0 Control register (main engine)
-<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
 */
 #define	REG_BG0CNT		(*(vu16*)0x4000008)
 
 /*! \brief Background 1 Control register (main engine)
-<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
 */
 #define	REG_BG1CNT		(*(vu16*)0x400000A)
 
 /*! \brief Background 2 Control register (main engine)
-<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
 */
 #define	REG_BG2CNT		(*(vu16*)0x400000C)
 
 /*! \brief Background 3 Control register (main engine)
-<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
 */
 #define	REG_BG3CNT		(*(vu16*)0x400000E)
 
@@ -341,27 +341,27 @@ use BG_TILE_RAM_SUB unless you really can't */
 
 
 /*! \brief Access to all Sub screen background control registers via: BGCTRL[x]
-<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
 */
 #define	BGCTRL_SUB				( (vu16*)0x4001008)
 
 /*! \brief Background 0 Control register (sub engine)
-<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
 */
 #define	REG_BG0CNT_SUB		(*(vu16*)0x4001008)
 
 /*! \brief Background 1 Control register (sub engine)
-<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
 */
 #define	REG_BG1CNT_SUB		(*(vu16*)0x400100A)
 
 /*! \brief Background 2 Control register (sub engine)
-<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
 */
 #define	REG_BG2CNT_SUB		(*(vu16*)0x400100C)
 
 /*! \brief Background 3 Control register (sub engine)
-<A HREF="http://nocash.emubase.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
+<A HREF="http://problemkaputt.de/gbatek.htm#dsvideobgmodescontrol">GBATEK Reference</A>
 */
 #define	REG_BG3CNT_SUB		(*(vu16*)0x400100E)
 
@@ -1054,7 +1054,7 @@ static inline
    By default, Background 0 uses slot 0 ... Background 3 uses slot 3.  It is possible
    to assign Background 0 to slot 2 and Background 1 to slot 3 (only these two are configurable)
   
-  For more information: <a href="http://nocash.emubase.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
+  For more information: <a href="http://problemkaputt.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
  */
 void bgExtPaletteEnable(void) 
 { 
@@ -1079,7 +1079,7 @@ static inline
    By default, Background 0 uses slot 0 ... Background 3 uses slot 3.  It is possible
    to assign Background 0 to slot 2 and Background 1 to slot 3 (only these two are configurable)
   
-  For more information: <a href="http://nocash.emubase.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
+  For more information: <a href="http://problemkaputt.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
 
 */
 void bgExtPaletteEnableSub(void) 
@@ -1105,7 +1105,7 @@ static inline
    By default, Background 0 uses slot 0 ... Background 3 uses slot 3.  It is possible
    to assign Background 0 to slot 2 and Background 1 to slot 3 (only these two are configurable)
   
-  For more information: <a href="http://nocash.emubase.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
+  For more information: <a href="http://problemkaputt.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
 
 */
 void bgExtPaletteDisable(void) 
@@ -1131,7 +1131,7 @@ static inline
    By default, Background 0 uses slot 0 ... Background 3 uses slot 3.  It is possible
    to assign Background 0 to slot 2 and Background 1 to slot 3 (only these two are configurable)
   
-  For more information: <a href="http://nocash.emubase.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
+  For more information: <a href="http://problemkaputt.de/gbatek.htm#dsvideoextendedpalettes">gbatek</a>
 
 */
 void bgExtPaletteDisableSub(void) 
