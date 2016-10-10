@@ -22,7 +22,7 @@ bool pianoIsInserted() {
 	// When reading from GBA cart space without a GBA cart inserted
 	// the values you read are 16-bit unsigned integers containing
 	// (Address / 2), cp.
-	// http://nocash.emubase.de/gbatek.htm#unpredictablethings.
+	// http://problemkaputt.de/gbatek.htm#unpredictablethings.
 	// The DS piano pulls down GBA pins A4 and A5
 	// (cp. http://darkfader.net/gba/files/cartridge.txt), so
 	// bits 4 and 5 are always 0. Thus, when the keyboard is
