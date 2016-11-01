@@ -150,6 +150,7 @@ typedef volatile s32          vs32;
 //! 64 bit volatile signed integer.
 typedef volatile s64          vs64;
 
+typedef uint32_t sec_t;
 
 
 #ifndef TRUE
