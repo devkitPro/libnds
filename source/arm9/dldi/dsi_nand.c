@@ -79,6 +79,18 @@ bool nand_Shutdown() {
 	return true;
 }
 
+//---------------------------------------------------------------------------------
+ssize_t nand_GetSize() {
+//---------------------------------------------------------------------------------
+	if (!REG_DSIMODE) return 0;
+
+	fifoSendValue32(FIFO_SDMMC, SDMMC_NAND_SIZE);
+
+	fifoWaitValue32(FIFO_SDMMC);
+
+	return fifoGetValue32(FIFO_SDMMC);
+
+}
 /*const DISC_INTERFACE __io_dsisd = {
 	DEVICE_TYPE_DSI_SD,
 	FEATURE_MEDIUM_CANREAD | FEATURE_MEDIUM_CANWRITE,

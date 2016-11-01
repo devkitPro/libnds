@@ -15,6 +15,7 @@ static struct mmcdevice deviceNAND;
     return &deviceSD;
 }
 */
+
 //---------------------------------------------------------------------------------
 int geterror(struct mmcdevice *ctx) {
 //---------------------------------------------------------------------------------
@@ -434,7 +435,7 @@ void sdmmcMsgHandler(int bytes, void *user_data) {
         break;
     case SDMMC_NAND_WRITE_SECTORS:
         retval = sdmmc_writesectors(&deviceNAND, msg.sdParams.startsector, msg.sdParams.numsectors, msg.sdParams.buffer);
-
+        break;
     }
 
     leaveCriticalSection(oldIME);
@@ -470,6 +471,10 @@ void sdmmcValueHandler(u32 value, void* user_data) {
         break;
 
     case SDMMC_SD_STOP:
+        break;
+
+    case SDMMC_NAND_SIZE:
+        result = deviceNAND.total_size;
         break;
     }
 

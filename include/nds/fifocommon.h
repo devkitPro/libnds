@@ -61,7 +61,8 @@ typedef enum {
 	SDMMC_SD_IS_INSERTED,
 	SDMMC_SD_STOP,
 	SDMMC_NAND_START,
-	SDMMC_NAND_STOP
+	SDMMC_NAND_STOP,
+	SDMMC_NAND_SIZE
 } FifoSdmmcCommands;
 
 typedef enum {
