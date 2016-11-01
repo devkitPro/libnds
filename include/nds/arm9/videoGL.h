@@ -1265,7 +1265,7 @@ void glGetFixed(const GL_GET_ENUM param, int* f) {
 			glPushMatrix(); // save the current state of the position matrix
 			glLoadIdentity(); // load an identity matrix into the position matrix so that the clip matrix = projection matrix
 			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
-				for(i = 0; i < 16; i++) f[i] = MATRIX_READ_CLIP[i]; // read out the projection matrix
+			for(i = 0; i < 16; i++) f[i] = MATRIX_READ_CLIP[i]; // read out the projection matrix
 			glPopMatrix(1); // restore the position matrix
 			break;
 		case GL_GET_MATRIX_POSITION:
@@ -1273,7 +1273,7 @@ void glGetFixed(const GL_GET_ENUM param, int* f) {
 			glPushMatrix(); // save the current state of the projection matrix
 			glLoadIdentity(); // load a identity matrix into the projection matrix so that the clip matrix = position matrix
 			while(GFX_BUSY); // wait until the graphics engine has stopped to read matrixes
-				for(i = 0; i < 16; i++) f[i] = MATRIX_READ_CLIP[i]; // read out the position matrix
+			for(i = 0; i < 16; i++) f[i] = MATRIX_READ_CLIP[i]; // read out the position matrix
 			glPopMatrix(1); // restore the projection matrix
 			break;
 		default:
