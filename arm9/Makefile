@@ -29,7 +29,8 @@ DATA			:=	../source/arm9
 ARCH	:=	-mthumb -mthumb-interwork -march=armv5te -mtune=arm946e-s -DARM9
 
 CFLAGS	:=	-g -Wall -O2\
- 			-fomit-frame-pointer\
+			-ffunction-sections -fdata-sections \
+			-fomit-frame-pointer\
 			-ffast-math \
 			$(ARCH)
 
