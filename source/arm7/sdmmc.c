@@ -187,48 +187,41 @@ void sdmmc_controller_init() {
     deviceSD.clk = 0x80;
     deviceSD.devicenumber = 0;
 
-    deviceNAND.isSDHC = 0;
-    deviceNAND.SDOPT = 0;
-    deviceNAND.res = 0;
-    deviceNAND.initarg = 1;
-    deviceNAND.clk = 0x80;
-    deviceNAND.devicenumber = 1;
-
-    *(vu16*)(SDMMC_BASE + 0x100) &= 0xF7FFu; //SDDATACTL32
-    *(vu16*)(SDMMC_BASE + 0x100) &= 0xEFFFu; //SDDATACTL32
+    *(vu16*)(SDMMC_BASE + REG_SDDATACTL32) &= 0xF7FFu;
+    *(vu16*)(SDMMC_BASE + REG_SDDATACTL32) &= 0xEFFFu;
 #ifdef DATA32_SUPPORT
-    *(vu16*)(SDMMC_BASE + 0x100) |= 0x402u; //SDDATACTL32
+    *(vu16*)(SDMMC_BASE + REG_SDDATACTL32) |= 0x402u;
 #else
-    *(vu16*)(SDMMC_BASE + 0x100) |= 0x402u; //SDDATACTL32
+    *(vu16*)(SDMMC_BASE + REG_SDDATACTL32) |= 0x402u;
 #endif
-    *(vu16*)(SDMMC_BASE + 0x0d8) = (*(vu16*)(SDMMC_BASE + 0xd8) & 0xFFDD) | 2;
+    *(vu16*)(SDMMC_BASE + REG_SDDATACTL) = (*(vu16*)(SDMMC_BASE + REG_SDDATACTL) & 0xFFDD) | 2;
 #ifdef DATA32_SUPPORT
-    *(vu16*)(SDMMC_BASE + 0x100) &= 0xFFFFu; //SDDATACTL32
-    *(vu16*)(SDMMC_BASE + 0x0d8) &= 0xFFDFu; //SDDATACTL
-    *(vu16*)(SDMMC_BASE + 0x104) = 512; //SDBLKLEN32
+    *(vu16*)(SDMMC_BASE + REG_SDDATACTL32) &= 0xFFFFu;
+    *(vu16*)(SDMMC_BASE + REG_SDDATACTL) &= 0xFFDFu;
+    *(vu16*)(SDMMC_BASE + REG_SDBLKLEN32) = 512;
 #else
-    *(vu16*)(SDMMC_BASE + 0x100) &= 0xFFFDu; //SDDATACTL32
-    *(vu16*)(SDMMC_BASE + 0x0d8) &= 0xFFDDu; //SDDATACTL
-    *(vu16*)(SDMMC_BASE + 0x104) = 0; //SDBLKLEN32
+    *(vu16*)(SDMMC_BASE + REG_SDDATACTL32) &= 0xFFFDu;
+    *(vu16*)(SDMMC_BASE + REG_SDDATACTL) &= 0xFFDDu;
+    *(vu16*)(SDMMC_BASE + REG_SDBLKLEN32) = 0;
 #endif
-    *(vu16*)(SDMMC_BASE + 0x108) = 1; //SDBLKCOUNT32
-    *(vu16*)(SDMMC_BASE + 0x0e0) &= 0xFFFEu; //SDRESET
-    *(vu16*)(SDMMC_BASE + 0x0e0) |= 1u; //SDRESET
-    *(vu16*)(SDMMC_BASE + 0x020) |= TMIO_MASK_ALL; //SDIR_MASK0
-    *(vu16*)(SDMMC_BASE + 0x022) |= TMIO_MASK_ALL>>16; //SDIR_MASK1
+    *(vu16*)(SDMMC_BASE + REG_SDBLKCOUNT32) = 1;
+    *(vu16*)(SDMMC_BASE + REG_SDRESET) &= 0xFFFEu;
+    *(vu16*)(SDMMC_BASE + REG_SDRESET) |= 1u;
+    *(vu16*)(SDMMC_BASE + REG_SDIRMASK0) |= TMIO_MASK_ALL;
+    *(vu16*)(SDMMC_BASE + REG_SDIRMASK1) |= TMIO_MASK_ALL>>16;
     *(vu16*)(SDMMC_BASE + 0x0fc) |= 0xDBu; //SDCTL_RESERVED7
     *(vu16*)(SDMMC_BASE + 0x0fe) |= 0xDBu; //SDCTL_RESERVED8
-    *(vu16*)(SDMMC_BASE + 0x002) &= 0xFFFCu; //SDPORTSEL
+    *(vu16*)(SDMMC_BASE + REG_SDPORTSEL) &= 0xFFFCu;
 #ifdef DATA32_SUPPORT
-    *(vu16*)(SDMMC_BASE + 0x024) = 0x20;
-    *(vu16*)(SDMMC_BASE + 0x028) = 0x40EE;
+    *(vu16*)(SDMMC_BASE + REG_SDCLKCTL) = 0x20;
+    *(vu16*)(SDMMC_BASE + REG_SDOPT) = 0x40EE;
 #else
-    *(vu16*)(SDMMC_BASE + 0x024) = 0x40; //Nintendo sets this to 0x20
-    *(vu16*)(SDMMC_BASE + 0x028) = 0x40EB; //Nintendo sets this to 0x40EE
+    *(vu16*)(SDMMC_BASE + REG_SDCLKCTL) = 0x40; //Nintendo sets this to 0x20
+    *(vu16*)(SDMMC_BASE + REG_SDOPT) = 0x40EB; //Nintendo sets this to 0x40EE
 #endif
-    *(vu16*)(SDMMC_BASE + 0x002) &= 0xFFFCu; ////SDPORTSEL
-    *(vu16*)(SDMMC_BASE + 0x026) = 512; //SDBLKLEN
-    *(vu16*)(SDMMC_BASE + 0x008) = 0; //SDSTOP
+    *(vu16*)(SDMMC_BASE + REG_SDPORTSEL) &= 0xFFFCu;
+    *(vu16*)(SDMMC_BASE + REG_SDBLKLEN) = 512;
+    *(vu16*)(SDMMC_BASE + REG_SDSTOP) = 0;
 
     setTarget(&deviceSD);
 }
