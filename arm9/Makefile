@@ -37,7 +37,7 @@ CFLAGS	:=	-g -Wall -O2\
 CFLAGS	+=	$(INCLUDE)
 CXXFLAGS	:=	$(CFLAGS)
 
-ASFLAGS	:=	-g $(ARCH)
+ASFLAGS	:=	-g $(ARCH) $(INCLUDE)
 
 ifneq ($(BUILD),debug)
 export ARM9BIN	:=	$(TOPDIR)/lib/libnds9.a
