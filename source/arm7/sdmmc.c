@@ -187,6 +187,13 @@ void sdmmc_controller_init() {
     deviceSD.clk = 0x80;
     deviceSD.devicenumber = 0;
 
+    deviceNAND.isSDHC = 0;
+    deviceNAND.SDOPT = 0;
+    deviceNAND.res = 0;
+    deviceNAND.initarg = 1;
+    deviceNAND.clk = 0x80;
+    deviceNAND.devicenumber = 1;
+
     *(vu16*)(SDMMC_BASE + REG_SDDATACTL32) &= 0xF7FFu;
     *(vu16*)(SDMMC_BASE + REG_SDDATACTL32) &= 0xEFFFu;
 #ifdef DATA32_SUPPORT
