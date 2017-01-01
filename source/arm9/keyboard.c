@@ -263,7 +263,7 @@ int keyboardUpdate(void) {
 
 
 
-ssize_t keyboardRead(struct _reent *r, int unused, char *ptr, size_t len) {
+ssize_t keyboardRead(struct _reent *r, void *unused, char *ptr, size_t len) {
 
 	int wasHidden = 0;
 	int tempLen;

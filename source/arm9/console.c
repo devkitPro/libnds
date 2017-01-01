@@ -197,7 +197,7 @@ static void consoleClearLine(char mode) {
 }
 
 //---------------------------------------------------------------------------------
-ssize_t nocash_write(struct _reent *r, int fd, const char *ptr, size_t len) {
+ssize_t nocash_write(struct _reent *r, void *fd, const char *ptr, size_t len) {
 //---------------------------------------------------------------------------------
 	nocashWrite(ptr,len);
 	return len;
@@ -205,7 +205,7 @@ ssize_t nocash_write(struct _reent *r, int fd, const char *ptr, size_t len) {
 
 
 //---------------------------------------------------------------------------------
-ssize_t con_write(struct _reent *r,int fd,const char *ptr, size_t len) {
+ssize_t con_write(struct _reent *r,void *fd,const char *ptr, size_t len) {
 //---------------------------------------------------------------------------------
 
 	char chr;
