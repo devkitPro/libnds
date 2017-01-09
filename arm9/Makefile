@@ -31,13 +31,14 @@ ARCH	:=	-mthumb -mthumb-interwork -march=armv5te -mtune=arm946e-s -DARM9
 CFLAGS	:=	-g -Wall -O2\
 			-ffunction-sections -fdata-sections \
 			-fomit-frame-pointer\
-			-ffast-math \
 			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE)
+
 CXXFLAGS	:=	$(CFLAGS)
 
-ASFLAGS	:=	-g $(ARCH) $(INCLUDE)
+ASFLAGS	= -g $(ARCH)
+ASFLAGS	+=	$(INCLUDE)
 
 ifneq ($(BUILD),debug)
 export ARM9BIN	:=	$(TOPDIR)/lib/libnds9.a

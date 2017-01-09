@@ -35,6 +35,7 @@ CFLAGS	+=	$(INCLUDE)
 CXXFLAGS	:=	$(CFLAGS)
 
 ASFLAGS	:=	-g $(ARCH)
+ASFLAGS	+=	$(INCLUDE)
 
 ifneq ($(BUILD),debug)
 export ARM7BIN	:=	$(TOPDIR)/lib/libnds7.a
