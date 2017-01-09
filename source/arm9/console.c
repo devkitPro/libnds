@@ -377,7 +377,10 @@ void consoleLoadFont(PrintConsole* console) {
 			palette = BG_PALETTE;
 	}
 
-	if(console->font.bpp == 4) {
+
+	if (console->font.bpp == 1) {
+
+	} else if (console->font.bpp == 4) {
 
 		if(!console->font.convertSingleColor) {
 

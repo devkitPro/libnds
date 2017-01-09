@@ -1,3 +1,4 @@
+#include <nds/asminc.h>
 #include <nds/arm9/cache_asm.h>
 
 @---------------------------------------------------------------------------------
@@ -9,10 +10,8 @@
 	.text
 	.arm
 
-	.global	__libnds_mpu_setup
-	.type	__libnds_mpu_setup STT_FUNC
 @---------------------------------------------------------------------------------
-__libnds_mpu_setup:
+BEGIN_ASM_FUNC __libnds_mpu_setup
 @---------------------------------------------------------------------------------
 @ turn the power on for M3
 @---------------------------------------------------------------------------------
@@ -98,14 +97,14 @@ __libnds_mpu_setup:
 	ldr	r2,=( PAGE_16M | 0x02000000 | 1)
 	mov	r8,#0x02400000
 
-	adr	r9,dsmasks
+	ldr	r9,=dsmasks
 	b	setregions
 
 debug_mode:
 	ldr	r3,=( PAGE_8M | 0x02000000 | 1)
 	ldr	r2,=( PAGE_8M | 0x02800000 | 1)
 	mov	r8,#0x02800000
-	adr	r9,debugmasks
+	ldr	r9,=debugmasks
 	b	setregions
 
 dsi_mode:
@@ -113,7 +112,7 @@ dsi_mode:
 	ldr	r3,=( PAGE_16M | 0x02000000 | 1)
 	ldr	r2,=( PAGE_16M | 0x0C000000 | 1)
 	mov	r8,#0x03000000
-	adr	r9,dsimasks
+	ldr	r9,=dsimasks
 
 setregions:
 
@@ -170,6 +169,30 @@ setregions:
 
 	bx	lr
 
+@---------------------------------------------------------------------------------
+BEGIN_ASM_FUNC memCached
+@---------------------------------------------------------------------------------
+	ldr	r1,=masks
+	ldr	r1, [r1]
+	ldr	r2,[r1],#4
+	and	r0,r0,r2
+	ldr	r2,[r1]
+	orr	r0,r0,r2
+	bx	lr
+
+@---------------------------------------------------------------------------------
+BEGIN_ASM_FUNC memUncached
+@---------------------------------------------------------------------------------
+	ldr	r1,=masks
+	ldr	r1, [r1]
+	ldr	r2,[r1],#8
+	and	r0,r0,r2
+	ldr	r2,[r1]
+	orr	r0,r0,r2
+	bx	lr
+
+	.data
+
 dsmasks:
 	.word	0x003fffff, 0x02000000, 0x02c00000
 debugmasks:
@@ -178,28 +201,4 @@ dsimasks:
 	.word	0x00ffffff, 0x02000000, 0x0c000000
 
 masks:	.word	dsmasks
-
-	.global memCached
-	.type	memCached STT_FUNC
-@---------------------------------------------------------------------------------
-memCached:
-@---------------------------------------------------------------------------------
-	ldr	r1,masks
-	ldr	r2,[r1],#4
-	and	r0,r0,r2
-	ldr	r2,[r1]
-	orr	r0,r0,r2
-	bx	lr
-
-	.global	memUncached
-	.type	memUncached STT_FUNC
-@---------------------------------------------------------------------------------
-memUncached:
-@---------------------------------------------------------------------------------
-	ldr	r1,masks
-	ldr	r2,[r1],#8
-	and	r0,r0,r2
-	ldr	r2,[r1]
-	orr	r0,r0,r2
-	bx	lr
 

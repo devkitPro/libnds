@@ -21,6 +21,8 @@
      distribution.
 
 ---------------------------------------------------------------------------------*/
+#include <nds/asminc.h>
+
 	.section	.vectors,"ax",%progbits
 
 	.global		SystemVectors
@@ -52,12 +54,7 @@ vec_fiq:
 
 
 @---------------------------------------------------------------------------------
-@ void setVectorBase(int highVector)
-@---------------------------------------------------------------------------------
-	.global setVectorBase
-	.type	setVectorBase STT_FUNC
-@---------------------------------------------------------------------------------
-setVectorBase:
+BEGIN_ASM_FUNC setVectorBase
 @---------------------------------------------------------------------------------
  
 	@ load the CP15 Control Register
