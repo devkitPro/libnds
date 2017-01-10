@@ -71,6 +71,7 @@ void i2cIRQHandler() {
 //---------------------------------------------------------------------------------
 VoidFn setPowerButtonCB(VoidFn CB) {
 //---------------------------------------------------------------------------------
+	if (!isDSiMode()) return CB;
 	VoidFn tmp = __powerbuttonCB;
 	__powerbuttonCB = CB;
 	return tmp;
@@ -115,8 +116,10 @@ void irqInitHandler(IntFn handler) {
 	REG_IF = ~0;
 
 #ifdef ARM7
-	REG_AUXIE = 0;
-	REG_AUXIF = ~0;
+	if (isDSiMode()) {
+		REG_AUXIE = 0;
+		REG_AUXIF = ~0;
+	}
 #endif
 	IRQ_HANDLER = handler;
 }
@@ -136,8 +139,10 @@ void irqInit() {
 	}
 
 #ifdef ARM7
-	irqSetAUX(IRQ_I2C, i2cIRQHandler);
-	irqEnableAUX(IRQ_I2C);
+	if (isDSiMode()) {
+		irqSetAUX(IRQ_I2C, i2cIRQHandler);
+		irqEnableAUX(IRQ_I2C);
+	}
 #endif
 	REG_IME = 1;			// enable global interrupt
 }

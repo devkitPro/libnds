@@ -34,7 +34,7 @@
 #include <nds/arm7/i2c.h>
 
 bool sleepIsEnabled = true;
-
+bool __dsimode = false; // set in crt0
 
 //---------------------------------------------------------------------------------
 void powerValueHandler(u32 value, void* user_data) {
@@ -105,9 +105,6 @@ void powerValueHandler(u32 value, void* user_data) {
 		}
 		fifoSendValue32(FIFO_PM, battery);
 		break;
-	case PM_DSI_HACK:
-		__dsimode = true;
-		break;
 	}
 }
 
@@ -134,8 +131,10 @@ void installSystemFIFO(void) {
 //---------------------------------------------------------------------------------
 
 	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
-	fifoSetValue32Handler(FIFO_SDMMC, sdmmcValueHandler, 0);
-	fifoSetDatamsgHandler(FIFO_SDMMC, sdmmcMsgHandler, 0);
+	if (__dsimode) {
+		fifoSetValue32Handler(FIFO_SDMMC, sdmmcValueHandler, 0);
+		fifoSetDatamsgHandler(FIFO_SDMMC, sdmmcMsgHandler, 0);
+	}
 	fifoSetDatamsgHandler(FIFO_FIRMWARE, firmwareMsgHandler, 0);
 	
 }

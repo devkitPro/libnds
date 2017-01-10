@@ -112,7 +112,11 @@ void systemSleep(void);
 */
 void ledBlink(int bm);
 
-extern bool __dsimode;
+//!	Checks whether the application is running in DSi mode.
+static inline bool isDSiMode() {
+	extern bool __dsimode;
+	return __dsimode;
+}
 
 //--------------------------------------------------------------
 //    ARM9 section

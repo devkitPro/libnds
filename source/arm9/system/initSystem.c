@@ -43,7 +43,7 @@ distribution.
 #include <sys/time.h>
 
 void __libnds_exit(int rc);
-bool __dsimode;
+bool __dsimode; // set in crt0
 extern time_t *punixTime;
 
 int __libnds_gtod(struct _reent *ptr, struct timeval *tp, struct timezone *tz);
@@ -85,10 +85,6 @@ void __attribute__((weak)) initSystem(void) {
 	fifoSetValue32Handler(FIFO_SYSTEM, systemValueHandler, 0);
 	fifoSetDatamsgHandler(FIFO_SYSTEM, systemMsgHandler, 0);
 
-	if(REG_DSIMODE) {
-		fifoSendValue32(FIFO_PM,PM_DSI_HACK);
-		__dsimode = true;
-	}
 	__transferRegion()->buttons = 0xffff;
 
 	punixTime = (time_t*)memUncached((void *)&__transferRegion()->unixTime);

@@ -21,7 +21,7 @@ static void paddleSetBus() {
 //------------------------------------------------------------------------------
 bool paddleIsInserted() {
 //------------------------------------------------------------------------------
-	if(REG_DSIMODE) return false;
+	if(isDSiMode()) return false;
 
 	paddleSetBus();
 

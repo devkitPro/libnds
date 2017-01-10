@@ -27,12 +27,10 @@
 #include <nds/system.h>
 #include <nds/arm7/i2c.h>
 
-extern bool __dsimode;
-
 //---------------------------------------------------------------------------------
 void systemShutDown() {
 //---------------------------------------------------------------------------------
-	if (!__dsimode) {
+	if (!isDSiMode()) {
 		writePowerManagement(PM_CONTROL_REG,PM_SYSTEM_PWR);
 	} else {
 		i2cWriteRegister(I2C_PM, I2CREGPM_RESETFLAG, 1);
