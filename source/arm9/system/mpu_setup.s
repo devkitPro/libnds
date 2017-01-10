@@ -84,7 +84,7 @@ BEGIN_ASM_FUNC __libnds_mpu_setup
 
 	ldr	r0,=0x4004008
 	ldr	r0,[r0]
-	ands	r0,r0,#0x8000
+	tst	r0,#0x8000
 	bne	dsi_mode
 
 	swi	0xf0000
@@ -108,9 +108,11 @@ debug_mode:
 	b	setregions
 
 dsi_mode:
+	tst	r0,#0x4000
 	ldr	r1,=( PAGE_8M  | 0x03000000 | 1)
 	ldr	r3,=( PAGE_16M | 0x02000000 | 1)
-	ldr	r2,=( PAGE_16M | 0x0C000000 | 1)
+	ldreq	r2,=( PAGE_16M | 0x0C000000 | 1)
+	ldrne	r2,=( PAGE_32M | 0x0C000000 | 1) @ DSi debugger extended iwram
 	mov	r8,#0x03000000
 	ldr	r9,=dsimasks
 
