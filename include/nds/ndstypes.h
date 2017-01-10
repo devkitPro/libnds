@@ -45,6 +45,10 @@
 #define DTCM_DATA	__attribute__((section(".dtcm")))
 #define DTCM_BSS	__attribute__((section(".sbss")))
 
+#define TWL_CODE	__attribute__((section(".twl")))
+#define TWL_DATA	__attribute__((section(".twl")))
+#define TWL_BSS		__attribute__((section(".twl_bss")))
+
 //! aligns a struct (and other types?) to m, making sure that the size of the struct is a multiple of m.
 #define ALIGN(m)	__attribute__((aligned (m)))
 
