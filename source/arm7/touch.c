@@ -422,7 +422,7 @@ bool touchPenDown() {
 }
 
 //---------------------------------------------------------------------------------
-void touchReadDSiMode(touchPosition *touchPos) {
+TWL_CODE void touchReadDSiMode(touchPosition *touchPos) {
 //---------------------------------------------------------------------------------
 	u8 touchdata[20];
 	int i, rawx = 0, rawy = 0, x, y;

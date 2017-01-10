@@ -44,12 +44,12 @@ void irqDummy(void) {}
 
 struct IntTable irqTable[MAX_INTERRUPTS] INT_TABLE_SECTION;
 #ifdef ARM7
-struct IntTable irqTableAUX[MAX_INTERRUPTS] INT_TABLE_SECTION;
+struct IntTable irqTableAUX[MAX_INTERRUPTS] TWL_BSS;
 
-static VoidFn __powerbuttonCB = (VoidFn)0;
+static TWL_BSS VoidFn __powerbuttonCB = (VoidFn)0;
 
 //---------------------------------------------------------------------------------
-void i2cIRQHandler() {
+TWL_CODE void i2cIRQHandler() {
 //---------------------------------------------------------------------------------
 	int cause = (i2cReadRegister(I2C_PM, I2CREGPM_PWRIF) & 0x3) | (i2cReadRegister(I2C_GPIO, 0x02)<<2);
 
@@ -206,7 +206,7 @@ void irqClear(u32 mask) {
 
 #ifdef ARM7
 //---------------------------------------------------------------------------------
-void irqSetAUX(u32 mask, IntFn handler) {
+TWL_CODE void irqSetAUX(u32 mask, IntFn handler) {
 //---------------------------------------------------------------------------------
 	int oldIME = enterCriticalSection();
 	__irqSet(mask,handler,irqTableAUX);
@@ -214,7 +214,7 @@ void irqSetAUX(u32 mask, IntFn handler) {
 }
 
 //---------------------------------------------------------------------------------
-void irqClearAUX(u32 mask) {
+TWL_CODE void irqClearAUX(u32 mask) {
 //---------------------------------------------------------------------------------
 	int oldIME = enterCriticalSection();
 	__irqClear(mask,irqTableAUX);
@@ -223,7 +223,7 @@ void irqClearAUX(u32 mask) {
 }
 
 //---------------------------------------------------------------------------------
-void irqDisableAUX(uint32 irq) {
+TWL_CODE void irqDisableAUX(uint32 irq) {
 //---------------------------------------------------------------------------------
 	int oldIME = enterCriticalSection();
 	REG_AUXIE &= ~irq;
@@ -231,7 +231,7 @@ void irqDisableAUX(uint32 irq) {
 }
 
 //---------------------------------------------------------------------------------
-void irqEnableAUX(uint32 irq) {
+TWL_CODE void irqEnableAUX(uint32 irq) {
 //---------------------------------------------------------------------------------
 	int oldIME = enterCriticalSection();
 	REG_AUXIE |= irq;
