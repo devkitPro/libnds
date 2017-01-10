@@ -45,6 +45,15 @@
 #define ARM7_OWNS_CARD BIT(11)
 #define ARM7_OWNS_ROM  BIT(7)
 
+#define REG_MBK1 ((vu8*)0x04004040) /* WRAM_A 0..3 */
+#define REG_MBK2 ((vu8*)0x04004044) /* WRAM_B 0..3 */
+#define REG_MBK3 ((vu8*)0x04004048) /* WRAM_B 4..7 */
+#define REG_MBK4 ((vu8*)0x0400404C) /* WRAM_C 0..3 */
+#define REG_MBK5 ((vu8*)0x04004050) /* WRAM_C 4..7 */
+#define REG_MBK6 (*(vu32*)0x04004054)
+#define REG_MBK7 (*(vu32*)0x04004058)
+#define REG_MBK8 (*(vu32*)0x0400405C)
+#define REG_MBK9 (*(vu32*)0x04004060)
 
 // Protection register (write-once sadly)
 #ifdef ARM7
