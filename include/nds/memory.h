@@ -126,14 +126,14 @@ typedef struct sNDSHeader {
 	u8 romversion;				//!< version of the ROM.
 	u8 flags;					//!< bit 2: auto-boot flag.
 
-	u32 arm9romOffset;			//!< offset of the arm9 binary in the nds file.
-	u32 arm9executeAddress;		//!< adress that should be executed after the binary has been copied.
-	u32 arm9destination;		//!< destination address to where the arm9 binary should be copied.
+	void *arm9romOffset;			//!< offset of the arm9 binary in the nds file.
+	void *arm9executeAddress;		//!< adress that should be executed after the binary has been copied.
+	void *arm9destination;		//!< destination address to where the arm9 binary should be copied.
 	u32 arm9binarySize;			//!< size of the arm9 binary.
 
-	u32 arm7romOffset;			//!< offset of the arm7 binary in the nds file.
-	u32 arm7executeAddress;		//!< adress that should be executed after the binary has been copied.
-	u32 arm7destination;		//!< destination address to where the arm7 binary should be copied.
+	void *arm7romOffset;			//!< offset of the arm7 binary in the nds file.
+	void *arm7executeAddress;		//!< adress that should be executed after the binary has been copied.
+	void *arm7destination;		//!< destination address to where the arm7 binary should be copied.
 	u32 arm7binarySize;			//!< size of the arm7 binary.
 
 	u32 filenameOffset;			//!< File Name Table (FNT) offset.
@@ -167,15 +167,83 @@ typedef struct sNDSHeader {
 	u16 logoCRC16;				//!< Nintendo Logo Checksum, CRC-16.
 	u16 headerCRC16;			//!< header checksum, CRC-16.
 
+} __attribute__ ((__packed__)) tNDSHeader;
+
+typedef struct __DSiHeader {
+	tNDSHeader ndshdr;
 	u32 debugRomSource;			//!< debug ROM offset.
 	u32 debugRomSize;			//!< debug size.
 	u32 debugRomDestination;	//!< debug RAM destination.
 	u32 offset_0x16C;			//reserved?
 
-	u8 zero[0x90];
-} __attribute__ ((__packed__)) tNDSHeader;
+	u8 zero[0x10];
+
+	u8 global_mbk_setting[5][4];
+	u32 arm9_mbk_setting[3];
+	u32 arm7_mbk_setting[3];
+	u32 mbk9_wramcnt_setting;
+
+	u32 region_flags;
+	u32 access_control;
+	u32 scfg_ext_mask;
+	u8 offset_0x1BC[3];
+	u8 appflags;
+
+	void *arm9iromOffset;
+	u32 offset_0x1C4;
+	void *arm9idestination;
+	u32 arm9ibinarySize;
+	void *arm7iromOffset;
+	u32 offset_0x1D4;
+	void *arm7idestination;
+	u32 arm7ibinarySize;
+
+	u32 digest_ntr_start;
+	u32 digest_ntr_size;
+	u32 digest_twl_start;
+	u32 digest_twl_size;
+	u32 sector_hashtable_start;
+	u32 sector_hashtable_size;
+	u32 block_hashtable_start;
+	u32 block_hashtable_size;
+	u32 digest_sector_size;
+	u32 digest_block_sectorcount;
+
+	u32 banner_size;
+	u32 offset_0x20C;
+	u32 total_rom_size;
+	u32 offset_0x214;
+	u32 offset_0x218;
+	u32 offset_0x21C;
+
+	u32 modcrypt1_start;
+	u32 modcrypt1_size;
+	u32 modcrypt2_start;
+	u32 modcrypt2_size;
+
+	u32 tid_low;
+	u32 tid_high;
+	u32 public_sav_size;
+	u32 private_sav_size;
+	u8 reserved3[176];
+	u8 age_ratings[0x10];
+
+	u8 hmac_arm9[20];
+	u8 hmac_arm7[20];
+	u8 hmac_digest_master[20];
+	u8 hmac_icon_title[20];
+	u8 hmac_arm9i[20];
+	u8 hmac_arm7i[20];
+	u8 reserved4[40];
+	u8 hmac_arm9_no_secure[20];
+	u8 reserved5[2636];
+	u8 debug_args[0x180];
+	u8 rsa_signature[0x80];
+
+} __attribute__ ((__packed__)) tDSiHeader;
 
 #define __NDSHeader ((tNDSHeader *)0x02FFFE00)
+#define __DSiHeader ((tDSiHeader *)0x02FFE000)
 
 
 /*!
