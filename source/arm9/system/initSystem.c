@@ -79,6 +79,10 @@ void __attribute__((weak)) initSystem(void) {
 	VRAM_H_CR = 0;
 	VRAM_I_CR = 0;
 
+	if (isDSiMode()) {
+		setCpuClock(true);
+	}
+
 	irqInit();
 	fifoInit();
 
