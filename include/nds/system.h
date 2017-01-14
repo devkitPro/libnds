@@ -198,6 +198,13 @@ typedef struct sysVectors_t {
 extern sysVectors SystemVectors;
 void setSDcallback(void(*callback)(int));
 
+/*!
+	\brief Sets the ARM9 clock speed, only possible in DSi mode
+	\param speed CPU speed (false = 67.03MHz, true = 134.06MHz)
+	\return The old CPU speed value
+*/
+bool setCpuClock(bool speed);
+
 // Helper functions for heap size
 //! returns current start of heap space
 u8* getHeapStart();
