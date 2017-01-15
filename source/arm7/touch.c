@@ -42,7 +42,7 @@ static u8 range = 20;
 static u8 min_range = 20;
 
 //---------------------------------------------------------------------------------
-u32 readTSCReg(u32 reg) {
+TWL_CODE u32 readTSCReg(u32 reg) {
 //---------------------------------------------------------------------------------
  
 	REG_SPICNT = SPI_ENABLE | SPI_BAUD_4MHz | SPI_DEVICE_TOUCH | SPI_CONTINUOUS;
@@ -60,7 +60,7 @@ u32 readTSCReg(u32 reg) {
 }
 
 //---------------------------------------------------------------------------------
-void readTSCRegArray(u32 reg, void *buffer, int size) {
+TWL_CODE void readTSCRegArray(u32 reg, void *buffer, int size) {
 //---------------------------------------------------------------------------------
  
 	REG_SPICNT = SPI_ENABLE | SPI_BAUD_4MHz | SPI_DEVICE_TOUCH | SPI_CONTINUOUS;
@@ -84,7 +84,7 @@ void readTSCRegArray(u32 reg, void *buffer, int size) {
 
 
 //---------------------------------------------------------------------------------
-u32 writeTSCReg(u32 reg, u32 value) {
+TWL_CODE u32 writeTSCReg(u32 reg, u32 value) {
 //---------------------------------------------------------------------------------
  
 	REG_SPICNT = SPI_ENABLE | SPI_BAUD_4MHz | SPI_DEVICE_TOUCH | SPI_CONTINUOUS;
