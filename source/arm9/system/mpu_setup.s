@@ -194,6 +194,7 @@ BEGIN_ASM_FUNC memUncached
 	bx	lr
 
 	.data
+	.align	2
 
 dsmasks:
 	.word	0x003fffff, 0x02000000, 0x02c00000
