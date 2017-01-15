@@ -412,7 +412,7 @@ bool touchPenDown() {
 		int oldIME = enterCriticalSection();
 		writeTSCReg(0,3);
 
-		down = (!(readTSCReg(9)&0x40) && !(readTSCReg(14)&3));
+		down = !(readTSCReg(9)&0x40) || !(readTSCReg(14)&3);
 		leaveCriticalSection(oldIME);
 		
 	} else {
