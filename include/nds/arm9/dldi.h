@@ -34,7 +34,7 @@ extern "C" {
 #endif
 
 #include "../disc_io.h"
-
+#include "dldi_asm.h"
 #define FIX_ALL						0x01
 #define FIX_GLUE					0x02
 #define FIX_GOT						0x04
