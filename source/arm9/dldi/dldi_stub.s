@@ -22,14 +22,13 @@
      distribution.
 
 ---------------------------------------------------------------------------------*/
+
+#include <nds/arm9/dldi_asm.h>
+
 	.align	4
 	.arm
 	.global _io_dldi_stub
 @---------------------------------------------------------------------------------
-.equ FEATURE_MEDIUM_CANREAD,		0x00000001
-.equ FEATURE_MEDIUM_CANWRITE,		0x00000002
-.equ FEATURE_SLOT_GBA,			0x00000010
-.equ FEATURE_SLOT_NDS,			0x00000020
 
 .equ DLDI_ALLOCATED_SPACE,		16384
 
@@ -42,9 +41,9 @@ dldi_start:
 	.word	0xBF8DA5ED		@ Magic number to identify this region
 	.asciz	" Chishm"		@ Identifying Magic string (8 bytes with null terminator)
 	.byte	0x01			@ Version number
-	.byte	0x0E	@16KiB	@ Log [base-2] of the size of this driver in bytes.
+	.byte	DLDI_SIZE_16KB	@16KiB	@ Log [base-2] of the size of this driver in bytes.
 	.byte	0x00			@ Sections to fix
-	.byte 	0x0E	@16KiB	@ Log [base-2] of the allocated space in bytes.
+	.byte 	DLDI_SIZE_16KB	@16KiB	@ Log [base-2] of the allocated space in bytes.
 	
 @---------------------------------------------------------------------------------
 @ Text identifier - can be anything up to 47 chars + terminating null -- 16 bytes
