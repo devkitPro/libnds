@@ -37,10 +37,10 @@
 	uses. They can hold the graphics for your sprites, the textures for your 3D
 	space ships, the tiles for your 2D platformer, or a direct map of pixels to
 	render to the screen. Figuring out how to effectively utilize this flexible but
-	limited amount of memory will be one the most challenging endeavors you will
+	limited amount of memory will be one the most challenging endeavours you will
 	face early homebrew development.
 
-	The nine banks can be utilized as enumerated by the VRAM types.  Banks are labled
+	The nine banks can be utilized as enumerated by the VRAM types.  Banks are labeled
 	A-I.  In order to utilize 2D or 3D texture graphics,  memory must be mapped for
 	these purposes.
 
@@ -54,8 +54,8 @@
 	tile and map offsets will be lost.
 
 	VRAM banks can be mapped to specific addresses for specific purposes.  In our
-	case, any of the 4 main banks amd several of the smaller ones can be mapped to
-	the main 2D background engine.(A B C and D banks are refered to as ìmainî
+	case, any of the 4 main banks and several of the smaller ones can be mapped to
+	the main 2D background engine.(A B C and D banks are referred to as ìmainî
 	because	they are 128KB and flexible in usage)
 
 	<pre>
@@ -64,7 +64,7 @@
 
 	The above would map the 128KB of VRAM_A to 0x6000000 for use as main background
 	graphics and maps (you can offset the mapping as well and the available offsets
-	are defined in the VRAM_A_TYPE enumberation)
+	are defined in the VRAM_A_TYPE enumeration)
 
 
 	\section VRAMSizes Video Ram Bank sizes
