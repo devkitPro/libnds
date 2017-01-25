@@ -539,7 +539,7 @@ GL_STATIC_INL
 \brief used in glPolyFmt() to set the alpha level for the following polygons, set to 0 for wireframe mode
 \param n the level of alpha (0-31)
 \return value for hw register*/
- u32 POLY_ALPHA(u32 n) { return (u32)((n) << 16); };
+ u32 POLY_ALPHA(u32 n) { return (u32)((n) << 16); }
 
 GL_STATIC_INL
 /*! \fn  u32 POLY_ID(u32 n)
@@ -547,7 +547,7 @@ GL_STATIC_INL
 \param n the ID to set for following polygons (0-63)
 \return value for hw register
 */
- u32 POLY_ID(u32 n) { return (u32)((n)<<24); };
+ u32 POLY_ID(u32 n) { return (u32)((n)<<24); }
 
 GL_STATIC_INL
 /*! \fn  void glBegin(GL_GLBEGIN_ENUM mode)
