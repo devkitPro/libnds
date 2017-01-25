@@ -26,7 +26,22 @@
 
 ---------------------------------------------------------------------------------*/
 /*!	\file math.h
-	\brief hardware coprocessor math instructions.
+	\brief Hardware coprocessor math instructions.
+    The arm9 coprocessor has several hardware assisted math functions for dealing with vector and
+    fractional calculations.  Since the Nintendo DS does not have hardware floating points,
+    these functions take fixed point numbers as arguments.
+ 
+    They return either unsigned 20.12 fixed point format or 1.19.12 signed fixed point format.
+    
+    Fixed point formats are denoted as period seperated strings of numbers from left to right.
+    If begining in a 1 the fixed point is signed, the next number is the number portion of the integer
+    that will be treated as the whole portion, the last number is the number of bits used for the fractional portion.
+ 
+ For example:
+ - 20.12 fixed point 20 bits are allocated to the whole portion and 12 to the frational portion.
+ - 1.19.12 fixed point 1 bit is allocated to the sign 19 bits are allocated to the whole portioan and 12 to the frational portion.
+ 
+ 
 */
 
 #ifndef MATH_ARM9_INCLUDE
@@ -68,9 +83,10 @@
 
 //  Fixed point conversion macros
 
-#define inttof32(n)          ((n) << 12) /*!< \brief convert int to f32 */
-#define f32toint(n)          ((n) >> 12) /*!< \brief convert f32 to int */
-#define floattof32(n)        ((int)((n) * (1 << 12))) /*!< \brief convert float to f32 */
+#define inttof32(n)          ((n) << 12) /*!< \brief convert a 32 bit integer to a 20.12 fixed point(f32) */
+#define f32toint(n)          ((n) >> 12) /*!< \brief convert a 20.12 fixed point(f32) to a 32 bit integer, the fractional portion is truncated. */
+#define floattof32(n)        ((int)((n) * (1 << 12))) /*!< \brief convert float to f32 (20.12)
+\warn The sign bit will be lost becuase it is the MSB which is truncated  */
 #define f32tofloat(n)        (((float)(n)) / (float)(1<<12)) /*!< \brief convert f32 to float */
 
 //  Fixed Point versions
@@ -252,16 +268,20 @@ u32 sqrt64(long long a)
 	return REG_SQRT_RESULT;
 }
 
+
+//Fixed point vector functions
+
 static inline
 /**
 *   \brief 1.19.12 fixed point cross product function result = AxB
 *   \param a pointer to fixed 3x3 matrix
 *   \param b pointer to fixed 3x3 matrix
-*   \param result pointer to fixed 3x3 matrix
-* Cross product
-* x = Ay * Bz - By * Az
-* y = Az * Bx - Bz * Ax
-* z = Ax * By - Bx * Ay
+*   \param result a pointer to a buffer for the resulting 3x3 matrix of 1.19.12 fixed point (f32)
+* 
+* Cross product\n
+* x = Ay * Bz - By * Az \n
+* y = Az * Bx - Bz * Ax \n
+* z = Ax * By - Bx * Ay \n
 */
 void crossf32(int32 *a, int32 *b, int32 *result)
 {
@@ -276,7 +296,8 @@ static inline
 *   \brief 1.19.12 fixed point dot product function result = A dot B
 *   \param a pointer to fixed 3x3 matrix
 *   \param b pointer to fixed 3x3 matrix
-*   \return 32 bit integer result
+*   \return 32 bit 1.19.12 fixed point result
+* 
 * Dot Product
 * result = Ax * Bx + Ay * By + Az * Bz
 */
@@ -290,7 +311,7 @@ int32 dotf32(int32 *a, int32 *b)
 static inline
 /**
 *   \brief 1.19.12 fixed point normalize function A = A  / |A|
-*   \param a pointer to fixed 3x3 matrix
+*   \param a a pointer to a buffer for the resulting 3x3 matrix of 1.19.12 fixed point (f32)
 * Normalize
 * Ax = Ax / mag
 * Ay = Ay / mag
