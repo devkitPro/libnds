@@ -254,14 +254,14 @@ u32 sqrt64(long long a)
 
 static inline
 /**
-*   \brief 1.19.12 fixed point cross product function result = AxB
+*   \brief 20.12 fixed point cross product function result = AxB
 *   \param a pointer to fixed 3x3 matrix
 *   \param b pointer to fixed 3x3 matrix
 *   \param result pointer to fixed 3x3 matrix
-* Cross product
-* x = Ay * Bz - By * Az
-* y = Az * Bx - Bz * Ax
-* z = Ax * By - Bx * Ay
+* Cross product\n
+* x = Ay * Bz - By * Az\n
+* y = Az * Bx - Bz * Ax\n
+* z = Ax * By - Bx * Ay\n
 */
 void crossf32(int32 *a, int32 *b, int32 *result)
 {
@@ -273,7 +273,7 @@ void crossf32(int32 *a, int32 *b, int32 *result)
 
 static inline
 /**
-*   \brief 1.19.12 fixed point dot product function result = A dot B
+*   \brief 20.12 fixed point dot product function result = A dot B
 *   \param a pointer to fixed 3x3 matrix
 *   \param b pointer to fixed 3x3 matrix
 *   \return 32 bit integer result
@@ -289,12 +289,12 @@ int32 dotf32(int32 *a, int32 *b)
 
 static inline
 /**
-*   \brief 1.19.12 fixed point normalize function A = A  / |A|
+*   \brief 20.12 fixed point normalize function A = A  / |A|
 *   \param a pointer to fixed 3x3 matrix
-* Normalize
-* Ax = Ax / mag
-* Ay = Ay / mag
-* Az = Az / mag
+* Normalize\n
+* Ax = Ax / mag\n
+* Ay = Ay / mag\n
+* Az = Az / mag\n
 */
 void normalizef32(int32* a)
 {
