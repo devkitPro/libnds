@@ -27,6 +27,22 @@
 ---------------------------------------------------------------------------------*/
 /*!	\file math.h
 	\brief hardware coprocessor math instructions.
+ \n
+ Fixed point numbers are denoted with a format n.f where f is the number of fractional digits.\n
+ On the fixed point hardware f is the number of fractional quantites in base-2, this can be
+ difficult to vizualize so start by considering dollars and cents in base-10. If you have $1.50 it can be also
+ said that you have 150 cents which is 150 (1/100) of a dollar.\n
+ 
+ You can apply this logic in base-2,20.12 fixed-point numbers are 32 bit integers for which each "one" in the integer representation
+ is (2^-12) = (1/4096) of a decimal 1.\n
+ \n e.g. 20.12 fixed points\n
+ 2048 = 0x0800 =2^11/2^12 = 2^-1 = 0.5\n
+ 4096 = 0x1000 =1\n
+ 8192 = 0x2000 = 2^13/2^12 = 2\n\n
+ 
+You may see things of the form ‘1.n.f’ in other documentation, this is technically incorrect becuase fixed point numbers are 2's complement,
+not signed magnitude. So they are formats hein are still denoted as m.f, even though calculations are signed.
+ For more information on fixed point representation see https://www.coranac.com/tonc/text/fixed.htm
 */
 
 #ifndef MATH_ARM9_INCLUDE
