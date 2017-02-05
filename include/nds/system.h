@@ -68,8 +68,13 @@ typedef enum
 */
 #define	REG_POWERCNT	*(vu16*)0x4000304
 
-#define REG_SCFG_A9ROM		*(vu16*)0x4004000
+#define REG_SCFG_ROM		*(vu16*)0x4004000
+
+#ifdef ARM7
+#define REG_SCFG_A9ROM		*(vu8*)0x4004000
 #define REG_SCFG_A7ROM		*(vu8*)0x4004001  // ??
+#endif
+
 #define REG_SCFG_CLK		*(vu16*)0x4004004
 #define REG_SCFG_RST		*(vu16*)0x4004006
 #define REG_SCFG_EXT		*(vu32*)0x4004008
