@@ -126,12 +126,12 @@ typedef struct sNDSHeader {
 	u8 romversion;				//!< version of the ROM.
 	u8 flags;					//!< bit 2: auto-boot flag.
 
-	void *arm9romOffset;			//!< offset of the arm9 binary in the nds file.
+	u32 arm9romOffset;			//!< offset of the arm9 binary in the nds file.
 	void *arm9executeAddress;		//!< adress that should be executed after the binary has been copied.
 	void *arm9destination;		//!< destination address to where the arm9 binary should be copied.
 	u32 arm9binarySize;			//!< size of the arm9 binary.
 
-	void *arm7romOffset;			//!< offset of the arm7 binary in the nds file.
+	u32 arm7romOffset;			//!< offset of the arm7 binary in the nds file.
 	void *arm7executeAddress;		//!< adress that should be executed after the binary has been copied.
 	void *arm7destination;		//!< destination address to where the arm7 binary should be copied.
 	u32 arm7binarySize;			//!< size of the arm7 binary.

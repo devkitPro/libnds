@@ -888,7 +888,7 @@ void glColorTableEXT( int target, int empty1, uint16 width, int empty2, int empt
 			// copy straight to VRAM, and assign a palette name
 			uint32 tempVRAM = VRAM_EFG_CR;
 			uint16 *startBank = vramGetBank( (uint16*)palette->vramAddr );
-			uint16 *endBank = vramGetBank( (uint16*)( palette->vramAddr + ( width << 1 ) - 1));
+			uint16 *endBank = vramGetBank( (uint16*)((char*)palette->vramAddr + ( width << 1 ) - 1));
 			do {
 				if( startBank == VRAM_E ) {
 					vramSetBankE( VRAM_E_LCD );
@@ -928,7 +928,7 @@ void glColorSubTableEXT( int target, int start, int count, int empty1, int empty
 		gl_palette_data *palette = (gl_palette_data*)DynamicArrayGet( &glGlob->palettePtrs, glGlob->activePalette );
 		if( start >= 0 && ( start + count ) <= ( palette->palSize >> 1 ) ) {
 			uint32 tempVRAM = vramSetBanks_EFG( VRAM_E_LCD, VRAM_F_LCD, VRAM_G_LCD );
-			swiCopy( data, palette->vramAddr + ( start << 1 ), count | COPY_MODE_HWORD );
+			swiCopy( data, (char*)palette->vramAddr + ( start << 1 ), count | COPY_MODE_HWORD );
 			vramRestoreBanks_EFG( tempVRAM );
 		}
 	}
@@ -1152,7 +1152,7 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 	if( type != GL_NOTEXTURE && texture ) {
 		uint32 vramTemp = VRAM_CR;
 		uint16 *startBank = vramGetBank( (uint16*)tex->vramAddr );
-		uint16 *endBank = vramGetBank(( uint16*)( tex->vramAddr + size - 1 ));
+		uint16 *endBank = vramGetBank(( uint16*)( (char*)tex->vramAddr + size - 1 ));
 
 		do {
 			if( startBank == VRAM_A )
@@ -1178,7 +1178,7 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 			dmaCopyWords( 0, texture, tex->vramAddr, size );
 			if( type == GL_COMPRESSED ) {
 				vramSetBankB( VRAM_B_LCD );
-				dmaCopyWords( 0, texture + tex->texSize, vramBlock_getAddr( glGlob->vramBlocks[ 0 ], tex->texIndexExt ), size >> 1 );
+				dmaCopyWords( 0, (char*)texture + tex->texSize, vramBlock_getAddr( glGlob->vramBlocks[ 0 ], tex->texIndexExt ), size >> 1 );
 			}
 		}
 		vramRestorePrimaryBanks(vramTemp);
