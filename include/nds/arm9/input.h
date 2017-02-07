@@ -32,7 +32,7 @@
  
  The state of the keypad must be read from hardware into memory using scanKeys() whenever
  you want an updated input state.  After reading, call one of the associated "keys" functions to see
- what event was triggered.  These events are computed as the difference between the first and last
+ what event was triggered.  These events are computed as the difference between the current and previous
  key state you read.  It's generally a good idea to scan keys frequently to insure your application's input system
  is responsive.\n
  
