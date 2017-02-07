@@ -29,6 +29,17 @@
 ---------------------------------------------------------------------------------*/
 /*! \file
 	\brief NDS button and touchscreen input support.
+ 
+ The state of the keypad must be read from hardware into memory using scanKeys() whenever
+ you want an updated input state.  After reading, call one of the associated "keys" functions to see
+ what event was triggered.  These events are computed as the difference between the first and last
+ key state you read.  It's generally a good idea to scan keys frequently to insure your application's input system
+ is responsive.\n
+ 
+ After reading the key state, you will be given an integer representing which keys are in the requested state,
+ to mask of specific buttons, use the key masks described in nds/input.h .
+ \see nds/input.h available key masks on the Nintendo DS
+ 
 */
 
 //---------------------------------------------------------------------------------
