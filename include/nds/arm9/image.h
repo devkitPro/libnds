@@ -41,9 +41,9 @@ buffer.
 //!	\brief holds a red green blue triplet
 typedef struct RGB_24
 {
-	unsigned char r;	//!< 8 bits for the red value.
-	unsigned char g;	//!< 8 bits for the green value.
-	unsigned char b;	//!< 8 bits for the blue value.
+	u8 r;	//!< 8 bits for the red value.
+	u8 g;	//!< 8 bits for the green value.
+	u8 b;	//!< 8 bits for the blue value.
 } __attribute__ ((packed)) RGB_24;
 
 
@@ -51,10 +51,10 @@ typedef struct RGB_24
 //!	A generic image structure.
 typedef struct sImage
 {
-	short height; 				/*!< \brief The height of the image in pixels */
-	short width; 				/*!< \brief The width of the image in pixels */
-	int bpp;					/*!< \brief Bits per pixel (should be 4 8 16 or 24) */
-	unsigned short* palette;	/*!< \brief A pointer to the palette data */
+	s16 height; 				/*!< \brief The height of the image in pixels */
+	s16 width; 				/*!< \brief The width of the image in pixels */
+	u8 bpp;			/*!< \brief Bits per pixel (should be 4 8 16 or 24) */
+	u16* palette;	/*!< \brief A pointer to the palette data */
 
 	//! A union of data pointers to the pixel data.
 	union
