@@ -483,5 +483,28 @@ void sdmmcValueHandler(u32 value, void* user_data) {
     fifoSendValue32(FIFO_SDMMC, result);
 }
 
+//---------------------------------------------------------------------------------
+int sdmmc_sdcard_readsectors(u32 sector_no, u32 numsectors, void *out) {
+//---------------------------------------------------------------------------------
+    return sdmmc_readsectors(&deviceSD, sector_no, numsectors, out);
+}
+
+//---------------------------------------------------------------------------------
+int sdmmc_sdcard_writesectors(u32 sector_no, u32 numsectors, void *in) {
+//---------------------------------------------------------------------------------
+    return sdmmc_writesectors(&deviceSD, sector_no, numsectors, in);
+}
+
+//---------------------------------------------------------------------------------
+int sdmmc_nand_readsectors(u32 sector_no, u32 numsectors, void *out) {
+//---------------------------------------------------------------------------------
+    return sdmmc_readsectors(&deviceNAND, sector_no, numsectors, out);
+}
+
+//---------------------------------------------------------------------------------
+int sdmmc_nand_writesectors(u32 sector_no, u32 numsectors, void *in) {
+//---------------------------------------------------------------------------------
+    return sdmmc_writesectors(&deviceNAND, sector_no, numsectors, in);
+}
 
 
