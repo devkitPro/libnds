@@ -214,8 +214,8 @@ typedef enum  {
 	GL_TEXTURE_COLOR0_TRANSPARENT = (1<<29), /*!< interpret color 0 as clear, same as old GL_TEXTURE_ALPHA_MASK */
 	TEXGEN_OFF      = (0<<30), /*!< use unmodified texcoord */
 	TEXGEN_TEXCOORD = (1<<30), /*!< multiply texcoords by the texture-matrix */
-	TEXGEN_NORMAL   = (2<<30), /*!< set texcoords equal to normal * texture-matrix, used for spherical reflection mapping */
-	TEXGEN_POSITION = (3<<30)  /*!< set texcoords equal to vertex * texture-matrix */
+	TEXGEN_NORMAL   = (int)(2U<<30), /*!< set texcoords equal to normal * texture-matrix, used for spherical reflection mapping */
+	TEXGEN_POSITION = (int)(3U<<30)  /*!< set texcoords equal to vertex * texture-matrix */
 }GL_TEXTURE_PARAM_ENUM;
 
 /*! \brief Enums for texture formats<BR>
