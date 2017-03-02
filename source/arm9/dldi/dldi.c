@@ -96,12 +96,12 @@ void dldiFixDriverAddresses (DLDI_INTERFACE* io) {
 	io->bssStart 		= (char*)io->bssStart + offset;
 	io->bssEnd 			= (char*)io->bssEnd + offset;
 	
-	io->ioInterface.startup 		= (FN_MEDIUM_STARTUP)		((char*)io->ioInterface.startup + offset);
-	io->ioInterface.isInserted 		= (FN_MEDIUM_ISINSERTED)	((char*)io->ioInterface.isInserted + offset);
-	io->ioInterface.readSectors 	= (FN_MEDIUM_READSECTORS)	((char*)io->ioInterface.readSectors + offset);
-	io->ioInterface.writeSectors	= (FN_MEDIUM_WRITESECTORS)	((char*)io->ioInterface.writeSectors + offset);
-	io->ioInterface.clearStatus 	= (FN_MEDIUM_CLEARSTATUS)	((char*)io->ioInterface.clearStatus + offset);
-	io->ioInterface.shutdown 		= (FN_MEDIUM_SHUTDOWN)		((char*)io->ioInterface.shutdown + offset);
+	io->ioInterface.startup 		= (FN_MEDIUM_STARTUP)		((intptr_t)io->ioInterface.startup + offset);
+	io->ioInterface.isInserted 		= (FN_MEDIUM_ISINSERTED)	((intptr_t)io->ioInterface.isInserted + offset);
+	io->ioInterface.readSectors 	= (FN_MEDIUM_READSECTORS)	((intptr_t)io->ioInterface.readSectors + offset);
+	io->ioInterface.writeSectors	= (FN_MEDIUM_WRITESECTORS)	((intptr_t)io->ioInterface.writeSectors + offset);
+	io->ioInterface.clearStatus 	= (FN_MEDIUM_CLEARSTATUS)	((intptr_t)io->ioInterface.clearStatus + offset);
+	io->ioInterface.shutdown 		= (FN_MEDIUM_SHUTDOWN)		((intptr_t)io->ioInterface.shutdown + offset);
 
 	// Fix all addresses with in the DLDI
 	if (io->fixSectionsFlags & FIX_ALL) {
