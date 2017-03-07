@@ -117,12 +117,10 @@ uint32 cardEepromGetSize() {
 		return size;
 	}
 
-	int device;
-
 	if(type == 3) {
 		int id = cardEepromReadID();
 
-		device = id & 0xffff;
+		int	device = id & 0xffff;
 		
 		if ( ((id >> 16) & 0xff) == 0x20 ) { // ST
 			

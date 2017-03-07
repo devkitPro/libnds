@@ -425,7 +425,7 @@ bool touchPenDown() {
 TWL_CODE void touchReadDSiMode(touchPosition *touchPos) {
 //---------------------------------------------------------------------------------
 	u8 touchdata[20];
-	int i, rawx = 0, rawy = 0, x, y;
+	int i, rawx = 0, rawy = 0;
 
 	int oldIME = enterCriticalSection();
 
@@ -433,6 +433,7 @@ TWL_CODE void touchReadDSiMode(touchPosition *touchPos) {
 	readTSCRegArray(1,touchdata,20);
 
 	for (i=0;i<10;i+=2) {
+		int  x, y;
 		x = (touchdata[i]<<8) + touchdata[i+1];
 		y = (touchdata[i+10]<<8) + touchdata[i+11];
 		if ((x & 0xf000) || (y & 0xf000)) break;

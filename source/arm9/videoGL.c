@@ -111,11 +111,10 @@ void glMaterialf(GL_MATERIALS_ENUM mode, rgb color) {
 //---------------------------------------------------------------------------------
 void glTexCoord2f32(int32 u, int32 v) {
 //---------------------------------------------------------------------------------
-	int x, y;
 	gl_texture_data *tex = (gl_texture_data*)DynamicArrayGet( &glGlob->texturePtrs, glGlob->activeTexture );
 	if( tex ) {
-		x = (tex->texFormat >> 20) & 7;
-		y = (tex->texFormat >> 23) & 7;
+		int x = (tex->texFormat >> 20) & 7;
+		int y = (tex->texFormat >> 23) & 7;
 		glTexCoord2t16(f32tot16 (mulf32(u,inttof32(8<<x))), f32tot16 (mulf32(v,inttof32(8<<y))));
 	}
 }
@@ -1095,7 +1094,7 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 			else {
 				uint8 *vramBAddr = (uint8*)VRAM_B;
 				uint8 *vramACAddr = NULL;
-				uint8 *vramBFound, *vramACFound;
+				uint8 *vramACFound;
 				uint32 vramBAllocSize = size >> 1;
 				if(( VRAM_B_CR & 0x83 )  != 0x83 )
 					return 0;
@@ -1106,6 +1105,7 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 				//		Check the extrapulated area to see if it is an empty spot
 				//			If not, then adjust the header spot in VRAM_B by a ratio amount found by the tile spot
 				while ( 1 ) {
+					uint8 *vramBFound;
 					// Check designated opening, and return available spot
 					vramBFound = vramBlock_examineSpecial( glGlob->vramBlocks[ 0 ], vramBAddr, vramBAllocSize, 2 );
 					// Make sure that the space found in VRAM_B is completely in it, and not extending out of it

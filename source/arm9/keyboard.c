@@ -377,7 +377,6 @@ Keyboard* keyboardDemoInit(void) {
 }
 
 void keyboardShow(void) {
-	int i;
 
 	swiWaitForVBlank();
 
@@ -389,6 +388,7 @@ void keyboardShow(void) {
 
 	if(curKeyboard->scrollSpeed)
 	{
+		int i;
 		for(i = -192; i < curKeyboard->offset_y; i += curKeyboard->scrollSpeed)
 		{
 			swiWaitForVBlank();
@@ -402,12 +402,12 @@ void keyboardShow(void) {
 }
 
 void keyboardHide(void) {
-	int i;
 
 	curKeyboard->visible = 0;
 
 	if(curKeyboard->scrollSpeed)
 	{
+		int i;
 		for(i = curKeyboard->offset_y; i > -192; i-= curKeyboard->scrollSpeed)
 		{
 			swiWaitForVBlank();
@@ -420,10 +420,9 @@ void keyboardHide(void) {
 }
 
 int keyboardGetChar(void) {
-	int pressed;
-
 
 	while(1) {
+		int pressed;
 		swiWaitForVBlank();
 		scanKeys();
 		pressed = keysDown();
@@ -444,10 +443,9 @@ int keyboardGetChar(void) {
 
 void keyboardGetString(char * buffer, int maxLen) {
 	char *end = buffer + maxLen;
-	char c;
 
 	while(buffer < end) {
-		c = (char)keyboardGetChar();
+		char c = (char)keyboardGetChar();
 
 		if(c == DVK_ENTER) break;
 
