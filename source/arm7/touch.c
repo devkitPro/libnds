@@ -60,7 +60,7 @@ TWL_CODE u32 readTSCReg(u32 reg) {
 }
 
 //---------------------------------------------------------------------------------
-TWL_CODE void readTSCRegArray(u32 reg, void *buffer, int size) {
+TWL_CODE static void readTSCRegArray(u32 reg, void *buffer, int size) {
 //---------------------------------------------------------------------------------
  
 	REG_SPICNT = SPI_ENABLE | SPI_BAUD_4MHz | SPI_DEVICE_TOUCH | SPI_CONTINUOUS;
@@ -84,7 +84,7 @@ TWL_CODE void readTSCRegArray(u32 reg, void *buffer, int size) {
 
 
 //---------------------------------------------------------------------------------
-TWL_CODE u32 writeTSCReg(u32 reg, u32 value) {
+TWL_CODE static u32 writeTSCReg(u32 reg, u32 value) {
 //---------------------------------------------------------------------------------
  
 	REG_SPICNT = SPI_ENABLE | SPI_BAUD_4MHz | SPI_DEVICE_TOUCH | SPI_CONTINUOUS;
@@ -103,7 +103,7 @@ TWL_CODE u32 writeTSCReg(u32 reg, u32 value) {
 
 
 //---------------------------------------------------------------------------------
-u8 CheckStylus(){
+static u8 CheckStylus(){
 //---------------------------------------------------------------------------------
 
 	SerialWaitBusy();
@@ -333,7 +333,7 @@ void UpdateRange(uint8 *this_range, int16 last_dist_max, u8 data_error, u8 tsc_t
 }
 
 //---------------------------------------------------------------------------------
-void touchReadDSMode(touchPosition *touchPos) {
+static void touchReadDSMode(touchPosition *touchPos) {
 //---------------------------------------------------------------------------------
 
 	int16 dist_max_y, dist_max_x, dist_max;
@@ -422,7 +422,7 @@ bool touchPenDown() {
 }
 
 //---------------------------------------------------------------------------------
-TWL_CODE void touchReadDSiMode(touchPosition *touchPos) {
+TWL_CODE static void touchReadDSiMode(touchPosition *touchPos) {
 //---------------------------------------------------------------------------------
 	u8 touchdata[20];
 	int i, rawx = 0, rawy = 0, x, y;
