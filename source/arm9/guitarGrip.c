@@ -1,5 +1,6 @@
 #include <nds/memory.h>
 #include <nds/system.h>
+#include <nds/arm9/guitarGrip.h>
 
 static u8 guitar_keys = 0;
 static u8 guitar_keys_old = 0;
