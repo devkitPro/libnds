@@ -51,10 +51,10 @@ void guitarGripScanKeys();
 u8 guitarGripKeysHeld();
 
 //! Obtains the current guitar grip keys pressed state
-u8 guitarGripKeysDown();
+u16 guitarGripKeysDown();
 
 //! Obtains the current guitar grip keys released state
-u8 guitarGripKeysUp();
+u16 guitarGripKeysUp();
 
 
 #ifdef __cplusplus
