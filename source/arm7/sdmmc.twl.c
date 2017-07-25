@@ -414,6 +414,34 @@ int sdmmc_writesectors(struct mmcdevice *device, u32 sector_no, u32 numsectors, 
 }
 
 //---------------------------------------------------------------------------------
+void sdmmc_get_cid(int devicenumber, u32 *cid) {
+//---------------------------------------------------------------------------------
+
+    struct mmcdevice *device = (devicenumber == 1 ? &deviceNAND : &deviceSD);
+
+    int oldIME = enterCriticalSection();
+
+    setTarget(device);
+
+    // use cmd7 to put sd card in standby mode
+    // CMD7
+    sdmmc_send_command(device, 0x10507, 0);
+
+    // get sd card info
+    // use cmd10 to read CID
+    sdmmc_send_command(device, 0x1060A, device->initarg << 0x10);
+
+    for(int i = 0; i < 4; ++i)
+        cid[i] = device->ret[i];
+
+    // put sd card back to transfer mode
+    // CMD7
+    sdmmc_send_command(device, 0x10507, device->initarg << 0x10);
+
+    leaveCriticalSection(oldIME);
+}
+
+//---------------------------------------------------------------------------------
 void sdmmcMsgHandler(int bytes, void *user_data) {
 //---------------------------------------------------------------------------------
     FifoMessage msg;

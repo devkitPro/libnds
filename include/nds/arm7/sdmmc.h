@@ -121,12 +121,27 @@ typedef struct mmcdevice {
     u32 res;
 } mmcdevice;
 
+enum {
+    MMC_DEVICE_SDCARD,
+    MMC_DEVICE_NAND,
+};
+
 void sdmmc_controller_init();
 void sdmmc_initirq();
 int sdmmc_cardinserted();
 
 int sdmmc_sdcard_init();
 int sdmmc_nand_init();
+void sdmmc_get_cid(int devicenumber, u32 *cid);
+
+static inline void sdmmc_nand_cid( u32 *cid) {
+    sdmmc_get_cid(MMC_DEVICE_NAND,cid);
+}
+
+static inline void sdmmc_sdcard_cid( u32 *cid) {
+    sdmmc_get_cid(MMC_DEVICE_SDCARD,cid);
+}
+
 int sdmmc_sdcard_readsectors(u32 sector_no, u32 numsectors, void *out);
 int sdmmc_sdcard_writesectors(u32 sector_no, u32 numsectors, void *in);
 int sdmmc_nand_readsectors(u32 sector_no, u32 numsectors, void *out);
