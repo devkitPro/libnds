@@ -38,7 +38,7 @@ void cardWriteCommand(const u8 *command) {
 	REG_AUXSPICNTH = CARD_CR1_ENABLE | CARD_CR1_IRQ;
 
 	for (index = 0; index < 8; index++) {
-		CARD_COMMAND[7-index] = command[index];
+		REG_CARD_COMMAND[7-index] = command[index];
 	}
 }
 
@@ -53,7 +53,7 @@ void cardPolledTransfer(u32 flags, u32 *destination, u32 length, const u8 *comma
 	do {
 		// Read data if available
 		if (REG_ROMCTRL & CARD_DATA_READY) {
-			data=CARD_DATA_RD;
+			data=REG_CARD_DATA_RD;
 			if (destination < target)
 				*destination = data;
 			destination++;
@@ -68,7 +68,7 @@ void cardStartTransfer(const u8 *command, u32 *destination, int channel, u32 fla
 	cardWriteCommand(command);
 
 	// Set up a DMA channel to transfer a word every time the card makes one
-	DMA_SRC(channel) = (u32)&CARD_DATA_RD;
+	DMA_SRC(channel) = (u32)&REG_CARD_DATA_RD;
 	DMA_DEST(channel) = (u32)destination;
 	DMA_CR(channel) = DMA_ENABLE | DMA_START_CARD | DMA_32_BIT | DMA_REPEAT | DMA_SRC_FIX | 0x0001;
 
@@ -82,7 +82,7 @@ u32 cardWriteAndRead(const u8 *command, u32 flags) {
 	cardWriteCommand(command);
 	REG_ROMCTRL = flags | CARD_ACTIVATE | CARD_nRESET | CARD_BLK_SIZE(7);
 	while (!(REG_ROMCTRL & CARD_DATA_READY)) ;
-	return CARD_DATA_RD;
+	return REG_CARD_DATA_RD;
 }
 
 //---------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ void cardReset() {
 	do {
 		if(REG_ROMCTRL&CARD_DATA_READY) {
 			if(read<0x2000) {
-				u32 data=CARD_DATA_RD;
+				u32 data=REG_CARD_DATA_RD;
 				(void)data;
 				read+=4;
 			}

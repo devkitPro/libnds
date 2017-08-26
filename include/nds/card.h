@@ -31,21 +31,19 @@
 #include "ndstypes.h"
 
 // Card bus
-   
-#define CARD_COMMAND   ((vu8*)0x040001A8)
+#define	REG_CARD_DATA_RD	(*(vu32*)0x04100010)
 
-#define REG_ROMCTRL		(*(vu32*)0x040001A4)
 #define REG_AUXSPICNT	(*(vu16*)0x040001A0)
 #define REG_AUXSPICNTH	(*(vu8*)0x040001A1)
 #define REG_AUXSPIDATA	(*(vu8*)0x040001A2)
+#define REG_ROMCTRL		(*(vu32*)0x040001A4)
 
-#define CARD_DATA_RD   (*(vu32*)0x04100010)
+#define REG_CARD_COMMAND	((vu8*)0x040001A8)
 
-#define CARD_1B0       (*(vu32*)0x040001B0)
-#define CARD_1B4       (*(vu32*)0x040001B4)
-#define CARD_1B8       (*(vu16*)0x040001B8)
-#define CARD_1BA       (*(vu16*)0x040001BA)
-
+#define	REG_CARD_1B0	(*(vu32*)0x040001B0)
+#define	REG_CARD_1B4	(*(vu32*)0x040001B4)
+#define	REG_CARD_1B8	(*(vu16*)0x040001B8)
+#define	REG_CARD_1BA	(*(vu16*)0x040001BA)
 
 #define CARD_CR1_ENABLE  0x80  // in byte 1, i.e. 0x8000
 #define CARD_CR1_IRQ     0x40  // in byte 1, i.e. 0x4000
