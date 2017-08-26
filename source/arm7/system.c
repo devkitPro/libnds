@@ -96,7 +96,7 @@ void powerValueHandler(u32 value, void* user_data) {
 		sleepIsEnabled = true;
 		break;
 	case PM_REQ_BATTERY:
-		if (!__dsimode) {
+		if (!isDSiMode()) {
 			battery = (readPowerManagement(PM_BATTERY_REG) & 1)?3:15;
 			backlight = readPowerManagement(PM_BACKLIGHT_LEVEL);
 			if (backlight & (1<<6)) battery += (backlight & (1<<3))<<4;
@@ -131,7 +131,7 @@ void installSystemFIFO(void) {
 //---------------------------------------------------------------------------------
 
 	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
-	if (__dsimode) {
+	if (isDSiMode()) {
 		fifoSetValue32Handler(FIFO_SDMMC, sdmmcValueHandler, 0);
 		fifoSetDatamsgHandler(FIFO_SDMMC, sdmmcMsgHandler, 0);
 	}
