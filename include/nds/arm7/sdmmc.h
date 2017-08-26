@@ -73,7 +73,6 @@
 #define TMIO_STAT1_CMD_BUSY      0x4000
 #define TMIO_STAT1_ILL_ACCESS    0x8000
 
-//Comes from TWLSDK mongoose.tef DWARF info
 #define SDMC_NORMAL              0x00000000
 #define SDMC_ERR_COMMAND         0x00000001
 #define SDMC_ERR_CRC             0x00000002
