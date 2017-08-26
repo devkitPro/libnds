@@ -36,6 +36,26 @@
 bool sleepIsEnabled = true;
 bool __dsimode = false; // set in crt0
 
+void twlEnableSlot1();
+void twlDisableSlot1();
+
+//---------------------------------------------------------------------------------
+void enableSlot1() {
+//---------------------------------------------------------------------------------
+
+	if(isDSiMode()) twlEnableSlot1();
+
+}
+
+//---------------------------------------------------------------------------------
+void disableSlot1() {
+//---------------------------------------------------------------------------------
+
+	if(isDSiMode()) twlDisableSlot1();
+
+}
+
+
 //---------------------------------------------------------------------------------
 void powerValueHandler(u32 value, void* user_data) {
 //---------------------------------------------------------------------------------
@@ -104,6 +124,12 @@ void powerValueHandler(u32 value, void* user_data) {
 			battery = i2cReadRegister(I2C_PM,I2CREGPM_BATTERY);
 		}
 		fifoSendValue32(FIFO_PM, battery);
+		break;
+	case PM_REQ_SLOT1_DISABLE:
+		disableSlot1();
+		break;
+	case PM_REQ_SLOT1_ENABLE:
+		enableSlot1();
 		break;
 	}
 }

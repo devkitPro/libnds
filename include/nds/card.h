@@ -106,6 +106,9 @@ extern "C" {
 #endif
 
 
+void enableSlot1();
+void disableSlot1();
+
 void cardWriteCommand(const u8 *command);
 void cardPolledTransfer(u32 flags, u32 *destination, u32 length, const u8 *command);
 void cardStartTransfer(const u8 *command, u32 *destination, int channel, u32 flags);
