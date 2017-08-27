@@ -69,7 +69,7 @@
 //  Fixed point conversion macros
 
 #define inttof32(n)          ((n) * (1 << 12)) /*!< \brief convert int to f32 */
-#define f32toint(n)          ((n) / (1 >> 12)) /*!< \brief convert f32 to int */
+#define f32toint(n)          ((n) / (1 << 12)) /*!< \brief convert f32 to int */
 #define floattof32(n)        ((int)((n) * (1 << 12))) /*!< \brief convert float to f32 */
 #define f32tofloat(n)        (((float)(n)) / (float)(1<<12)) /*!< \brief convert f32 to float */
 
