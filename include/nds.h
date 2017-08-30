@@ -242,6 +242,7 @@ extern "C" {
 #include "nds/fifocommon.h"
 #include "nds/touch.h"
 #include "nds/input.h"
+#include "nds/sha1.h"
 
 
 //---------------------------------------------------------------------------------
