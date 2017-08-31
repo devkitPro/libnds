@@ -93,10 +93,14 @@ else
 endif
 #---------------------------------------------------------------------------------
 
-export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
-					$(PNGFILES:.png=.o) \
-					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
- 
+export OFILES_BIN	:=	$(addsuffix .o,$(BINFILES)) $(PNGFILES:.png=.o)
+
+export OFILES_SRC	:=	$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) $(SFILES:.s=.o)
+
+export OFILES	:=	$(OFILES_BIN) $(OFILES_SRC)
+
+export HFILES	:=	$(PNGFILES:.png=.h) $(addsuffix .h,$(subst .,_,$(BINFILES)))
+
 export INCLUDE	:=	$(foreach dir,$(INCLUDES),-I$(CURDIR)/$(dir)) \
 					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
 					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
@@ -132,16 +136,18 @@ $(ARM9BIN)	:	$(OFILES)
 	@$(AR) rcs "$(ARM9BIN)" $(OFILES)
 	@echo built ... $(notdir $@)
 
+$(OFILES_SRC)	: $(HFILES)
+
 #---------------------------------------------------------------------------------
 # you need a rule like this for each extension you use as binary data 
 #---------------------------------------------------------------------------------
-%.bin.o	:	%.bin
+%_bin.h %.bin.o	:	%.bin
 #---------------------------------------------------------------------------------
 	@echo $(notdir $<)
 	@$(bin2o)
 
 #---------------------------------------------------------------------------------
-%.s	%h : %.png %.grit
+%.s	%.h : %.png %.grit
 #---------------------------------------------------------------------------------
 	grit $< -fts -o$*
 
