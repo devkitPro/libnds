@@ -73,4 +73,14 @@ void swiSHA1Final(void *digest, swiSHA1context_t *ctx);
  * \param len      length of data
  */
 void swiSHA1Calc(void *digest, const void *data, size_t len);
+
+/**
+ * \brief          SHA-1 verify
+ *
+ * \param digest1  buffer containing hash to verify
+ * \param digest2  buffer containing hash to verify
+ */
+void swiSHA1Verify(const void *digest1, const void *digest2);
+
+
 #endif // SHA1_H_INCLUDE
