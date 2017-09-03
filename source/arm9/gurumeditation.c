@@ -45,7 +45,6 @@ unsigned long ARMShift(unsigned long value,unsigned char shift) {
 		// constant shift index
 		index = ((shift >> 3) & 0x1F) ;
 	} ;
-	int i ;
 	bool isN ;
 	switch (shift & 0x06) {
 		case 0x00:
@@ -59,6 +58,7 @@ unsigned long ARMShift(unsigned long value,unsigned char shift) {
 			isN = (value & 0x80000000) ;
 			value = value >> index ;
 			if (isN) {
+				int i ;
 				for (i=31;i>31-index;i--) {
 					value = value | (1 << i) ;
 				} ;
@@ -78,11 +78,12 @@ unsigned long ARMShift(unsigned long value,unsigned char shift) {
 u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState) {
 //---------------------------------------------------------------------------------
 
-	int Rf, Rb, Rd, Rn, Rm;
+	int Rd;
 
 	if (thumbState) {
 		// Thumb
 
+		int Rf, Rb;
 		unsigned short opcode = *(unsigned short *)opcodeAddress ;
 		// ldr r,[pc,###]			01001ddd ffffffff
 		// ldr r,[r,r]				0101xx0f ffbbbddd
@@ -134,6 +135,7 @@ u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState) {
 		}
 	} else {
 		// arm32
+		int Rn, Rm;
 		unsigned long opcode = *(unsigned long *)opcodeAddress ;
 
 		// SWP			xxxx0001 0x00nnnn dddd0000 1001mmmm

@@ -41,7 +41,7 @@ void powerValueHandler(u32 value, void* user_data) {
 //---------------------------------------------------------------------------------
 	u32 temp;
 	u32 ie_save;
-	int battery, backlight, power;
+	int battery, power;
 
 	switch(value & 0xFFFF0000) {
 		//power control
@@ -97,6 +97,7 @@ void powerValueHandler(u32 value, void* user_data) {
 		break;
 	case PM_REQ_BATTERY:
 		if (!__dsimode) {
+			int backlight;
 			battery = (readPowerManagement(PM_BATTERY_REG) & 1)?3:15;
 			backlight = readPowerManagement(PM_BACKLIGHT_LEVEL);
 			if (backlight & (1<<6)) battery += (backlight & (1<<3))<<4;

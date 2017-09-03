@@ -387,10 +387,10 @@ int fifoGetDatamsg(int channel, int buffersize, u8 * destbuffer) {
 	int	num_words = (num_bytes+3)>>2;
 	u32 buffer_array[num_words];
 
-	int i,next;
+	int i;
 	for(i=0; i<num_words;i++) {
 		buffer_array[i] = FIFO_BUFFER_DATA(block);
-		next=FIFO_BUFFER_GETNEXT(block);
+		int next=FIFO_BUFFER_GETNEXT(block);
 		fifo_freeBlock(block);
 		block=next;
 		if(block==FIFO_BUFFER_TERMINATE) break;
@@ -643,12 +643,13 @@ bool fifoInit() {
 	#define __SYNC_END		14
 	#define __TIMEOUT		120
 
-	int their_value=0,my_value=__SYNC_START,count=0;
+	int my_value=__SYNC_START,count=0;
 
 	irqSet(IRQ_VBLANK,__timeoutvbl);
 	irqEnable(IRQ_IPC_SYNC|IRQ_VBLANK);
 
 	do {
+		int their_value=0;
 		their_value = IPC_GetSync();
 		if(their_value == __SYNC_END && count > 2) break;
 		if(count>3) break;
