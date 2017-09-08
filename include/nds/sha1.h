@@ -30,6 +30,10 @@
 #ifndef SHA1_H_INCLUDE
 #define SHA1_H_INCLUDE
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include "nds/ndstypes.h"
 #include <stddef.h>
 
@@ -81,6 +85,10 @@ void swiSHA1Calc(void *digest, const void *data, size_t len);
  * \param digest2  buffer containing hash to verify
  */
 void swiSHA1Verify(const void *digest1, const void *digest2);
+
+#ifdef __cplusplus
+}
+#endif
 
 
 #endif // SHA1_H_INCLUDE
