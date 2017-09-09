@@ -28,6 +28,7 @@
 
 #include <nds/ndstypes.h>
 #include <nds/system.h>
+#include <nds/arm7/codec.h>
 #include <nds/arm7/touch.h>
 #include <nds/arm7/input.h>
 #include <nds/interrupts.h>
@@ -40,67 +41,6 @@ static u8 range_counter_1 = 0;
 static u8 range_counter_2 = 0;
 static u8 range = 20;
 static u8 min_range = 20;
-
-//---------------------------------------------------------------------------------
-TWL_CODE u32 readTSCReg(u32 reg) {
-//---------------------------------------------------------------------------------
- 
-	REG_SPICNT = SPI_ENABLE | SPI_BAUD_4MHz | SPI_DEVICE_TOUCH | SPI_CONTINUOUS;
-	REG_SPIDATA = ((reg<<1) | 1) & 0xFF;
- 
-	while(REG_SPICNT & 0x80);
- 
-	REG_SPIDATA = 0;
- 
-	while(REG_SPICNT & 0x80);
-
-	REG_SPICNT = 0;
-
-	return REG_SPIDATA;
-}
-
-//---------------------------------------------------------------------------------
-TWL_CODE static void readTSCRegArray(u32 reg, void *buffer, int size) {
-//---------------------------------------------------------------------------------
- 
-	REG_SPICNT = SPI_ENABLE | SPI_BAUD_4MHz | SPI_DEVICE_TOUCH | SPI_CONTINUOUS;
-	REG_SPIDATA = ((reg<<1) | 1) & 0xFF;
-
-	char *buf = (char*)buffer;
-	while(REG_SPICNT & 0x80);
-	int count = 0;
-	while(count<size) {
-		REG_SPIDATA = 0;
- 
-		while(REG_SPICNT & 0x80);
-
-
-		buf[count++] = REG_SPIDATA;
-		
-	}
-	REG_SPICNT = 0;
-
-}
-
-
-//---------------------------------------------------------------------------------
-TWL_CODE static u32 writeTSCReg(u32 reg, u32 value) {
-//---------------------------------------------------------------------------------
- 
-	REG_SPICNT = SPI_ENABLE | SPI_BAUD_4MHz | SPI_DEVICE_TOUCH | SPI_CONTINUOUS;
-	REG_SPIDATA = ((reg<<1)) & 0xFF;
- 
-	while(REG_SPICNT & 0x80);
- 
-	REG_SPIDATA = value;
- 
-	while(REG_SPICNT & 0x80);
-
-	REG_SPICNT = 0;
-
-	return REG_SPIDATA;
-}
-
 
 //---------------------------------------------------------------------------------
 static u8 CheckStylus(){
@@ -189,11 +129,6 @@ uint32 touchReadTemperature(int * t1, int * t2) {
 	*t2 = touchRead(TSC_MEASURE_TEMP2);
 	return 8490 * (*t2 - *t1) - 273*4096;
 }
-
-
-static bool touchInit = false;
-static s32 xscale, yscale;
-static s32 xoffset, yoffset;
 
 //---------------------------------------------------------------------------------
 int16 readTouchValue(uint32 command, int16 *dist_max, u8 *err){
@@ -339,10 +274,6 @@ static void touchReadDSMode(touchPosition *touchPos) {
 	int16 dist_max_y, dist_max_x, dist_max;
 	u8 error, error_where, first_check, i;
 
-	uint32 oldIME = REG_IME;
-
-	REG_IME = 0;
-
 	first_check = CheckStylus();
 	if(first_check != 0){
 		error_where = 0;
@@ -398,56 +329,41 @@ static void touchReadDSMode(touchPosition *touchPos) {
 	}
 
 	UpdateRange(&range, dist_max, error_where, last_time_touched);
+}
 
-	REG_IME = oldIME;
+static s32 xscale, yscale;
+static s32 xoffset, yoffset;
 
+//---------------------------------------------------------------------------------
+void touchInit() {
+//---------------------------------------------------------------------------------
+
+	xscale = ((PersonalData->calX2px - PersonalData->calX1px) << 19) / ((PersonalData->calX2) - (PersonalData->calX1));
+	yscale = ((PersonalData->calY2px - PersonalData->calY1px) << 19) / ((PersonalData->calY2) - (PersonalData->calY1));
+
+	xoffset = ((PersonalData->calX1 + PersonalData->calX2) * xscale  - ((PersonalData->calX1px + PersonalData->calX2px) << 19) ) / 2;
+	yoffset = ((PersonalData->calY1 + PersonalData->calY2) * yscale  - ((PersonalData->calY1px + PersonalData->calY2px) << 19) ) / 2;
+
+	if (cdcIsAvailable()) {
+		int oldIME = enterCriticalSection();
+		cdcTouchInit();
+		leaveCriticalSection(oldIME);
+	}
 }
 
 //---------------------------------------------------------------------------------
 bool touchPenDown() {
 //---------------------------------------------------------------------------------
+
 	bool down;
-	if (isDSiMode()) {
-
-		int oldIME = enterCriticalSection();
-		writeTSCReg(0,3);
-
-		down = !(readTSCReg(9)&0x40) || !(readTSCReg(14)&3);
-		leaveCriticalSection(oldIME);
-		
+	int oldIME = enterCriticalSection();
+	if (cdcIsAvailable()) {
+		down = cdcTouchPenDown();
 	} else {
 		down = !(REG_KEYXY & (1<<6));
 	}
-	return down;
-}
-
-//---------------------------------------------------------------------------------
-TWL_CODE static void touchReadDSiMode(touchPosition *touchPos) {
-//---------------------------------------------------------------------------------
-	u8 touchdata[20];
-	int i, rawx = 0, rawy = 0, x, y;
-
-	int oldIME = enterCriticalSection();
-
-	writeTSCReg(0,252);
-	readTSCRegArray(1,touchdata,20);
-
-	for (i=0;i<10;i+=2) {
-		x = (touchdata[i]<<8) + touchdata[i+1];
-		y = (touchdata[i+10]<<8) + touchdata[i+11];
-		if ((x & 0xf000) || (y & 0xf000)) break;
-		rawx += x;
-		rawy += y;
-	}
-
-	if (i!=10) {
-		rawx = 0; rawy= 0;
-	} else {
-		touchPos->rawx = rawx/5;
-		touchPos->rawy = rawy/5;
-	}
-	
 	leaveCriticalSection(oldIME);
+	return down;
 }
 
 //---------------------------------------------------------------------------------
@@ -455,21 +371,14 @@ TWL_CODE static void touchReadDSiMode(touchPosition *touchPos) {
 //---------------------------------------------------------------------------------
 void touchReadXY(touchPosition *touchPos) {
 //---------------------------------------------------------------------------------
-	if ( !touchInit ) {
 
-		xscale = ((PersonalData->calX2px - PersonalData->calX1px) << 19) / ((PersonalData->calX2) - (PersonalData->calX1));
-		yscale = ((PersonalData->calY2px - PersonalData->calY1px) << 19) / ((PersonalData->calY2) - (PersonalData->calY1));
-
-		xoffset = ((PersonalData->calX1 + PersonalData->calX2) * xscale  - ((PersonalData->calX1px + PersonalData->calX2px) << 19) ) / 2;
-		yoffset = ((PersonalData->calY1 + PersonalData->calY2) * yscale  - ((PersonalData->calY1px + PersonalData->calY2px) << 19) ) / 2;
-		touchInit = true;
-	}
-
-	if (isDSiMode()) {
-		touchReadDSiMode(touchPos);
+	int oldIME = enterCriticalSection();
+	if (cdcIsAvailable()) {
+		cdcTouchRead(touchPos);
 	} else {
 		touchReadDSMode(touchPos);
 	}
+	leaveCriticalSection(oldIME);
 
 	s16 px = ( touchPos->rawx * xscale - xoffset + xscale/2 ) >>19;
 	s16 py = ( touchPos->rawy * yscale - yoffset + yscale/2 ) >>19;
