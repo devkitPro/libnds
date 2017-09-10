@@ -90,8 +90,30 @@ extern "C" {
 
 typedef void (*MIC_BUF_SWAP_CB)(u8* completedBuffer, int length);
 
+//---------------------------------------------------------------------------------
+// DSi Registers
+//---------------------------------------------------------------------------------
 
+#define REG_SNDEXTCNT	(*(vu16*)0x04004700)
+#define REG_MICCNT		(*(vu16*)0x04004600)
+#define REG_MICDATA		(*(vu32*)0x04004604)
 
+#define SNDEXTCNT_RATIO(n)		((n)&0xF)
+#define SNDEXTCNT_FREQ_32KHZ	(0<<13) // output freq 32.73kHz
+#define SNDEXTCNT_FREQ_47KHZ	(1<<13) // output freq 47.61kHz
+#define SNDEXTCNT_MUTE			BIT(14)
+#define SNDEXTCNT_ENABLE		BIT(15)
+
+#define MICCNT_FORMAT(n)		((n)&3) // unknown, always set to '2'
+#define MICCNT_FREQ_DIV(n)		(((n)&3)<<2) // F/(n+1) where F is SNDEXTCNT output freq
+#define MICCNT_EMPTY			BIT(8)
+#define MICCNT_NOT_EMPTY		BIT(9)
+#define MICCNT_MORE_DATA		BIT(10)
+#define MICCNT_OVERRUN			BIT(11)
+#define MICCNT_CLEAR_FIFO		BIT(12)
+#define MICCNT_ENABLE_IRQ		BIT(13)
+#define MICCNT_ENABLE_IRQ2		BIT(14)
+#define MICCNT_ENABLE			BIT(15)
 
 /*---------------------------------------------------------------------------------
 	microphone code based on neimod's microphone example.
