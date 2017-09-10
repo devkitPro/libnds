@@ -46,8 +46,10 @@ static inline bool cdcIsAvailable(void) {
 }
 
 enum cdcBanks {
-	CDC_TOUCHCNT	= 0x03,
-	CDC_TOUCHDATA	= 0xFC,
+	CDC_CONTROL     = 0x00, // Chip control
+	CDC_SOUND       = 0x01, // ADC/DAC control
+	CDC_TOUCHCNT	= 0x03, // TSC control
+	CDC_TOUCHDATA	= 0xFC, // TSC data buffer
 };
 
 // Direct register functions

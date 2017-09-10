@@ -31,12 +31,15 @@
 #include <nds/fifocommon.h>
 #include <nds/timers.h>
 #include <nds/arm7/audio.h>
+#include <nds/arm7/codec.h>
 
+void micSetAmp_TWL(u8 control, u8 gain);
+u16 micReadData16_TWL();
 
 //---------------------------------------------------------------------------------
 // Turn on the Microphone Amp. Code based on neimod's example.
 //---------------------------------------------------------------------------------
-void micSetAmp(u8 control, u8 gain) {
+void micSetAmp_NTR(u8 control, u8 gain) {
 //---------------------------------------------------------------------------------
 	SerialWaitBusy();
 	REG_SPICNT = SPI_ENABLE | SPI_DEVICE_POWER | SPI_BAUD_1MHz | SPI_CONTINUOUS;
@@ -61,9 +64,9 @@ void micSetAmp(u8 control, u8 gain) {
 //---------------------------------------------------------------------------------
 // Read a byte from the microphone. Code based on neimod's example.
 //---------------------------------------------------------------------------------
-u8 micReadData8() {
+u8 micReadData8_NTR() {
 //---------------------------------------------------------------------------------
-	static u16 result, result2;
+	u16 result, result2;
 
 	SerialWaitBusy();
 
@@ -90,9 +93,9 @@ u8 micReadData8() {
 //---------------------------------------------------------------------------------
 // Read a short from the microphone. Code based on neimod's example.
 //---------------------------------------------------------------------------------
-u16 micReadData12() {
+u16 micReadData12_NTR() {
 //---------------------------------------------------------------------------------
-	static u16 result, result2;
+	u16 result, result2;
 
 	SerialWaitBusy();
 
@@ -114,6 +117,49 @@ u16 micReadData12() {
 	result2 = REG_SPIDATA;
 
 	return (((result & 0x7F) << 5) | ((result2>>3)&0x1F));
+}
+
+//---------------------------------------------------------------------------------
+void micSetAmp(u8 control, u8 gain) {
+//---------------------------------------------------------------------------------
+
+	int oldIME = enterCriticalSection();
+	if (cdcIsAvailable()) {
+		micSetAmp_TWL(control, gain);
+	} else {
+		micSetAmp_NTR(control, gain);
+	}
+	leaveCriticalSection(oldIME);
+}
+
+//---------------------------------------------------------------------------------
+u8 micReadData8() {
+//---------------------------------------------------------------------------------
+
+	u8 smp;
+	int oldIME = enterCriticalSection();
+	if (cdcIsAvailable()) {
+		smp = micReadData16_TWL() >> 8;
+	} else {
+		smp = micReadData8_NTR();
+	}
+	leaveCriticalSection(oldIME);
+	return smp;
+}
+
+//---------------------------------------------------------------------------------
+u16 micReadData12() {
+//---------------------------------------------------------------------------------
+
+	u16 smp;
+	int oldIME = enterCriticalSection();
+	if (cdcIsAvailable()) {
+		smp = micReadData16_TWL() >> 4;
+	} else {
+		smp = micReadData12_NTR();
+	}
+	leaveCriticalSection(oldIME);
+	return smp;
 }
 
 static u8* microphone_front_buffer;
