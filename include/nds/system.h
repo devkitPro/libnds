@@ -225,6 +225,8 @@ u8* getHeapLimit();
 //--------------------------------------------------------------
 #ifdef ARM7
 
+#define REG_CONSOLEID	(*(vu64*)0x04004D00)
+
 //!	Power-controlled hardware devices accessable to the ARM7.
 /*!	Note that these should only be used when programming for
 	the ARM7.  Trying to boot up these hardware devices via
