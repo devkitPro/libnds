@@ -28,7 +28,6 @@
 //---------------------------------------------------------------------------------
 void setExceptionHandler(VoidFn handler) {
 //---------------------------------------------------------------------------------
-	exceptionStack = (u32)0x23EFFFC ;
 	EXCEPTION_VECTOR = enterException ;
 	*exceptionC = handler ;
 }
