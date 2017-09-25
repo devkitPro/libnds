@@ -97,7 +97,7 @@ typedef struct FifoMessage {
 			void *buffer;
 			u32 address;
 			u32	length;
-		} fwParams;
+		} blockParams;
 	};
 
 } ALIGN(4) FifoMessage;

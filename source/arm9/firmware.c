@@ -36,9 +36,9 @@ void readFirmware(u32 address, void *buffer, u32 length) {
 	FifoMessage msg;
 
 	msg.type = FW_READ;
-	msg.fwParams.address = address;
-	msg.fwParams.buffer = buffer;
-	msg.fwParams.length = length;
+	msg.blockParams.address = address;
+	msg.blockParams.buffer = buffer;
+	msg.blockParams.length = length;
 
 	fifoSendDatamsg(FIFO_FIRMWARE, sizeof(msg), (u8*)&msg);
 
@@ -58,9 +58,9 @@ int writeFirmware(u32 address, void *buffer, u32 length) {
 	FifoMessage msg;
 
 	msg.type = FW_WRITE;
-	msg.fwParams.address = address;
-	msg.fwParams.buffer = buffer;
-	msg.fwParams.length = length;
+	msg.blockParams.address = address;
+	msg.blockParams.buffer = buffer;
+	msg.blockParams.length = length;
 	
 	fifoSendDatamsg(FIFO_FIRMWARE, sizeof(msg), (u8*)&msg);
 

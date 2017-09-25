@@ -140,11 +140,11 @@ void firmwareMsgHandler(int bytes, void *user_data) {
 	
 	switch(msg.type) {
 		case FW_READ:
-			readFirmware(msg.fwParams.address, msg.fwParams.buffer, msg.fwParams.length);
+			readFirmware(msg.blockParams.address, msg.blockParams.buffer, msg.blockParams.length);
 			response = 0;
 			break;
 		case FW_WRITE:
-			response = writeFirmware(msg.fwParams.address, msg.fwParams.buffer, msg.fwParams.length);
+			response = writeFirmware(msg.blockParams.address, msg.blockParams.buffer, msg.blockParams.length);
 			break;
 	}
 	fifoSendValue32(FIFO_FIRMWARE,response);
