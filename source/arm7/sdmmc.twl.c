@@ -177,9 +177,15 @@ int sdmmc_cardinserted() {
 	return 1; //sdmmc_cardready;
 }
 
+
+static bool sdmmc_controller_initialised = false;
+
 //---------------------------------------------------------------------------------
-void sdmmc_controller_init() {
+void sdmmc_controller_init( bool force_init ) {
 //---------------------------------------------------------------------------------
+
+    if (!force_init && sdmmc_controller_initialised) return;
+
     deviceSD.isSDHC = 0;
     deviceSD.SDOPT = 0;
     deviceSD.res = 0;
@@ -229,6 +235,8 @@ void sdmmc_controller_init() {
     *(vu16*)(SDMMC_BASE + REG_SDPORTSEL) &= 0xFFFCu;
     *(vu16*)(SDMMC_BASE + REG_SDBLKLEN) = 512;
     *(vu16*)(SDMMC_BASE + REG_SDSTOP) = 0;
+
+    sdmmc_controller_initialised = true;
 
     setTarget(&deviceSD);
 }
@@ -487,10 +495,24 @@ void sdmmcMsgHandler(int bytes, void *user_data) {
 }
 
 //---------------------------------------------------------------------------------
+int sdmmc_nand_startup() {
+//---------------------------------------------------------------------------------
+    sdmmc_controller_init(false);
+    return sdmmc_nand_init();
+}
+
+//---------------------------------------------------------------------------------
+int sdmmc_sd_startup() {
+//---------------------------------------------------------------------------------
+    sdmmc_controller_init(false);
+    return sdmmc_sdcard_init();
+}
+
+//---------------------------------------------------------------------------------
 void sdmmcValueHandler(u32 value, void* user_data) {
 //---------------------------------------------------------------------------------
     int result = 0;
-
+    int sdflag = 0;
     int oldIME = enterCriticalSection();
 
     switch(value) {
@@ -500,12 +522,13 @@ void sdmmcValueHandler(u32 value, void* user_data) {
         break;
 
     case SDMMC_SD_START:
+        sdflag = 1;
+        /* Falls through. */
+    case SDMMC_NAND_START:
         if (sdmmc_read16(REG_SDSTATUS0) == 0) {
             result = 1;
         } else {
-            sdmmc_controller_init();
-            sdmmc_nand_init();
-            result = sdmmc_sdcard_init();
+            result = (sdflag == 1 ) ? sdmmc_sd_startup() : sdmmc_nand_startup();
         }
         break;
 

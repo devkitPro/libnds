@@ -18,7 +18,7 @@ bool sdio_Startup() {
 	fifoWaitValue32(FIFO_SDMMC);
 
 	result = fifoGetValue32(FIFO_SDMMC);
-	
+
 	return result == 0;
 }
 

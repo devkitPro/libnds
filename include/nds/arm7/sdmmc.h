@@ -125,7 +125,7 @@ enum {
     MMC_DEVICE_NAND,
 };
 
-void sdmmc_controller_init();
+void sdmmc_controller_init(bool force_init);
 void sdmmc_initirq();
 int sdmmc_cardinserted();
 

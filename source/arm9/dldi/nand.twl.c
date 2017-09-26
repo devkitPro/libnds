@@ -9,7 +9,19 @@
 //---------------------------------------------------------------------------------
 bool nand_Startup() {
 //---------------------------------------------------------------------------------
-	return true;
+	fifoSendValue32(FIFO_SDMMC,SDMMC_HAVE_SD);
+	while(!fifoCheckValue32(FIFO_SDMMC));
+	int result = fifoGetValue32(FIFO_SDMMC);
+
+	if(result==0) return false;
+
+	fifoSendValue32(FIFO_SDMMC,SDMMC_NAND_START);
+
+	fifoWaitValue32(FIFO_SDMMC);
+
+	result = fifoGetValue32(FIFO_SDMMC);
+
+	return result == 0;
 }
 
 //---------------------------------------------------------------------------------
