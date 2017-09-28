@@ -266,14 +266,20 @@ int sdmmc_sdcard_init() {
 //---------------------------------------------------------------------------------
     setTarget(&deviceSD);
     swiDelay(0xF000);
+
+    // card reset
     sdmmc_send_command(&deviceSD,0,0);
+
+    // CMD8 0x1AA
     sdmmc_send_command(&deviceSD,0x10408,0x1AA);
     u32 temp = (deviceSD.error & 0x1) << 0x1E;
 
     u32 temp2 = 0;
     do {
         do {
+            // CMD55
             sdmmc_send_command(&deviceSD,0x10437,deviceSD.initarg << 0x10);
+            // ACMD41
             sdmmc_send_command(&deviceSD,0x10769,0x00FF8000 | temp);
             temp2 = 1;
         } while ( !(deviceSD.error & 1) );
@@ -302,6 +308,15 @@ int sdmmc_sdcard_init() {
     sdmmc_send_command(&deviceSD,0x10507,deviceSD.initarg << 0x10);
     if (deviceSD.error & 0x4) return -1;
 
+    // CMD55
+    sdmmc_send_command(&deviceSD,0x10437,deviceSD.initarg << 0x10);
+    if (deviceSD.error & 0x4) return -1;
+
+    // ACMD42
+    sdmmc_send_command(&deviceSD,0x1076A,0x0);
+    if (deviceSD.error & 0x4) return -1;
+
+    // CMD55
     sdmmc_send_command(&deviceSD,0x10437,deviceSD.initarg << 0x10);
     if (deviceSD.error & 0x4) return -1;
 
