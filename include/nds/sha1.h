@@ -84,7 +84,7 @@ void swiSHA1Calc(void *digest, const void *data, size_t len);
  * \param digest1  buffer containing hash to verify
  * \param digest2  buffer containing hash to verify
  */
-void swiSHA1Verify(const void *digest1, const void *digest2);
+bool swiSHA1Verify(const void *digest1, const void *digest2);
 
 #ifdef __cplusplus
 }
