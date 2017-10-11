@@ -1,0 +1,25 @@
+language: c
+
+sudo: false
+
+cache:
+  directories:
+    - /home/travis/devkitPro
+
+before_install:
+  # Prepare devkitARM update
+  - export DEVKITPRO=/home/travis/devkitPro
+  - export DEVKITARM=${DEVKITPRO}/devkitARM
+  - mkdir -p $DEVKITPRO
+  - cd $DEVKITPRO
+  - wget -N https://raw.githubusercontent.com/devkitPro/installer/master/perl/devkitARMupdate.pl
+  -
+
+install:
+  - cd $DEVKITPRO
+  # Install or update devkitARM if it's cached
+  - perl devkitARMupdate.pl
+  - cd $TRAVIS_BUILD_DIR
+
+script:
+  - make
