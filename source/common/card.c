@@ -29,6 +29,7 @@
 #include "nds/memory.h"
 #include "nds/bios.h"
 
+#include <stdio.h>
 
 //---------------------------------------------------------------------------------
 void cardWriteCommand(const u8 *command) {
@@ -54,9 +55,8 @@ void cardPolledTransfer(u32 flags, u32 *destination, u32 length, const u8 *comma
 		// Read data if available
 		if (REG_ROMCTRL & CARD_DATA_READY) {
 			data=REG_CARD_DATA_RD;
-			if (destination < target)
-				*destination = data;
-			destination++;
+			if (NULL != destination && destination < target)
+				*destination++ = data;
 		}
 	} while (REG_ROMCTRL & CARD_BUSY);
 }
