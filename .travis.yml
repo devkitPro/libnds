@@ -8,7 +8,7 @@ cache:
 
 before_install:
   # Prepare devkitARM update
-  - export DEVKITPRO=/home/travis/devkitPro
+  - export DEVKITPRO=/opt/devkitpro
   - export DEVKITARM=${DEVKITPRO}/devkitARM
   - mkdir -p $DEVKITPRO
   - cd $DEVKITPRO
