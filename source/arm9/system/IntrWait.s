@@ -48,10 +48,14 @@ BEGIN_ASM_FUNC swiIntrWait
 	mov	r3, r3, lsl#12
 	add	r3, r3, #0x4000
 
-	cmp	r0, #0
-	blne 	check_flags
-	bne 	flag_set
+	mov 	r12, r0
+	bl 	check_flags
+	beq	wait
 
+	cmp	r12, #0
+	beq	flag_set
+wait:
+	mov	r12, #0x4000000
 wait_flags:
 	mov	r2, #1
 	str  	r2, [r12,#0x208]
