@@ -189,14 +189,12 @@ void setVectorBase(int highVector);
 	See gbatek for more information.
 */
 typedef struct sysVectors_t {
-	u32	reset;			//!< CPU reset.
-	u32	undefined;		//!< undefined instruction.
-	u32	swi;			//!< software interrupt.
-	u32	prefetch_abort;	//!< prefetch abort.
-	u32	data_abort;		//!< data abort.
-	/* according to gbatek, there should be 4 bytes reserved and 4 bytes for normal interupt
-	asuming the struct follows the memory layout?...*/
-	u32	fiq;			//!< fast interrupt.
+	VoidFn	reset;			//!< CPU reset.
+	VoidFn	undefined;		//!< undefined instruction.
+	VoidFn	swi;			//!< software interrupt.
+	VoidFn	prefetch_abort;	//!< prefetch abort.
+	VoidFn	data_abort;		//!< data abort.
+	VoidFn	fiq;			//!< fast interrupt.
 } sysVectors;
 
 

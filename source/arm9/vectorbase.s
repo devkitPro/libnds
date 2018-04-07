@@ -27,6 +27,8 @@
 
 	.global		SystemVectors
 
+	.arm
+
 	ldr	r15,vec_reset
 	ldr	r15,vec_undefined
 	ldr	r15,vec_swi
@@ -54,7 +56,7 @@ vec_fiq:
 
 
 @---------------------------------------------------------------------------------
-BEGIN_ASM_FUNC setVectorBase
+BEGIN_ASM_FUNC setVectorBase vectors
 @---------------------------------------------------------------------------------
  
 	@ load the CP15 Control Register

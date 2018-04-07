@@ -6,8 +6,8 @@
 #endif	// !__ASSEMBLER__
 
 
-.macro BEGIN_ASM_FUNC name
-	.section .text.\name, "ax", %progbits
+.macro BEGIN_ASM_FUNC name section=text
+	.section .\section\().\name\(), "ax", %progbits
 	.global \name
 	.type \name, %function
 	.align 2
