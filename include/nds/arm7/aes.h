@@ -32,49 +32,53 @@ extern "C" {
 #endif
 
 #include <nds/ndstypes.h>
+#include <calico/nds/arm7/aes.h>
 
 typedef struct aes_keyslot {
-	vu8 normalkey[16];
-	vu8 key_x[16];
-	vu8 key_y[16];
+	u8 normalkey[16];
+	u8 key_x[16];
+	u8 key_y[16];
 } aes_keyslot_t;
 
+enum {
+	AES_MODE_CCM_decrypt = AesMode_CcmDecrypt,
+	AES_MODE_CCM_encrypt = AesMode_CcmEncrypt,
+	AES_MODE_CTR = AesMode_Ctr,
+};
 
-#define REG_AES_CNT	(*(vu32*)0x04004400)
+enum {
+	CCM_MAC_SIZE_2,
+	CCM_MAC_SIZE_4,
+	CCM_MAC_SIZE_6,
+	CCM_MAC_SIZE_8,
+	CCM_MAC_SIZE_10,
+	CCM_MAC_SIZE_12,
+	CCM_MAC_SIZE_14,
+	CCM_MAC_SIZE_16,
+};
 
-#define AES_WRFIFO_FLUSH (1<<10)
-#define AES_RDFIFO_FLUSH (1<<11)
+#define AES_CNT_DMA_WRITE_SIZE(size) AES_WRFIFO_DMA_SIZE(size)
+#define AES_CNT_DMA_READ_SIZE(size)  AES_RDFIFO_DMA_SIZE(size)
 
-#define AES_CNT_DMA_WRITE_SIZE(size) ((size & 3) << 12)
-#define AES_CNT_DMA_READ_SIZE(size)  ((size & 3) << 14)
+#define AES_CNT_MAC_SIZE(size)       ((((_x)/2-1)&7)<<16)
 
-#define AES_CNT_CCM_SIZE(size)       ((size & 3) << 16)
+#define AES_CNT_KEY_APPLY AES_KEY_SELECT
 
-#define AES_CCM_PASSTRHOUGH (1<<19)
+#define AES_CNT_KEYSLOT(slot) AES_KEY_SLOT(slot)
 
-#define AES_CNT_KEY_APPLY (1<<24)
+#define AES_CNT_MODE(mode)    AES_MODE(mode)
 
-#define AES_CNT_KEYSLOT(slot) ((slot & 3) << 26)
+#define AES_CNT_IRQ       AES_IRQ_ENABLE
 
-#define AES_CNT_MODE(mode)    ((mode & 3) << 28)
+#define AES_CNT_ENABLE    AES_ENABLE
 
-#define AES_CNT_IRQ       (1<<30)
+#define REG_AES_BLKCNT REG_AES_LEN
 
-#define AES_CNT_ENABLE    (1<<31)
-
-#define REG_AES_BLKCNT (*(vu32*)0x4004404)
-
-#define REG_AES_WRFIFO (*(vu32*)0x4004408)
-#define REG_AES_RDFIFO (*(vu32*)0x400440c)
-
-#define REG_AES_IV  ((vu8*)0x4004420)
-#define REG_AES_MAC ((vu8*)0x4004430)
-
-#define AES_KEYSLOT  ((aes_keyslot_t *)0x4004440)
-#define AES_KEYSLOT0 (*(aes_keyslot_t *)0x4004440)
-#define AES_KEYSLOT1 (*(aes_keyslot_t *)0x4004470)
-#define AES_KEYSLOT2 (*(aes_keyslot_t *)0x40044A0)
-#define AES_KEYSLOT3 (*(aes_keyslot_t *)0x40044D0)
+#define AES_KEYSLOT  ((aes_keyslot_t *)(MM_IO + IO_AES_SLOTxKEY(0)))
+#define AES_KEYSLOT0 MEOW_REG(aes_keyslot_t, IO_AES_SLOTxKEY(0))
+#define AES_KEYSLOT1 MEOW_REG(aes_keyslot_t, IO_AES_SLOTxKEY(1))
+#define AES_KEYSLOT2 MEOW_REG(aes_keyslot_t, IO_AES_SLOTxKEY(2))
+#define AES_KEYSLOT3 MEOW_REG(aes_keyslot_t, IO_AES_SLOTxKEY(3))
 
 #ifdef __cplusplus
 }
