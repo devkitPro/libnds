@@ -54,8 +54,8 @@ dist: dist-bin dist-src
 #-------------------------------------------------------------------------------
 install: dist-bin
 #-------------------------------------------------------------------------------
-	mkdir -p $(DEVKITPRO)/libnds
-	bzip2 -cd libnds-$(VERSION).tar.bz2 | tar -xf - -C $(DEVKITPRO)/libnds
+	mkdir -p $(DESTDIR)$(DEVKITPRO)/libnds
+	bzip2 -cd libnds-$(VERSION).tar.bz2 | tar -xf - -C $(DESTDIR)$(DEVKITPRO)/libnds
 
 #---------------------------------------------------------------------------------
 docs:
