@@ -200,7 +200,6 @@ DLDI_INTERFACE* dldiLoadFromFile (const char* path) {
 }
 
 void dldiFree (DLDI_INTERFACE* dldi) {
-	if (!dldi) return;
 	free(dldi);
 }
 
