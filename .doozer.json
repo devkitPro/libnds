@@ -1,0 +1,34 @@
+{
+  "targets": {
+    "lib": {
+
+      "buildenv": "docker:devkitpro/devkitarm",
+
+      "buildcmd": [
+        "make -j"
+      ]
+    },
+
+    "docs": {
+       // Only invoke docs target when building from master branch
+      "branch": "master",
+
+      "buildenv": "xenial-amd64",
+      "builddeps": [
+        "doxygen"
+      ],
+
+      "buildcmd": [
+        "doxygen"
+      ],
+
+      "artifacts": [{
+        "source": "docs/html",
+        "destination": {
+          "type": "git",
+          "branch": "gh-pages"
+        }
+      }]
+    }
+  }
+}
