@@ -19,7 +19,8 @@
       ],
 
       "buildcmd": [
-        "doxygen"
+        "doxygen",
+	"echo libnds.devkitpro.org > docs/html/CNAME"
       ],
 
       "artifacts": [{
