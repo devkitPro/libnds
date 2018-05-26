@@ -49,7 +49,7 @@
 
  \section audio_api Audio API
  - \ref sound.h "Simple Sound Engine"
- - <a href="http://www.maxmod.org/ref">Maxmod</a>
+ - <a href="https://maxmod.devkitpro.org/ref">Maxmod</a>
 
  \section math_api Math
   - \ref math.h "Hardware Assisted Math"
