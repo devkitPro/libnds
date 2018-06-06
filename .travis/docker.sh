@@ -2,4 +2,4 @@
 
 source /etc/profile.d/devkit-env.sh
 
-ls -al
+make -C libnds
