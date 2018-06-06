@@ -1,25 +1,11 @@
 language: c
 
-sudo: false
+sudo: required
 
-cache:
-  directories:
-    - /home/travis/devkitPro
-
-before_install:
-  # Prepare devkitARM update
-  - export DEVKITPRO=/opt/devkitpro
-  - export DEVKITARM=${DEVKITPRO}/devkitARM
-  - mkdir -p $DEVKITPRO
-  - cd $DEVKITPRO
-  - wget -N https://raw.githubusercontent.com/devkitPro/installer/master/perl/devkitARMupdate.pl
-  -
+services: docker 
 
 install:
-  - cd $DEVKITPRO
-  # Install or update devkitARM if it's cached
-  - perl devkitARMupdate.pl
-  - cd $TRAVIS_BUILD_DIR
+  - docker pull devkitpro/devkitarm
 
 script:
-  - make
+  - docker run -e ENABLE_COMPATIBILITY_REPORTING -v $TRAVIS_BUILD_DIR:/libnds devkitpro/devkitarm /bin/bash -ex /libnds/.travis/docker.sh
