@@ -109,6 +109,8 @@ int32 mulf32(int32 a, int32 b)
 	return (int32)(result >> 12);
 }
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wbuiltin-declaration-mismatch"
 static inline
 /**
 *   \brief Fixed point sqrt
@@ -127,6 +129,7 @@ int32 sqrtf32(int32 a)
 
 	return REG_SQRT_RESULT;
 }
+#pragma GCC diagnostic pop
 
 //  Integer versions
 
