@@ -24,6 +24,7 @@
 
 ---------------------------------------------------------------------------------*/
 #include <nds/ndstypes.h>
+#include <nds/memory.h>
 #include <nds/system.h>
 #include <nds/fifocommon.h>
 #include <nds/fifomessages.h>
@@ -157,7 +158,7 @@ void installSystemFIFO(void) {
 //---------------------------------------------------------------------------------
 
 	fifoSetValue32Handler(FIFO_PM, powerValueHandler, 0);
-	if (isDSiMode()) {
+	if (__NDSHeader->unitCode) {
 		fifoSetValue32Handler(FIFO_SDMMC, sdmmcValueHandler, 0);
 		fifoSetDatamsgHandler(FIFO_SDMMC, sdmmcMsgHandler, 0);
 	}
