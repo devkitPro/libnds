@@ -208,16 +208,16 @@ static inline
 \param dest the destination to copy to
 \param size the size in bytes of the area to fill.  Will be truncated to the nearest word (4 bytes)
 */
-void dmaFillWords( u32 value, void* dest, uint32 size) {
-#ifdef ARM7	
-	(*(vu32*)0x027FFE04) = (vu32) value;
+void dmaFillWords(u32 value, void* dest, uint32 size) {
+#ifdef ARM7
+	(*(vu32*)0x027FFE04) = value;
 	DMA_SRC(3) = 0x027FFE04;
-#else	
-	DMA_FILL(3) = (vuint32)value;
+#else
+	DMA_FILL(3) = value;
 	DMA_SRC(3) = (uint32)&DMA_FILL(3);
-#endif	
+#endif
 
-    DMA_DEST(3) = (uint32)dest;
+	DMA_DEST(3) = (uint32)dest;
 	DMA_CR(3) = DMA_SRC_FIX | DMA_COPY_WORDS | (size>>2);
 	while(DMA_CR(3) & DMA_BUSY);
 }
@@ -230,12 +230,12 @@ static inline
 \param dest the destination to copy to
 \param size the size in bytes of the area to fill.  Will be truncated to the nearest half word (2 bytes)
 */
-void dmaFillHalfWords( u16 value, void* dest, uint32 size) {
-#ifdef ARM7	
-	(*(vu32*)0x027FFE04) = (vu32) value;
+void dmaFillHalfWords(u16 value, void* dest, uint32 size) {
+#ifdef ARM7
+	(*(vu32*)0x027FFE04) = (u32)value;
 	DMA_SRC(3) = 0x027FFE04;
-#else	
-	DMA_FILL(3) = (vuint32)value;
+#else
+	DMA_FILL(3) = (uint32)value;
 	DMA_SRC(3) = (uint32)&DMA_FILL(3);
 #endif
 
