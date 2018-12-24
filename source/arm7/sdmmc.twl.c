@@ -92,25 +92,84 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 					if(size >= blkSize)
 					{
 						#ifdef DATA32_SUPPORT
+                        // skip startOffset bytes at the beggining of the read
+                        if(ctx->startOffset>0)
+                        {
+                            u32 skipped=0;
+                            for(u32 skipped = 0; skipped < ctx->startOffset; skipped += 4)
+                            {
+                                sdmmc_read32(REG_SDFIFO32);        
+                            }
+                            u32 remain = ctx->startOffset-skipped;
+                            if(remain>0)
+                            {
+                                u32 data = sdmmc_read32(REG_SDFIFO32);
+                                u8 data8[4];
+                                u8* pdata8 = data8;
+                                *pdata8++ = data;
+    							*pdata8++ = data >> 8;
+    							*pdata8++ = data >> 16;
+    							*pdata8++ = data >> 24;
+    							pdata8 = data8;
+                                for (int i=0; i<remain; i++)
+                                {
+                                    pdata8++;        
+                                }
+                                for (int i=0; i<4-remain; i++)
+                                {
+                                    *rDataPtr8++ = *pdata8++;
+                                }     
+                            }
+                        }
+                        // copy data
+                        u32 copied = 0;
 						if(!((u32)rDataPtr32 & 3))
 						{
-							for(u32 i = 0; i < blkSize; i += 4)
+							for(int i = 0; i < blkSize-ctx->startOffset-ctx->endOffset; i += 4)
 							{
 								*rDataPtr32++ = sdmmc_read32(REG_SDFIFO32);
+								copied+=4;
 							}
 						}
 						else
 						{
-							for(u32 i = 0; i < blkSize; i += 4)
+							for(int i = 0; i < blkSize-ctx->startOffset-ctx->endOffset; i += 4)
 							{
 								u32 data = sdmmc_read32(REG_SDFIFO32);
 								*rDataPtr8++ = data;
 								*rDataPtr8++ = data >> 8;
 								*rDataPtr8++ = data >> 16;
 								*rDataPtr8++ = data >> 24;
+								copied+=4;
 							}
 						}
+                        // skip endOffset bytes at the end of the read
+                        if(ctx->endOffset>0)
+                        {
+                          u32 remain = blkSize-ctx->startOffset-ctx->endOffset-copied;
+                          if(remain)
+                          {
+                                u32 data = sdmmc_read32(REG_SDFIFO32);
+                                u8 data8[4];
+                                u8* pdata8 = data8;
+                                *pdata8++ = data;
+                                *pdata8++ = data >> 8;
+                                *pdata8++ = data >> 16;
+                                *pdata8++ = data >> 24;
+                                pdata8 = data8;
+                                for (int i=0; i<remain; i++)
+                                {
+                                    *rDataPtr8++ = *pdata8++;
+                                }                                
+                          }                          
+                          for(u32 skipped=4-remain; skipped < ctx->endOffset; skipped += 4)
+                          {
+                              sdmmc_read32(REG_SDFIFO32);        
+                          }
+                        }
 						#else
+                        // startOffset & endOffset NOT IMPLEMENTED in DATA16 mode
+                        // copy data : this code seems wrong
 						if(!((u32)rDataPtr16 & 1))
 						{
 							for(u32 i = 0; i < blkSize; i += 4)
@@ -226,6 +285,244 @@ void sdmmc_send_command(struct mmcdevice *ctx, uint32_t cmd, uint32_t args) {
 		ctx->ret[2] = (u32)(sdmmc_read16(REG_SDRESP4) | (sdmmc_read16(REG_SDRESP5) << 16));
 		ctx->ret[3] = (u32)(sdmmc_read16(REG_SDRESP6) | (sdmmc_read16(REG_SDRESP7) << 16));
 	}
+}
+
+//---------------------------------------------------------------------------------
+void sdmmc_send_command_nonblocking_ndma(struct mmcdevice *ctx, u32 cmd, u32 args)
+//---------------------------------------------------------------------------------
+{
+	*(u32*)(0x4004104) = 0x0400490C;
+	*(u32*)(0x4004108) = (u32)ctx->rData;
+	
+	*(u32*)(0x400410C) = ctx->size;
+	
+	*(u32*)(0x4004110) = 0x80;
+	
+	*(u32*)(0x4004114) = 0x1;
+	
+	*(u32*)(0x400411C) = 0xC8004000;
+
+	const bool getSDRESP = (cmd << 15) >> 31;
+	u16 flags = (cmd << 15) >> 31;
+	const bool readdata = cmd & 0x20000;
+	const bool writedata = cmd & 0x40000;
+
+	if(readdata || writedata)
+	{
+		flags |= TMIO_STAT0_DATAEND;
+	}
+
+	ctx->error = 0;
+	while((sdmmc_read16(REG_SDSTATUS1) & TMIO_STAT1_CMD_BUSY)); //mmc working?
+	sdmmc_write16(REG_SDIRMASK0,0);
+	sdmmc_write16(REG_SDIRMASK1,0);
+	sdmmc_write16(REG_SDSTATUS0,0);
+	sdmmc_write16(REG_SDSTATUS1,0);
+	sdmmc_mask16(REG_SDDATACTL32,0x1800,0x400); // Disable TX32RQ and RX32RDY IRQ. Clear fifo.
+	sdmmc_write16(REG_SDCMDARG0,args &0xFFFF);
+	sdmmc_write16(REG_SDCMDARG1,args >> 16);
+	sdmmc_write16(REG_SDCMD,cmd &0xFFFF);
+
+	u32 size = ctx->size;
+	const u16 blkSize = sdmmc_read16(REG_SDBLKLEN32);
+	u32 *rDataPtr32 = (u32*)ctx->rData;
+	//u8  *rDataPtr8  = ctx->rData;
+	const u32 *tDataPtr32 = (u32*)ctx->tData;
+	const u8  *tDataPtr8  = ctx->tData;
+
+	bool rUseBuf = ( NULL != rDataPtr32 );
+	bool tUseBuf = ( NULL != tDataPtr32 );
+
+    
+	u16 status0 = 0;
+	while(1)
+	{
+		volatile u16 status1 = sdmmc_read16(REG_SDSTATUS1);
+#ifdef DATA32_SUPPORT
+		volatile u16 ctl32 = sdmmc_read16(REG_SDDATACTL32);
+		if((ctl32 & 0x100))
+#else
+		if((status1 & TMIO_STAT1_RXRDY))
+#endif
+		{
+            /*
+            // should not be needed : ndma unit is taking care of data transfer
+			if(readdata)
+			{
+				if(rUseBuf)
+				{
+					sdmmc_mask16(REG_SDSTATUS1, TMIO_STAT1_RXRDY, 0);
+					if(size >= blkSize)
+					{
+						size -= blkSize;
+					}
+				}
+
+				sdmmc_mask16(REG_SDDATACTL32, 0x800, 0);
+			}*/
+		}
+#ifdef DATA32_SUPPORT
+		if(!(ctl32 & 0x200))
+#else
+		if((status1 & TMIO_STAT1_TXRQ))
+#endif
+		{
+			if(writedata)
+			{
+				if(tUseBuf)
+				{
+					sdmmc_mask16(REG_SDSTATUS1, TMIO_STAT1_TXRQ, 0);
+					if(size >= blkSize)
+					{
+						#ifdef DATA32_SUPPORT
+						if(!((u32)tDataPtr32 & 3))
+						{
+							for(u32 i = 0; i < blkSize; i += 4)
+							{
+								sdmmc_write32(REG_SDFIFO32, *tDataPtr32++);
+							}
+						}
+						else
+						{
+							for(u32 i = 0; i < blkSize; i += 4)
+							{
+								u32 data = *tDataPtr8++;
+								data |= (u32)*tDataPtr8++ << 8;
+								data |= (u32)*tDataPtr8++ << 16;
+								data |= (u32)*tDataPtr8++ << 24;
+								sdmmc_write32(REG_SDFIFO32, data);
+							}
+						}
+						#else
+						if(!((u32)tDataPtr16 & 1))
+						{
+							for(u32 i = 0; i < blkSize; i += 2)
+							{
+								sdmmc_write16(REG_SDFIFO, *tDataPtr16++);
+							}
+						}
+						else
+						{
+							for(u32 i = 0; i < blkSize; i += 2)
+							{
+								u16 data = *tDataPtr8++;
+								data |= (u16)(*tDataPtr8++ << 8);
+								sdmmc_write16(REG_SDFIFO, data);
+							}
+						}
+						#endif
+						size -= blkSize;
+					}
+				}
+
+				sdmmc_mask16(REG_SDDATACTL32, 0x1000, 0);
+			}
+		}
+		if(status1 & TMIO_MASK_GW)
+		{
+			ctx->error |= 4;
+			break;
+		}
+        
+        if(status1 & TMIO_STAT1_CMD_BUSY)
+		{
+            // command is ongoing : return
+            break;
+		} 
+        else 
+        {
+            // command is finished already without going busy : return
+            // not supposed to happen
+            // needed for no$gba only
+            /*status0 = sdmmc_read16(REG_SDSTATUS0);
+            if((status0 & flags) == flags)
+            break;*/
+		}		
+	}
+	//ctx->stat0 = sdmmc_read16(REG_SDSTATUS0);
+	//ctx->stat1 = sdmmc_read16(REG_SDSTATUS1);
+	//sdmmc_write16(REG_SDSTATUS0,0);
+	//sdmmc_write16(REG_SDSTATUS1,0);
+
+	/*if(getSDRESP != 0)
+	{
+		ctx->ret[0] = (u32)(sdmmc_read16(REG_SDRESP0) | (sdmmc_read16(REG_SDRESP1) << 16));
+		ctx->ret[1] = (u32)(sdmmc_read16(REG_SDRESP2) | (sdmmc_read16(REG_SDRESP3) << 16));
+		ctx->ret[2] = (u32)(sdmmc_read16(REG_SDRESP4) | (sdmmc_read16(REG_SDRESP5) << 16));
+		ctx->ret[3] = (u32)(sdmmc_read16(REG_SDRESP6) | (sdmmc_read16(REG_SDRESP7) << 16));
+	}*/
+}
+
+/* return true if the command is completed and false if it is still ongoing */
+//---------------------------------------------------------------------------------
+bool sdmmc_check_command_ndma(struct mmcdevice *ctx, u32 cmd)
+//---------------------------------------------------------------------------------
+{
+	const bool getSDRESP = (cmd << 15) >> 31;
+    u16 flags = (cmd << 15) >> 31;
+	const bool readdata = cmd & 0x20000;
+	const bool writedata = cmd & 0x40000;
+
+	if(readdata || writedata)
+	{
+		flags |= TMIO_STAT0_DATAEND;
+	}    
+    u16 status0 = 0;
+    
+    volatile u16 status1 = sdmmc_read16(REG_SDSTATUS1);
+    
+    if(status1 & TMIO_MASK_GW)
+	{
+		ctx->error |= 4;
+
+        ctx->stat0 = sdmmc_read16(REG_SDSTATUS0);
+      	ctx->stat1 = sdmmc_read16(REG_SDSTATUS1);
+      	sdmmc_write16(REG_SDSTATUS0,0);
+      	sdmmc_write16(REG_SDSTATUS1,0);
+      
+      	if(getSDRESP != 0)
+      	{
+      		ctx->ret[0] = (u32)(sdmmc_read16(REG_SDRESP0) | (sdmmc_read16(REG_SDRESP1) << 16));
+      		ctx->ret[1] = (u32)(sdmmc_read16(REG_SDRESP2) | (sdmmc_read16(REG_SDRESP3) << 16));
+      		ctx->ret[2] = (u32)(sdmmc_read16(REG_SDRESP4) | (sdmmc_read16(REG_SDRESP5) << 16));
+      		ctx->ret[3] = (u32)(sdmmc_read16(REG_SDRESP6) | (sdmmc_read16(REG_SDRESP7) << 16));
+      	}
+        *(u32*)(0x400411C) = 0x48004000;
+        return true;    
+    }        
+    
+    if(!(status1 & TMIO_STAT1_CMD_BUSY))
+	{
+		status0 = sdmmc_read16(REG_SDSTATUS0);        
+		if(sdmmc_read16(REG_SDSTATUS0) & TMIO_STAT0_CMDRESPEND)
+		{
+			ctx->error |= 0x1;
+		}
+		if(status0 & TMIO_STAT0_DATAEND)
+		{
+			ctx->error |= 0x2;
+		}
+        
+        if((status0 & flags) != flags)
+        {
+            return false;
+        }
+		
+        ctx->stat0 = sdmmc_read16(REG_SDSTATUS0);
+      	ctx->stat1 = sdmmc_read16(REG_SDSTATUS1);
+      	sdmmc_write16(REG_SDSTATUS0,0);
+      	sdmmc_write16(REG_SDSTATUS1,0);
+      
+      	if(getSDRESP != 0)
+      	{
+      		ctx->ret[0] = (u32)(sdmmc_read16(REG_SDRESP0) | (sdmmc_read16(REG_SDRESP1) << 16));
+      		ctx->ret[1] = (u32)(sdmmc_read16(REG_SDRESP2) | (sdmmc_read16(REG_SDRESP3) << 16));
+      		ctx->ret[2] = (u32)(sdmmc_read16(REG_SDRESP4) | (sdmmc_read16(REG_SDRESP5) << 16));
+      		ctx->ret[3] = (u32)(sdmmc_read16(REG_SDRESP6) | (sdmmc_read16(REG_SDRESP7) << 16));
+      	}
+        *(u32*)(0x400411C) = 0x48004000; 
+        return true;
+	} else return false;        
 }
 
 //---------------------------------------------------------------------------------
@@ -690,7 +987,11 @@ int sdmmc_readsectors(struct mmcdevice *device, u32 sector_no, u32 numsectors, v
     sdmmc_write16(REG_SDBLKCOUNT,numsectors);
     device->rData = out;
     device->size = numsectors << 9;
-    sdmmc_send_command_ndma(device,0x33C12,sector_no);
+    device->startOffset = 0;
+    device->endOffset = 0;
+    //sdmmc_send_command(device,0x33C12,sector_no);
+    sdmmc_send_command_nonblocking_ndma(device,0x33C12,sector_no);
+    while(!sdmmc_check_command_ndma(device,0x33C12)) {}
     setTarget(&deviceSD);
     return geterror(device);
 }
@@ -711,6 +1012,8 @@ int sdmmc_writesectors(struct mmcdevice *device, u32 sector_no, u32 numsectors, 
     sdmmc_write16(REG_SDBLKCOUNT,numsectors);
     device->tData = in;
     device->size = numsectors << 9;
+    device->startOffset = 0;
+    device->endOffset = 0;
     sdmmc_send_command(device,0x52C19,sector_no);
     setTarget(&deviceSD);
     return geterror(device);

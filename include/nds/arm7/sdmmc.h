@@ -108,6 +108,8 @@ typedef struct mmcdevice {
 	u8* rData;
 	const u8* tData;
     u32 size;
+    u32 startOffset;
+    u32 endOffset;
     u32 error;
     u16 stat0;
     u16 stat1;
