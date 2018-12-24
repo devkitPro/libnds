@@ -105,7 +105,8 @@
 #define TMIO_MASK_WRITEOP (TMIO_STAT1_TXRQ | TMIO_STAT1_DATAEND)
 
 typedef struct mmcdevice {
-    u8* data;
+	u8* rData;
+	const u8* tData;
     u32 size;
     u32 error;
     u16 stat0;
