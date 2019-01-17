@@ -434,9 +434,9 @@ void sdmmc_send_command_nonblocking_ndma(struct mmcdevice *ctx, u32 cmd, u32 arg
             // command is finished already without going busy : return
             // not supposed to happen
             // needed for no$gba only
-            /*status0 = sdmmc_read16(REG_SDSTATUS0);
+            status0 = sdmmc_read16(REG_SDSTATUS0);
             if((status0 & flags) == flags)
-            break;*/
+            break;
 		}		
 	}
 	//ctx->stat0 = sdmmc_read16(REG_SDSTATUS0);
