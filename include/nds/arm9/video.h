@@ -728,6 +728,8 @@ void setBackdropColorSub(const u16 color)
 
 #define GFX_CONTROL           (*(vu16*) 0x04000060)
 
+#define GFX_RDLINES_COUNT     (*(vu32*) 0x04000320)
+
 #define GFX_FIFO              (*(vu32*) 0x04000400)
 #define GFX_STATUS            (*(vu32*) 0x04000600)
 #define GFX_COLOR             (*(vu32*) 0x04000480)
@@ -745,6 +747,7 @@ void setBackdropColorSub(const u16 color)
 
 #define GFX_CLEAR_COLOR       (*(vu32*) 0x04000350)
 #define GFX_CLEAR_DEPTH       (*(vu16*) 0x04000354)
+#define GFX_CLRIMAGE_OFFSET   (*(vu16*) 0x04000356)
 
 #define GFX_LIGHT_VECTOR      (*(vu32*) 0x040004C8)
 #define GFX_LIGHT_COLOR       (*(vu32*) 0x040004CC)
