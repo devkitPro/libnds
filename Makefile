@@ -5,8 +5,8 @@ endif
 export TOPDIR	:=	$(CURDIR)
 
 export LIBNDS_MAJOR	:= 1
-export LIBNDS_MINOR	:= 7
-export LIBNDS_PATCH	:= 3
+export LIBNDS_MINOR	:= 8
+export LIBNDS_PATCH	:= 0
 
 
 VERSION	:=	$(LIBNDS_MAJOR).$(LIBNDS_MINOR).$(LIBNDS_PATCH)
