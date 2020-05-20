@@ -46,6 +46,7 @@
   - \ref videoGL.h "OpenGL (ish)"
   - \ref boxtest.h "Box Test"
   - \ref postest.h "Position test"
+  - \ref gl2d.h "Simple DS 2D rendering using the 3d core"
 
  \section audio_api Audio API
  - \ref sound.h "Simple Sound Engine"
@@ -95,9 +96,12 @@
 
  \section external_links Usefull links
  - <a href="http://www.devkitpro.org/">devkitPro</a>
- - <a href="http://wiki.devkitpro.org/index.php/Main_Page">devkitPro wiki</a>
- - <a href="http://sourceforge.net/projects/devkitpro/">devkitPro sourceforge page</a>
- - <a href="http://problemkaputt.de/gbatek.htm">gbatek, gba and nds hardware documentation.</a> (<a href="http://forum.gbadev.org/viewtopic.php?t=16867">V2.6a download</a>)
+ - <a href="https://github.com/devkitPro/">devkitPro github</a>
+
+
+ \section games Example Games
+ - <a href="http://rel.phatcode.net/index.php?action=contents&item=Bubble_Fight_EX_DS">Bubble Fight EX</a>
+ - <a href="http://rel.phatcode.net/index.php?action=contents&item=Space-Impakto-DS">Space Impakto DS</a>
 
 */
 
