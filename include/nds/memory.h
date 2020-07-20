@@ -243,9 +243,6 @@ typedef struct __DSiHeader {
 
 } tDSiHeader;
 
-#ifdef static_assert
-static_assert(sizeof(tDSiHeader) == 0x1000, "tDSiHeader not packed properly");
-#endif
 
 #define __NDSHeader ((tNDSHeader *)0x02FFFE00)
 #define __DSiHeader ((tDSiHeader *)0x02FFE000)
@@ -263,12 +260,6 @@ typedef struct sNDSBanner {
   u16 palette[16];		//!< the pallete of the icon.
   u16 titles[6][128];	//!< title of the game in 6 different languages.
 } tNDSBanner;
-
-#ifdef static_assert
-static_assert(sizeof(tNDSBanner) == 0x840, "tNDSBanner not packed properly");
-#endif
-
-
 
 #ifdef __cplusplus
 extern "C" {
