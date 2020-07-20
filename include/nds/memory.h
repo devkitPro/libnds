@@ -33,6 +33,7 @@
 #define NDS_MEMORY_INCLUDE
 
 #include "ndstypes.h"
+#include <assert.h>
 
 
 #ifdef ARM9
@@ -107,7 +108,7 @@ typedef struct sGBAHeader {
 	u8 version;			//!< the version of the game.
 	u8 complement;		//!< complement checksum of the gba header.
 	u16 checksum;		//!< a 16 bit checksum? (gbatek says its unused/reserved).
-} __attribute__ ((__packed__)) tGBAHeader;
+} tGBAHeader;
 
 #define GBA_HEADER (*(tGBAHeader *)0x08000000)
 
@@ -167,7 +168,7 @@ typedef struct sNDSHeader {
 	u16 logoCRC16;				//!< Nintendo Logo Checksum, CRC-16.
 	u16 headerCRC16;			//!< header checksum, CRC-16.
 
-} __attribute__ ((__packed__)) tNDSHeader;
+} tNDSHeader;
 
 typedef struct __DSiHeader {
 	tNDSHeader ndshdr;
@@ -240,7 +241,8 @@ typedef struct __DSiHeader {
 	u8 debug_args[0x180];
 	u8 rsa_signature[0x80];
 
-} __attribute__ ((__packed__)) tDSiHeader;
+} tDSiHeader;
+
 
 #define __NDSHeader ((tNDSHeader *)0x02FFFE00)
 #define __DSiHeader ((tDSiHeader *)0x02FFE000)
@@ -257,10 +259,7 @@ typedef struct sNDSBanner {
   u8 icon[512];			//!< 32*32 icon of the game with 4 bit per pixel.
   u16 palette[16];		//!< the pallete of the icon.
   u16 titles[6][128];	//!< title of the game in 6 different languages.
-} __attribute__ ((__packed__)) tNDSBanner;
-
-
-
+} tNDSBanner;
 
 #ifdef __cplusplus
 extern "C" {
