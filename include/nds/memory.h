@@ -110,10 +110,6 @@ typedef struct sGBAHeader {
 	u16 checksum;		//!< a 16 bit checksum? (gbatek says its unused/reserved).
 } tGBAHeader;
 
-#ifdef static_assert
-static_assert(sizeof(tGBAHeader) == 0xC0, "tGBAHeader not packed properly");
-#endif
-
 #define GBA_HEADER (*(tGBAHeader *)0x08000000)
 
 /*!
@@ -173,10 +169,6 @@ typedef struct sNDSHeader {
 	u16 headerCRC16;			//!< header checksum, CRC-16.
 
 } tNDSHeader;
-
-#ifdef static_assert
-static_assert(sizeof(tNDSHeader) == 0x160, "tNDSHeader not packed properly");
-#endif
 
 typedef struct __DSiHeader {
 	tNDSHeader ndshdr;
