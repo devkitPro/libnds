@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['objcolor_5f16',['OBJCOLOR_16',['../sprite_8h.html#a742825bf053bb35205b8b865a0e4d649a4ed366ca1b13dad5aaec013b4581bdb1',1,'sprite.h']]],
+  ['objcolor_5f256',['OBJCOLOR_256',['../sprite_8h.html#a742825bf053bb35205b8b865a0e4d649ac4ddaf4e340f89bd283a473795ad0ec6',1,'sprite.h']]],
+  ['objmode_5fbitmap',['OBJMODE_BITMAP',['../sprite_8h.html#afa2d57f19c0a76b1a1f5fce3e56a21c0ae1b93f29d86036c324bf397a79ed487a',1,'sprite.h']]],
+  ['objmode_5fblended',['OBJMODE_BLENDED',['../sprite_8h.html#afa2d57f19c0a76b1a1f5fce3e56a21c0a7144e10d5f51997f842966fb16cbb5d3',1,'sprite.h']]],
+  ['objmode_5fnormal',['OBJMODE_NORMAL',['../sprite_8h.html#afa2d57f19c0a76b1a1f5fce3e56a21c0a0882e54ed052d427941435558c127766',1,'sprite.h']]],
+  ['objmode_5fwindowed',['OBJMODE_WINDOWED',['../sprite_8h.html#afa2d57f19c0a76b1a1f5fce3e56a21c0a0d39ca6140f7771a2795995647e7417d',1,'sprite.h']]],
+  ['objpriority_5f0',['OBJPRIORITY_0',['../sprite_8h.html#a660b5853b585aae46ee7ab859519ba06af1e6d3f0b1e883e751b8b3c0e2f585fd',1,'sprite.h']]],
+  ['objpriority_5f1',['OBJPRIORITY_1',['../sprite_8h.html#a660b5853b585aae46ee7ab859519ba06a5ebcc748f942f912694c27b014aae0ad',1,'sprite.h']]],
+  ['objpriority_5f2',['OBJPRIORITY_2',['../sprite_8h.html#a660b5853b585aae46ee7ab859519ba06add2564c7321106e1b4e51a416bb381a6',1,'sprite.h']]],
+  ['objpriority_5f3',['OBJPRIORITY_3',['../sprite_8h.html#a660b5853b585aae46ee7ab859519ba06a50c3fc6e7b4b70bdf0e974e708045a74',1,'sprite.h']]],
+  ['objshape_5fforbidden',['OBJSHAPE_FORBIDDEN',['../sprite_8h.html#aac1b605210a8e98fa93ef0bdd21b9da8a1842bf1ee017ab2e36b15fdaf9936621',1,'sprite.h']]],
+  ['objshape_5fsquare',['OBJSHAPE_SQUARE',['../sprite_8h.html#aac1b605210a8e98fa93ef0bdd21b9da8a5378b6606b37cdfcd326daef8e0aed9b',1,'sprite.h']]],
+  ['objshape_5ftall',['OBJSHAPE_TALL',['../sprite_8h.html#aac1b605210a8e98fa93ef0bdd21b9da8a7818135605e4a6287827a8a507b6a0bd',1,'sprite.h']]],
+  ['objshape_5fwide',['OBJSHAPE_WIDE',['../sprite_8h.html#aac1b605210a8e98fa93ef0bdd21b9da8a1304f921b8b113fc5c0f9253c1ca93dc',1,'sprite.h']]],
+  ['objsize_5f16',['OBJSIZE_16',['../sprite_8h.html#ad4f73caa22e905bda813773a4ca78fa0adce8f37c58631090e1fbaa42e85f9fd4',1,'sprite.h']]],
+  ['objsize_5f32',['OBJSIZE_32',['../sprite_8h.html#ad4f73caa22e905bda813773a4ca78fa0ab01e45e31f4675681b5addced858321f',1,'sprite.h']]],
+  ['objsize_5f64',['OBJSIZE_64',['../sprite_8h.html#ad4f73caa22e905bda813773a4ca78fa0a0e8cc5c7b39eab1b610a0b6229ebabe7',1,'sprite.h']]],
+  ['objsize_5f8',['OBJSIZE_8',['../sprite_8h.html#ad4f73caa22e905bda813773a4ca78fa0a6bf4fb4f7f555ab45f5d45d5ef06db43',1,'sprite.h']]]
+];

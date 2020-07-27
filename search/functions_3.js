@@ -1,0 +1,27 @@
+var searchData=
+[
+  ['dc_5fflushall',['DC_FlushAll',['../cache_8h.html#aa5b7f47a8a914faa793ffa33619f6373',1,'cache.h']]],
+  ['dc_5fflushrange',['DC_FlushRange',['../cache_8h.html#a4436939fe9b937948cebac4f7b74163a',1,'cache.h']]],
+  ['dc_5finvalidateall',['DC_InvalidateAll',['../cache_8h.html#af1a9ab8fa01ec83aaeaa5f5de9826aa0',1,'cache.h']]],
+  ['dc_5finvalidaterange',['DC_InvalidateRange',['../cache_8h.html#aa3755369821b55b3d29eb0450edf06f3',1,'cache.h']]],
+  ['decompress',['decompress',['../decompress_8h.html#ad81c495c228fba81fbce48e5e5baeb24',1,'decompress.h']]],
+  ['decompressstream',['decompressStream',['../decompress_8h.html#acf28aafab2b7551e73fa94d50519e659',1,'decompress.h']]],
+  ['defaultexceptionhandler',['defaultExceptionHandler',['../exceptions_8h.html#a88d6fe39976343d6482a70d717c1d248',1,'exceptions.h']]],
+  ['div32',['div32',['../math_8h.html#a8b25b6b0f98f520202166139b6bf4d76',1,'math.h']]],
+  ['div64',['div64',['../math_8h.html#a0f20721e5099dc0e6618e6712877789d',1,'math.h']]],
+  ['divf32',['divf32',['../math_8h.html#aa053e49cd385c88c9659d0832b41153f',1,'math.h']]],
+  ['dmabusy',['dmaBusy',['../dma_8h.html#a9e58ac43c51bb560bd7ee7674f08690c',1,'dma.h']]],
+  ['dmacopy',['dmaCopy',['../dma_8h.html#ac77a16a7cb9f2fa2b4361c22fe84245d',1,'dma.h']]],
+  ['dmacopyasynch',['dmaCopyAsynch',['../dma_8h.html#a9eb7416edd856337ae6219614be9a490',1,'dma.h']]],
+  ['dmacopyhalfwords',['dmaCopyHalfWords',['../dma_8h.html#aa17182286e26761e2c3fad8926df9524',1,'dma.h']]],
+  ['dmacopyhalfwordsasynch',['dmaCopyHalfWordsAsynch',['../dma_8h.html#acc6b6f93a5b6326fe436595e25be6df9',1,'dma.h']]],
+  ['dmacopywords',['dmaCopyWords',['../dma_8h.html#aaa94ba5c28cc758b2b9cb2734ea232f5',1,'dma.h']]],
+  ['dmacopywordsasynch',['dmaCopyWordsAsynch',['../dma_8h.html#a5a7b8732fb10c73080d5ea7c52dac32d',1,'dma.h']]],
+  ['dmafillhalfwords',['dmaFillHalfWords',['../dma_8h.html#aa4eb46d7ce51d26338207cf666806a83',1,'dma.h']]],
+  ['dmafillwords',['dmaFillWords',['../dma_8h.html#a2279bd61daedfa6911666cb1644f848e',1,'dma.h']]],
+  ['dotf32',['dotf32',['../math_8h.html#aee624b6f4e77ae4b96feeb86bb452299',1,'math.h']]],
+  ['dynamicarraydelete',['DynamicArrayDelete',['../dynamicArray_8h.html#ad9fa79503f4f34e03df2129d341cf650',1,'dynamicArray.h']]],
+  ['dynamicarrayget',['DynamicArrayGet',['../dynamicArray_8h.html#aaea82421c137851619ab23d43a181ae8',1,'dynamicArray.h']]],
+  ['dynamicarrayinit',['DynamicArrayInit',['../dynamicArray_8h.html#a0a39689ec40feb0fd409f59810da9346',1,'dynamicArray.h']]],
+  ['dynamicarrayset',['DynamicArraySet',['../dynamicArray_8h.html#ad582bc9a7dc5b6c05eba35a7e3b4efd9',1,'dynamicArray.h']]]
+];

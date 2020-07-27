@@ -1,0 +1,21 @@
+var searchData=
+[
+  ['alarmhour',['alarmHour',['../structtPERSONAL__DATA.html#ac19618c583afcd7ff0d1c0d2fff52827',1,'tPERSONAL_DATA']]],
+  ['alarmminute',['alarmMinute',['../structtPERSONAL__DATA.html#aa4841ad7c07006dd5c4e7535d4c2bda5',1,'tPERSONAL_DATA']]],
+  ['allocbuffer',['allocBuffer',['../structOamState.html#a9ce0269dcc79d438a15e76fe99f52527',1,'OamState']]],
+  ['allocbuffersize',['allocBufferSize',['../structOamState.html#a6b1f747b763614cadc9efcf0a0e7d1dd',1,'OamState']]],
+  ['arm7binarysize',['arm7binarySize',['../structsNDSHeader.html#ad25b979c41c6eb8d2f3e5f7738d0fa08',1,'sNDSHeader']]],
+  ['arm7destination',['arm7destination',['../structsNDSHeader.html#a0761ea7618a08c445ba220ac4d0b2e35',1,'sNDSHeader']]],
+  ['arm7executeaddress',['arm7executeAddress',['../structsNDSHeader.html#aba81a581abbe059aa77ec009ae665132',1,'sNDSHeader']]],
+  ['arm7overlaysize',['arm7overlaySize',['../structsNDSHeader.html#a5f0bc8c556b65ca634eb520cbd087f29',1,'sNDSHeader']]],
+  ['arm7overlaysource',['arm7overlaySource',['../structsNDSHeader.html#afb65a8cee79d676361929761dce46647',1,'sNDSHeader']]],
+  ['arm7romoffset',['arm7romOffset',['../structsNDSHeader.html#a8e35878e88ec6ea437b3fadf96fb4c69',1,'sNDSHeader']]],
+  ['arm9binarysize',['arm9binarySize',['../structsNDSHeader.html#a659235c84511f61f68cf99a47dfc35bf',1,'sNDSHeader']]],
+  ['arm9destination',['arm9destination',['../structsNDSHeader.html#a4905ab9f50483d5520ffe593f05b09fd',1,'sNDSHeader']]],
+  ['arm9executeaddress',['arm9executeAddress',['../structsNDSHeader.html#ad8ef2653d6e2e40987045b4068baf917',1,'sNDSHeader']]],
+  ['arm9overlaysize',['arm9overlaySize',['../structsNDSHeader.html#a3d6d3f7619e22f44f2714283349d27cc',1,'sNDSHeader']]],
+  ['arm9overlaysource',['arm9overlaySource',['../structsNDSHeader.html#a0e7e090d74499b25978d94d633bde668',1,'sNDSHeader']]],
+  ['arm9romoffset',['arm9romOffset',['../structsNDSHeader.html#a04e3fe9a275a775c2695eb0127b70708',1,'sNDSHeader']]],
+  ['asciioffset',['asciiOffset',['../structConsoleFont.html#a676b4b45082d34b8bfbd21d20e0a6444',1,'ConsoleFont']]],
+  ['automode',['autoMode',['../structtPERSONAL__DATA.html#a65493a343ad6b0d29e933207b37a4d2b',1,'tPERSONAL_DATA']]]
+];
