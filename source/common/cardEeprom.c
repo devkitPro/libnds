@@ -97,20 +97,26 @@ uint32 cardEepromGetSize() {
 	if(type == 1)
 		return 512;
 	if(type == 2) {
-		u32 buf1,buf2,buf3;
+		u32 buf1,buf2,buf3 = 0x54536554; // "TeST"
+		// Save the first word of the EEPROM
 		cardReadEeprom(0,(u8*)&buf1,4,type);
-		if ( !(buf1 != 0 || buf1 != 0xffffffff) ) {
-			buf3 = ~buf1;
-			cardWriteEeprom(0,(u8*)&buf3,4,type);
-		} else {
-			buf3 = buf1;
-		}
+
+		// Write "TeST" to it
+		cardWriteEeprom(0,(u8*)&buf3,4,type);
+
+		// Loop until the EEPROM mirrors and the first word shows up again
 		int size = 8192;
-		while (1) {	 
+		while (1) {
 			cardReadEeprom(size,(u8*)&buf2,4,type);
 			if ( buf2 == buf3 ) break;
 			size += 8192;
-		};
+		}
+
+		// Restore the first word
+		cardWriteEeprom(0,(u8*)&buf1,4,type);
+
+		return size;
+	}
 
 		if ( buf1 != buf3 ) cardWriteEeprom(0,(u8*)&buf1,4,type);
 
