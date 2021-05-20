@@ -69,7 +69,6 @@ u32 cardEepromReadID() {
 	return id;
 }
 
-
 //---------------------------------------------------------------------------------
 int cardEepromGetType(void) {
 //---------------------------------------------------------------------------------
@@ -79,7 +78,7 @@ int cardEepromGetType(void) {
 	if (( sr == 0xff && id == 0xffffff) || ( sr == 0 && id == 0 )) return -1;
 	if ( sr == 0xf0 && id == 0xffffff ) return 1;
 	if ( sr == 0x00 && id == 0xffffff ) return 2;
-	if ( id != 0xffffff) return 3;
+	if ( id != 0xffffff || ( sr == 0x02 && id == 0xffffff )) return 3;
 	
 	return 0;
 }
@@ -159,7 +158,13 @@ uint32 cardEepromGetSize() {
 			if (device == 0x2211)
 				return 128*1024;		//	1Mbit(128KByte) - MX25L1021E
 		}
-		
+
+		if (id == 0xffffff) {
+			int sr = cardEepromCommand(SPI_EEPROM_RDSR);
+			if (sr == 2) { // Pokémon Mystery Dungeon - Explorers of Sky
+				return 128*1024; // 1Mbit (128KByte)
+			}
+		}
 
 		return 256*1024;		//	2Mbit(256KByte)
 	}
