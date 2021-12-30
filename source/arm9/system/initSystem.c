@@ -2,7 +2,7 @@
 
 initSystem.c -- Code for initialising the DS
 
-Copyright (C) 2007 - 2010
+Copyright (C) 2007 - 2021
 	Dave Murphy (WinterMute)
 
 This software is provided 'as-is', without any express or implied
@@ -44,9 +44,32 @@ distribution.
 
 void __libnds_exit(int rc);
 bool __dsimode; // set in crt0
-extern time_t *punixTime;
 
-int __libnds_gtod(struct _reent *ptr, struct timeval *tp, struct timezone *tz);
+time_t *punixTime;
+
+//---------------------------------------------------------------------------------
+int __SYSCALL(gettod_r)(struct _reent *ptr, struct timeval *tp, struct timezone *tz) {
+//---------------------------------------------------------------------------------
+
+        if (tp != NULL) {
+                tp->tv_sec = *punixTime;
+                tp->tv_usec = 0;
+        }
+        if (tz != NULL) {
+                tz->tz_minuteswest = 0;
+                tz->tz_dsttime = 0;
+        }
+
+        return 0;
+}
+
+
+//---------------------------------------------------------------------------------
+void __SYSCALL(exit)(int rc) {
+//---------------------------------------------------------------------------------
+	__libnds_exit(rc);
+}
+
 
 //---------------------------------------------------------------------------------
 // Reset the DS registers to sensible defaults
@@ -92,9 +115,6 @@ void __attribute__((weak)) initSystem(void) {
 	__transferRegion()->buttons = 0xffff;
 
 	punixTime = (time_t*)memUncached((void *)&__transferRegion()->unixTime);
-
-	__syscalls.exit = __libnds_exit;
-	__syscalls.gettod_r = __libnds_gtod;
 
 	extern  char *fake_heap_end;
 	__transferRegion()->bootcode = (struct __bootstub *)fake_heap_end;
