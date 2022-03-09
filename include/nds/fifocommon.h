@@ -158,6 +158,7 @@ bool fifoInit();
 	\brief Send an address to an channel.
 
 	Transmits an address in the range 0x02000000-0x023FFFFF to the other CPU.
+	That means any addresses allocated through defined behavior in C, except those returned by memUncached().
 
 	\param channel channel number to send to.
 	\param address address to send.
