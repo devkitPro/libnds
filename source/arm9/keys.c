@@ -31,14 +31,11 @@
 #include <nds/ipc.h>
 #include <nds/system.h>
 #include <nds/arm9/input.h>
-#include <libnds_internal.h>
 
 //------------------------------------------------------------------------------
 
-#define KEYS_CUR (( ((~REG_KEYINPUT)&0x3ff) | (((~__transferRegion()->buttons)&3)<<10) | (((~__transferRegion()->buttons)<<6) & (KEY_TOUCH|KEY_LID) ))^KEY_LID)
+static Keypad s_keypad;
 
-static uint16 keys = 0;
-static uint16 keysold = 0;
 static uint16 keysrepeat = 0;
 
 static u8 delay = 30, repeat = 15, count = 30;
@@ -46,32 +43,32 @@ static u8 delay = 30, repeat = 15, count = 30;
 //------------------------------------------------------------------------------
 void scanKeys(void) {
 //------------------------------------------------------------------------------
-	keysold = keys;
-	keys = KEYS_CUR;
+	s_keypad.old = s_keypad.cur;
+	s_keypad.cur = keysCurrent();
 
-    if ( delay != 0 ) {
-        if ( keys != keysold ) {
-            count = delay ;
-            keysrepeat = keysDown() ;
-        }
-        count--;
-        if ( count == 0 ) {
-            count = repeat;
-            keysrepeat = keys;
-        }
-    }
+	if ( delay != 0 ) {
+		if ( s_keypad.cur != s_keypad.old ) {
+			count = delay;
+			keysrepeat = keypadDown(&s_keypad);
+		}
+		count--;
+		if ( count == 0 ) {
+			count = repeat;
+			keysrepeat = s_keypad.cur;
+		}
+	}
 }
 
 //------------------------------------------------------------------------------
 uint32 keysHeld(void) {
 //------------------------------------------------------------------------------
-	return keys;
+	return keypadHeld(&s_keypad);
 }
 
 //------------------------------------------------------------------------------
 uint32 keysDown(void) {
 //------------------------------------------------------------------------------
-	return (keys &~ keysold);
+	return keypadDown(&s_keypad);
 }
 
 //------------------------------------------------------------------------------
@@ -96,11 +93,14 @@ void keysSetRepeat( u8 setDelay, u8 setRepeat ) {
 //------------------------------------------------------------------------------
 uint32 keysUp(void) {
 //------------------------------------------------------------------------------
-	return (keys ^ keysold) & (~keys);
+	return keypadUp(&s_keypad);
 }
 
 //------------------------------------------------------------------------------
 uint32 keysCurrent(void) {
 //------------------------------------------------------------------------------
-	return (KEYS_CUR);
+	touchPosition tp;
+	Keypad k = {0};
+	keypadRead(&k);
+	return keypadHeld(&k) | (touchRead(&tp) ? KEY_TOUCH : 0);
 }

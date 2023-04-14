@@ -81,17 +81,6 @@ void keysSetRepeat( u8 setDelay, u8 setRepeat );
 //! Obtains the current keypad released state.
 uint32 keysUp(void);
 
-
-
-__attribute__ ((deprecated)) touchPosition touchReadXY() ;
-
-
-/*!
-	\brief Obtains the current touchpad state.
-	\param data a touchPosition ptr which will be filled by the function.
-*/
-void touchRead(touchPosition *data);
-
 #ifdef __cplusplus
 }
 #endif

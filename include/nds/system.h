@@ -150,10 +150,6 @@ void powerOn(int bits);
 */
 void powerOff(int bits);
 
-//internal fifo handlers
-void systemMsgHandler(int bytes, void* user_data);
-void systemValueHandler(u32 value, void* data);
-
 //!	Switches the screens.
 static inline void lcdSwap(void) { REG_POWERCNT ^= POWER_SWAP_LCDS; }
 

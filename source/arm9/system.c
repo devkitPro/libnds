@@ -35,7 +35,6 @@ distribution.
 #include <nds/fifocommon.h>
 #include <nds/interrupts.h>
 #include <nds/fifomessages.h>
-#include <libnds_internal.h>
 
 //todo document
 //
@@ -46,38 +45,6 @@ static void(*SDcallback)(int)=NULL;
 void setSDcallback(void(*callback)(int)) {
 //---------------------------------------------------------------------------------
 	SDcallback = callback;
-}
-
-//---------------------------------------------------------------------------------
-// Handle system requests from the arm7
-//---------------------------------------------------------------------------------
-void systemValueHandler(u32 value, void* data){
-//---------------------------------------------------------------------------------
-	switch(value) {
-	case PM_REQ_SLEEP:
-		systemSleep();
-		break;
-	case SDMMC_INSERT:
-		if(SDcallback) SDcallback(1);
-		break;
-	case SDMMC_REMOVE:
-		if(SDcallback) SDcallback(0);
-		break;
-	}
-}
-
-//---------------------------------------------------------------------------------
-void systemMsgHandler(int bytes, void* user_data){
-//---------------------------------------------------------------------------------
-	FifoMessage msg;
-
-	fifoGetDatamsg(FIFO_SYSTEM, bytes, (u8*)&msg);
-
-	switch (msg.type) {
-	case SYS_INPUT_MESSAGE:
-		setTransferInputData(&(msg.SystemInput.touch), msg.SystemInput.keys);
-		break;
-	}
 }
 
 //---------------------------------------------------------------------------------
