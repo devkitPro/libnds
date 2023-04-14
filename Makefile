@@ -4,8 +4,8 @@ endif
 
 export TOPDIR	:=	$(CURDIR)
 
-export LIBNDS_MAJOR	:= 1
-export LIBNDS_MINOR	:= 8
+export LIBNDS_MAJOR	:= 2
+export LIBNDS_MINOR	:= 0
 export LIBNDS_PATCH	:= 0
 
 
@@ -42,12 +42,12 @@ clean:
 #-------------------------------------------------------------------------------
 dist-src:
 #-------------------------------------------------------------------------------
-	@tar --exclude=*CVS* --exclude=.svn -cjf libnds-src-$(VERSION).tar.bz2 arm7/Makefile arm9/Makefile source include icon.bmp Makefile libnds_license.txt Doxyfile
+	@tar --exclude=*CVS* --exclude=.svn -cjf libnds-src-$(VERSION).tar.bz2 arm7/Makefile arm9/Makefile source include Makefile libnds_license.txt Doxyfile
 
 #-------------------------------------------------------------------------------
 dist-bin: all
 #-------------------------------------------------------------------------------
-	@tar --exclude=*CVS* --exclude=.svn -cjf libnds-$(VERSION).tar.bz2 include lib icon.bmp libnds_license.txt
+	@tar --exclude=*CVS* --exclude=.svn -cjf libnds-$(VERSION).tar.bz2 include lib libnds_license.txt
 
 dist: dist-bin dist-src
 

@@ -1,3 +1,4 @@
+.*/
 arm7/debug
 arm7/release
 arm9/debug
@@ -7,3 +8,4 @@ lib
 docs
 warn.log
 *.bz2
+*~

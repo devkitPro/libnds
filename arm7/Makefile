@@ -23,12 +23,10 @@ INCLUDES	:=	../include ../source/common
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH	:=	-mthumb -mthumb-interwork -mcpu=arm7tdmi -mtune=arm7tdmi -DARM7
+ARCH	:=	-mthumb -mthumb-interwork -march=armv4t -mtune=arm7tdmi -DARM7
 
 CFLAGS	:=	-g -Wall -Os \
 			-ffunction-sections -fdata-sections \
- 			-fomit-frame-pointer\
-			-ffast-math \
 			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE)
@@ -55,8 +53,8 @@ LIBS	:=
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:=
- 
+LIBDIRS	:= $(LIBNDS)
+
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
 # rules for different file extensions

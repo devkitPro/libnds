@@ -26,11 +26,10 @@ DATA			:=	../source/arm9
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH	:=	-mthumb -mthumb-interwork -march=armv5te -mtune=arm946e-s -DARM9
+ARCH	:=	-march=armv5te -mtune=arm946e-s -DARM9
 
 CFLAGS	:=	-g -Wall -O2\
 			-ffunction-sections -fdata-sections \
-			-fomit-frame-pointer\
 			$(ARCH)
 
 CFLAGS	+=	$(INCLUDE)
@@ -58,8 +57,8 @@ LIBS	:=
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:=
- 
+LIBDIRS	:=	$(LIBNDS)
+
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
 # rules for different file extensions
