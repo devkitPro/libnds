@@ -62,16 +62,16 @@ void powerOn(int bits) {
 //---------------------------------------------------------------------------------
 	if(bits & BIT(16))
 		REG_POWERCNT |= bits & 0xFFFF;
-	else
-		fifoSendValue32(FIFO_PM, PM_REQ_ON | (bits & 0xFFFF));
+	//else
+	//	fifoSendValue32(FIFO_PM, PM_REQ_ON | (bits & 0xFFFF));
 }
 
 //---------------------------------------------------------------------------------
 void powerOff(int bits) {
 	if(bits & BIT(16))
 		REG_POWERCNT &= ~(bits & 0xFFFF);
-	else
-		fifoSendValue32(FIFO_PM, PM_REQ_OFF | (bits & 0xFFFF));
+	//else
+	//	fifoSendValue32(FIFO_PM, PM_REQ_OFF | (bits & 0xFFFF));
 }
 
 //---------------------------------------------------------------------------------
