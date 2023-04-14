@@ -33,9 +33,7 @@
 #ifndef _NDSTYPES_INCLUDE
 #define _NDSTYPES_INCLUDE
 //---------------------------------------------------------------------------------
-// define libnds types in terms of stdint
-#include <stdint.h>
-#include <stdbool.h>
+#include <calico/types.h>
 
 //---------------------------------------------------------------------------------
 // libgba compatible section macros
@@ -62,7 +60,6 @@
 #define GETRAW(name)      (name)
 #define GETRAWSIZE(name)  ((int)name##_size)
 #define GETRAWEND(name)  ((int)name##_end)
-
 
 /*!
 	\brief returns a number with the nth bit set.
@@ -115,53 +112,12 @@ typedef volatile float32        vfloat32;
 //! 64 bit volatile signed floating point number.
 typedef volatile float64        vfloat64;
 
-//! 8 bit unsigned integer.
-typedef uint8_t		byte;
-
-//! 8 bit unsigned integer.
-typedef uint8_t		u8;
-//! 16 bit unsigned integer.
-typedef uint16_t	u16;
-//! 32 bit unsigned integer.
-typedef uint32_t	u32;
-//! 64 bit unsigned integer.
-typedef uint64_t	u64;
-
-//! 8 bit signed integer.
-typedef int8_t		s8;
-//! 16 bit signed integer.
-typedef int16_t		s16;
-//! 32 bit signed integer.
-typedef int32_t		s32;
-//! 64 bit signed integer.
-typedef int64_t		s64;
-
-//! 8 bit volatile unsigned integer.
-typedef volatile u8          vu8;
-//! 16 bit volatile unsigned integer.
-typedef volatile u16         vu16;
-//! 32 bit volatile unsigned integer.
-typedef volatile u32         vu32;
-//! 64 bit volatile unsigned integer.
-typedef volatile u64         vu64;
-
-//! 8 bit volatile signed integer.
-typedef volatile s8           vs8;
-//! 16 bit volatile signed integer.
-typedef volatile s16          vs16;
-//! 32 bit volatile signed integer.
-typedef volatile s32          vs32;
-//! 64 bit volatile signed integer.
-typedef volatile s64          vs64;
-
 typedef uint32_t sec_t;
-
 
 #ifndef TRUE
 #define TRUE 1
 #define FALSE 0
 #endif
-
 
 // Handy function pointer typedefs
 //! a function pointer that takes no arguments and doesn't return anything.
