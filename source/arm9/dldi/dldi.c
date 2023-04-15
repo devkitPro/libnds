@@ -37,29 +37,12 @@
 #include <unistd.h>
 #include <sys/fcntl.h>
 
-const u32  DLDI_MAGIC_NUMBER = 
-	0xBF8DA5ED;	
-	
+const u32  DLDI_MAGIC_NUMBER =
+	DLDI_MAGIC_VAL;
+
 // Stored backwards to prevent it being picked up by DLDI patchers
 const char DLDI_MAGIC_STRING_BACKWARDS [DLDI_MAGIC_STRING_LEN] =
 	{'\0', 'm', 'h', 's', 'i', 'h', 'C', ' '} ;
-
-// The only built in driver
-extern DLDI_INTERFACE _io_dldi_stub;
-
-const DLDI_INTERFACE* io_dldi_data = &_io_dldi_stub;
-
-const DISC_INTERFACE* dldiGetInternal (void) {
-	if (_io_dldi_stub.ioInterface.features & FEATURE_SLOT_GBA) {
-		sysSetCartOwner(BUS_OWNER_ARM9);
-	}
-	if (_io_dldi_stub.ioInterface.features & FEATURE_SLOT_NDS) {
-		sysSetCardOwner(BUS_OWNER_ARM9);
-	}
-
-	return &_io_dldi_stub.ioInterface;
-}
-
 
 bool dldiIsValid (const DLDI_INTERFACE* io) {
 	int i;
@@ -79,10 +62,10 @@ bool dldiIsValid (const DLDI_INTERFACE* io) {
 
 void dldiFixDriverAddresses (DLDI_INTERFACE* io) {
 	u32 offset;
-	u8** address;
-	u8* oldStart;
-	u8* oldEnd;
-	
+	void** address;
+	void* oldStart;
+	void* oldEnd;
+
 	offset = (char*)io - (char*)(io->dldiStart);
 
 	oldStart = io->dldiStart;
@@ -107,7 +90,7 @@ void dldiFixDriverAddresses (DLDI_INTERFACE* io) {
 
 	// Fix all addresses with in the DLDI
 	if (io->fixSectionsFlags & FIX_ALL) {
-		for (address = (u8**)io->dldiStart; address < (u8**)io->dldiEnd; address++) {
+		for (address = (void**)io->dldiStart; address < (void**)io->dldiEnd; address++) {
 			if (oldStart <= *address && *address < oldEnd) {
 				*address += offset;
 			}
@@ -116,7 +99,7 @@ void dldiFixDriverAddresses (DLDI_INTERFACE* io) {
 	
 	// Fix the interworking glue section
 	if (io->fixSectionsFlags & FIX_GLUE) {
-		for (address = (u8**)io->interworkStart; address < (u8**)io->interworkEnd; address++) {
+		for (address = (void**)io->interworkStart; address < (void**)io->interworkEnd; address++) {
 			if (oldStart <= *address && *address < oldEnd) {
 				*address += offset;
 			}
@@ -125,7 +108,7 @@ void dldiFixDriverAddresses (DLDI_INTERFACE* io) {
 	
 	// Fix the global offset table section
 	if (io->fixSectionsFlags & FIX_GOT) {
-		for (address = (u8**)io->gotStart; address < (u8**)io->gotEnd; address++) {
+		for (address = (void**)io->gotStart; address < (void**)io->gotEnd; address++) {
 			if (oldStart <= *address && *address < oldEnd) {
 				*address += offset;
 			}
@@ -201,10 +184,4 @@ DLDI_INTERFACE* dldiLoadFromFile (const char* path) {
 
 void dldiFree (DLDI_INTERFACE* dldi) {
 	free(dldi);
-}
-
-extern const DISC_INTERFACE __io_dsisd;
-
-const DISC_INTERFACE* get_io_dsisd (void) {
-	return (isDSiMode() && __NDSHeader->unitCode ) ? &__io_dsisd : NULL;
 }

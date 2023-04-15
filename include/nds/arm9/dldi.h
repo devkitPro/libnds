@@ -34,14 +34,12 @@ extern "C" {
 #endif
 
 #include "../disc_io.h"
-#include "dldi_asm.h"
-#define FIX_ALL						0x01
-#define FIX_GLUE					0x02
-#define FIX_GOT						0x04
-#define FIX_BSS						0x08
+#include <calico/dev/dldi.h>
 
-#define DLDI_MAGIC_STRING_LEN 		8
-#define DLDI_FRIENDLY_NAME_LEN 		48
+#define FIX_ALL						DLDI_FIX_ALL
+#define FIX_GLUE					DLDI_FIX_GLUE
+#define FIX_GOT						DLDI_FIX_GOT
+#define FIX_BSS						DLDI_FIX_BSS
 
 extern const u32  DLDI_MAGIC_NUMBER;
 
@@ -69,19 +67,6 @@ typedef struct DLDI_INTERFACE {
 	// Original I/O interface data
 	DISC_INTERFACE ioInterface;
 } DLDI_INTERFACE;
-
-
-/*
-Pointer to the internal DLDI, not directly usable by libfat.
-You'll need to set the bus permissions appropriately before using.
-*/
-extern const DLDI_INTERFACE* io_dldi_data;
-
-/*
-Return a pointer to the internal IO interface, 
-setting up bus permissions in the process.
-*/
-extern const DISC_INTERFACE* dldiGetInternal (void);
 
 /*
 Determines if an IO driver is a valid DLDI driver

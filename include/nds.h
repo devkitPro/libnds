@@ -277,7 +277,6 @@ extern "C" {
 #include "nds/arm9/trig_lut.h"
 #include "nds/arm9/video.h"
 #include "nds/arm9/videoGL.h"
-#include "nds/arm9/nand.h"
 
 //---------------------------------------------------------------------------------
 #endif // #ifdef ARM9
