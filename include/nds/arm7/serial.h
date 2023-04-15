@@ -112,9 +112,6 @@ void SerialWaitBusy() {
 	while (REG_SPICNT & SPI_BUSY);
 }
 
-// Read the firmware
-void readFirmware(u32 address, void * destination, u32 size);
-
 
 #endif
 

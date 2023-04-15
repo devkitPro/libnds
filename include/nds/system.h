@@ -37,36 +37,33 @@
 #define NDS_SYSTEM_INCLUDE
 
 #include "ndstypes.h"
+#include <calico/nds/system.h>
+#include <calico/nds/lcd.h>
+#include <calico/nds/pm.h>
+#include <calico/nds/mm_env.h>
 
-//!	LCD status register.
-#define	REG_DISPSTAT	(*(vu16*)0x04000004)
+#define REG_POWERCNT REG_POWCNT
+
+#define isDSiMode       systemIsTwlMode
+#define systemSleep     pmEnterSleep
+#define getBatteryLevel pmGetBatteryState
 
 //! LCD Status register bitdefines
 typedef enum
 {
-	DISP_IN_VBLANK   =  BIT(0), //!<	The display currently in a vertical blank.
-	DISP_IN_HBLANK    = BIT(1), //!<	The display currently in a horizontal blank.
-	DISP_YTRIGGERED   = BIT(2), //!<	Current scanline and %DISP_Y match.
-	DISP_VBLANK_IRQ   = BIT(3), //!<	Interrupt on vertical blank.
-	DISP_HBLANK_IRQ   = BIT(4), //!<	Interrupt on horizontal blank.
-	DISP_YTRIGGER_IRQ = BIT(5)  //!<	Interrupt when current scanline and %DISP_Y match.
+	DISP_IN_VBLANK    = DISPSTAT_IF_VBLANK, //!<	The display currently in a vertical blank.
+	DISP_IN_HBLANK    = DISPSTAT_IF_HBLANK, //!<	The display currently in a horizontal blank.
+	DISP_YTRIGGERED   = DISPSTAT_IF_VCOUNT, //!<	Current scanline and %DISP_Y match.
+	DISP_VBLANK_IRQ   = DISPSTAT_IE_VBLANK, //!<	Interrupt on vertical blank.
+	DISP_HBLANK_IRQ   = DISPSTAT_IE_HBLANK, //!<	Interrupt on horizontal blank.
+	DISP_YTRIGGER_IRQ = DISPSTAT_IE_VCOUNT  //!<	Interrupt when current scanline and %DISP_Y match.
 }DISP_BITS;
-
-//!	Current display scanline.
-#define	REG_VCOUNT		(*(vu16*)0x4000006)
-
 
 //!	Halt control register.
 /*!	Writing 0x40 to HALT_CR activates GBA mode.
 	%HALT_CR can only be accessed via the BIOS.
 */
 #define HALT_CR       (*(vu16*)0x04000300)
-
-//!	Power control register.
-/*!	This register controls what hardware should
-	be turned on or off.
-*/
-#define	REG_POWERCNT	*(vu16*)0x4000304
 
 #define REG_SCFG_ROM		*(vu16*)0x4004000
 
@@ -87,7 +84,7 @@ static inline
 	\param Yvalue the value for the Y trigger.
 */
 void SetYtrigger(int Yvalue) {
-	REG_DISPSTAT = (REG_DISPSTAT & 0x007F ) | (Yvalue << 8) | (( Yvalue & 0x100 ) >> 1) ;
+	REG_DISPSTAT = (REG_DISPSTAT & ~DISPSTAT_LYC_MASK ) | DISPSTAT_LYC(Yvalue);
 }
 
 #define PM_ARM9_DIRECT BIT(16)
@@ -100,34 +97,22 @@ typedef enum
 	PM_BACKLIGHT_TOP	= BIT(3),		//!< Enable the top backlight if set.
 	PM_SYSTEM_PWR		= BIT(6),		//!< Turn the power *off* if set.
 
-	POWER_LCD		= PM_ARM9_DIRECT | BIT(0),		//!<	Controls the power for both LCD screens.
-	POWER_2D_A		= PM_ARM9_DIRECT | BIT(1),		//!<	Controls the power for the main 2D core.
-	POWER_MATRIX	= PM_ARM9_DIRECT | BIT(2),		//!<	Controls the power for the 3D matrix.
-	POWER_3D_CORE	= PM_ARM9_DIRECT | BIT(3),		//!<	Controls the power for the main 3D core.
-	POWER_2D_B		= PM_ARM9_DIRECT | BIT(9),		//!<	Controls the power for the sub 2D core.
-	POWER_SWAP_LCDS	= PM_ARM9_DIRECT | BIT(15),		//!<	Controls which screen should use the main core.
+#ifdef ARM9
+	POWER_LCD		= PM_ARM9_DIRECT | POWCNT_LCD,			//!<	Controls the power for both LCD screens.
+	POWER_2D_A		= PM_ARM9_DIRECT | POWCNT_2D_GFX_A,		//!<	Controls the power for the main 2D core.
+	POWER_MATRIX	= PM_ARM9_DIRECT | POWCNT_3D_RENDER,	//!<	Controls the power for the 3D matrix.
+	POWER_3D_CORE	= PM_ARM9_DIRECT | POWCNT_3D_GEOMETRY,	//!<	Controls the power for the main 3D core.
+	POWER_2D_B		= PM_ARM9_DIRECT | POWCNT_2D_GFX_B,		//!<	Controls the power for the sub 2D core.
+	POWER_SWAP_LCDS	= PM_ARM9_DIRECT | POWCNT_LCD_SWAP,		//!<	Controls which screen should use the main core.
 	POWER_ALL_2D	= PM_ARM9_DIRECT | POWER_LCD | POWER_2D_A | POWER_2D_B,			//!< power just 2D hardware.
 	POWER_ALL		= PM_ARM9_DIRECT | POWER_ALL_2D | POWER_3D_CORE | POWER_MATRIX	//!< power everything.
+#endif
 }PM_Bits;
-
-
-/*!	\brief Causes the nds to go to sleep.
-	The nds will be reawakened when the lid is opened.
-
-	\note By default, this is automatically called when closing the lid.
-*/
-void systemSleep(void);
 
 /*!	Set the LED blink mode
 	\param bm What to power on.
 */
 void ledBlink(int bm);
-
-//!	Checks whether the application is running in DSi mode.
-static inline bool isDSiMode() {
-	extern bool __dsimode;
-	return __dsimode;
-}
 
 //--------------------------------------------------------------
 //    ARM9 section
@@ -151,13 +136,13 @@ void powerOn(int bits);
 void powerOff(int bits);
 
 //!	Switches the screens.
-static inline void lcdSwap(void) { REG_POWERCNT ^= POWER_SWAP_LCDS; }
+static inline void lcdSwap(void) { pmGfxLcdSwap(); }
 
 //!	Forces the main core to display on the top.
-static inline void lcdMainOnTop(void) { REG_POWERCNT |= POWER_SWAP_LCDS; }
+static inline void lcdMainOnTop(void) { pmGfxSetLcdLayout(PmLcdLayout_TopIsA); }
 
 //!	Forces the main core to display on the bottom.
-static inline void lcdMainOnBottom(void) { REG_POWERCNT &= ~POWER_SWAP_LCDS; }
+static inline void lcdMainOnBottom(void) { pmGfxSetLcdLayout(PmLcdLayout_TopIsB); }
 
 //! Powers down the DS
 static inline
@@ -168,16 +153,11 @@ void systemShutDown(void) {
 void readFirmware(u32 address, void *buffer, u32 length);
 int writeFirmware(u32 address, void *buffer, u32 length);
 
-
-//! gets the DS Battery level
-u32 getBatteryLevel();
-
 //!	Set the arm9 vector base
 /*!	Arm9 only
 	\param highVector high vector
 */
 void setVectorBase(int highVector);
-
 
 /*! \brief A struct with all the CPU exeption vectors.
 	each member contains an ARM instuction that will be executed when an exeption occured.
@@ -192,7 +172,6 @@ typedef struct sysVectors_t {
 	VoidFn	data_abort;		//!< data abort.
 	VoidFn	fiq;			//!< fast interrupt.
 } sysVectors;
-
 
 extern sysVectors SystemVectors;
 void setSDcallback(void(*callback)(int));
@@ -228,7 +207,7 @@ u8* getHeapLimit();
 	ARM7 only.
 */
 typedef enum {
-	POWER_SOUND = BIT(0),			//!<	Controls the power for the sound controller.
+	POWER_SOUND = POWCNT_SOUND,			//!<	Controls the power for the sound controller.
 
 	PM_CONTROL_REG		= 0,		//!<	Selects the PM control register
 	PM_BATTERY_REG		= 1,		//!<	Selects the PM battery register
@@ -248,14 +227,6 @@ typedef enum {
 //!< PM control register bits - LED control
 #define PM_LED_CONTROL(m)  ((m)<<4)
 
-//install the fifo power handler
-void installSystemFIFO(void);
-
-//cause the ds to enter low power mode
-void systemSleep(void);
-//internal can check if sleep mode is enabled
-int sleepEnabled(void);
-
 // Warning: These functions use the SPI chain, and are thus 'critical'
 // sections, make sure to disable interrupts during the call if you've
 // got a VBlank IRQ polling the touch screen, etc...
@@ -270,16 +241,13 @@ int readPowerManagement(int reg) {
 
 static inline
 void powerOn(int bits) {
-	REG_POWERCNT |= bits;
+	pmPowerOn(bits);
 }
 
 static inline
 void powerOff(PM_Bits bits) {
-	REG_POWERCNT &= ~bits;
+	pmPowerOff(bits);
 }
-
-void readUserSettings();
-void systemShutDown();
 
 #endif /* ARM7 */
 
@@ -379,69 +347,6 @@ typedef struct tPERSONAL_DATA
 } PACKED PERSONAL_DATA ;
 
 //!	Default location for the user's personal data (see %PERSONAL_DATA).
-#define PersonalData ((PERSONAL_DATA*)0x2FFFC80)
-
-
-//! struct containing time and day of the real time clock.
-typedef	struct {
-	u8 year;	//!< add 2000 to get 4 digit year
-	u8 month;	//!< 1 to 12
-	u8 day;		//!< 1 to (days in month)
-
-	u8 weekday;	//!< day of week
-	u8 hours;	//!< 0 to 11 for AM, 52 to 63 for PM
-	u8 minutes;	//!< 0 to 59
-	u8 seconds;	//!< 0 to 59
-} RTCtime;
-
-
-
-// argv struct magic number
-#define ARGV_MAGIC 0x5f617267
-
-//structure used to set up argc/argv on the DS
-struct __argv {
-	int argvMagic;		// argv magic number, set to 0x5f617267 ('_arg') if valid
-	char *commandLine;	// base address of command line, set of null terminated strings
-	int length;			// total length of command line
-	int argc;			// internal use, number of arguments
-	char **argv;		// internal use, argv pointer
-	int dummy;			// internal use
-	u32 host;			// internal use, host ip for dslink 
-};
-
-#define __system_argv		((struct __argv *)0x02FFFE70)
-
-#define BOOTSIG	0x62757473746F6F62ULL	// 'bootstub'
-
-struct __bootstub {
-	u64	bootsig;
-	VoidFn arm9reboot;
-	VoidFn arm7reboot;
-	u32 bootsize;
-};
-
-
-#ifdef ARM9
-/*!
-	\brief returns a cached mirror of an address.
-	\param address an address.
-	\return a pointer to the cached mirror of that address.
-*/
-void *memCached(void *address);
-
-/*!
-	\brief returns an uncached mirror of an address.
-	\param address an address.
-	\return a pointer to the uncached mirror of that address.
-*/
-void *memUncached(void *address);
-
-void resetARM7(u32 address);
-#endif
-
-#ifdef ARM7
-void resetARM9(u32 address);
-#endif
+#define PersonalData ((PERSONAL_DATA*)MM_ENV_USER_SETTINGS)
 
 #endif

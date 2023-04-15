@@ -290,7 +290,6 @@ extern "C" {
 #include "nds/arm7/audio.h"
 #include "nds/arm7/codec.h"
 #include "nds/arm7/i2c.h"
-#include "nds/arm7/sdmmc.h"
 #include "nds/arm7/serial.h"
 
 //---------------------------------------------------------------------------------

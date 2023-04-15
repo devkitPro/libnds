@@ -34,17 +34,17 @@
 
 #include "ndstypes.h"
 #include <assert.h>
+#include <calico/nds/system.h>
+#include <calico/nds/mm.h>
+#include <calico/nds/mm_env.h>
 
-
-#ifdef ARM9
-#define REG_EXMEMCNT (*(vu16*)0x04000204)
-#else
-#define REG_EXMEMSTAT (*(vu16*)0x04000204)
+#ifdef ARM7
+#define REG_EXMEMSTAT REG_EXMEMCNT
 #endif
 
-#define ARM7_MAIN_RAM_PRIORITY BIT(15)
-#define ARM7_OWNS_CARD BIT(11)
-#define ARM7_OWNS_ROM  BIT(7)
+#define ARM7_MAIN_RAM_PRIORITY EXMEMCNT_MAIN_RAM_PRIO_ARM7
+#define ARM7_OWNS_CARD         EXMEMCNT_NDS_SLOT_ARM7
+#define ARM7_OWNS_ROM          EXMEMCNT_GBA_SLOT_ARM7
 
 #define REG_MBK1 ((vu8*)0x04004040) /* WRAM_A 0..3 */
 #define REG_MBK2 ((vu8*)0x04004044) /* WRAM_B 0..3 */
@@ -65,27 +65,27 @@
 #define ALLRAM        ((u8*)0x00000000)
 
 //! 8 bit pointer to main ram.
-#define MAINRAM8      ((u8*)0x02000000)
+#define MAINRAM8      ((u8*)MM_MAINRAM)
 //! 16 bit pointer to main ram.
-#define MAINRAM16     ((u16*)0x02000000)
+#define MAINRAM16     ((u16*)MM_MAINRAM)
 //! 32 bit pointer to main ram.
-#define MAINRAM32     ((u32*)0x02000000)
+#define MAINRAM32     ((u32*)MM_MAINRAM)
 
 
 // TODO: fixme: shared RAM
 
 // GBA_BUS is volatile, while GBAROM is not
 //! 16 bit volatile pointer to the GBA slot bus.
-#define GBA_BUS       ((vu16 *)(0x08000000))
+#define GBA_BUS       ((vu16 *)MM_CARTROM)
 //! 16 bit pointer to the GBA slot ROM.
-#define GBAROM        ((u16*)0x08000000)
+#define GBAROM        ((u16*)MM_CARTROM)
 
 //! 8 bit pointer to GBA slot Save ram.
-#define SRAM          ((u8*)0x0A000000)
+#define SRAM          ((u8*)MM_CARTRAM)
 
 
 #ifdef ARM7
-#define VRAM          ((u16*)0x06000000)
+#define VRAM          ((u16*)MM_VRAM)
 #endif
 
 
@@ -110,7 +110,7 @@ typedef struct sGBAHeader {
 	u16 checksum;		//!< a 16 bit checksum? (gbatek says its unused/reserved).
 } tGBAHeader;
 
-#define GBA_HEADER (*(tGBAHeader *)0x08000000)
+#define GBA_HEADER (*(tGBAHeader *)MM_CARTROM)
 
 /*!
 	\brief the NDS file header format
@@ -244,8 +244,8 @@ typedef struct __DSiHeader {
 } tDSiHeader;
 
 
-#define __NDSHeader ((tNDSHeader *)0x02FFFE00)
-#define __DSiHeader ((tDSiHeader *)0x02FFE000)
+#define __NDSHeader ((tNDSHeader *)MM_ENV_APP_NDS_HEADER)
+#define __DSiHeader ((tDSiHeader *)MM_ENV_APP_TWL_HEADER)
 
 
 /*!
