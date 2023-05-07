@@ -89,6 +89,9 @@
 
 #include <nds/ndstypes.h>
 #include <nds/arm9/sassert.h>
+#include <calico/nds/mm.h>
+#include <calico/nds/lcd.h>
+#include <calico/nds/arm9/vram.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -97,33 +100,33 @@ extern "C" {
 extern u16 mosaicShadow;
 extern u16 mosaicShadowSub;
 
-#define BG_PALETTE       ((u16*)0x05000000)		/**< \brief background palette memory*/
-#define BG_PALETTE_SUB   ((u16*)0x05000400)		/**< \brief background palette memory (sub engine)*/
+#define BG_PALETTE       ((u16*)MM_PALRAM)		/**< \brief background palette memory*/
+#define BG_PALETTE_SUB   ((u16*)(MM_PALRAM+0x400))		/**< \brief background palette memory (sub engine)*/
 
-#define SPRITE_PALETTE ((u16*)0x05000200) 		/**< \brief sprite palette memory*/
-#define SPRITE_PALETTE_SUB ((u16*)0x05000600)	/**< \brief sprite palette memory (sub engine)*/
+#define SPRITE_PALETTE ((u16*)(MM_PALRAM+0x200)) 		/**< \brief sprite palette memory*/
+#define SPRITE_PALETTE_SUB ((u16*)(MM_PALRAM+0x600))	/**< \brief sprite palette memory (sub engine)*/
 
-#define BG_GFX			((u16*)0x6000000)		/**< \brief background graphics memory*/
-#define BG_GFX_SUB		((u16*)0x6200000)		/**< \brief background graphics memory (sub engine)*/
-#define SPRITE_GFX			((u16*)0x6400000)	/**< \brief sprite graphics memory*/
-#define SPRITE_GFX_SUB		((u16*)0x6600000)	/**< \brief sprite graphics memory (sub engine)*/
+#define BG_GFX			((u16*)MM_VRAM_BG_A)		/**< \brief background graphics memory*/
+#define BG_GFX_SUB		((u16*)MM_VRAM_BG_B)		/**< \brief background graphics memory (sub engine)*/
+#define SPRITE_GFX			((u16*)MM_VRAM_OBJ_A)	/**< \brief sprite graphics memory*/
+#define SPRITE_GFX_SUB		((u16*)MM_VRAM_OBJ_B)	/**< \brief sprite graphics memory (sub engine)*/
 
-#define VRAM_0        ((u16*)0x6000000)
-#define VRAM          ((u16*)0x6800000)
+#define VRAM_0        ((u16*)MM_VRAM)
+#define VRAM          ((u16*)MM_VRAM_A)
 
 
-#define VRAM_A        ((u16*)0x6800000)/*!< \brief pointer to vram bank A mapped as LCD*/
-#define VRAM_B        ((u16*)0x6820000)/*!< \brief pointer to vram bank B mapped as LCD*/
-#define VRAM_C        ((u16*)0x6840000)/*!< \brief pointer to vram bank C mapped as LCD*/
-#define VRAM_D        ((u16*)0x6860000)/*!< \brief pointer to vram bank D mapped as LCD*/
-#define VRAM_E        ((u16*)0x6880000)/*!< \brief pointer to vram bank E mapped as LCD*/
-#define VRAM_F        ((u16*)0x6890000)/*!< \brief pointer to vram bank F mapped as LCD*/
-#define VRAM_G        ((u16*)0x6894000)/*!< \brief pointer to vram bank G mapped as LCD*/
-#define VRAM_H        ((u16*)0x6898000)/*!< \brief pointer to vram bank H mapped as LCD*/
-#define VRAM_I        ((u16*)0x68A0000)/*!< \brief pointer to vram bank I mapped as LCD*/
+#define VRAM_A        ((u16*)MM_VRAM_A)/*!< \brief pointer to vram bank A mapped as LCD*/
+#define VRAM_B        ((u16*)MM_VRAM_B)/*!< \brief pointer to vram bank B mapped as LCD*/
+#define VRAM_C        ((u16*)MM_VRAM_C)/*!< \brief pointer to vram bank C mapped as LCD*/
+#define VRAM_D        ((u16*)MM_VRAM_D)/*!< \brief pointer to vram bank D mapped as LCD*/
+#define VRAM_E        ((u16*)MM_VRAM_E)/*!< \brief pointer to vram bank E mapped as LCD*/
+#define VRAM_F        ((u16*)MM_VRAM_F)/*!< \brief pointer to vram bank F mapped as LCD*/
+#define VRAM_G        ((u16*)MM_VRAM_G)/*!< \brief pointer to vram bank G mapped as LCD*/
+#define VRAM_H        ((u16*)MM_VRAM_H)/*!< \brief pointer to vram bank H mapped as LCD*/
+#define VRAM_I        ((u16*)MM_VRAM_I)/*!< \brief pointer to vram bank I mapped as LCD*/
 
-#define OAM           ((u16*)0x07000000)/*!< \brief pointer to Object Attribute Memory*/
-#define OAM_SUB       ((u16*)0x07000400)/*!< \brief pointer to Object Attribute Memory (Sub engine)*/
+#define OAM           ((u16*)MM_OBJRAM)/*!< \brief pointer to Object Attribute Memory*/
+#define OAM_SUB       ((u16*)(MM_OBJRAM+0x400))/*!< \brief pointer to Object Attribute Memory (Sub engine)*/
 
 // macro creates a 15 bit color from 3x5 bit components
 /** \brief  Macro to convert 5 bit r g b components into a single 15 bit RGB triplet */
@@ -134,27 +137,23 @@ extern u16 mosaicShadowSub;
 #define ARGB16(a, r, g, b) ( ((a) << 15) | (r)|((g)<<5)|((b)<<10))
 
 /** \brief  Screen height in pixels */
-#define SCREEN_HEIGHT 192
+#define SCREEN_HEIGHT LCD_HEIGHT
 /** \brief  Screen width in pixels */
-#define SCREEN_WIDTH  256
+#define SCREEN_WIDTH  LCD_WIDTH
 
 //	Vram Control
-#define VRAM_CR			(*(vu32*)0x04000240)
-#define VRAM_A_CR		(*(vu8*)0x04000240)
-#define VRAM_B_CR		(*(vu8*)0x04000241)
-#define VRAM_C_CR		(*(vu8*)0x04000242)
-#define VRAM_D_CR		(*(vu8*)0x04000243)
-#define VRAM_EFG_CR		(*(vu32*)0x04000244)
-#define VRAM_E_CR		(*(vu8*)0x04000244)
-#define VRAM_F_CR		(*(vu8*)0x04000245)
-#define VRAM_G_CR		(*(vu8*)0x04000246)
-#define WRAM_CR			(*(vu8*)0x04000247)
-#define VRAM_H_CR		(*(vu8*)0x04000248)
-#define VRAM_I_CR		(*(vu8*)0x04000249)
-
-#define VRAM_ENABLE		(1<<7)
-
-#define VRAM_OFFSET(n)	((n)<<3)
+#define VRAM_CR			REG_VRAMCNT_ABCD
+#define VRAM_A_CR		REG_VRAMCNT_A
+#define VRAM_B_CR		REG_VRAMCNT_B
+#define VRAM_C_CR		REG_VRAMCNT_C
+#define VRAM_D_CR		REG_VRAMCNT_D
+#define VRAM_EFG_CR		MEOW_REG(u32, IO_VRAMCNT_E)
+#define VRAM_E_CR		REG_VRAMCNT_E
+#define VRAM_F_CR		REG_VRAMCNT_F
+#define VRAM_G_CR		REG_VRAMCNT_G
+#define WRAM_CR			MEOW_REG(u8, IO_WRAMCNT)
+#define VRAM_H_CR		REG_VRAMCNT_H
+#define VRAM_I_CR		REG_VRAMCNT_I
 
 //! Allowed VRAM bank A modes
 typedef enum {
@@ -362,8 +361,6 @@ u32 vramDefault();
 	\param vramTemp restores the main 4 banks to the value encoded in vramTemp (returned from vramSetMainBanks)
 */
 void vramRestorePrimaryBanks(u32 vramTemp);
-
-__attribute__ ((deprecated)) void vramRestoreMainBanks(u32 vramTemp);
 
 /** \brief  Restore the E,F,G bank modes.
 	\param vramTemp restores the E,F,G bank modes to the value encoded in vramTemp (returned from vramSetBanks_EFG)
