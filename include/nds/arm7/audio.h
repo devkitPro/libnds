@@ -42,51 +42,50 @@ extern "C" {
 
 #include <nds/arm7/serial.h>
 #include <nds/system.h>
+#include <calico/nds/arm7/sound.h>
 
-#define SOUND_VOL(n)	(n)
-#define SOUND_FREQ(n)	((-0x1000000 / (n)))
-#define SOUND_ENABLE	BIT(15)
+#define SOUND_VOL(n)	SOUNDCNT_VOL(n)
+#define SOUND_FREQ(n)	(-soundTimerFromHz(n))
+#define SOUND_ENABLE	SOUNDCNT_ENABLE
 
-#define SOUND_REPEAT    BIT(27)
-#define SOUND_ONE_SHOT  BIT(28)
+#define SOUND_REPEAT    SOUNDxCNT_MODE(SoundMode_Repeat)
+#define SOUND_ONE_SHOT  SOUNDxCNT_MODE(SoundMode_OneShot)
 
-#define SOUND_FORMAT_16BIT (1<<29)
-#define SOUND_FORMAT_8BIT	(0<<29)
-#define SOUND_FORMAT_PSG    (3<<29)
-#define SOUND_FORMAT_ADPCM  (2<<29)
+#define SOUND_FORMAT_16BIT SOUNDxCNT_FMT(SoundFmt_Pcm16)
+#define SOUND_FORMAT_8BIT  SOUNDxCNT_FMT(SoundFmt_Pcm8)
+#define SOUND_FORMAT_PSG   SOUNDxCNT_FMT(SoundFmt_Psg)
+#define SOUND_FORMAT_ADPCM SOUNDxCNT_FMT(SoundFmt_ImaAdpcm)
 
-#define SOUND_PAN(n)	((n) << 16)
+#define SOUND_PAN(n)	SOUNDxCNT_PAN(n)
 
-#define SCHANNEL_ENABLE BIT(31)
+#define SCHANNEL_ENABLE SOUNDxCNT_ENABLE
 
 //---------------------------------------------------------------------------------
 // registers
 //---------------------------------------------------------------------------------
 
-#define REG_MASTER_VOLUME	(*(vu8*)0x4000500)
-#define REG_SOUNDCNT		(*(vu16*)0x4000500)
-#define REG_SOUNDBIAS		(*(vu32*)0x4000504)
+#define REG_MASTER_VOLUME	REG_SOUNDCNTVOL
 
 
-#define SCHANNEL_CR(n)				(*(vu32*)(0x04000400 + ((n)<<4)))
-#define SCHANNEL_VOL(n)				(*(vu8*)(0x04000400 + ((n)<<4)))
-#define SCHANNEL_PAN(n)				(*(vu8*)(0x04000402 + ((n)<<4)))
-#define SCHANNEL_SOURCE(n)			(*(vu32*)(0x04000404 + ((n)<<4)))
-#define SCHANNEL_TIMER(n)			(*(vu16*)(0x04000408 + ((n)<<4)))
-#define SCHANNEL_REPEAT_POINT(n)	(*(vu16*)(0x0400040A + ((n)<<4)))
-#define SCHANNEL_LENGTH(n)			(*(vu32*)(0x0400040C + ((n)<<4)))
+#define SCHANNEL_CR(n)				REG_SOUNDxCNT(n)
+#define SCHANNEL_VOL(n)				REG_SOUNDxVOL(n)
+#define SCHANNEL_PAN(n)				REG_SOUNDxPAN(n)
+#define SCHANNEL_SOURCE(n)			REG_SOUNDxSAD(n)
+#define SCHANNEL_TIMER(n)			REG_SOUNDxTMR(n)
+#define SCHANNEL_REPEAT_POINT(n)	REG_SOUNDxPNT(n)
+#define SCHANNEL_LENGTH(n)			REG_SOUNDxLEN(n)
 
 
 //---------------------------------------------------------------------------------
 // Sound Capture Registers
 //---------------------------------------------------------------------------------
-#define REG_SNDCAP0CNT	(*(vu8*)0x04000508)
-#define REG_SNDCAP1CNT	(*(vu8*)0x04000509)
+#define REG_SNDCAP0CNT	REG_SNDCAPxCNT(0)
+#define REG_SNDCAP1CNT	REG_SNDCAPxCNT(1)
 
-#define REG_SNDCAP0DAD	(*(vu32*)0x04000510)
-#define REG_SNDCAP0LEN  (*(vu16*)0x04000514)
-#define REG_SNDCAP1DAD	(*(vu32*)0x04000518)
-#define REG_SNDCAP1LEN	(*(vu16*)0x0400051C)
+#define REG_SNDCAP0DAD	REG_SNDCAPxDAD(0)
+#define REG_SNDCAP0LEN  REG_SNDCAPxLEN(0)
+#define REG_SNDCAP1DAD	REG_SNDCAPxDAD(1)
+#define REG_SNDCAP1LEN	REG_SNDCAPxLEN(1)
 
 typedef void (*MIC_BUF_SWAP_CB)(u8* completedBuffer, int length);
 
@@ -94,15 +93,15 @@ typedef void (*MIC_BUF_SWAP_CB)(u8* completedBuffer, int length);
 // DSi Registers
 //---------------------------------------------------------------------------------
 
-#define REG_SNDEXTCNT	(*(vu16*)0x04004700)
+#define REG_SNDEXTCNT	REG_SNDEXCNT
 #define REG_MICCNT		(*(vu16*)0x04004600)
 #define REG_MICDATA		(*(vu32*)0x04004604)
 
-#define SNDEXTCNT_RATIO(n)		((n)&0xF)
-#define SNDEXTCNT_FREQ_32KHZ	(0<<13) // output freq 32.73kHz
-#define SNDEXTCNT_FREQ_47KHZ	(1<<13) // output freq 47.61kHz
-#define SNDEXTCNT_MUTE			BIT(14)
-#define SNDEXTCNT_ENABLE		BIT(15)
+#define SNDEXTCNT_RATIO(n)		SNDEXCNT_MIX_RATIO(n)
+#define SNDEXTCNT_FREQ_32KHZ	SNDEXCNT_I2S_32728_HZ
+#define SNDEXTCNT_FREQ_47KHZ	SNDEXCNT_I2S_4761x_HZ
+#define SNDEXTCNT_MUTE			SNDEXCNT_MUTE
+#define SNDEXTCNT_ENABLE		SNDEXCNT_ENABLE
 
 #define MICCNT_FORMAT(n)		((n)&3) // unknown, always set to '2'
 #define MICCNT_FREQ_DIV(n)		(((n)&3)<<2) // F/(n+1) where F is SNDEXTCNT output freq
@@ -162,8 +161,6 @@ static inline void micOff(void) {
 //---------------------------------------------------------------------------------
   micSetAmp(PM_AMP_OFF, 0);
 }
-
-void installSoundFIFO(void);
 
 #ifdef __cplusplus
 }

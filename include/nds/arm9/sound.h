@@ -39,16 +39,26 @@ extern "C" {
 #endif
 
 #include <nds/ndstypes.h>
+#include <calico/nds/arm9/sound.h>
 
 typedef void (* MicCallback)(void* completedBuffer, int length);
 
-/*! \brief Sound formats used by the DS */
-typedef enum {
-	SoundFormat_16Bit = 1, /*!<  16-bit PCM */
-	SoundFormat_8Bit = 0,  /*!<  8-bit PCM */
-	SoundFormat_PSG = 3,   /*!<  PSG (programmable sound generator?) */
-	SoundFormat_ADPCM = 2  /*!<  IMA ADPCM compressed audio  */
-}SoundFormat;
+typedef SoundFmt  SoundFormat;
+typedef SoundDuty DutyCycle;
+
+#define SoundFormat_16Bit SoundFmt_Pcm16
+#define SoundFormat_8Bit  SoundFmt_Pcm8
+#define SoundFormat_PSG   SoundFmt_Psg
+#define SoundFormat_ADPCM SoundFmt_ImaAdpcm
+
+#define DutyCycle_0  SoundDuty_0
+#define DutyCycle_12 SoundDuty_12_5
+#define DutyCycle_25 SoundDuty_25
+#define DutyCycle_37 SoundDuty_37_5
+#define DutyCycle_50 SoundDuty_50
+#define DutyCycle_62 SoundDuty_62_5
+#define DutyCycle_75 SoundDuty_75
+#define DutyCycle_87 SoundDuty_87_5
 
 /*! \brief Microphone recording formats DS */
 typedef enum {
@@ -56,28 +66,22 @@ typedef enum {
 	MicFormat_12Bit = 0 /*!<  12-bit PCM */
 }MicFormat;
 
-/*! \brief PSG Duty cycles used by the PSG hardware */
-typedef enum {
-	DutyCycle_0  = 7, /*!<  0.0% duty cycle */
-	DutyCycle_12 = 0, /*!<  12.5% duty cycle */
-	DutyCycle_25 = 1, /*!<  25.0% duty cycle */
-	DutyCycle_37 = 2, /*!<  37.5% duty cycle */
-	DutyCycle_50 = 3, /*!<  50.0% duty cycle */
-	DutyCycle_62 = 4, /*!<  62.5% duty cycle */
-	DutyCycle_75 = 5, /*!<  75.0% duty cycle */
-	DutyCycle_87 = 6  /*!<  87.5% duty cycle */
-}DutyCycle;
-
 /*! \fn void soundEnable(void)
 	\brief Enables Sound on the DS.  Should be called prior to
 	attempting sound playback
 */
-void soundEnable(void);
+static inline void soundEnable(void)
+{
+	soundPowerOn();
+}
 
 /*! \fn void soundDisable(void)
 	\brief Disables Sound on the DS.
 */
-void soundDisable(void);
+static inline void soundDisable(void)
+{
+	soundPowerOff();
+}
 
 /*! \fn int soundPlaySample(const void* data, SoundFormat format, u32 dataSize, u16 freq, u8 volume, u8 pan, bool loop, u16 loopPoint);
 	\brief Plays a sound in the specified format at the specified frequency.
@@ -120,7 +124,12 @@ int soundPlayNoise(u16 freq, u8 volume, u8 pan);
 	\brief Pause the sound specified by soundId
 	\param soundId The sound ID returned by play sound
 */
-void soundPause(int soundId);
+static inline void soundPause(int soundId)
+{
+	if (soundId >= 0) {
+		soundStop(1U << soundId);
+	}
+}
 
 /*! \fn void soundSetWaveDuty(int soundId, DutyCycle cycle)
 	\brief Sets the Wave Duty of a PSG sound
@@ -133,34 +142,59 @@ void soundSetWaveDuty(int soundId, DutyCycle cycle);
 	\brief Stops the sound specified by soundId and frees any resources allocated
 	\param soundId The sound ID returned by play sound
 */
-void soundKill(int soundId);
+static inline void soundKill(int soundId)
+{
+	if (soundId >= 0) {
+		soundStop(1U << soundId);
+	}
+}
 
 /*! \fn void soundResume(int soundId)
 	\brief Resumes a paused sound
 	\param soundId The sound ID returned by play sound
 */
-void soundResume(int soundId);
+static inline void soundResume(int soundId)
+{
+	if (soundId >= 0) {
+		soundStart(1U << soundId);
+	}
+}
 
 /*! \fn void soundSetVolume(int soundId, u8 volume)
 	\brief Sets the sound volume
 	\param soundId The sound ID returned by play sound
 	\param volume The new volume (0 to 127 min to max)
 */
-void soundSetVolume(int soundId, u8 volume);
+static inline void soundSetVolume(int soundId, u8 volume)
+{
+	if (soundId >= 0) {
+		soundChSetVolume(soundId, volume<<4);
+	}
+}
 
 /*! \fn void soundSetPan(int soundId, u8 pan)
 	\brief Sets the sound pan
 	\param soundId The sound ID returned by play sound
 	\param pan The new pan value (0 to 127 left to right (64 = center))
 */
-void soundSetPan(int soundId, u8 pan);
+static inline void soundSetPan(int soundId, u8 pan)
+{
+	if (soundId >= 0) {
+		soundChSetPan(soundId, pan);
+	}
+}
 
 /*! \fn void soundSetFreq(int soundId, u16 freq)
 	\brief Sets the sound frequency
 	\param soundId The sound ID returned by play sound
 	\param freq The frequency in Hz
 */
-void soundSetFreq(int soundId, u16 freq);
+static inline void soundSetFreq(int soundId, u16 freq)
+{
+	if (soundId >= 0) {
+		soundChSetTimer(soundId, soundTimerFromHz(freq));
+	}
+}
 
 /*! \fn int soundMicRecord(void *buffer, u32 bufferLength, MicFormat format, int freq, MicCallback callback);
 
