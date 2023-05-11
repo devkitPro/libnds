@@ -40,11 +40,13 @@ extern "C" {
 
 #include <nds/ndstypes.h>
 #include <calico/nds/arm9/sound.h>
+#include <calico/nds/arm9/mic.h>
 
 typedef void (* MicCallback)(void* completedBuffer, int length);
 
 typedef SoundFmt  SoundFormat;
 typedef SoundDuty DutyCycle;
+typedef MicFmt    MicFormat;
 
 #define SoundFormat_16Bit SoundFmt_Pcm16
 #define SoundFormat_8Bit  SoundFmt_Pcm8
@@ -60,11 +62,8 @@ typedef SoundDuty DutyCycle;
 #define DutyCycle_75 SoundDuty_75
 #define DutyCycle_87 SoundDuty_87_5
 
-/*! \brief Microphone recording formats DS */
-typedef enum {
-	MicFormat_8Bit = 1, /*!<  8-bit PCM */
-	MicFormat_12Bit = 0 /*!<  12-bit PCM */
-}MicFormat;
+#define MicFormat_8Bit  MicFmt_Pcm8
+#define MicFormat_12Bit MicFmt_Pcm16
 
 /*! \fn void soundEnable(void)
 	\brief Enables Sound on the DS.  Should be called prior to

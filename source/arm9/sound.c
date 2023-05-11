@@ -26,11 +26,13 @@
 
 ---------------------------------------------------------------------------------*/
 #include <nds/arm9/sound.h>
+#include <calico/nds/pm.h>
 #include <string.h>
 
 __attribute__((constructor)) static void _soundEnsureInit(void)
 {
 	soundInit();
+	micInit();
 }
 
 static int _soundFindFreeChannel(int chmin, int chmax)
@@ -75,4 +77,38 @@ int soundPlaySample(const void* data, SoundFormat format, u32 dataSize, u16 freq
 	}
 
 	return ch;
+}
+
+static void _soundMicCallback(void* user, void* buf, size_t byte_sz)
+{
+	MicCallback cb = (MicCallback)user;
+	cb(buf, byte_sz);
+}
+
+int soundMicRecord(void *buffer, u32 bufferLength, MicFormat format, int freq, MicCallback callback)
+{
+	if (!micSetCpuTimer(TIMER_PRESCALER_1, timerCalcPeriod(TIMER_PRESCALER_1, freq))) {
+		return 0;
+	}
+
+	if (callback) {
+		micSetCallback(_soundMicCallback, callback);
+	} else {
+		micSetCallback(NULL, NULL);
+	}
+
+	pmMicSetAmp(true, PmMicGain_160);
+
+	if (!micStart(buffer, bufferLength/2, format, MicMode_DoubleBuffer)) {
+		pmMicSetAmp(false, 0);
+		return 0;
+	}
+
+	return 1;
+}
+
+void soundMicOff(void)
+{
+	micStop();
+	pmMicSetAmp(false, 0);
 }
