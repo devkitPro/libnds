@@ -31,9 +31,11 @@
 #endif
 
 #include <nds/ndstypes.h>
+#include <calico/nds/arm7/i2c.h>
+#include <calico/nds/arm7/mcu.h>
 
-#define REG_I2CDATA	(*(vu8 *)0x4004500)
-#define REG_I2CCNT	(*(vu8 *)0x4004501)
+#define REG_I2CDATA	REG_I2C_DATA
+#define REG_I2CCNT	REG_I2C_CNT
 
 static inline void i2cWaitBusy() {
 	while(REG_I2CCNT & 0x80);
@@ -44,22 +46,35 @@ enum i2cDevices {
 	I2C_CAM1	= 0x78,
 	I2C_UNK1	= 0xA0,
 	I2C_UNK2	= 0xE0,
-	I2C_PM		= 0x4A,
+	I2C_PM		= I2cDev_MCU,
 	I2C_UNK3	= 0x40,
 	I2C_GPIO	= 0x90
 };
 
 // Registers for Power Management (I2C_PM)
-#define I2CREGPM_BATUNK		0x00
-#define I2CREGPM_PWRIF		0x10
-#define I2CREGPM_PWRCNT		0x11
-#define I2CREGPM_MMCPWR		0x12
-#define I2CREGPM_BATTERY	0x20
-#define I2CREGPM_CAMLED		0x31
-#define I2CREGPM_VOL		0x40
-#define I2CREGPM_RESETFLAG	0x70
+#define I2CREGPM_BATUNK		McuReg_Version
+#define I2CREGPM_PWRIF		McuReg_IrqFlags
+#define I2CREGPM_PWRCNT		McuReg_DoReset
+#define I2CREGPM_MMCPWR		McuReg_Config
+#define I2CREGPM_BATTERY	McuReg_BatteryState
+#define I2CREGPM_CAMLED		McuReg_CamLed
+#define I2CREGPM_VOL		McuReg_VolumeLevel
+#define I2CREGPM_RESETFLAG	McuReg_WarmbootFlag
 
-u8 i2cWriteRegister(u8 device, u8 reg, u8 data);
-u8 i2cReadRegister(u8 device, u8 reg);
+static inline u8 i2cWriteRegister(u8 device, u8 reg, u8 data)
+{
+	i2cLock();
+	bool ret = i2cWriteRegister8((I2cDevice)device, reg, data);
+	i2cUnlock();
+	return ret;
+}
+
+static inline u8 i2cReadRegister(u8 device, u8 reg)
+{
+	i2cLock();
+	u8 ret = i2cReadRegister8((I2cDevice)device, reg);
+	i2cUnlock();
+	return ret;
+}
 
 #endif // I2C_ARM7_INCLUDE

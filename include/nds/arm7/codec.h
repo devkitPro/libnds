@@ -39,30 +39,14 @@ extern "C" {
 #include <nds/arm7/serial.h>
 #include <nds/memory.h>
 #include <nds/system.h>
-#include <nds/touch.h>
+#include <calico/nds/arm7/codec.h>
 
-static inline bool cdcIsAvailable(void) {
-	return isDSiMode() && (__DSiHeader->appflags & 0x01);
-}
+#define cdcIsAvailable cdcIsTwlMode
 
-enum cdcBanks {
-	CDC_CONTROL     = 0x00, // Chip control
-	CDC_SOUND       = 0x01, // ADC/DAC control
-	CDC_TOUCHCNT	= 0x03, // TSC control
-	CDC_TOUCHDATA	= 0xFC, // TSC data buffer
-};
-
-// Direct register functions
-u8   cdcReadReg(u8 bank, u8 reg);
-void cdcReadRegArray(u8 bank, u8 reg, void* data, u8 size);
-void cdcWriteReg(u8 bank, u8 reg, u8 value);
-void cdcWriteRegMask(u8 bank, u8 reg, u8 mask, u8 value);
-void cdcWriteRegArray(u8 bank, u8 reg, const void* data, u8 size);
-
-// Touchscreen functions
-void cdcTouchInit(void);
-bool cdcTouchPenDown(void);
-bool cdcTouchRead(touchPosition* pos);
+#define CDC_CONTROL   CdcPage_Control
+#define CDC_SOUND     CdcPage_Sound
+#define CDC_TOUCHCNT  CdcPage_TscControl
+#define CDC_TOUCHDATA CdcPage_TscData
 
 #ifdef __cplusplus
 }

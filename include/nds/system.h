@@ -197,6 +197,7 @@ u8* getHeapLimit();
 //    ARM7 section
 //--------------------------------------------------------------
 #ifdef ARM7
+#include <calico/nds/arm7/pmic.h>
 
 #define REG_CONSOLEID	(*(vu64*)0x04004D00)
 
@@ -209,17 +210,16 @@ u8* getHeapLimit();
 typedef enum {
 	POWER_SOUND = POWCNT_SOUND,			//!<	Controls the power for the sound controller.
 
-	PM_CONTROL_REG		= 0,		//!<	Selects the PM control register
-	PM_BATTERY_REG		= 1,		//!<	Selects the PM battery register
-	PM_AMPLIFIER_REG	= 2,		//!<	Selects the PM amplifier register
-	PM_READ_REGISTER	= (1<<7),	//!<	Selects the PM read register
-	PM_AMP_OFFSET		= 2,		//!<	Selects the PM amp register
-	PM_GAIN_OFFSET		= 3,		//!<	Selects the PM gain register
-	PM_BACKLIGHT_LEVEL	= 4, 		//!<	Selects the DS Lite backlight register
-	PM_GAIN_20			= 0,		//!<	Sets the mic gain to 20db
-	PM_GAIN_40			= 1,		//!<	Sets the mic gain to 40db
-	PM_GAIN_80			= 2,		//!<	Sets the mic gain to 80db
-	PM_GAIN_160			= 3,		//!<	Sets the mic gain to 160db
+	PM_CONTROL_REG		= PmicReg_Control,			//!<	Selects the PM control register
+	PM_BATTERY_REG		= PmicReg_BatteryStatus,	//!<	Selects the PM battery register
+	PM_AMPLIFIER_REG	= PmicReg_MicAmpControl,	//!<	Selects the PM amplifier register
+	PM_AMP_OFFSET		= PmicReg_MicAmpControl,	//!<	Selects the PM amp register
+	PM_GAIN_OFFSET		= PmicReg_MicAmpGain,		//!<	Selects the PM gain register
+	PM_BACKLIGHT_LEVEL	= PmicReg_BacklightLevel,	//!<	Selects the DS Lite backlight register
+	PM_GAIN_20			= PmicMicGain_20,			//!<	Sets the mic gain to 20db
+	PM_GAIN_40			= PmicMicGain_40,			//!<	Sets the mic gain to 40db
+	PM_GAIN_80			= PmicMicGain_80,			//!<	Sets the mic gain to 80db
+	PM_GAIN_160			= PmicMicGain_160,			//!<	Sets the mic gain to 160db
 	PM_AMP_ON			= 1,		//!<	Turns the sound amp on
 	PM_AMP_OFF			= 0			//!<	Turns the sound amp off
 } ARM7_power;
@@ -227,16 +227,20 @@ typedef enum {
 //!< PM control register bits - LED control
 #define PM_LED_CONTROL(m)  ((m)<<4)
 
-// Warning: These functions use the SPI chain, and are thus 'critical'
-// sections, make sure to disable interrupts during the call if you've
-// got a VBlank IRQ polling the touch screen, etc...
-
 // Read/write a power management register
-int writePowerManagement(int reg, int command);
+static inline
+void writePowerManagement(int reg, int command) {
+	spiLock();
+	pmicWriteRegister((PmicRegister)reg, command);
+	spiUnlock();
+}
 
 static inline
 int readPowerManagement(int reg) {
-	return writePowerManagement((reg)|PM_READ_REGISTER, 0);
+	spiLock();
+	int ret = pmicReadRegister((PmicRegister)reg);
+	spiUnlock();
+	return ret;
 }
 
 static inline
