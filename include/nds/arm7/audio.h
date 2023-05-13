@@ -43,6 +43,7 @@ extern "C" {
 #include <nds/arm7/serial.h>
 #include <nds/system.h>
 #include <calico/nds/arm7/sound.h>
+#include <calico/nds/arm7/mic.h>
 
 #define SOUND_VOL(n)	SOUNDCNT_VOL(n)
 #define SOUND_FREQ(n)	(-soundTimerFromHz(n))
@@ -87,15 +88,13 @@ extern "C" {
 #define REG_SNDCAP1DAD	REG_SNDCAPxDAD(1)
 #define REG_SNDCAP1LEN	REG_SNDCAPxLEN(1)
 
-typedef void (*MIC_BUF_SWAP_CB)(u8* completedBuffer, int length);
-
 //---------------------------------------------------------------------------------
 // DSi Registers
 //---------------------------------------------------------------------------------
 
 #define REG_SNDEXTCNT	REG_SNDEXCNT
-#define REG_MICCNT		(*(vu16*)0x04004600)
-#define REG_MICDATA		(*(vu32*)0x04004604)
+#define REG_MICCNT		REG_MICEX_CNT
+#define REG_MICDATA		REG_MICEX_DATA
 
 #define SNDEXTCNT_RATIO(n)		SNDEXCNT_MIX_RATIO(n)
 #define SNDEXTCNT_FREQ_32KHZ	SNDEXCNT_I2S_32728_HZ
@@ -104,63 +103,15 @@ typedef void (*MIC_BUF_SWAP_CB)(u8* completedBuffer, int length);
 #define SNDEXTCNT_ENABLE		SNDEXCNT_ENABLE
 
 #define MICCNT_FORMAT(n)		((n)&3) // unknown, always set to '2'
-#define MICCNT_FREQ_DIV(n)		(((n)&3)<<2) // F/(n+1) where F is SNDEXTCNT output freq
-#define MICCNT_EMPTY			BIT(8)
-#define MICCNT_NOT_EMPTY		BIT(9)
-#define MICCNT_MORE_DATA		BIT(10)
-#define MICCNT_OVERRUN			BIT(11)
-#define MICCNT_CLEAR_FIFO		BIT(12)
-#define MICCNT_ENABLE_IRQ		BIT(13)
-#define MICCNT_ENABLE_IRQ2		BIT(14)
-#define MICCNT_ENABLE			BIT(15)
-
-/*---------------------------------------------------------------------------------
-	microphone code based on neimod's microphone example.
-	See: http://neimod.com/dstek/ 
-	Chris Double (chris.double@double.co.nz)
-	http://www.double.co.nz/nintendo_ds
----------------------------------------------------------------------------------*/
-
-
-/*---------------------------------------------------------------------------------
-	Read a byte from the microphone
----------------------------------------------------------------------------------*/
-u8 micReadData8();
-u16 micReadData12();
-
-/*---------------------------------------------------------------------------------
-	Fill the buffer with data from the microphone. The buffer will be
-	signed sound data at 16kHz. Once the length of the buffer is
-	reached, no more data will be stored. Uses ARM7 timer 0.  
----------------------------------------------------------------------------------*/
-void micStartRecording(u8* buffer, int length, int freq, int timer, bool eightBitSample, MIC_BUF_SWAP_CB bufferSwapCallback);
-
-/*---------------------------------------------------------------------------------
-	Stop recording data, and return the length of data recorded.
----------------------------------------------------------------------------------*/
-int micStopRecording(void);
-
-/* This must be called during IRQ_TIMER0 */
-void micTimerHandler(void);
-
-void micSetAmp(u8 control, u8 gain);
-
-//---------------------------------------------------------------------------------
-// Turn the microphone on 
-//---------------------------------------------------------------------------------
-static inline void micOn(void) {
-//---------------------------------------------------------------------------------
-  micSetAmp(PM_AMP_ON, PM_GAIN_160);
-}
-
-
-//---------------------------------------------------------------------------------
-// Turn the microphone off 
-//---------------------------------------------------------------------------------
-static inline void micOff(void) {
-//---------------------------------------------------------------------------------
-  micSetAmp(PM_AMP_OFF, 0);
-}
+#define MICCNT_FREQ_DIV(n)		MICEX_CNT_RATE_DIV(n)
+#define MICCNT_EMPTY			MICEX_CNT_FIFO_EMPTY
+#define MICCNT_NOT_EMPTY		MICEX_CNT_FIFO_HALF
+#define MICCNT_MORE_DATA		MICEX_CNT_FIFO_FULL
+#define MICCNT_OVERRUN			MICEX_CNT_FIFO_BORKED
+#define MICCNT_CLEAR_FIFO		MICEX_CNT_CLEAR_FIFO
+#define MICCNT_ENABLE_IRQ		MICEX_CNT_IE_FIFO_HALF
+#define MICCNT_ENABLE_IRQ2		MICEX_CNT_IE_FIFO_FULL
+#define MICCNT_ENABLE			MICEX_CNT_ENABLE
 
 #ifdef __cplusplus
 }
