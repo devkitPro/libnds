@@ -243,7 +243,6 @@ extern "C" {
 #include "nds/memory.h"
 #include "nds/system.h"
 #include "nds/timers.h"
-#include "nds/fifocommon.h"
 #include "nds/touch.h"
 #include "nds/input.h"
 #include "nds/sha1.h"

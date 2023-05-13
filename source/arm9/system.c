@@ -32,9 +32,7 @@ distribution.
 #include <nds/memory.h>
 #include <nds/bios.h>
 #include <nds/system.h>
-#include <nds/fifocommon.h>
 #include <nds/interrupts.h>
-#include <nds/fifomessages.h>
 
 //todo document
 //
@@ -67,14 +65,14 @@ void powerOff(int bits) {
 //---------------------------------------------------------------------------------
 void ledBlink(int bm) {
 //---------------------------------------------------------------------------------
-	fifoSendValue32(FIFO_PM, PM_REQ_LED | bm);
+	//fifoSendValue32(FIFO_PM, PM_REQ_LED | bm);
 }
 
 //---------------------------------------------------------------------------------
 void enableSlot1() {
 //---------------------------------------------------------------------------------
 
-	if(isDSiMode()) fifoSendValue32(FIFO_PM, PM_REQ_SLOT1_ENABLE);
+	//if(isDSiMode()) fifoSendValue32(FIFO_PM, PM_REQ_SLOT1_ENABLE);
 
 }
 
@@ -82,6 +80,6 @@ void enableSlot1() {
 void disableSlot1() {
 //---------------------------------------------------------------------------------
 
-	if(isDSiMode()) fifoSendValue32(FIFO_PM, PM_REQ_SLOT1_DISABLE);
+	//if(isDSiMode()) fifoSendValue32(FIFO_PM, PM_REQ_SLOT1_DISABLE);
 
 }
