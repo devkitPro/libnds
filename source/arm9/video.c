@@ -43,12 +43,6 @@ u32 vramSetPrimaryBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE
 }
 
 //---------------------------------------------------------------------------------
-u32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d) {
-//---------------------------------------------------------------------------------
-	return vramSetPrimaryBanks(a,b,c,d);
-}
-
-//---------------------------------------------------------------------------------
 u32 vramSetBanks_EFG(VRAM_E_TYPE e, VRAM_F_TYPE f, VRAM_G_TYPE g) {
 //---------------------------------------------------------------------------------
 	uint32 vramTemp = VRAM_EFG_CR;

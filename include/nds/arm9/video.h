@@ -342,8 +342,6 @@ typedef _palette _ext_palette[16];
 */
 u32 vramSetPrimaryBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d);
 
-__attribute__ ((deprecated)) u32 vramSetMainBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d);
-
 /** \brief  Set E,F,G bank modes.
 *    \param e mapping mode of VRAM_E
 *    \param f mapping mode of VRAM_F
