@@ -30,6 +30,7 @@ distribution.
 #include "keyboardGfx.h"
 #include <nds/ndstypes.h>
 #include <nds/interrupts.h>
+#include <nds/system.h>
 #include <nds/arm9/keyboard.h>
 #include <nds/arm9/input.h>
 #include <nds/arm9/decompress.h>
@@ -269,6 +270,10 @@ ssize_t keyboardRead(struct _reent *r, void *unused, char *ptr, size_t len) {
 	int tempLen;
 	int c = NOKEY;
 
+	if (!pmMainLoop()) {
+		return 0;
+	}
+
 	stdioRead = true;
 
 	if(!curKeyboard->visible) {
@@ -280,7 +285,7 @@ ssize_t keyboardRead(struct _reent *r, void *unused, char *ptr, size_t len) {
 		keyboardUpdate();
 		swiWaitForVBlank();
 
-	} while(keyBufferLength <= 0 || (keyBufferLength < KEY_BUFFER_SIZE && lastKey != DVK_ENTER));
+	} while(pmMainLoop() && (keyBufferLength <= 0 || (keyBufferLength < KEY_BUFFER_SIZE && lastKey != DVK_ENTER)));
 
 	tempLen = keyBufferLength;
 
@@ -423,7 +428,7 @@ int keyboardGetChar(void) {
 	int pressed;
 
 
-	while(1) {
+	while(pmMainLoop()) {
 		swiWaitForVBlank();
 		scanKeys();
 		pressed = keysDown();
@@ -449,7 +454,7 @@ void keyboardGetString(char * buffer, int maxLen) {
 	while(buffer < end) {
 		c = (char)keyboardGetChar();
 
-		if(c == DVK_ENTER) break;
+		if(c == 0 || c == DVK_ENTER) break;
 
 		*buffer++ = c;
 	}
