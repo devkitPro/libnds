@@ -31,9 +31,10 @@
 
 #include <nds/arm9/sassert.h>
 //---------------------------------------------------------------------------------
-void timerStart(int timer, ClockDivider divider, u16 ticks, VoidFn callback){
+void timerStart(unsigned timer, ClockDivider divider, u16 ticks, VoidFn callback){
 //---------------------------------------------------------------------------------
-	sassert(timer < 4, "timer must be in range 0 - 3");
+	sassert(timer < 2, "timer must be in range 0 - 1");
+	TIMER_CR(timer) = 0;
 	TIMER_DATA(timer) = ticks;
 
 	if(callback) {
@@ -46,12 +47,12 @@ void timerStart(int timer, ClockDivider divider, u16 ticks, VoidFn callback){
 }
 
 
-u16 elapsed[4] = {0, 0, 0, 0};
+static u16 elapsed[2];
 
 //---------------------------------------------------------------------------------
-u16 timerElapsed(int timer) {
+u16 timerElapsed(unsigned timer) {
 //---------------------------------------------------------------------------------
-	sassert(timer < 4, "timer must be in range 0 - 3");
+	sassert(timer < 2, "timer must be in range 0 - 1");
 	u16 time = TIMER_DATA(timer);
 
 	s32 result = (s32)time - (s32)elapsed[timer];
@@ -68,9 +69,9 @@ u16 timerElapsed(int timer) {
 
 
 //---------------------------------------------------------------------------------
-u16 timerPause(int timer) {
+u16 timerPause(unsigned timer) {
 //---------------------------------------------------------------------------------
-	sassert(timer < 4, "timer must be in range 0 - 3");
+	sassert(timer < 2, "timer must be in range 0 - 1");
 	TIMER_CR(timer) &= ~TIMER_ENABLE;
 	u16 temp = timerElapsed(timer);
 	elapsed[timer] = 0;
@@ -78,9 +79,9 @@ u16 timerPause(int timer) {
 }
 
 //---------------------------------------------------------------------------------
-u16 timerStop(int timer) {
+u16 timerStop(unsigned timer) {
 //---------------------------------------------------------------------------------
-	sassert(timer < 4, "timer must be in range 0 - 3");
+	sassert(timer < 2, "timer must be in range 0 - 1");
 	TIMER_CR(timer) = 0;
 	u16 temp = timerElapsed(timer);
 	elapsed[timer] = 0;
@@ -88,60 +89,16 @@ u16 timerStop(int timer) {
 }
 
 
-/*
-  CPU Usage - http://forums.devkitpro.org/viewtopic.php?f=6&t=415
-
-  original Source by eKid
-  adapted by Ryouarashi and Weirdfox
-*/
-static int localTimer = 0;
+static u32 tickRef;
 
 //---------------------------------------------------------------------------------
-void cpuStartTiming(int timer) {
+void cpuStartTiming(int unused) {
 //---------------------------------------------------------------------------------
-	sassert(timer < 3, "timer must be in range 0 - 2");
-	localTimer = timer;
-
-    TIMER_CR(timer) = 0;
-    TIMER_CR(timer+1) = 0;
-
-    TIMER_DATA(timer) = 0;
-    TIMER_DATA(timer+1) = 0;
-
-    TIMER_CR(timer+1) = TIMER_CASCADE | TIMER_ENABLE;
-    TIMER_CR(timer) = TIMER_ENABLE;
+	tickRef = tickGetCount();
 }
 
 //---------------------------------------------------------------------------------
-u32 cpuGetTiming() {
+u32 cpuGetTiming(void) {
 //---------------------------------------------------------------------------------
-	int lo = TIMER_DATA(localTimer);
-	int hi = TIMER_DATA(localTimer+1);
-	int lo2 = TIMER_DATA(localTimer);
-	int hi2 = TIMER_DATA(localTimer+1);
-
-	if (lo2 < lo) {
-		lo = lo2, hi = hi2;
-	}
-	return ( lo | hi<<16 );
+	return (tickGetCount() - tickRef) * 64;
 }
-
-//---------------------------------------------------------------------------------
-u32 cpuEndTiming() {
-//---------------------------------------------------------------------------------
-	int lo = TIMER_DATA(localTimer);
-	int hi = TIMER_DATA(localTimer+1);
-	int lo2 = TIMER_DATA(localTimer);
-	int hi2 = TIMER_DATA(localTimer+1);
-
-	if (lo2 < lo) {
-		lo = lo2, hi = hi2;
-	}
-
-	TIMER_CR(localTimer) = 0;
-	TIMER_CR(localTimer+1) = 0;
-
-	return ( lo | hi<<16 );
-
-}
-
