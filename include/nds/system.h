@@ -109,10 +109,13 @@ typedef enum
 #endif
 }PM_Bits;
 
+static inline
 /*!	Set the LED blink mode
 	\param bm What to power on.
 */
-void ledBlink(int bm);
+void ledBlink(int bm) {
+	pmSetPowerLed((PmLedMode)(bm&3));
+}
 
 //--------------------------------------------------------------
 //    ARM9 section
