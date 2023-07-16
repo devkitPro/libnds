@@ -75,10 +75,10 @@ enum {
 #define REG_AES_BLKCNT REG_AES_LEN
 
 #define AES_KEYSLOT  ((aes_keyslot_t *)(MM_IO + IO_AES_SLOTxKEY(0)))
-#define AES_KEYSLOT0 MEOW_REG(aes_keyslot_t, IO_AES_SLOTxKEY(0))
-#define AES_KEYSLOT1 MEOW_REG(aes_keyslot_t, IO_AES_SLOTxKEY(1))
-#define AES_KEYSLOT2 MEOW_REG(aes_keyslot_t, IO_AES_SLOTxKEY(2))
-#define AES_KEYSLOT3 MEOW_REG(aes_keyslot_t, IO_AES_SLOTxKEY(3))
+#define AES_KEYSLOT0 MK_REG(aes_keyslot_t, IO_AES_SLOTxKEY(0))
+#define AES_KEYSLOT1 MK_REG(aes_keyslot_t, IO_AES_SLOTxKEY(1))
+#define AES_KEYSLOT2 MK_REG(aes_keyslot_t, IO_AES_SLOTxKEY(2))
+#define AES_KEYSLOT3 MK_REG(aes_keyslot_t, IO_AES_SLOTxKEY(3))
 
 #ifdef __cplusplus
 }

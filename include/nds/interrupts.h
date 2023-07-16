@@ -68,7 +68,7 @@ typedef u32 IRQ_MASKS;
 typedef u32 IRQ_MASKSAUX;
 
 //! maximum number of interrupts.
-#define MAX_INTERRUPTS  MEOW_IRQ_NUM_HANDLERS
+#define MAX_INTERRUPTS  MK_IRQ_NUM_HANDLERS
 
 //! values allowed for REG_IME
 enum IME_VALUE {
