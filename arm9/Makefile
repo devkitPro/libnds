@@ -26,7 +26,7 @@ DATA			:=	../source/arm9
 #---------------------------------------------------------------------------------
 # options for code generation
 #---------------------------------------------------------------------------------
-ARCH	:=	-march=armv5te -mtune=arm946e-s -DARM9
+ARCH	:=	-march=armv5te -mtune=arm946e-s -mthumb -DARM9
 
 CFLAGS	:=	-g -Wall -O2\
 			-ffunction-sections -fdata-sections \
