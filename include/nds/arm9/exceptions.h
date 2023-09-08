@@ -25,35 +25,50 @@
 #define _exceptions_h_
 //---------------------------------------------------------------------------------
 
+#include "../ndstypes.h"
+#include <calico/arm/common.h>
+#include <calico/nds/mm_env.h>
 
 /** \file
 	\brief functions to handle hardware exceptions.
 */
 
-#define EXCEPTION_VECTOR	(*(VoidFn *)(0x2FFFD9C))
+#define EXCEPTION_VECTOR	(*(VoidFn *)MM_ENV_EXCPT_VECTOR)
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+//! Exception context structure.
+typedef struct ExcptContext {
+	u32 r[16];
+	u32 cpsr;
+	u32 spsr;
+	u32 cp15cr;
+	u32 excpt_cpsr;
+} ExcptContext;
 
-extern VoidFn exceptionC[];//shouldn't this be a pointer instead of an array?
-extern u32 exceptionStack;
-
-//! an array with a copy of all the registers of when the exception occured.
-extern s32 exceptionRegisters[];
-
-
-void enterException(void);
+//! Exception handler function type.
+typedef void (* ExcptHandler)(ExcptContext* ctx, unsigned flags);
 
 //! sets a custom hardware exception handler.
-void setExceptionHandler(VoidFn handler);
+static inline void setExceptionHandler(ExcptHandler handler)
+{
+	extern ExcptHandler g_excptHandler;
+	void __libnds_excpt(void);
+
+	EXCEPTION_VECTOR = __libnds_excpt;
+	g_excptHandler = handler;
+}
 
 //! sets the default hardware exception handler.
-void defaultExceptionHandler();
+void defaultExceptionHandler(void);
 
-//! returns the cpu status register.
-u32 getCPSR();
+//! prints the given exception context.
+void guruMeditationDump(ExcptContext* ctx, unsigned flags);
+
+//! decodes the fault address from a given opcode.
+u32 getExceptionAddress(const ExcptContext* ctx, u32 opcodeAddress);
 
 #ifdef __cplusplus
 }

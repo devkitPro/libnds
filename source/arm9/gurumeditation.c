@@ -24,16 +24,13 @@
 
 #include <nds/ndstypes.h>
 #include <nds/memory.h>
-
-#include <nds/arm9/video.h>
-#include <nds/arm9/console.h>
 #include <nds/arm9/exceptions.h>
-#include <nds/arm9/background.h>
 
-#include <stdio.h>
+#include <calico/arm/psr.h>
+#include <calico/system/dietprint.h>
 
 //---------------------------------------------------------------------------------
-unsigned long ARMShift(unsigned long value,unsigned char shift) {
+static unsigned long ARMShift(const u32* exceptionRegisters, unsigned long value,unsigned char shift) {
 //---------------------------------------------------------------------------------
 	// no shift at all
 	if (shift == 0x0B) return value ;
@@ -73,14 +70,14 @@ unsigned long ARMShift(unsigned long value,unsigned char shift) {
 	return value;
 }
 
-
 //---------------------------------------------------------------------------------
-u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState) {
+u32 getExceptionAddress(const ExcptContext* ctx, u32 opcodeAddress) {
 //---------------------------------------------------------------------------------
 
 	int Rf, Rb, Rd, Rn, Rm;
+	const u32* exceptionRegisters = ctx->r;
 
-	if (thumbState) {
+	if (ctx->cpsr & ARM_PSR_T) {
 		// Thumb
 
 		unsigned short opcode = *(unsigned short *)opcodeAddress ;
@@ -155,7 +152,7 @@ u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState) {
 				if (opcode & 0x01000000) {
 					unsigned short shift = (unsigned short)((opcode >> 4) & 0xFF) ;
 					// pre indexing
-					long Offset = ARMShift(exceptionRegisters[Rm],shift);
+					long Offset = ARMShift(exceptionRegisters,exceptionRegisters[Rm],shift);
 					// add or sub the offset depending on the U-Bit
 					return exceptionRegisters[Rn] + ((opcode & 0x00800000)?Offset:-Offset);
 				} else {
@@ -180,7 +177,7 @@ u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState) {
 			Rd = (opcode >> 12) & 0x0F;
 			Rm = opcode & 0x0F;
 			unsigned short shift = (unsigned short)((opcode >> 4) & 0xFF);
-			long Offset = ARMShift(exceptionRegisters[Rm],shift);
+			long Offset = ARMShift(exceptionRegisters,exceptionRegisters[Rm],shift);
 			// add or sub the offset depending on the U-Bit
 			return exceptionRegisters[Rn] + ((opcode & 0x00800000)?Offset:-Offset);
 		} else if ((opcode & 0x0E400F90) == 0x00400090) {
@@ -199,71 +196,57 @@ u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState) {
 	return 0;
 }
 
-static const char *registerNames[] =
+static const char* const registerNames[] =
 	{	"r0","r1","r2","r3","r4","r5","r6","r7",
 		"r8 ","r9 ","r10","r11","r12","sp ","lr ","pc " };
 
-extern const char __itcm_start[];
-
 //---------------------------------------------------------------------------------
-void guruMeditationDump() {
+void guruMeditationDump(ExcptContext* ctx, unsigned flags) {
 //---------------------------------------------------------------------------------
-	consoleDemoInit();
+	unsigned cpuMode = ctx->cpsr & 0x1f;
+	unsigned excptMode = ctx->excpt_cpsr & 0x1f;
 
-	BG_PALETTE_SUB[0] = RGB15(31,0,0);
-	BG_PALETTE_SUB[255] = RGB15(31,31,31);
+	u32 codeAddress = ctx->r[15];
+	u32 exceptionAddress = 0;
 
-	iprintf("\x1b[5CGuru Meditation Error!\n");
-	u32	currentMode = getCPSR() & 0x1f;
-	u32 thumbState = ((*(u32*)0x02FFFD90) & 0x20);
+	dietPrint("     Guru Meditation Error!\n");
 
-	u32 codeAddress, exceptionAddress = 0;
+	if (!(flags & 2) && excptMode == ARM_PSR_MODE_ABT) {
+		// The BIOS does not provide a mechanism to distinguish data aborts from
+		// prefetch aborts. Assume a prefetch abort if the PC is outside the usual
+		// code memory range (ITCM, main RAM).
+		u32 dabtCodeAddr = codeAddress-8;
+		u32 pabtCodeAddr = codeAddress-4;
+		flags = pabtCodeAddr < 0x01000000 || pabtCodeAddr >= 0x03000000;
+		codeAddress = flags ? pabtCodeAddr : dabtCodeAddr;
+	}
 
-	int offset = 8;
-
-	if ( currentMode == 0x17 ) {
-		iprintf ("\x1b[10Cdata abort!\n\n");
-		codeAddress = exceptionRegisters[15] - offset;
-		if (	(codeAddress > 0x02000000 && codeAddress < 0x02400000) ||
-				(codeAddress > (u32)__itcm_start && codeAddress < (u32)(__itcm_start + 32768)) )
-			exceptionAddress = getExceptionAddress( codeAddress, thumbState);
-		else
+	if (excptMode == ARM_PSR_MODE_ABT) {
+		if (flags & 1) {
+			dietPrint("        prefetch abort!\n\n");
 			exceptionAddress = codeAddress;
-
-	} else {
-		if (thumbState)
-			offset = 2;
-		else
-			offset = 4;
-		iprintf("\x1b[5Cundefined instruction!\n\n");
-		codeAddress = exceptionRegisters[15] - offset;
+		} else {
+			dietPrint("          data abort!\n\n");
+			exceptionAddress = getExceptionAddress(ctx, codeAddress);
+		}
+	} else /* if (excptMode == ARM_PSR_MODE_UND) */ {
+		dietPrint("     undefined instruction!\n\n");
+		codeAddress -= (ctx->cpsr & ARM_PSR_T) ? 2 : 4;
 		exceptionAddress = codeAddress;
 	}
 
-	iprintf("  pc: %08lX addr: %08lX\n\n",codeAddress,exceptionAddress);
-
-	int i;
-	for ( i=0; i < 8; i++ ) {
-		iprintf(	"  %s: %08lX   %s: %08lX\n",
-		registerNames[i], exceptionRegisters[i],
-		registerNames[i+8],exceptionRegisters[i+8]);
+	dietPrint("  pc: %08lX  addr: %08lX\n\n", codeAddress, exceptionAddress);
+	for (unsigned i = 0; i < 7; i ++) {
+		dietPrint("  %s: %08lX   %s: %08lX\n",
+			registerNames[i],  ctx->r[i],
+			registerNames[i+8],ctx->r[i+8]
+		);
 	}
-	iprintf("\n");
-	u32 *stack = (u32 *)exceptionRegisters[13];
-	for ( i=0; i<10; i++ ) {
-		iprintf( "\x1b[%d;2H%08lX:  %08lX %08lX", i + 14, (u32)&stack[i*2],stack[i*2], stack[(i*2)+1] );
+
+	dietPrint("  %s: %08lX  cp15: %08lX\n", registerNames[7], ctx->r[7], ctx->cp15cr);
+	if (cpuMode == ARM_PSR_MODE_USR || cpuMode == ARM_PSR_MODE_SYS) {
+		dietPrint("cpsr: %08lX\n", ctx->cpsr);
+	} else {
+		dietPrint("cpsr: %08lX  spsr: %08lX\n", ctx->cpsr, ctx->spsr);
 	}
-}
-
-//---------------------------------------------------------------------------------
-static void defaultHandler() {
-//---------------------------------------------------------------------------------
-	guruMeditationDump();
-	while(1);
-}
-
-//---------------------------------------------------------------------------------
-void defaultExceptionHandler() {
-//---------------------------------------------------------------------------------
-	setExceptionHandler(defaultHandler) ;
 }
