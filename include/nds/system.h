@@ -156,14 +156,9 @@ void systemShutDown(void) {
 void readFirmware(u32 address, void *buffer, u32 length);
 int writeFirmware(u32 address, void *buffer, u32 length);
 
-//!	Set the arm9 vector base
-/*!	Arm9 only
-	\param highVector high vector
-*/
-void setVectorBase(int highVector);
-
-/*! \brief A struct with all the CPU exeption vectors.
-	each member contains an ARM instuction that will be executed when an exeption occured.
+/*! \brief A struct with all the CPU exception vectors.
+	Each member contains a pointer to a function that will be executed
+	when a corresponding exception occurs.
 
 	See gbatek for more information.
 */
@@ -173,10 +168,12 @@ typedef struct sysVectors_t {
 	VoidFn	swi;			//!< software interrupt.
 	VoidFn	prefetch_abort;	//!< prefetch abort.
 	VoidFn	data_abort;		//!< data abort.
-	VoidFn	fiq;			//!< fast interrupt.
+	VoidFn	irq;			//!< interrupt.
 } sysVectors;
 
-extern sysVectors SystemVectors;
+#define SystemVectors __excpt_vectors
+
+extern sysVectors __excpt_vectors;
 void setSDcallback(void(*callback)(int));
 
 /*!
