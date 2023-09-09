@@ -67,10 +67,47 @@ FUNC_START32 __libnds_excpt
 	str   r6, [sp, #17*4] @ spsr
 	str   r2, [sp, #19*4] @ excpt_cpsr
 
+	@--------------------------------------------------------------------------
+	@ MPU reconfiguration
+
+	@ Configure MPU regions 0-2: background, main RAM, BIOS
+	ldr   r4, =CP15_PU_ENABLE | CP15_PU_4G
+	mcr   p15, 0, r4, c6, c0, 0
+	ldr   r4, =CP15_PU_ENABLE | CP15_PU_16M | MM_MAINRAM
+	mcr   p15, 0, r4, c6, c1, 0
+	ldr   r4, =CP15_PU_ENABLE | CP15_PU_32K | MM_BIOS
+	mcr   p15, 0, r4, c6, c2, 0
+
+	@ Configure MPU region 3: DTCM
+	mrc   p15, 0, r4, c9, c1, 0
+	bic   r4, r4, #0xff
+	orr   r4, r4, #CP15_PU_ENABLE | CP15_PU_16K
+	mcr   p15, 0, r4, c6, c3, 0
+
+	@ Clear unused MPU regions 4-7
+	mov   r4, #0
+	mcr   p15, 0, r4, c6, c4, 0
+	mcr   p15, 0, r4, c6, c5, 0
+	mcr   p15, 0, r4, c6, c6, 0
+	mcr   p15, 0, r4, c6, c7, 0
+
+	@ Set up MPU region attributes
+	ldr   r4, =0x3633
+	mcr   p15, 0, r4, c5, c0, 2 @ Data permissions
+	ldr   r4, =0x0666
+	mcr   p15, 0, r4, c5, c0, 3 @ Code permissions
+	mov   r4, #0b0110
+	mcr   p15, 0, r4, c2, c0, 0 @ Data cacheability
+	mcr   p15, 0, r4, c2, c0, 1 @ Code cacheability
+	mov   r4, #0b0010
+	mcr   p15, 0, r4, c3, c0, 0 @ Write buffer enable
+
 	@ Reenable MPU
 	mrc   p15, 0, r4, c1, c0, 0
 	orr   r4, r4, #CP15_CR_PU_ENABLE
 	mcr   p15, 0, r4, c1, c0, 0
+
+	@--------------------------------------------------------------------------
 
 	@ Grab C function & call it
 	ldr   r4, =g_excptHandler
