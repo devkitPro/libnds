@@ -222,11 +222,11 @@
 #ifndef NDS_INCLUDE
 #define NDS_INCLUDE
 
-#ifndef ARM7
-#ifndef ARM9
-#error Either ARM7 or ARM9 must be defined
+#if !defined(__NDS__) || !(defined(ARM9) || defined(ARM7))
+#error "This header file is only for NDS ARM9 or ARM7"
 #endif
-#endif
+
+#include <calico.h>
 
 #ifdef __cplusplus
 extern "C" {
