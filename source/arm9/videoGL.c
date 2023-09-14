@@ -1175,9 +1175,11 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 				src++;
 			}
 		} else {
+			DC_FlushRange(texture, size);
 			dmaCopyWords( 0, texture, tex->vramAddr, size );
 			if( type == GL_COMPRESSED ) {
 				vramSetBankB( VRAM_B_LCD );
+				DC_FlushRange((char*)texture + tex->texSize, size >> 1);
 				dmaCopyWords( 0, (char*)texture + tex->texSize, vramBlock_getAddr( glGlob->vramBlocks[ 0 ], tex->texIndexExt ), size >> 1 );
 			}
 		}
