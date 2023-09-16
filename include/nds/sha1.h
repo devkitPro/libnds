@@ -35,15 +35,9 @@ extern "C" {
 #endif
 
 #include "nds/ndstypes.h"
-#include <stddef.h>
+#include <calico/nds/bios.h>
 
-typedef struct swiSHA1context {
-	u32 state[5];       /*!< intermediate digest state  */
-	u32 total[2];       /*!< number of bytes processed  */
-	u8  buffer[64];     /*!< data block being processed */
-	u32 fragment_size;
-	void (*sha_block)(struct swiSHA1context *ctx, const void *src, size_t len); /*!< data block being processed */
-} swiSHA1context_t;
+typedef SvcSha1Context swiSHA1context_t;
 
 /**
  * \brief          SHA-1 context setup

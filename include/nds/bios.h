@@ -42,6 +42,7 @@ extern "C" {
 
 
 #include "nds/ndstypes.h"
+#include <calico/nds/bios.h>
 
 
 /*!	\brief Should return the header of a compressed stream of bytes.
@@ -101,11 +102,6 @@ typedef struct UnpackStruct
 
 
 /*!
-	\brief resets the DS.
-*/
-void swiSoftReset(void);
-
-/*!
 	\brief delays the code.
 
    Delays for for a period X + Y*duration where X is the swi overhead and Y is a cycle of
@@ -118,7 +114,7 @@ void swiSoftReset(void);
 	\param duration length of delay
 	\note Duration should be 1 or more, a duration of 0 is a huge delay.
 */
-void swiDelay(uint32 duration);
+void swiDelay(u32 duration) __asm__("svcWaitByLoop");
 
 
 /*!
@@ -127,7 +123,11 @@ void swiDelay(uint32 duration);
 	\param divisor		signed integer to divide by
 	\return numerator / divisor
 */
-int swiDivide(int numerator, int divisor);
+static inline int swiDivide(int numerator, int divisor)
+{
+	SvcDivResult res = svcDivMod(numerator, divisor);
+	return res.quot;
+}
 
 /*!
 	\brief calculate the remainder of an division.
@@ -135,7 +135,12 @@ int swiDivide(int numerator, int divisor);
 	\param divisor		signed integer to divide by
 	\return numerator % divisor
 */
-int swiRemainder(int numerator, int divisor);
+static inline int swiRemainder(int numerator, int divisor)
+{
+	SvcDivResult res = svcDivMod(numerator, divisor);
+	return res.rem;
+}
+
 
 /*!
 	\brief divides 2 numbers and stores both the result and the remainder.
@@ -145,7 +150,12 @@ int swiRemainder(int numerator, int divisor);
 	\param result		pointer to integer set to numerator / divisor
 	\param remainder 	pointer to integer set to numerator % divisor
 */
-void swiDivMod(int numerator, int divisor, int * result, int * remainder);
+static inline void swiDivMod(int numerator, int divisor, int * result, int * remainder)
+{
+	SvcDivResult res = svcDivMod(numerator, divisor);
+	if (result) *result = res.quot;
+	if (remainder) *remainder = res.rem;
+}
 
 
 //! copy in chunks of halfword size.
@@ -164,19 +174,7 @@ void swiDivMod(int numerator, int divisor, int * result, int * remainder);
 	\param flags	bits(0-20): size of data to copy/fill in words,
 						or'd with the copy mode size (word or halfword) and type (copy or fill).
 */
-void swiCopy(const void * source, void * dest, int flags);
-
-
-/*!	\brief copies or fills some memory.
-	can only copy in word chunks.
-	\param source	pointer to transfer source or pointer to value to fill the memory with.
-	\param dest		pointer to transfer destination.
-	\param flags	bits(0-20): size of data to copy/fill in words,
-						or'd with the type (copy or fill).
-
-	\note Transfers more quickly than swiCopy, but has higher interrupt latency.
-*/
-void swiFastCopy(const void * source, void * dest, int flags);
+void swiCopy(const void * source, void * dest, int flags) __asm__("svcCpuSet");
 
 
 /*!	\brief calculates the square root.
@@ -184,7 +182,7 @@ void swiFastCopy(const void * source, void * dest, int flags);
 	\return the square root of the value as an integer.
 	\note use fixed point math if you want more accuracy.
 */
-int swiSqrt(int value);
+int swiSqrt(int value) __asm__("svcSqrt");
 
 
 /*!	\brief calculates a CRC-16 checksum.
@@ -194,7 +192,7 @@ int swiSqrt(int value);
 
 	\return the CRC-16 after the data has been processed.
 */
-uint16 swiCRC16(uint16 crc, void * data, uint32 size);
+u16 swiCRC16(u16 crc, void * data, u32 size) __asm__("svcGetCRC16");
 
 
 /*!	\brief returns 0 if running on a nintendo hardware debugger.
@@ -211,7 +209,7 @@ int swiIsDebugger(void);
 	\param destination		destination address (word aligned).
 	\param params			pointer to an UnpackStruct.
 */
-void swiUnpackBits(uint8 * source, uint32 * destination, PUnpackStruct params);
+void swiUnpackBits(const void* source, u32* destination, PUnpackStruct params) __asm__("svcBitUnpack");
 
 
 /*!	\brief Decompresses LZSS compressed data.
@@ -222,7 +220,7 @@ void swiUnpackBits(uint8 * source, uint32 * destination, PUnpackStruct params);
 	\note Writes data a byte at a time.
 	\see decompress.h
 */
-void swiDecompressLZSSWram(void * source, void * destination);
+void swiDecompressLZSSWram(const void* source, void* destination) __asm__("svcLZ77UncompWram");
 
 
 /*!	\brief Decompresses LZSS compressed data vram safe.
@@ -236,11 +234,7 @@ void swiDecompressLZSSWram(void * source, void * destination);
 	\note Writes data a halfword at a time.
 	\see decompress.h
 */
-int swiDecompressLZSSVram(void * source, void * destination, uint32 toGetSize, TDecompressionStream * stream);
-
-int swiDecompressLZSSVramNTR(void * source, void * destination, uint32 toGetSize, TDecompressionStream * stream);
-int swiDecompressLZSSVramTWL(void * source, void * destination, uint32 toGetSize, TDecompressionStream * stream);
-
+int swiDecompressLZSSVram(const void* source, void* destination, u32 toGetSize, const TDecompressionStream* stream) __asm__("svcLZ77UncompVramCallback");
 
 /*!	\brief Decompresses Huffman compressed data.
 
@@ -252,7 +246,7 @@ int swiDecompressLZSSVramTWL(void * source, void * destination, uint32 toGetSize
 	\return The length of the decompressed data, or a signed errorcode from the Open/Close functions.
 	\see decompress.h
 */
-int swiDecompressHuffman(void * source, void * destination, uint32 toGetSize, TDecompressionStream * stream);
+int swiDecompressHuffman(const void* source, void* destination, u32 toGetSize, const TDecompressionStream* stream) __asm__("svcHuffUncompCallback");
 
 
 /*!	\brief Decompresses RLE compressed data.
@@ -269,7 +263,7 @@ int swiDecompressHuffman(void * source, void * destination, uint32 toGetSize, TD
 	\note Writes data a byte at a time.
 	\see decompress.h
 */
-void swiDecompressRLEWram(void * source, void * destination);
+void swiDecompressRLEWram(const void* source, void* destination) __asm__("svcRLUncompWram");
 
 
 /*!	\brief Decompresses RLE compressed data vram safe.
@@ -288,25 +282,18 @@ void swiDecompressRLEWram(void * source, void * destination);
 	\note Writes data a halfword at a time.
 	\see decompress.h
 */
-int swiDecompressRLEVram(void * source, void * destination, uint32 toGetSize, TDecompressionStream * stream);
+int swiDecompressRLEVram(const void* source, void* destination, u32 toGetSize, const TDecompressionStream* stream) __asm__("svcRLUncompVramCallback");
 
 
 
 #ifdef ARM9
-
-/*!	\brief wait for any interrupt.
-
-	\note ARM9 exclusive.
-*/
-void swiWaitForIRQ(void);
-
 
 /*!	\brief Writes a word of the data to 0x04000300:32
 
 	\param data the word to write.
 	\note This is on the ARM9, but works differently then the ARM7 function!
 */
-void swiSetHaltCR(uint32 data);
+void swiSetHaltCR(u32 data) __asm__("svcCustomPost");
 
 
 /*!	\brief Decodes a stream of bytes based on the difference of the bytes.
@@ -318,7 +305,7 @@ void swiSetHaltCR(uint32 data);
 	\note Writes data a byte at a time.
 	\note ARM9 exclusive.
 */
-void swiDecodeDelta8(void * source, void * destination);
+void swiDecodeDelta8(const void* source, void* destination) __asm__("svcDiff8bitUnfilterWram");
 
 
 /*!	\brief Decodes a stream of bytes based on the difference of the bytes.
@@ -330,7 +317,7 @@ void swiDecodeDelta8(void * source, void * destination);
 	\note Writes data a halfword at a time.
 	\note ARM9 exclusive.
 */
-void swiDecodeDelta16(void * source, void * destination);
+void swiDecodeDelta16(const void* source, void* destination) __asm__("svcDiff16bitUnfilter");
 #endif
 
 
@@ -341,22 +328,25 @@ void swiDecodeDelta16(void * source, void * destination);
 	\param data The byte to write.
 	\note ARM7 exclusive.
 */
-void swiSetHaltCR(uint8 data);
+void swiSetHaltCR(u8 data) __asm__("svcCustomHalt");
 
 /*!	\brief Halts the CPU untill an interupt occures.
 	\note ARM7 exclusive.
 */
-void swiHalt(void);
+void swiHalt(void) __asm__("svcHalt");
 
 /*!	\brief Halts the CPU and most of the hardware untill an interupt occures.
 	\note ARM7 exclusive.
 */
-void swiSleep(void);
+void swiSleep(void) __asm__("svcSleep");
 
 /*!	\brief Switches the DS to GBA mode.
 	\note ARM7 exclusive.
 */
-void swiSwitchToGBAMode(void);
+static inline void swiSwitchToGBAMode(void)
+{
+	swiSetHaltCR(0x40);
+}
 
 
 /*!	\brief Returns an entry in the sine table.
@@ -364,28 +354,28 @@ void swiSwitchToGBAMode(void);
 	\return The entry.
 	\note ARM7 exclusive.
 */
-uint16 swiGetSineTable(int index);
+u16 swiGetSineTable(int index) __asm__("svcGetSineTable");
 
 /*!	\brief Returns an entry in the pitch table.
 	\param index The index of the pitch table (0-767).
 	\return The entry.
 	\note ARM7 exclusive.
 */
-uint16 swiGetPitchTable(int index);
+u16 swiGetPitchTable(int index) __asm__("svcGetPitchTable");
 
 /*!	\brief Returns an entry in the volume table.
 	\param index The index of the volume table (0-723).
 	\return The entry.
 	\note ARM7 exclusive.
 */
-uint8 swiGetVolumeTable(int index);
+u16 swiGetVolumeTable(int index) __asm__("svcGetVolumeTable");
 
 /*!	\brief increments or decrements the sound bias once per delay.
 	\param enabled 	0 to decrement it until it reaches 0x000, 1 to increment it until it reaches 0x200.
 	\param delay 	Is in the same units of time as swiDelay.
 	\note ARM7 exclusive.
 */
-void swiChangeSoundBias(int enabled, int delay);
+void swiChangeSoundBias(int enabled, int delay) __asm__("svcSoundBias");
 
 
 #endif //ARM7
