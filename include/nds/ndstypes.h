@@ -66,53 +66,27 @@
 */
 #define BIT(n) (1 << (n))
 
-//! 8 bit unsigned integer.
-typedef uint8_t		uint8;
-//! 16 bit unsigned integer.
-typedef uint16_t	uint16;
-//! 32 bit unsigned integer.
-typedef uint32_t	uint32;
-//! 64 bit unsigned integer.
-typedef uint64_t	uint64;
+typedef uint8_t  uint8   MK_DEPRECATED;
+typedef uint16_t uint16  MK_DEPRECATED;
+typedef uint32_t uint32  MK_DEPRECATED;
+typedef uint64_t uint64  MK_DEPRECATED;
+typedef int8_t   int8    MK_DEPRECATED;
+typedef int16_t  int16   MK_DEPRECATED;
+typedef int32_t  int32   MK_DEPRECATED;
+typedef int64_t  int64   MK_DEPRECATED;
+typedef float    float32 MK_DEPRECATED;
+typedef double   float64 MK_DEPRECATED;
 
-//! 8 bit signed integer.
-typedef int8_t		int8;
-//! 16 bit signed integer.
-typedef int16_t		int16;
-//! 32 bit signed integer.
-typedef int32_t		int32;
-//! 64 bit signed integer.
-typedef int64_t		int64;
-
-//! 32 bit signed floating point number.
-typedef float		float32;
-//! 64 bit signed floating point number.
-typedef double		float64;
-
-//! 8 bit volatile unsigned integer.
-typedef volatile uint8_t	vuint8;
-//! 16 bit volatile unsigned integer.
-typedef volatile uint16_t	vuint16;
-//! 32 bit volatile unsigned integer.
-typedef volatile uint32_t	vuint32;
-//! 64 bit volatile unsigned integer.
-typedef volatile uint64_t	vuint64;
-
-//! 8 bit volatile signed integer.
-typedef volatile int8_t		vint8;
-//! 16 bit volatile signed integer.
-typedef volatile int16_t	vint16;
-//! 32 bit volatile signed integer.
-typedef volatile int32_t	vint32;
-//! 64 bit volatile signed integer.
-typedef volatile int64_t	vint64;
-
-//! 32 bit volatile signed floating point number.
-typedef volatile float32        vfloat32;
-//! 64 bit volatile signed floating point number.
-typedef volatile float64        vfloat64;
-
-typedef uint32_t sec_t;
+typedef volatile uint8_t  vuint8   MK_DEPRECATED;
+typedef volatile uint16_t vuint16  MK_DEPRECATED;
+typedef volatile uint32_t vuint32  MK_DEPRECATED;
+typedef volatile uint64_t vuint64  MK_DEPRECATED;
+typedef volatile int8_t   vint8    MK_DEPRECATED;
+typedef volatile int16_t  vint16   MK_DEPRECATED;
+typedef volatile int32_t  vint32   MK_DEPRECATED;
+typedef volatile int64_t  vint64   MK_DEPRECATED;
+typedef volatile float32  vfloat32 MK_DEPRECATED;
+typedef volatile float64  vfloat64 MK_DEPRECATED;
 
 #ifndef TRUE
 #define TRUE 1
