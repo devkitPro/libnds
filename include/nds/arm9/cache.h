@@ -36,13 +36,13 @@
 extern "C" {
 #endif
 
-#include "nds/ndstypes.h"
+#include <nds/ndstypes.h>
 
 
 /*! \fn IC_InvalidateAll()
 	\brief invalidate entire instruction cache.
 */
-void	IC_InvalidateAll();
+void	IC_InvalidateAll(void) __asm__("armICacheInvalidateAll");
 
 
 /*! \fn IC_InvalidateRange(const void *base, u32 size)
@@ -50,13 +50,13 @@ void	IC_InvalidateAll();
 	\param base base address of the region to invalidate
 	\param size size of the region to invalidate.
 */
-void	IC_InvalidateRange(const void *base, u32 size);
+void	IC_InvalidateRange(const void *base, u32 size) __asm__("armICacheInvalidate");
 
 
 /*! \fn DC_FlushAll()
 	\brief flush the entire data cache to memory.
 */
-void	DC_FlushAll();
+void	DC_FlushAll(void) __asm__("armDCacheFlushAll");
 
 
 /*! \fn DC_FlushRange(const void *base, u32 size)
@@ -64,21 +64,16 @@ void	DC_FlushAll();
 	\param base base address of the region to flush.
 	\param size size of the region to flush.
 */
-void	DC_FlushRange(const void *base, u32 size);
-
-
-/*! \fn DC_InvalidateAll()
-	\brief invalidate the entire data cache.
-*/
-void	DC_InvalidateAll();
+void	DC_FlushRange(const void *base, u32 size) __asm__("armDCacheFlush");
 
 
 /*! \fn DC_InvalidateRange(const void *base, u32 size)
 	\brief invalidate the data cache for a range of addresses.
 	\param base base address of the region to invalidate
 	\param size size of the region to invalidate.
+	\warning Base address and size must be cache line size (32-byte) aligned!
 */
-void	DC_InvalidateRange(const void *base, u32 size);
+void	DC_InvalidateRange(const void *base, u32 size) __asm__("armDCacheInvalidate");
 
 #ifdef __cplusplus
 }
