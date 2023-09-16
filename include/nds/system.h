@@ -153,8 +153,13 @@ void systemShutDown(void) {
 	powerOn(PM_SYSTEM_PWR);
 }
 
-void readFirmware(u32 address, void *buffer, u32 length);
-int writeFirmware(u32 address, void *buffer, u32 length);
+static inline
+void readFirmware(u32 address, void *buffer, u32 length)
+{
+	pmReadNvram(buffer, address, length);
+}
+
+int writeFirmware(u32 address, const void *buffer, u32 length);
 
 /*! \brief A struct with all the CPU exception vectors.
 	Each member contains a pointer to a function that will be executed
