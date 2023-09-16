@@ -93,10 +93,10 @@ typedef struct DecompressionStream
 //! A struct and struct pointer with information about unpacking data.
 typedef struct UnpackStruct
 {
-	uint16 sourceSize; 		//!< in bytes
-	uint8 sourceWidth;		//!< 1,2,4 or 8 bits.
-	uint8 destWidth;		//!< 1,2,4,8,16 or 32 bits.
-	uint32 dataOffset;		//!< bits 0-30 are added to all non-zero destination writes, unless bit 31 is set, which does it for zeros too.
+	u16 sourceSize; 		//!< in bytes
+	u8 sourceWidth;		//!< 1,2,4 or 8 bits.
+	u8 destWidth;		//!< 1,2,4,8,16 or 32 bits.
+	u32 dataOffset;		//!< bits 0-30 are added to all non-zero destination writes, unless bit 31 is set, which does it for zeros too.
 } PACKED TUnpackStruct, * PUnpackStruct;
 
 

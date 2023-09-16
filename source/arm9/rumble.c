@@ -31,7 +31,7 @@ static RUMBLE_TYPE rumbleType;
 //---------------------------------------------------------------------------------
 bool isRumbleInserted(void) {
 //---------------------------------------------------------------------------------
-	uint16 four[4];
+	u16 four[4];
 	sysSetCartOwner(BUS_OWNER_ARM9);
 	// First, check for 0x96 to see if it's a GBA game
 	if (GBA_HEADER.is96h == 0x96) {

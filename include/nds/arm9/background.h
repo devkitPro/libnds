@@ -435,7 +435,7 @@ typedef struct BgState
 
 
 //id -> register look up tables
-extern vuint16* bgControl[8];
+extern vu16* bgControl[8];
 extern bg_scroll* bgScrollTable[8];
 extern bg_transform* bgTransform[8];
 extern BgState bgState[8];
@@ -689,7 +689,7 @@ static inline
 	\return
 		a pointer to the appropriate background control register
 */
-vuint16* bgSetControlBits(int id, u16 bits)
+vu16* bgSetControlBits(int id, u16 bits)
 {
 	sassert(id >= 0 && id <= 7, "bgSetControlBits(), id must be the number returned from bgInit or bgInitSub");
 	*bgControl[id] |= bits;

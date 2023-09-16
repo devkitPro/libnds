@@ -85,7 +85,7 @@ int cardEepromGetType(void) {
 }
 
 //---------------------------------------------------------------------------------
-uint32 cardEepromGetSize() {
+u32 cardEepromGetSize() {
 //---------------------------------------------------------------------------------
 
 	int type = cardEepromGetType();
@@ -197,10 +197,10 @@ void cardReadEeprom(u32 address, u8 *data, u32 length, u32 addrtype) {
 
 
 //---------------------------------------------------------------------------------
-void cardWriteEeprom(uint32 address, uint8 *data, uint32 length, uint32 addrtype) {
+void cardWriteEeprom(u32 address, u8 *data, u32 length, u32 addrtype) {
 //---------------------------------------------------------------------------------
 
-	uint32 address_end = address + length;
+	u32 address_end = address + length;
 	int i;
 	int maxblocks = 32;
 	if(addrtype == 1) maxblocks = 16;
@@ -273,7 +273,7 @@ void cardEepromChipErase(void) {
 //---------------------------------------------------------------------------------
 //	COMMAND Sec.erase 0xD8
 //---------------------------------------------------------------------------------
-void cardEepromSectorErase(uint32 address) {
+void cardEepromSectorErase(u32 address) {
 //---------------------------------------------------------------------------------
 		// set WEL (Write Enable Latch)
 		REG_AUXSPICNT = /*E*/0x8000 | /*SEL*/0x2000 | /*MODE*/0x40;

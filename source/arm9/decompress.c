@@ -29,11 +29,11 @@ distribution.
 #include <nds/bios.h>
 #include <nds/arm9/sassert.h>
 
-static int getHeader(uint8 *source, uint16 *dest, uint32 arg) {
-	return *(uint32*)source;
+static int getHeader(u8 *source, u16 *dest, u32 arg) {
+	return *(u32*)source;
 }
 
-static uint8 readByte(uint8 *source) {
+static u8 readByte(u8 *source) {
 	return *source;
 }
 

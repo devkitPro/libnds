@@ -112,7 +112,7 @@ void disableSlot1();
 void cardWriteCommand(const u8 *command);
 void cardPolledTransfer(u32 flags, u32 *destination, u32 length, const u8 *command);
 void cardStartTransfer(const u8 *command, u32 *destination, int channel, u32 flags);
-uint32 cardWriteAndRead(const u8 *command, u32 flags);
+u32 cardWriteAndRead(const u8 *command, u32 flags);
 void cardParamCommand (u8 command, u32 parameter, u32 flags, u32 *destination, u32 length);
 
 // These commands require the cart to not be initialized yet, which may mean the user
@@ -135,10 +135,10 @@ void cardWriteEeprom(u32 address, u8 *data, u32 length, u32 addrtype);
 
 // Returns the ID of the EEPROM chip? Doesn't work well, most chips give ff,ff
 // i = 0 or 1
-u32 cardEepromReadID(); 
+u32 cardEepromReadID();
 
 // Sends a command to the EEPROM
-u8 cardEepromCommand(u8 command); 
+u8 cardEepromCommand(u8 command);
 
 /*
  * -1:no card or no EEPROM

@@ -82,13 +82,13 @@ static inline
 *    \param den Takes 20.12 denominator.
 *    \return returns 20.12 result.
 */
-int32 divf32(int32 num, int32 den)
+s32 divf32(s32 num, s32 den)
 {
 	REG_DIVCNT = DIV_64_32;
 
 	while(REG_DIVCNT & DIV_BUSY);
 
-	REG_DIV_NUMER = ((int64)num) << 12;
+	REG_DIV_NUMER = ((s64)num) << 12;
 	REG_DIV_DENOM_L = den;
 
 	while(REG_DIVCNT & DIV_BUSY);
@@ -103,10 +103,10 @@ static inline
 *   \param b Takes 20.12
 *   \return returns 20.12 result
 */
-int32 mulf32(int32 a, int32 b)
+s32 mulf32(s32 a, s32 b)
 {
 	long long result = (long long)a * (long long)b;
-	return (int32)(result >> 12);
+	return (s32)(result >> 12);
 }
 
 #pragma GCC diagnostic push
@@ -117,13 +117,13 @@ static inline
 *   \param a Takes 20.12
 *   \return returns 20.12 result
 */
-int32 sqrtf32(int32 a)
+s32 sqrtf32(s32 a)
 {
 	REG_SQRTCNT = SQRT_64;
 
 	while(REG_SQRTCNT & SQRT_BUSY);
 
-	REG_SQRT_PARAM = ((int64)a) << 12;
+	REG_SQRT_PARAM = ((s64)a) << 12;
 
 	while(REG_SQRTCNT & SQRT_BUSY);
 
@@ -140,7 +140,7 @@ static inline
 *   \param den  denominator
 *   \return returns 32 bit integer result
 */
-int32 div32(int32 num, int32 den)
+s32 div32(s32 num, s32 den)
 {
 	REG_DIVCNT = DIV_32_32;
 
@@ -161,7 +161,7 @@ static inline
 *   \param den  denominator
 *   \return returns 32 bit integer remainder
 */
-int32 mod32(int32 num, int32 den)
+s32 mod32(s32 num, s32 den)
 {
 	REG_DIVCNT = DIV_32_32;
 
@@ -182,7 +182,7 @@ static inline
 *   \param den  32 bit denominator
 *   \return returns 32 bit integer result
 */
-int32 div64(int64 num, int32 den)
+s32 div64(s64 num, s32 den)
 {
 	REG_DIVCNT = DIV_64_32;
 
@@ -203,7 +203,7 @@ static inline
 *   \param den  32 bit denominator
 *   \return returns 32 bit integer remainder
 */
-int32 mod64(int64 num, int32 den)
+s32 mod64(s64 num, s32 den)
 {
 	REG_DIVCNT = DIV_64_32;
 
@@ -266,7 +266,7 @@ static inline
 * y = Az * Bx - Bz * Ax\n
 * z = Ax * By - Bx * Ay\n
 */
-void crossf32(int32 *a, int32 *b, int32 *result)
+void crossf32(s32 *a, s32 *b, s32 *result)
 {
 	result[0] = mulf32(a[1], b[2]) - mulf32(b[1], a[2]);
 	result[1] = mulf32(a[2], b[0]) - mulf32(b[2], a[0]);
@@ -283,7 +283,7 @@ static inline
 * Dot Product
 * result = Ax * Bx + Ay * By + Az * Bz
 */
-int32 dotf32(int32 *a, int32 *b)
+s32 dotf32(s32 *a, s32 *b)
 {
 	return mulf32(a[0], b[0]) + mulf32(a[1], b[1]) + mulf32(a[2], b[2]);
 }
@@ -299,10 +299,10 @@ static inline
 * Ay = Ay / mag\n
 * Az = Az / mag\n
 */
-void normalizef32(int32* a)
+void normalizef32(s32* a)
 {
 	// magnitude = sqrt ( Ax^2 + Ay^2 + Az^2 )
-	int32 magnitude = sqrtf32( mulf32(a[0], a[0]) + mulf32(a[1], a[1]) + mulf32(a[2], a[2]) );
+	s32 magnitude = sqrtf32( mulf32(a[0], a[0]) + mulf32(a[1], a[1]) + mulf32(a[2], a[2]) );
 
 	a[0] = divf32(a[0], magnitude);
 	a[1] = divf32(a[1], magnitude);

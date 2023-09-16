@@ -49,12 +49,12 @@ gl_hidden_globals* glGetGlobals() {
 }
 
 //---------------------------------------------------------------------------------
-void glRotatef32i(int angle, int32 x, int32 y, int32 z) {
+void glRotatef32i(int angle, s32 x, s32 y, s32 z) {
 //---------------------------------------------------------------------------------
-	int32 axis[3];
-	int32 sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
-	int32 cosine = cosLerp(angle);//COS[angle & LUT_MASK];
-	int32 one_minus_cosine = inttof32(1) - cosine;
+	s32 axis[3];
+	s32 sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
+	s32 cosine = cosLerp(angle);//COS[angle & LUT_MASK];
+	s32 one_minus_cosine = inttof32(1) - cosine;
 
 	axis[0]=x;
 	axis[1]=y;
@@ -81,8 +81,8 @@ void glRotatef32i(int angle, int32 x, int32 y, int32 z) {
 //---------------------------------------------------------------------------------
 void glMaterialf(GL_MATERIALS_ENUM mode, rgb color) {
 //---------------------------------------------------------------------------------
-	static uint32 diffuse_ambient = 0;
-	static uint32 specular_emission = 0;
+	static u32 diffuse_ambient = 0;
+	static u32 specular_emission = 0;
 
 	switch(mode) {
 		case GL_AMBIENT:
@@ -109,7 +109,7 @@ void glMaterialf(GL_MATERIALS_ENUM mode, rgb color) {
 }
 
 //---------------------------------------------------------------------------------
-void glTexCoord2f32(int32 u, int32 v) {
+void glTexCoord2f32(s32 u, s32 v) {
 //---------------------------------------------------------------------------------
 	int x, y;
 	gl_texture_data *tex = (gl_texture_data*)DynamicArrayGet( &glGlob->texturePtrs, glGlob->activeTexture );
@@ -131,7 +131,7 @@ vramBlock_init( s_vramBlock *mb ) {
 	struct s_SingleBlock *newBlock = (struct s_SingleBlock*)malloc( sizeof( struct s_SingleBlock ));
 	memset( (void*)newBlock, 0, sizeof( s_SingleBlock ));
 	newBlock->AddrSet = mb->startAddr;
-	newBlock->blockSize = (uint32)mb->endAddr - (uint32)mb->startAddr;
+	newBlock->blockSize = (u32)mb->endAddr - (u32)mb->startAddr;
 
 	mb->firstBlock = mb->firstEmpty = newBlock;
 
@@ -153,7 +153,7 @@ vramBlock_init( s_vramBlock *mb ) {
 }
 
 
-s_vramBlock* vramBlock_Construct( uint8 *start, uint8 *end ) {
+s_vramBlock* vramBlock_Construct( u8 *start, u8 *end ) {
 	// Block Container is constructed, with a starting and ending address. Then initialization of the first block is made
 	struct s_vramBlock* mb = ( struct s_vramBlock*)malloc( sizeof( s_vramBlock ));
 	if( start > end ) {
@@ -190,8 +190,8 @@ void vramBlock_Deconstruct( s_vramBlock *mb ) {
 	}
 }
 
-uint8*
-vramBlock__allocateBlock( s_vramBlock *mb, struct s_SingleBlock *block, uint8 *addr, uint32 size ) {
+u8*
+vramBlock__allocateBlock( s_vramBlock *mb, struct s_SingleBlock *block, u8 *addr, u32 size ) {
 	// Initial tests to ensure allocation is valid
 	if( !size || !addr || !block || block->indexOut || addr < block->AddrSet || ( addr + size ) > ( block->AddrSet + block->blockSize )) return 0;
 
@@ -201,7 +201,7 @@ vramBlock__allocateBlock( s_vramBlock *mb, struct s_SingleBlock *block, uint8 *a
 	struct s_SingleBlock *testBlock[ 4 ] = { block->node[ 0 ], block->node[ 1 ], block->node[ 2 ], block->node[ 3 ] };
 
 	// Boolean comparisons ( for determining if an empty block set for allocation should be split once, twice, or not at all )
-	uint32 valComp[ 2 ] = { addr != block->AddrSet, addr + size < block->AddrSet + block->blockSize };
+	u32 valComp[ 2 ] = { addr != block->AddrSet, addr + size < block->AddrSet + block->blockSize };
 
 	int i = 0;
 	for( ; i < 2; i++ ) {
@@ -219,7 +219,7 @@ vramBlock__allocateBlock( s_vramBlock *mb, struct s_SingleBlock *block, uint8 *a
 				newBlock->blockSize = block->blockSize - size;
 				block->blockSize = size;
 			} else {
-				newBlock->blockSize = (uint32)addr - (uint32)block->AddrSet;
+				newBlock->blockSize = (u32)addr - (u32)block->AddrSet;
 				block->AddrSet = addr;
 				block->blockSize -= newBlock->blockSize;
 				if( block == *first )
@@ -267,10 +267,10 @@ vramBlock__allocateBlock( s_vramBlock *mb, struct s_SingleBlock *block, uint8 *a
 	if( testBlock[ 1 ] )
 		testBlock[ 1 ]->node[ 2 ] = block;
 
-	return (uint8*)block;
+	return (u8*)block;
 }
 
-uint32
+u32
 vramBlock__deallocateBlock( s_vramBlock *mb, struct s_SingleBlock *block ) {
 	// Test to see if this is an allocated block
 	if( !block->indexOut ) return 0;
@@ -336,8 +336,8 @@ vramBlock__deallocateBlock( s_vramBlock *mb, struct s_SingleBlock *block ) {
 	return 1;
 }
 
-uint8*
-vramBlock_examineSpecial( s_vramBlock *mb, uint8 *addr, uint32 size, uint8 align ) {
+u8*
+vramBlock_examineSpecial( s_vramBlock *mb, u8 *addr, u32 size, u8 align ) {
 	// Simple validity tests
 	if( !addr || !mb->firstEmpty || !size || align >= 8 )
 		return NULL;
@@ -348,7 +348,7 @@ vramBlock_examineSpecial( s_vramBlock *mb, uint8 *addr, uint32 size, uint8 align
 	mb->lastExamined = NULL;
 	mb->lastExaminedAddr = NULL;
 	mb->lastExaminedSize = 0;
-	uint8 *checkAddr = addr;
+	u8 *checkAddr = addr;
 
 	// If the address is within a valid block, examine if it will initially fit in it
 	while( block && checkAddr >= block->AddrSet + block->blockSize )
@@ -359,24 +359,24 @@ vramBlock_examineSpecial( s_vramBlock *mb, uint8 *addr, uint32 size, uint8 align
 	if( checkAddr < block->AddrSet )
 		checkAddr = block->AddrSet;
 
-	uint8* bankLock[ 5 ] = { 0x0 };
-	uint32 bankSize[ 5 ] = { 0x0 };
-	uint32 curBank = 0;
+	u8* bankLock[ 5 ] = { 0x0 };
+	u32 bankSize[ 5 ] = { 0x0 };
+	u32 curBank = 0;
 
 	// Values that hold which banks to examine
-	uint32 isNotMainBank = ( checkAddr >= (uint8*)VRAM_E ? 1 : 0 );
-	uint32 vramCtrl = ( isNotMainBank ? VRAM_EFG_CR : VRAM_CR );
+	u32 isNotMainBank = ( checkAddr >= (u8*)VRAM_E ? 1 : 0 );
+	u32 vramCtrl = ( isNotMainBank ? VRAM_EFG_CR : VRAM_CR );
 	int vramLock = glGlob->vramLock[ isNotMainBank ];
-	uint32 i = 0, iEnd = ( isNotMainBank ? 3 : 4 );
+	u32 i = 0, iEnd = ( isNotMainBank ? 3 : 4 );
 
 	// Fill in the array with only those banks that are not set for Textures or Texture Palettes
 	for( ; i < iEnd; i++ ) {
 		if((( vramCtrl & 0x83 ) != 0x83 ) || ( vramLock & 0x1 )) {		// VRAM_ENABLE | ( VRAM_x_TEXTURE | VRAM_x_TEX_PALETTE )
 			if( isNotMainBank ) {
-				bankLock[ curBank ] = ( i == 0 ? (uint8*)VRAM_E : (uint8*)VRAM_F + (( i - 1 ) * 0x4000 ));
+				bankLock[ curBank ] = ( i == 0 ? (u8*)VRAM_E : (u8*)VRAM_F + (( i - 1 ) * 0x4000 ));
 				bankSize[ curBank ] = ( i == 0 ? 0x10000 : 0x4000 );
 			} else {
-				bankLock[ curBank ] = (uint8*)VRAM_A + ( i * 0x20000 );
+				bankLock[ curBank ] = (u8*)VRAM_A + ( i * 0x20000 );
 				bankSize[ curBank ] = 0x20000;
 			}
 			curBank++;
@@ -387,7 +387,7 @@ vramBlock_examineSpecial( s_vramBlock *mb, uint8 *addr, uint32 size, uint8 align
 	curBank = 0;
 
 	// Retrieve the available area from this block using the address given
-	uint32 curBlockSize = block->blockSize - ((uint32)checkAddr - (uint32)block->AddrSet );
+	u32 curBlockSize = block->blockSize - ((u32)checkAddr - (u32)block->AddrSet );
 	do {
 		// Do address adjustments based on locked banks
 		if( bankLock[ curBank ] ) {
@@ -409,14 +409,14 @@ vramBlock_examineSpecial( s_vramBlock *mb, uint8 *addr, uint32 size, uint8 align
 				checkAddr = block->AddrSet;
 			// Adjust the blocks available size based on address location within said block
 			if( bankLock[ curBank ] && bankLock[ curBank ] < block->AddrSet + block->blockSize )
-				curBlockSize = (uint32)bankLock[ curBank ] - (uint32)checkAddr;
+				curBlockSize = (u32)bankLock[ curBank ] - (u32)checkAddr;
 			else
-				curBlockSize = block->blockSize - ((uint32)checkAddr - (uint32)block->AddrSet );
+				curBlockSize = block->blockSize - ((u32)checkAddr - (u32)block->AddrSet );
 		}
 
 		// Obtained an aligned address, and adjust the available area that can be used
-		uint8* aligned_checkAddr = (uint8*)(((uint32)checkAddr + ((1<<align)-1)) & (~((1<<align)-1)));
-		uint32 excess = ((uint32)aligned_checkAddr - (uint32)checkAddr);
+		u8* aligned_checkAddr = (u8*)(((u32)checkAddr + ((1<<align)-1)) & (~((1<<align)-1)));
+		u32 excess = ((u32)aligned_checkAddr - (u32)checkAddr);
 		curBlockSize -= excess;
 		if( curBlockSize >= size ) {
 			mb->lastExamined = block;
@@ -438,8 +438,8 @@ vramBlock_examineSpecial( s_vramBlock *mb, uint8 *addr, uint32 size, uint8 align
 	return NULL;
 }
 
-uint32
-vramBlock_allocateSpecial( s_vramBlock *mb, uint8 *addr, uint32 size ) {
+u32
+vramBlock_allocateSpecial( s_vramBlock *mb, u8 *addr, u32 size ) {
 	// Simple validity tests. Special allocations require "examination" data
 	if( !addr || !size || !mb->lastExamined || !mb->lastExaminedAddr ) return 0;
 	if( mb->lastExaminedAddr != addr || mb->lastExaminedSize != size ) return 0;
@@ -447,10 +447,10 @@ vramBlock_allocateSpecial( s_vramBlock *mb, uint8 *addr, uint32 size ) {
 	// Can only get here if prior tests passed, meaning a spot is available, and can be allocated
 	struct s_SingleBlock *newBlock = (struct s_SingleBlock*)vramBlock__allocateBlock( mb,  mb->lastExamined, addr, size );
 	if( newBlock ) { // with current implementation, it should never be false if it gets to here
-		uint32 curBlock;
+		u32 curBlock;
 		// Use a prior index if one exists. Else, obtain a new index
 		if( mb->deallocCount )
-			curBlock = (uint32)DynamicArrayGet( &mb->deallocBlocks, mb->deallocCount-- );
+			curBlock = (u32)DynamicArrayGet( &mb->deallocBlocks, mb->deallocCount-- );
 		else
 			curBlock = mb->blockCount++;
 		DynamicArraySet( &mb->blockPtrs, curBlock, (void*)newBlock );
@@ -464,23 +464,23 @@ vramBlock_allocateSpecial( s_vramBlock *mb, uint8 *addr, uint32 size ) {
 	return 0;
 }
 
-uint32
-vramBlock_allocateBlock( s_vramBlock *mb, uint32 size, uint8 align ) {
+u32
+vramBlock_allocateBlock( s_vramBlock *mb, u32 size, u8 align ) {
 	// Simple valid tests, such as if there are no more empty blocks as indicated by "firstEmpty"
 	if( mb->firstEmpty == NULL || !size || align >= 8 )
 		return 0;
 
 	// Grab the first empty block, and begin examination for a valid spot from there
 	struct s_SingleBlock *block = mb->firstEmpty;
-	uint8* checkAddr = vramBlock_examineSpecial( mb, block->AddrSet, size, align );
+	u8* checkAddr = vramBlock_examineSpecial( mb, block->AddrSet, size, align );
 	if( !checkAddr ) return 0;
 
 	// If execution gets here, then a spot was found, so allocate it
 	return vramBlock_allocateSpecial( mb, checkAddr, size );
 }
 
-uint32
-vramBlock_deallocateBlock( s_vramBlock *mb, uint32 index ) {
+u32
+vramBlock_deallocateBlock( s_vramBlock *mb, u32 index ) {
 	// Retrieve the block from the index array, and see if it exists. If it does, and is deallocated (which it should),
 	//		remove from index list
 	struct s_SingleBlock *block = (struct s_SingleBlock*)DynamicArrayGet( &mb->blockPtrs, index );
@@ -500,8 +500,8 @@ vramBlock_deallocateAll( s_vramBlock *mb ) {
 }
 
 
-uint8*
-vramBlock_getAddr( s_vramBlock *mb, uint32 index ) {
+u8*
+vramBlock_getAddr( s_vramBlock *mb, u32 index ) {
 	struct s_SingleBlock *getBlock;
 	if(( getBlock = (struct s_SingleBlock*)DynamicArrayGet( &mb->blockPtrs, index )))
 		return getBlock->AddrSet;
@@ -509,8 +509,8 @@ vramBlock_getAddr( s_vramBlock *mb, uint32 index ) {
 }
 
 
-uint32
-vramBlock_getSize( s_vramBlock *mb, uint32 index ) {
+u32
+vramBlock_getSize( s_vramBlock *mb, u32 index ) {
 	struct s_SingleBlock *getBlock;
 	if(( getBlock = (struct s_SingleBlock*)DynamicArrayGet( &mb->blockPtrs, index )))
 		return getBlock->blockSize;
@@ -535,8 +535,8 @@ void glInit_C(void) {
 		return;
 
 	// Allocate the designated layout for each memory block
-	glGlob->vramBlocks[ 0 ] = vramBlock_Construct( (uint8*)VRAM_A, (uint8*)VRAM_E );
-	glGlob->vramBlocks[ 1 ] = vramBlock_Construct( (uint8*)VRAM_E, (uint8*)VRAM_H );
+	glGlob->vramBlocks[ 0 ] = vramBlock_Construct( (u8*)VRAM_A, (u8*)VRAM_E );
+	glGlob->vramBlocks[ 1 ] = vramBlock_Construct( (u8*)VRAM_E, (u8*)VRAM_H );
 
 	glGlob->vramLock[ 0 ] = 0;
 	glGlob->vramLock[ 1 ] = 0;
@@ -674,7 +674,7 @@ int glGenTextures(int n, int *names) {
 		gl_texture_data *texture = (gl_texture_data*)malloc( sizeof( gl_texture_data ));
 		memset( (void*)texture, 0, sizeof( gl_texture_data ));
 		if( glGlob->deallocTexSize  ) // Use previously deleted texture names
-			names[ index ] = (uint32)DynamicArrayGet( &glGlob->deallocTex, glGlob->deallocTexSize-- );
+			names[ index ] = (u32)DynamicArrayGet( &glGlob->deallocTex, glGlob->deallocTexSize-- );
 		else
 			names[ index ] = glGlob->texCount++;
 		DynamicArraySet( &glGlob->texturePtrs, names[ index ], (void*)texture  );
@@ -726,7 +726,7 @@ int glDeleteTextures( int n, int *names ) {
 }
 
 //---------------------------------------------------------------------------------
-uint16* vramGetBank(uint16 *addr) {
+u16* vramGetBank(u16 *addr) {
 //---------------------------------------------------------------------------------
 	if(addr >= VRAM_A && addr < VRAM_B)
 		return VRAM_A;
@@ -753,9 +753,9 @@ uint16* vramGetBank(uint16 *addr) {
 //  to prevent consideration of the bank when allocating
 //  This is not an actual openGL function
 //---------------------------------------------------------------------------------
-int glLockVRAMBank( uint16 *addr ) {
+int glLockVRAMBank( u16 *addr ) {
 //---------------------------------------------------------------------------------
-	uint16 *actualVRAMBank = vramGetBank( addr );
+	u16 *actualVRAMBank = vramGetBank( addr );
 	if( actualVRAMBank < VRAM_A || actualVRAMBank > VRAM_G )
 		return 0;
 
@@ -783,9 +783,9 @@ int glLockVRAMBank( uint16 *addr ) {
 //  to allow consideration of the bank when allocating
 //  This is not an actual openGL function
 //---------------------------------------------------------------------------------
-int glUnlockVRAMBank( uint16 *addr ) {
+int glUnlockVRAMBank( u16 *addr ) {
 //---------------------------------------------------------------------------------
-	uint16 *actualVRAMBank = vramGetBank( addr );
+	u16 *actualVRAMBank = vramGetBank( addr );
 	if( actualVRAMBank < VRAM_A || actualVRAMBank > VRAM_G )
 		return 0;
 
@@ -840,7 +840,7 @@ void glBindTexture(int target, int name) {
 //  format palette into palette memory,
 //  and sets it to the currently bound texture
 //---------------------------------------------------------------------------------
-void glColorTableEXT( int target, int empty1, uint16 width, int empty2, int empty3, const uint16* table ) {
+void glColorTableEXT( int target, int empty1, u16 width, int empty2, int empty3, const u16* table ) {
 //---------------------------------------------------------------------------------
 	if( glGlob->activeTexture ) {
 		gl_texture_data *texture = (gl_texture_data*)DynamicArrayGet( &glGlob->texturePtrs, glGlob->activeTexture );
@@ -853,16 +853,16 @@ void glColorTableEXT( int target, int empty1, uint16 width, int empty2, int empt
 			return;
 
 		// Allocate new palette block based on the texture's format
-		uint32 colFormat = (( texture->texFormat >> 26 ) & 0x7 );
+		u32 colFormat = (( texture->texFormat >> 26 ) & 0x7 );
 
-		uint32 colFormatVal = (( colFormat == GL_RGB4 || ( colFormat == GL_NOTEXTURE && width <= 4 )) ? 3 : 4 );
-		uint8* checkAddr = vramBlock_examineSpecial( glGlob->vramBlocks[ 1 ], (uint8*)VRAM_E, width << 1, colFormatVal );
+		u32 colFormatVal = (( colFormat == GL_RGB4 || ( colFormat == GL_NOTEXTURE && width <= 4 )) ? 3 : 4 );
+		u8* checkAddr = vramBlock_examineSpecial( glGlob->vramBlocks[ 1 ], (u8*)VRAM_E, width << 1, colFormatVal );
 
 		if( checkAddr ) {
 			// Calculate the address, logical and actual, of where the palette will go
-			uint16* baseBank = vramGetBank( (uint16*)checkAddr );
-			uint32 addr = ( (uint32)checkAddr - (uint32)baseBank );
-			uint8 offset = 0;
+			u16* baseBank = vramGetBank( (u16*)checkAddr );
+			u32 addr = ( (u32)checkAddr - (u32)baseBank );
+			u8 offset = 0;
 
 			if( baseBank == VRAM_F )
 				offset = ( VRAM_F_CR >> 3 ) & 3;
@@ -886,9 +886,9 @@ void glColorTableEXT( int target, int empty1, uint16 width, int empty2, int empt
 			palette->palSize = width << 1;
 
 			// copy straight to VRAM, and assign a palette name
-			uint32 tempVRAM = VRAM_EFG_CR;
-			uint16 *startBank = vramGetBank( (uint16*)palette->vramAddr );
-			uint16 *endBank = vramGetBank( (uint16*)((char*)palette->vramAddr + ( width << 1 ) - 1));
+			u32 tempVRAM = VRAM_EFG_CR;
+			u16 *startBank = vramGetBank( (u16*)palette->vramAddr );
+			u16 *endBank = vramGetBank( (u16*)((char*)palette->vramAddr + ( width << 1 ) - 1));
 			do {
 				if( startBank == VRAM_E ) {
 					vramSetBankE( VRAM_E_LCD );
@@ -906,7 +906,7 @@ void glColorTableEXT( int target, int empty1, uint16 width, int empty2, int empt
 			vramRestoreBanks_EFG( tempVRAM );
 
 			if( glGlob->deallocPalSize )
-				texture->palIndex = (uint32)DynamicArrayGet( &glGlob->deallocPal, glGlob->deallocPalSize-- );
+				texture->palIndex = (u32)DynamicArrayGet( &glGlob->deallocPal, glGlob->deallocPalSize-- );
 			else
 				texture->palIndex = glGlob->palCount++;
 			DynamicArraySet( &glGlob->palettePtrs, texture->palIndex, (void*)palette );
@@ -923,11 +923,11 @@ void glColorTableEXT( int target, int empty1, uint16 width, int empty2, int empt
 //  format palette into a specific spot in
 //  a currently bound texture's existing palette
 //---------------------------------------------------------------------------------
-void glColorSubTableEXT( int target, int start, int count, int empty1, int empty2, const uint16* data ) {
+void glColorSubTableEXT( int target, int start, int count, int empty1, int empty2, const u16* data ) {
 	if( count > 0 && glGlob->activePalette ) {
 		gl_palette_data *palette = (gl_palette_data*)DynamicArrayGet( &glGlob->palettePtrs, glGlob->activePalette );
 		if( start >= 0 && ( start + count ) <= ( palette->palSize >> 1 ) ) {
-			uint32 tempVRAM = vramSetBanks_EFG( VRAM_E_LCD, VRAM_F_LCD, VRAM_G_LCD );
+			u32 tempVRAM = vramSetBanks_EFG( VRAM_E_LCD, VRAM_F_LCD, VRAM_G_LCD );
 			swiCopy( data, (char*)palette->vramAddr + ( start << 1 ), count | COPY_MODE_HWORD );
 			vramRestoreBanks_EFG( tempVRAM );
 		}
@@ -939,10 +939,10 @@ void glColorSubTableEXT( int target, int start, int count, int empty1, int empty
 //  format palette from the palette memory
 //  of the currently bound texture
 //---------------------------------------------------------------------------------
-void glGetColorTableEXT( int target, int empty1, int empty2, uint16* table ) {
+void glGetColorTableEXT( int target, int empty1, int empty2, u16* table ) {
 	if( glGlob->activePalette ) {
 		gl_palette_data *palette = (gl_palette_data*)DynamicArrayGet( &glGlob->palettePtrs, glGlob->activePalette );
-		uint32 tempVRAM = vramSetBanks_EFG( VRAM_E_LCD, VRAM_F_LCD, VRAM_G_LCD );
+		u32 tempVRAM = vramSetBanks_EFG( VRAM_E_LCD, VRAM_F_LCD, VRAM_G_LCD );
 		swiCopy( palette->vramAddr, table, palette->palSize >> 1 | COPY_MODE_HWORD );
 		vramRestoreBanks_EFG( tempVRAM );
 	}
@@ -1041,8 +1041,8 @@ void glGetColorTableParameterEXT( int target, int pname, int * params ) {
 //---------------------------------------------------------------------------------
 int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, int param, const void* texture) {
 //---------------------------------------------------------------------------------
-	uint32 size = 0;
-	uint32 typeSizes[ 9 ] = { 0, 8, 2, 4, 8, 3, 8, 16, 16 };	// Represents the number of bits per pixels for each format
+	u32 size = 0;
+	u32 typeSizes[ 9 ] = { 0, 8, 2, 4, 8, 3, 8, 16, 16 };	// Represents the number of bits per pixels for each format
 
 	if( !glGlob->activeTexture ) return 0;
 
@@ -1072,7 +1072,7 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 
 	// Clear out the texture data if one already exists for the active texture
 	if( tex ) {
-		uint32 texType = (( tex->texFormat >> 26 ) & 0x07 );
+		u32 texType = (( tex->texFormat >> 26 ) & 0x07 );
 		if(( tex->texSize != size ) || ( typeSizes[ texType ] != typeSizes[ type ] )) {
 			if( tex->texIndexExt )
 				vramBlock_deallocateBlock( glGlob->vramBlocks[ 0 ], tex->texIndexExt );
@@ -1093,10 +1093,10 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 				tex->texIndex = vramBlock_allocateBlock( glGlob->vramBlocks[ 0 ], tex->texSize, 3 );
 			}
 			else {
-				uint8 *vramBAddr = (uint8*)VRAM_B;
-				uint8 *vramACAddr = NULL;
-				uint8 *vramBFound, *vramACFound;
-				uint32 vramBAllocSize = size >> 1;
+				u8 *vramBAddr = (u8*)VRAM_B;
+				u8 *vramACAddr = NULL;
+				u8 *vramBFound, *vramACFound;
+				u32 vramBAllocSize = size >> 1;
 				if(( VRAM_B_CR & 0x83 )  != 0x83 )
 					return 0;
 
@@ -1109,21 +1109,21 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 					// Check designated opening, and return available spot
 					vramBFound = vramBlock_examineSpecial( glGlob->vramBlocks[ 0 ], vramBAddr, vramBAllocSize, 2 );
 					// Make sure that the space found in VRAM_B is completely in it, and not extending out of it
-					if( vramGetBank( (uint16*)vramBFound ) != VRAM_B || vramGetBank( (uint16*)( vramBFound + vramBAllocSize ) - 1 ) != VRAM_B ) {
+					if( vramGetBank( (u16*)vramBFound ) != VRAM_B || vramGetBank( (u16*)( vramBFound + vramBAllocSize ) - 1 ) != VRAM_B ) {
 						return 0;
 					}
 					// Make sure it is completely on either half of VRAM_B
-					if(((uint32)vramBFound - (uint32)VRAM_B < 0x10000 ) && ((uint32)vramBFound - (uint32)VRAM_B + vramBAllocSize > 0x10000 )) {
-						vramBAddr = (uint8*)VRAM_B + 0x10000;
+					if(((u32)vramBFound - (u32)VRAM_B < 0x10000 ) && ((u32)vramBFound - (u32)VRAM_B + vramBAllocSize > 0x10000 )) {
+						vramBAddr = (u8*)VRAM_B + 0x10000;
 						continue;
 					}
 					// Retrieve the tile location in VRAM_A or VRAM_C
-					uint32 offset = ((uint32)vramBFound - (uint32)VRAM_B );
-					vramACAddr = (uint8*)( offset >= 0x10000 ? VRAM_B : VRAM_A ) + ( offset << 1 );
+					u32 offset = ((u32)vramBFound - (u32)VRAM_B );
+					vramACAddr = (u8*)( offset >= 0x10000 ? VRAM_B : VRAM_A ) + ( offset << 1 );
 					vramACFound = vramBlock_examineSpecial( glGlob->vramBlocks[ 0 ], vramACAddr, size, 3 );
 					if( vramACAddr != vramACFound ) {
 						// Adjust the spot in VRAM_B by the difference found with VRAM_A/VRAM_C, divided by 2
-						vramBAddr += (((uint32)vramACFound - (uint32)vramACAddr ) >> 1 );
+						vramBAddr += (((u32)vramACFound - (u32)vramACAddr ) >> 1 );
 						continue;
 					} else {
 						// Spot found, setting up spots
@@ -1136,7 +1136,7 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 		}
 		if( tex->texIndex ) {
 			tex->vramAddr = vramBlock_getAddr( glGlob->vramBlocks[ 0 ], tex->texIndex );
-			tex->texFormat = (sizeX << 20) | (sizeY << 23) | ((type == GL_RGB ? GL_RGBA : type ) << 26) | (( (uint32)tex->vramAddr >> 3 ) & 0xFFFF );
+			tex->texFormat = (sizeX << 20) | (sizeY << 23) | ((type == GL_RGB ? GL_RGBA : type ) << 26) | (( (u32)tex->vramAddr >> 3 ) & 0xFFFF );
 		} else {
 			tex->vramAddr = NULL;
 			tex->texFormat = 0;
@@ -1150,9 +1150,9 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 
 	// Copy the texture data into either VRAM or main memory
 	if( type != GL_NOTEXTURE && texture ) {
-		uint32 vramTemp = VRAM_CR;
-		uint16 *startBank = vramGetBank( (uint16*)tex->vramAddr );
-		uint16 *endBank = vramGetBank(( uint16*)( (char*)tex->vramAddr + size - 1 ));
+		u32 vramTemp = VRAM_CR;
+		u16 *startBank = vramGetBank( (u16*)tex->vramAddr );
+		u16 *endBank = vramGetBank(( u16*)( (char*)tex->vramAddr + size - 1 ));
 
 		do {
 			if( startBank == VRAM_A )
@@ -1167,8 +1167,8 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 		} while ( startBank <= endBank );
 
 		if( type == GL_RGB ) {
-			uint16 *src = (uint16*)texture;
-			uint16 *dest = (uint16*)tex->vramAddr;
+			u16 *src = (u16*)texture;
+			u16 *dest = (u16*)tex->vramAddr;
 			size >>= 1;
 			while (size--) {
 				*dest++ = *src | 0x8000;

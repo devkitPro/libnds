@@ -79,7 +79,7 @@ GL_STATIC_INL
 /*! \brief Returns the distance from the camera of the last position test, pretty darn useful.
 	\return W magnitude
 */
-int32 PosTestWresult()
+s32 PosTestWresult()
 {
 	return GFX_POS_RESULT[3];
 }
@@ -88,7 +88,7 @@ GL_STATIC_INL
 /*! \brief Returns absolute X position of the last position test (location if the modelview matrix was identity)
 	\return Absolute X position
 */
-int32 PosTestXresult()
+s32 PosTestXresult()
 {
 	return GFX_POS_RESULT[0];
 }
@@ -97,7 +97,7 @@ GL_STATIC_INL
 /*! \brief Returns absolute Y position of the last position test (location if the modelview matrix was identity)
 	\return Absolute Y position
 */
-int32 PosTestYresult()
+s32 PosTestYresult()
 {
 	return GFX_POS_RESULT[1];
 }
@@ -106,7 +106,7 @@ GL_STATIC_INL
 /*! \brief Returns absolute Z position of the last position test (location if the modelview matrix was identity)
 	\return Absolute Z position
 */
-int32 PosTestZresult()
+s32 PosTestZresult()
 {
 	return GFX_POS_RESULT[2];
 }

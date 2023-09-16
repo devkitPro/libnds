@@ -32,7 +32,7 @@
 //---------------------------------------------------------------------------------
 u32 vramSetPrimaryBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE d) {
 //---------------------------------------------------------------------------------
-	uint32 vramTemp = VRAM_CR;
+	u32 vramTemp = VRAM_CR;
 
 	VRAM_A_CR = VRAM_ENABLE | a;
 	VRAM_B_CR = VRAM_ENABLE | b;
@@ -45,7 +45,7 @@ u32 vramSetPrimaryBanks(VRAM_A_TYPE a, VRAM_B_TYPE b, VRAM_C_TYPE c, VRAM_D_TYPE
 //---------------------------------------------------------------------------------
 u32 vramSetBanks_EFG(VRAM_E_TYPE e, VRAM_F_TYPE f, VRAM_G_TYPE g) {
 //---------------------------------------------------------------------------------
-	uint32 vramTemp = VRAM_EFG_CR;
+	u32 vramTemp = VRAM_EFG_CR;
 
 	VRAM_E_CR = VRAM_ENABLE | e;
 	VRAM_F_CR = VRAM_ENABLE | f;

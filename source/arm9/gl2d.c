@@ -34,7 +34,7 @@
 static inline void gxVertex3i(v16 x, v16 y, v16 z)
 {
 	GFX_VERTEX16 = (y << 16) | (x & 0xFFFF);
-	GFX_VERTEX16 = ((uint32)(uint16)z);
+	GFX_VERTEX16 = ((u32)(u16)z);
 }
 
 
@@ -90,7 +90,7 @@ static inline void gxScalef32(s32 x, s32 y, s32 z)
     I this made for future naming conflicts.
 
 ******************************************************************************/
-static inline void gxTranslate3f32( int32 x, int32 y, int32 z ) 
+static inline void gxTranslate3f32( s32 x, s32 y, s32 z )
 {
 	MATRIX_TRANSLATE = x;
 	MATRIX_TRANSLATE = y;
@@ -1016,7 +1016,7 @@ int glLoadSpriteSet( glImage              *sprite,
 					 int 	              param,
 					 int				  pallette_width,
 					 const u16			  *palette,
-					 const uint8          *texture	 
+					 const u8          *texture
                    )
 {
 
@@ -1072,7 +1072,7 @@ int glLoadTileSet( glImage              *sprite,
 				   int 	                param,
 				   int					pallette_width,
 				   const u16			*palette,
-				   const uint8          *texture	 
+				   const u8          *texture
                  )
 {
 

@@ -79,7 +79,7 @@
 // Fixed point / floating point / integer conversion macros
 //////////////////////////////////////////////////////////////////////
 
-typedef uint16 fixed12d3; /*!< \brief Used for depth (glClearDepth, glCutoffDepth) */
+typedef u16 fixed12d3; /*!< \brief Used for depth (glClearDepth, glCutoffDepth) */
 
 
 #define intto12d3(n)    ((n) << 3) /*!< \brief convert int to fixed12d3 */
@@ -288,44 +288,44 @@ deallocating video RAM in videoGL
 
 
 typedef struct s_SingleBlock {
-	uint32 indexOut;
-	uint8 *AddrSet;
+	u32 indexOut;
+	u8 *AddrSet;
 	struct s_SingleBlock *node[ 4 ]; // 0-1 ~ prev/next memory block, 2-3 ~ prev/next empty/alloc block
-	uint32 blockSize;
+	u32 blockSize;
 } s_SingleBlock;
 
 typedef struct s_vramBlock {
-	uint8 *startAddr, *endAddr;
+	u8 *startAddr, *endAddr;
 	struct s_SingleBlock *firstBlock;
 	struct s_SingleBlock *firstEmpty;
 	struct s_SingleBlock *firstAlloc;
 
 	struct s_SingleBlock *lastExamined;
-	uint8 *lastExaminedAddr;
-	uint32 lastExaminedSize;
+	u8 *lastExaminedAddr;
+	u32 lastExaminedSize;
 
 	DynamicArray blockPtrs;
 	DynamicArray deallocBlocks;
 
-	uint32 blockCount;
-	uint32 deallocCount;
+	u32 blockCount;
+	u32 deallocCount;
 } s_vramBlock;
 
 typedef struct gl_texture_data {
 	void* vramAddr;			// Address to the texture loaded into VRAM
-	uint32 texIndex;		// The index in the Memory Block
-	uint32 texIndexExt;		// The secondary index in the Memory block (only for GL_COMPRESSED textures)
+	u32 texIndex;		// The index in the Memory Block
+	u32 texIndexExt;		// The secondary index in the Memory block (only for GL_COMPRESSED textures)
 	int palIndex;			// The palette index
-	uint32 texFormat;		// Specifications of how the texture is displayed
-	uint32 texSize;			// The size (in blocks) of the texture
+	u32 texFormat;		// Specifications of how the texture is displayed
+	u32 texSize;			// The size (in blocks) of the texture
 } gl_texture_data;
 
 typedef struct gl_palette_data {
 	void* vramAddr;			// Address to the palette loaded into VRAM
-	uint32 palIndex;		// The index in the Memory Block
-	uint16 addr;			// The offset address for texture palettes in VRAM
-	uint16 palSize;			// The length of the palette
-	uint32 connectCount;	// The number of textures currently using this palette
+	u32 palIndex;		// The index in the Memory Block
+	u16 addr;			// The offset address for texture palettes in VRAM
+	u16 palSize;			// The length of the palette
+	u32 connectCount;	// The number of textures currently using this palette
 } gl_palette_data;
 
 
@@ -348,8 +348,8 @@ typedef struct gl_hidden_globals {
 
 	DynamicArray deallocTex;		// Preserves deleted texture names for later use with glGenTextures
 	DynamicArray deallocPal;		// Preserves deleted palette names
-	uint32 deallocTexSize;			// Preserved number of deleted texture names
-	uint32 deallocPalSize;			// Preserved number of deleted palette names
+	u32 deallocTexSize;			// Preserved number of deleted texture names
+	u32 deallocPalSize;			// Preserved number of deleted palette names
 
 	int activeTexture;				// The current active texture name
 	int activePalette;				// The current active palette name
@@ -359,7 +359,7 @@ typedef struct gl_hidden_globals {
 	// holds the current state of the clear color register
 	u32 clearColor; // state of clear color register
 
-	uint8 isActive;					// Has this been called before?
+	u8 isActive;					// Has this been called before?
 } gl_hidden_globals;
 
 
@@ -418,7 +418,7 @@ extern "C" {
 \param x X component of the unit vector axis.
 \param y Y component of the unit vector axis.
 \param z Z component of the unit vector axis. */
-void glRotatef32i(int angle, int32 x, int32 y, int32 z);
+void glRotatef32i(int angle, s32 x, s32 y, s32 z);
 
 /*! \brief Loads a 2D texture into texture memory and sets the currently bound texture ID to the attributes specified
 \param target not used, just here for OpenGL compatibility
@@ -439,7 +439,7 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 \param empty2 ignored, only here for OpenGL compatability
 \param empty3 ignored, only here for OpenGL compatability
 \param table pointer to the palette data to load (if NULL, then palette is removed from currently bound texture)*/
-void glColorTableEXT(int target, int empty1, uint16 width, int empty2, int empty3, const uint16* table);
+void glColorTableEXT(int target, int empty1, u16 width, int empty2, int empty3, const u16* table);
 
 /*! \brief glColorSubTableEXT loads a 15-bit color format palette into a specific spot in a currently bound texture's existing palette
 \param target ignored, only here for OpenGL compatability
@@ -448,14 +448,14 @@ void glColorTableEXT(int target, int empty1, uint16 width, int empty2, int empty
 \param empty1 ignored, only here for OpenGL compatability
 \param empty2 ignored, only here for OpenGL compatability
 \param data pointer to the palette data to load */
-void glColorSubTableEXT( int target, int start, int count, int empty1, int empty2, const uint16* data );
+void glColorSubTableEXT( int target, int start, int count, int empty1, int empty2, const u16* data );
 
 /*! \brief glGetColorTableEXT retrieves a 15-bit color format palette from the palette memory of the currently bound texture
 \param target ignored, only here for OpenGL compatability
 \param empty1 ignored, only here for OpenGL compatability
 \param empty2 ignored, only here for OpenGL compatability
 \param table pointer to where palette data will be written to */
-void glGetColorTableEXT( int target, int empty1, int empty2, uint16* table );
+void glGetColorTableEXT( int target, int empty1, int empty2, u16* table );
 
 /*! \brief glAssignColorTable sets the active texture with a palette set with another texture
 \param target ignored, only here for OpenGL compatability (not really, since this isn't in OpenGL)
@@ -503,19 +503,19 @@ void glResetTextures(void);
 /* \brief Locks a designated vram bank to prevent consideration of the bank when allocating
 \param addr the address associated with the vram bank selected
 \return 1 on success, 0 on failure */
-int glLockVRAMBank( uint16 *addr );
+int glLockVRAMBank( u16 *addr );
 
 
 /* \brief Unlocks a designated vram bank to allow consideration of the bank when allocating
 \param addr the address associated with the vram bank selected
 \return 1 on success, 0 on failure */
-int glUnlockVRAMBank( uint16 *addr );
+int glUnlockVRAMBank( u16 *addr );
 
 /*! \brief Sets texture coordinates for following vertices<BR>
 <A HREF="http://problemkaputt.de/gbatek.htm#ds3dtextureattributes">GBATEK http://problemkaputt.de/gbatek.htm#ds3dtextureattributes</A>
 \param u U(a.k.a. S) texture coordinate (0.0 - 1.0)
 \param v V(a.k.a. T) texture coordinate (0.0 - 1.0)*/
-void glTexCoord2f32(int32 u, int32 v);
+void glTexCoord2f32(s32 u, s32 v);
 
 /*! \brief specify the material properties to be used in rendering lit polygons
 \param mode which material property to change
@@ -568,12 +568,12 @@ GL_STATIC_INL
  void glClearDepth(fixed12d3 depth) { GFX_CLEAR_DEPTH = depth; }
 
 GL_STATIC_INL
-/*! \fn  void glColor3b(uint8 red, uint8 green, uint8 blue)
+/*! \fn  void glColor3b(u8 red, u8 green, u8 blue)
 \brief Set the color for following vertices
 \param red the red component (0-255) Bottom 3 bits ignored
 \param green the green component (0-255) Bottom 3 bits ignored
 \param blue the blue component (0-255) Bottom 3 bits ignored*/
- void glColor3b(uint8 red, uint8 green, uint8 blue) { GFX_COLOR = (vu32)RGB15(red>>3, green>>3, blue>>3); }
+ void glColor3b(u8 red, u8 green, u8 blue) { GFX_COLOR = (vu32)RGB15(red>>3, green>>3, blue>>3); }
 
 GL_STATIC_INL
 /*! \fn  void glColor(rgb color)
@@ -714,14 +714,14 @@ GL_STATIC_INL
  void glMatrixMode(GL_MATRIX_MODE_ENUM mode) { MATRIX_CONTROL = mode; }
 
 GL_STATIC_INL
-/*! \fn   void glViewport(uint8 x1, uint8 y1, uint8 x2, uint8 y2)
+/*! \fn   void glViewport(u8 x1, u8 y1, u8 x2, u8 y2)
 \brief specify the viewport for following drawing, can be set several times per frame.<BR>
 <A HREF="http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol">GBATEK http://problemkaputt.de/gbatek.htm#ds3ddisplaycontrol</A>
 \param x1 the left of the viewport
 \param y1 the bottom of the viewport
 \param x2 the right of the viewport
 \param y2 the top of the viewport */
- void glViewport(uint8 x1, uint8 y1, uint8 x2, uint8 y2) { GFX_VIEWPORT = (x1) + (y1 << 8) + (x2 << 16) + (y2 << 24); }
+ void glViewport(u8 x1, u8 y1, u8 x2, u8 y2) { GFX_VIEWPORT = (x1) + (y1 << 8) + (x2 << 16) + (y2 << 24); }
 
 GL_STATIC_INL
 /*! \fn  void glFlush(u32 mode)
@@ -817,13 +817,13 @@ void glFogOffset(int offset) {
 }
 
 GL_STATIC_INL
-/*! \fn void glFogColor(uint8 red, uint8 green, uint8 blue, uint8 alpha)
+/*! \fn void glFogColor(u8 red, u8 green, u8 blue, u8 alpha)
 \brief sets the fog color
 \param red component (0-31)
 \param green component (0-31)
 \param blue component (0-31)
 \param alpha from 0(clear) to 31(opaque)*/
-void glFogColor(uint8 red, uint8 green, uint8 blue, uint8 alpha) {
+void glFogColor(u8 red, u8 green, u8 blue, u8 alpha) {
 	sassert(red<32,"glFogColor red is out of range");
 	sassert(green<32,"glFogColor green is out of range");
 	sassert(blue<32,"glFogColor blue is out of range");
@@ -1062,7 +1062,7 @@ GL_STATIC_INL
 \param upy <upx, upy, upz> Unit vector describing which direction is up for the camera.
 \param upz <upx, upy, upz> Unit vector describing which direction is up for the camera. */
 void gluLookAtf32(int eyex, int eyey, int eyez, int lookAtx, int lookAty, int lookAtz, int upx, int upy, int upz) {
-	int32 side[3], forward[3], up[3], eye[3];
+	s32 side[3], forward[3], up[3], eye[3];
 
 	forward[0] = eyex - lookAtx;
 	forward[1] = eyey - lookAty;
@@ -1221,10 +1221,10 @@ void glSetOutlineColor(int id, rgb color) {
 }
 
 GL_STATIC_INL
-/*! \fn void glSetToonTable(const uint16 *table)
+/*! \fn void glSetToonTable(const u16 *table)
 \brief Loads a toon table
 \param table pointer to the 32 color palette to load into the toon table*/
-void glSetToonTable(const uint16 *table) {
+void glSetToonTable(const u16 *table) {
 	int i;
 	for(i = 0; i < 32; i++ )
 		GFX_TOON_TABLE[i] = table[i];
@@ -1307,21 +1307,21 @@ void glInit() {
 }
 
 GL_STATIC_INL
-/*! \fn void glClearColor(uint8 red, uint8 green, uint8 blue, uint8 alpha)
+/*! \fn void glClearColor(u8 red, u8 green, u8 blue, u8 alpha)
 \brief sets the color of the rear-plane(a.k.a Clear Color/Plane)
 \param red component (0-31)
 \param green component (0-31)
 \param blue component (0-31)
 \param alpha from 0(clear) to 31(opaque)*/
-void glClearColor(uint8 red, uint8 green, uint8 blue, uint8 alpha) {
+void glClearColor(u8 red, u8 green, u8 blue, u8 alpha) {
 	GFX_CLEAR_COLOR = glGlob->clearColor = ( glGlob->clearColor & 0xFFE08000) | (0x7FFF & RGB15(red, green, blue)) | ((alpha & 0x1F) << 16);
 }
 
 GL_STATIC_INL
-/*! \fn void glClearPolyID(uint8 ID)
+/*! \fn void glClearPolyID(u8 ID)
 \brief sets the polygon ID of the rear-plane(a.k.a. Clear/Color Plane), useful for antialiasing and edge coloring
 \param ID the polygon ID to give the rear-plane */
-void glClearPolyID(uint8 ID) {
+void glClearPolyID(u8 ID) {
 	GFX_CLEAR_COLOR = glGlob->clearColor = ( glGlob->clearColor & 0xC0FFFFFF) | (( ID & 0x3F ) << 24 );
 }
 
@@ -1402,7 +1402,7 @@ GL_STATIC_INL
 \param g the green component of the color
 \param b the blue component of the color */
 void glColor3f(float r, float g, float b) {
-	glColor3b((uint8)(r*255), (uint8)(g*255), (uint8)(b*255));
+	glColor3b((u8)(r*255), (u8)(g*255), (u8)(b*255));
 }
 
 GL_STATIC_INL

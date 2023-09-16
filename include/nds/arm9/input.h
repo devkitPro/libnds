@@ -61,16 +61,16 @@ void scanKeys(void);
 /*!	\brief Obtains the current keypad state.
 	Call this function to get keypad state without affecting state of other key functions (keysUp keysHeld etc...)
 */
-uint32 keysCurrent(void);
+u32 keysCurrent(void);
 
 //!	Obtains the current keypad held state.
-uint32 keysHeld(void);
+u32 keysHeld(void);
 
 //!	Obtains the current keypad pressed state.
-uint32 keysDown(void);
+u32 keysDown(void);
 
 //!	Obtains the current keypad pressed or repeating state.
-uint32 keysDownRepeat(void);
+u32 keysDownRepeat(void);
 
 /*!	\brief Sets the key repeat parameters.
 	\param setDelay Number of %scanKeys calls before keys start to repeat.
@@ -79,7 +79,7 @@ uint32 keysDownRepeat(void);
 void keysSetRepeat( u8 setDelay, u8 setRepeat );
 
 //! Obtains the current keypad released state.
-uint32 keysUp(void);
+u32 keysUp(void);
 
 #ifdef __cplusplus
 }

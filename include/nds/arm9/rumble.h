@@ -32,9 +32,9 @@
 extern "C" {
 #endif
 
-#define RUMBLE_PAK			(*(vuint16 *)0x08000000)
-#define WARIOWARE_PAK		(*(vuint16 *)0x080000C4)
-#define WARIOWARE_ENABLE	(*(vuint16 *)0x080000C6)
+#define RUMBLE_PAK			(*(vu16 *)0x08000000)
+#define WARIOWARE_PAK		(*(vu16 *)0x080000C4)
+#define WARIOWARE_ENABLE	(*(vu16 *)0x080000C6)
 
 typedef enum {
    RUMBLE,

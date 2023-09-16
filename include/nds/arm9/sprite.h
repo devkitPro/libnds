@@ -184,8 +184,8 @@ typedef union SpriteEntry
 	};
 
 	struct {
-		uint16 attribute[3];
-		uint16 filler;
+		u16 attribute[3];
+		u16 filler;
 	};
 
 } SpriteEntry, * pSpriteEntry;
@@ -195,17 +195,17 @@ typedef union SpriteEntry
 //! A sprite rotation entry.
 typedef struct SpriteRotation
 {
-	uint16 filler1[3];	/* Unused! Filler for the sprite entry attributes which overlap these */
-	int16 hdx;			/**< The change in x per horizontal pixel */
+	u16 filler1[3];	/* Unused! Filler for the sprite entry attributes which overlap these */
+	s16 hdx;			/**< The change in x per horizontal pixel */
 
-	uint16 filler2[3];	/* Unused! Filler for the sprite entry attributes which overlap these */
-	int16 vdx;			/**< The change in y per horizontal pixel */
+	u16 filler2[3];	/* Unused! Filler for the sprite entry attributes which overlap these */
+	s16 vdx;			/**< The change in y per horizontal pixel */
 
-	uint16 filler3[3];	/* Unused! Filler for the sprite entry attributes which overlap these */
-	int16 hdy;			/**< The change in x per vertical pixel */
+	u16 filler3[3];	/* Unused! Filler for the sprite entry attributes which overlap these */
+	s16 hdy;			/**< The change in x per vertical pixel */
 
-	uint16 filler4[3];	/* Unused! Filler for the sprite entry attributes which overlap these */
-	int16 vdy;			/**< The change in y per vertical pixel */
+	u16 filler4[3];	/* Unused! Filler for the sprite entry attributes which overlap these */
+	s16 vdy;			/**< The change in y per vertical pixel */
 } SpriteRotation, * pSpriteRotation;
 
 

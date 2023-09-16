@@ -340,7 +340,7 @@ int glLoadSpriteSet( glImage              *sprite,
 					 int 	              param,
 					 int				  pallette_width,
 					 const u16			  *palette,
-					 const uint8          *texture	 
+					 const u8          *texture
                    );
 
 
@@ -370,7 +370,7 @@ int glLoadTileSet( glImage              *sprite,
 				   int 	                param,
 				   int					pallette_width,
 				   const u16			*palette,
-				   const uint8          *texture	 
+				   const u8          *texture
                  );
 
 				 
