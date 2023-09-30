@@ -32,7 +32,7 @@
 extern "C" {
 #endif
 
-#define RUMBLE_PAK			(*(vu16 *)0x08000000)
+#define RUMBLE_PAK			(*(vu16 *)0x08001000)
 #define WARIOWARE_PAK		(*(vu16 *)0x080000C4)
 #define WARIOWARE_ENABLE	(*(vu16 *)0x080000C6)
 
@@ -41,17 +41,17 @@ typedef enum {
    WARIOWARE
 }RUMBLE_TYPE;
 
-/*! \fn bool isRumbleInserted(void);
+/*! \fn bool rumbleIsInserted(void);
 	\brief Check for rumble option pak.
 	\return true if the cart in the GBA slot is a Rumble option pak.
 */
-bool isRumbleInserted(void);
+bool rumbleIsInserted(void);
 
-/*! \fn void setRumble(bool position);
+/*! \fn void rumbleSet(bool position);
 	\param position Alternates position of the actuator in the pak
 	\brief Fires the rumble actuator.
 */
-void setRumble(bool position);
+void rumbleSet(bool position);
 
 #ifdef __cplusplus
 }
