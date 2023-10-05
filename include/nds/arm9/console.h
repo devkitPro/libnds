@@ -101,9 +101,9 @@ PrintConsole defaultConsole =
 		(u16*)default_font_bin, //font gfx
 		0, //font palette
 		0, //font color count
-		4, //bpp
+		1, //bpp
 		0, //first ascii character in the set
-		128, //number of characters in the font set
+		256, //number of characters in the font set
 		true, //convert to single color
 	},
 	0, //font background map

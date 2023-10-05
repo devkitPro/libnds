@@ -44,9 +44,9 @@ PrintConsole defaultConsole =
 		(u16*)default_font_bin, //font gfx
 		0, //font palette
 		0, //font color count
-		4, //bpp
+		1, //bpp
 		0, //first ascii character in the set
-		128, //number of characters in the font set
+		256, //number of characters in the font set
 		true //convert single color
 	},
 	0, //font background map
@@ -377,8 +377,24 @@ void consoleLoadFont(PrintConsole* console) {
 			palette = BG_PALETTE;
 	}
 
-
 	if (console->font.bpp == 1) {
+
+		const u8* in = (const u8*)console->font.gfx;
+		u32* out = (u32*)console->fontBgGfx;
+		for (i = 0; i < console->font.numChars * 8; i ++) {
+			unsigned cur = *in++;
+
+			int j;
+			u32 temp = 0;
+			for (j = 0; j < 8; j ++) {
+				temp |= ((cur&1) * 0xf) << (j*4);
+				cur >>= 1;
+			}
+
+			*out++ = temp;
+		}
+
+		goto _setUpPalette;
 
 	} else if (console->font.bpp == 4) {
 
@@ -391,7 +407,6 @@ void consoleLoadFont(PrintConsole* console) {
 
 			console->fontCurPal <<= 12;
 		} else {
-			console->fontCurPal = 15 << 12;
 
 			for (i = 0; i < console->font.numChars * 16; i++) {
 				u16 temp = 0;
@@ -408,8 +423,7 @@ void consoleLoadFont(PrintConsole* console) {
 				console->fontBgGfx[i] = temp;
 			}
 
-
-
+_setUpPalette:
 			//set up the palette for color printing
 			palette[1 * 16 - 1] = RGB15(0,0,0); //30 normal black
 			palette[2 * 16 - 1] = RGB15(15,0,0); //31 normal red
@@ -430,6 +444,8 @@ void consoleLoadFont(PrintConsole* console) {
 			palette[14 * 16 - 1] = RGB15(31,0,31);	//45 bright magenta
 			palette[15 * 16 - 1] = RGB15(0,31,31);	//46 bright cyan
 			palette[16 * 16 - 1] = RGB15(31,31,31); //47 & 39 bright white
+
+			console->fontCurPal = 15 << 12;
 		}
 
 	} else if(console->font.bpp == 8) {
