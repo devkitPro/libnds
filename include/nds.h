@@ -94,7 +94,7 @@
 
 
 
- \section external_links Usefull links
+ \section external_links Useful links
  - <a href="http://www.devkitpro.org/">devkitPro</a>
  - <a href="https://github.com/devkitPro/">devkitPro github</a>
 
