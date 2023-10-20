@@ -126,11 +126,11 @@ extern u16 mosaicShadowSub;
 #define OAM_SUB       ((u16*)0x07000400)/*!< \brief pointer to Object Attribute Memory (Sub engine)*/
 
 // macro creates a 15 bit color from 3x5 bit components
-/** \brief  Macro to convert 5 bit r g b components into a single 15 bit RGB triplet */
+/** \brief  Macro to convert 5 bit RGB components into a single 15 bit RGB triplet */
 #define RGB15(r,g,b)  ((r)|((g)<<5)|((b)<<10))
 #define RGB5(r,g,b)  ((r)|((g)<<5)|((b)<<10))
 #define RGB8(r,g,b)  (((r)>>3)|(((g)>>3)<<5)|(((b)>>3)<<10))
-/** \brief  Macro to convert 5 bit r g b components plus 1 bit alpha into a single 16 bit ARGB triplet */
+/** \brief  Macro to convert 5 bit RGB components plus 1 bit alpha into a single 16 bit ARGB triplet */
 #define ARGB16(a, r, g, b) ( ((a) << 15) | (r)|((g)<<5)|((b)<<10))
 
 /** \brief  Screen height in pixels */
