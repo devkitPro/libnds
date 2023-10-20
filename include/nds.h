@@ -79,7 +79,7 @@
  - \ref decompress.h "Decompression"
  - \ref image.h "Image Manipulation"
  - \ref pcx.h "PCX file loader"
- - \ref dynamicArray.h "General Purpose dynamic array implementation"
+ - \ref dynamicArray.h "General purpose dynamic array implementation"
  - \ref linkedlist.h "General purpose linked list implementation"
 
  \section peripheral_api Custom Peripherals
