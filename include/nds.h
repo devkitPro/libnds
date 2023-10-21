@@ -70,7 +70,7 @@
  - \ref fifocommon.h "Fifo"
  - \ref timers.h "Timers"
 
- \section user_io_api User Input/ouput
+ \section user_io_api User Input/output
  - \ref arm9/input.h "Keypad and Touch pad"
  - \ref keyboard.h "Keyboard"
  - \ref console.h "Console and Debug Printing"
