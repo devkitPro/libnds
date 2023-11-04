@@ -46,66 +46,58 @@ dmaCopy(source, destination, sizeof(dataToCopy));
 #define NDS_DMA_INCLUDE
 
 #include "nds/ndstypes.h"
+#include <calico/nds/dma.h>
 
-#define DMA0_SRC       (*(vu32*)0x040000B0)
-#define DMA0_DEST      (*(vu32*)0x040000B4)
-#define DMA0_CR        (*(vu32*)0x040000B8)
+#define DMA_SRC(n)     REG_DMAxSAD(n)
+#define DMA_DEST(n)    REG_DMAxDAD(n)
+#define DMA_CR(n)      REG_DMAxCNT(n)
+#define DMA_FILL(n)    REG_DMAxFIL(n)
 
-#define DMA1_SRC       (*(vu32*)0x040000BC)
-#define DMA1_DEST      (*(vu32*)0x040000C0)
-#define DMA1_CR        (*(vu32*)0x040000C4)
+#define DMA0_SRC       DMA_SRC(0)
+#define DMA0_DEST      DMA_DEST(0)
+#define DMA0_CR        DMA_CR(0)
 
-#define DMA2_SRC       (*(vu32*)0x040000C8)
-#define DMA2_DEST      (*(vu32*)0x040000CC)
-#define DMA2_CR        (*(vu32*)0x040000D0)
+#define DMA1_SRC       DMA_SRC(1)
+#define DMA1_DEST      DMA_DEST(1)
+#define DMA1_CR        DMA_CR(1)
 
-#define DMA3_SRC       (*(vu32*)0x040000D4)
-#define DMA3_DEST      (*(vu32*)0x040000D8)
-#define DMA3_CR        (*(vu32*)0x040000DC)
+#define DMA2_SRC       DMA_SRC(2)
+#define DMA2_DEST      DMA_DEST(2)
+#define DMA2_CR        DMA_CR(2)
 
-
-#define DMA_SRC(n)     (*(vu32*)(0x040000B0+(n*12)))
-#define DMA_DEST(n)    (*(vu32*)(0x040000B4+(n*12)))
-#define DMA_CR(n)      (*(vu32*)(0x040000B8+(n*12)))
-
-#ifdef ARM9
-#define DMA_FILL(n)    (*(vu32*)(0x040000E0+(n*4)))
-#endif
+#define DMA3_SRC       DMA_SRC(3)
+#define DMA3_DEST      DMA_DEST(3)
+#define DMA3_CR        DMA_CR(3)
 
 // DMA control register contents
 // The defaults are 16-bit, increment source/dest addresses, no irq
-#define DMA_ENABLE      BIT(31)
-#define DMA_BUSY	    BIT(31)
-#define DMA_IRQ_REQ     BIT(30)
+#define DMA_ENABLE      (DMA_START<<16)
+#define DMA_BUSY	    (DMA_START<<16)
+#define DMA_IRQ_REQ     (DMA_IRQ_ENABLE<<16)
 
-#define DMA_START_NOW   0
-#define DMA_START_CARD  (5<<27)
-
-#ifdef ARM7
-#define DMA_START_VBL   BIT(27)
-#endif
+#define DMA_START_NOW   (DMA_TIMING(DmaTiming_Immediate)<<16)
+#define DMA_START_CARD  (DMA_TIMING(DmaTiming_Slot1)<<16)
+#define DMA_START_VBL   (DMA_TIMING(DmaTiming_VBlank)<<16)
 
 #ifdef ARM9
-#define DMA_START_HBL   BIT(28)
-#define DMA_START_VBL   BIT(27)
-#define DMA_START_FIFO	(7<<27)
-#define DMA_DISP_FIFO	(4<<27)
+#define DMA_START_HBL   (DMA_TIMING(DmaTiming_HBlank)<<16)
+#define DMA_START_FIFO	(DMA_TIMING(DmaTiming_3dFifo)<<16)
+#define DMA_DISP_FIFO	(DMA_TIMING(DmaTiming_MemDisp)<<16)
 #endif
 
-#define DMA_16_BIT      0
-#define DMA_32_BIT      BIT(26)
+#define DMA_16_BIT      (DMA_UNIT_16<<16)
+#define DMA_32_BIT      (DMA_UNIT_32<<16)
 
+#define DMA_REPEAT      (DMA_MODE_REPEAT<<16)
 
-#define DMA_REPEAT      BIT(25)
+#define DMA_SRC_INC     (DMA_MODE_SRC(DmaMode_Increment)<<16)
+#define DMA_SRC_DEC     (DMA_MODE_SRC(DmaMode_Decrement)<<16)
+#define DMA_SRC_FIX     (DMA_MODE_SRC(DmaMode_Fixed)<<16)
 
-#define DMA_SRC_INC     (0)
-#define DMA_SRC_DEC     BIT(23)
-#define DMA_SRC_FIX     BIT(24)
-
-#define DMA_DST_INC     (0)
-#define DMA_DST_DEC     BIT(21)
-#define DMA_DST_FIX     BIT(22)
-#define DMA_DST_RESET   (3<<21)
+#define DMA_DST_INC     (DMA_MODE_DST(DmaMode_Increment)<<16)
+#define DMA_DST_DEC     (DMA_MODE_DST(DmaMode_Decrement)<<16)
+#define DMA_DST_FIX     (DMA_MODE_DST(DmaMode_Fixed)<<16)
+#define DMA_DST_RESET   (DMA_MODE_DST(DmaMode_IncrReload)<<16)
 
 #define DMA_COPY_WORDS     (DMA_ENABLE | DMA_32_BIT | DMA_START_NOW)
 #define DMA_COPY_HALFWORDS (DMA_ENABLE | DMA_16_BIT | DMA_START_NOW)
@@ -120,10 +112,8 @@ static inline
     \param size the size in bytes of the data to copy.  Will be truncated to the nearest word (4 bytes)
 */
 void dmaCopyWords(u8 channel, const void* src, void* dest, u32 size) {
-	DMA_SRC(channel) = (u32)src;
-	DMA_DEST(channel) = (u32)dest;
-	DMA_CR(channel) = DMA_COPY_WORDS | (size>>2);
-	while(DMA_CR(channel) & DMA_BUSY);
+	dmaStartCopy32(channel, dest, src, size);
+	dmaBusyWait(channel);
 }
 
 static inline
@@ -135,10 +125,8 @@ static inline
 \param size the size in bytes of the data to copy.  Will be truncated to the nearest half word (2 bytes)
 */
 void dmaCopyHalfWords(u8 channel, const void* src, void* dest, u32 size) {
-	DMA_SRC(channel) = (u32)src;
-	DMA_DEST(channel) = (u32)dest;
-	DMA_CR(channel) = DMA_COPY_HALFWORDS | (size>>1);
-	while(DMA_CR(channel) & DMA_BUSY);
+	dmaStartCopy16(channel, dest, src, size);
+	dmaBusyWait(channel);
 }
 
 static inline
@@ -149,10 +137,7 @@ static inline
 \param size the size in bytes of the data to copy.  Will be truncated to the nearest half word (2 bytes)
 */
 void dmaCopy(const void * source, void * dest, u32 size) {
-	DMA_SRC(3) = (u32)source;
-	DMA_DEST(3) = (u32)dest;
-	DMA_CR(3) = DMA_COPY_HALFWORDS | (size>>1);
-	while(DMA_CR(3) & DMA_BUSY);
+	dmaCopyHalfWords(3, source, dest, size);
 }
 
 static inline
@@ -165,10 +150,7 @@ This function returns immediately after starting the transfer.
 \param size the size in bytes of the data to copy.  Will be truncated to the nearest word (4 bytes)
 */
 void dmaCopyWordsAsynch(u8 channel, const void* src, void* dest, u32 size) {
-	DMA_SRC(channel) = (u32)src;
-	DMA_DEST(channel) = (u32)dest;
-	DMA_CR(channel) = DMA_COPY_WORDS | (size>>2);
-
+	dmaStartCopy32(channel, dest, src, size);
 }
 
 static inline
@@ -181,9 +163,7 @@ This function returns immediately after starting the transfer.
 \param size the size in bytes of the data to copy.  Will be truncated to the nearest half word (2 bytes)
 */
 void dmaCopyHalfWordsAsynch(u8 channel, const void* src, void* dest, u32 size) {
-	DMA_SRC(channel) = (u32)src;
-	DMA_DEST(channel) = (u32)dest;
-	DMA_CR(channel) = DMA_COPY_HALFWORDS | (size>>1);
+	dmaStartCopy16(channel, dest, src, size);
 }
 
 static inline
@@ -195,9 +175,7 @@ This function returns immediately after starting the transfer.
 \param size the size in bytes of the data to copy.  Will be truncated to the nearest half word (2 bytes)
 */
 void dmaCopyAsynch(const void * source, void * dest, u32 size) {
-	DMA_SRC(3) = (u32)source;
-	DMA_DEST(3) = (u32)dest;
-	DMA_CR(3) = DMA_COPY_HALFWORDS | (size>>1);
+	dmaCopyHalfWordsAsynch(3, source, dest, size);
 }
 
 static inline
@@ -209,17 +187,8 @@ static inline
 \param size the size in bytes of the area to fill.  Will be truncated to the nearest word (4 bytes)
 */
 void dmaFillWords(u32 value, void* dest, u32 size) {
-#ifdef ARM7
-	(*(vu32*)0x027FFE04) = value;
-	DMA_SRC(3) = 0x027FFE04;
-#else
-	DMA_FILL(3) = value;
-	DMA_SRC(3) = (u32)&DMA_FILL(3);
-#endif
-
-	DMA_DEST(3) = (u32)dest;
-	DMA_CR(3) = DMA_SRC_FIX | DMA_COPY_WORDS | (size>>2);
-	while(DMA_CR(3) & DMA_BUSY);
+	dmaStartFill32(3, dest, value, size);
+	dmaBusyWait(3);
 }
 
 static inline
@@ -231,17 +200,8 @@ static inline
 \param size the size in bytes of the area to fill.  Will be truncated to the nearest half word (2 bytes)
 */
 void dmaFillHalfWords(u16 value, void* dest, u32 size) {
-#ifdef ARM7
-	(*(vu32*)0x027FFE04) = (u32)value;
-	DMA_SRC(3) = 0x027FFE04;
-#else
-	DMA_FILL(3) = (u32)value;
-	DMA_SRC(3) = (u32)&DMA_FILL(3);
-#endif
-
-	DMA_DEST(3) = (u32)dest;
-	DMA_CR(3) = DMA_SRC_FIX | DMA_COPY_HALFWORDS | (size>>1);
-	while(DMA_CR(3) & DMA_BUSY);
+	dmaStartFill16(3, dest, value, size);
+	dmaBusyWait(3);
 }
 
 static inline
@@ -251,9 +211,7 @@ static inline
 \return non zero if busy, 0 if channel is free
 */
 int dmaBusy(u8 channel) {
-	return (DMA_CR(channel) & DMA_BUSY)>>31;
+	return dmaIsBusy(channel);
 }
 
-
 #endif
-
