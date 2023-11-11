@@ -84,7 +84,6 @@
 
  \section peripheral_api Custom Peripherals
  - \ref rumble.h "Rumble Pack"
- - \ref ndsmotion.h "DS Motion Pack"
  - \ref piano.h "DS Easy Piano Controller"
 
  \section debug_api Debugging
@@ -213,9 +212,6 @@
 
 	<!-- card -->
 	\example card/eeprom/source/main.cpp
-
-	<!-- ds_motion -->
-	\example ds_motion/source/main.c
 */
 
 
