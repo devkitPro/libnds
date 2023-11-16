@@ -25,9 +25,36 @@
  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-#ifndef NDS_DLDI_INCLUDE
-#define NDS_DLDI_INCLUDE
+#pragma once
 
-#include "../dldi.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-#endif // NDS_DLDI_INCLUDE
+#include <calico/dev/disc_io.h>
+#include <calico/dev/dldi.h>
+
+typedef DldiHeader DLDI_INTERFACE;
+
+/// Determine if a given DLDI driver structure is valid
+bool dldiIsValid(const DLDI_INTERFACE* io);
+
+/// Find a DLDI driver area within a given binary
+DLDI_INTERFACE* dldiFindDriverArea(void* bin, size_t bin_size);
+
+/// Adjust the pointer addresses within a DLDI driver for the target virtual address
+void dldiFixDriverAddresses(DLDI_INTERFACE* io, uptr dldi_vaddr);
+
+/// Patch a DLDI driver into a given area
+bool dldiApplyPatch(DLDI_INTERFACE* area, const DLDI_INTERFACE* io);
+
+/// Patch a binary using a given DLDI driver
+MK_INLINE bool dldiPatchBinary(void* bin, size_t bin_size, const DLDI_INTERFACE* io)
+{
+	DLDI_INTERFACE* area = dldiFindDriverArea(bin, bin_size);
+	return area ? dldiApplyPatch(area, io) : false;
+}
+
+#ifdef __cplusplus
+}
+#endif
