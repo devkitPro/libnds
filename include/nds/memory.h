@@ -270,29 +270,32 @@ extern "C" {
 #define BUS_OWNER_ARM7 false
 
 
-static inline
+MK_DEPRECATED static inline
 /*! \fn void sysSetCartOwner(bool arm9)
     \brief Sets the owner of the GBA cart.  Both CPUs cannot have access to the gba cart (slot 2).
     \param arm9 if true the arm9 is the owner, otherwise the arm7
+    \deprecated Use gbacartOpen and gbacartClose instead of this function for better interoperation between CPUs.
 */
 void sysSetCartOwner(bool arm9) {
   REG_EXMEMCNT = (REG_EXMEMCNT & ~ARM7_OWNS_ROM) | (arm9 ? 0 :  ARM7_OWNS_ROM);
 }
 
-static inline
+MK_DEPRECATED static inline
 /*! \fn void sysSetCardOwner(bool arm9)
     \brief Sets the owner of the DS card bus.  Both CPUs cannot have access to the DS card bus (slot 1).
-*   \param arm9 if true the arm9 is the owner, otherwise the arm7
+    \param arm9 if true the arm9 is the owner, otherwise the arm7
+    \deprecated Use ntrcardOpen and ntrcardClose instead of this function for better interoperation between CPUs.
 */
 void sysSetCardOwner(bool arm9) {
   REG_EXMEMCNT = (REG_EXMEMCNT & ~ARM7_OWNS_CARD) | (arm9 ? 0 : ARM7_OWNS_CARD);
 }
 
-static inline
+MK_DEPRECATED static inline
 /*! \fn void sysSetBusOwners(bool arm9rom, bool arm9card)
     \brief Sets the owner of the DS card bus (slot 1) and gba cart bus (slot 2).  Only one cpu may access the device at a time.
-*   \param arm9rom if true the arm9 is the owner of slot 2, otherwise the arm7
-*   \param arm9card if true the arm9 is the owner of slot 1, otherwise the arm7
+    \param arm9rom if true the arm9 is the owner of slot 2, otherwise the arm7
+    \param arm9card if true the arm9 is the owner of slot 1, otherwise the arm7
+    \deprecated See \ref sysSetCartOwner and \ref sysSetCardOwner for alternatives.
 */
 void sysSetBusOwners(bool arm9rom, bool arm9card) {
   REG_EXMEMCNT = (REG_EXMEMCNT & ~(ARM7_OWNS_CARD|ARM7_OWNS_ROM)) |
