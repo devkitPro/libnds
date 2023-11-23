@@ -38,6 +38,7 @@
 
 #include "ndstypes.h"
 #include <calico/nds/system.h>
+#include <calico/nds/scfg.h>
 #include <calico/nds/lcd.h>
 #include <calico/nds/pm.h>
 #include <calico/nds/mm_env.h>
@@ -64,18 +65,6 @@ typedef enum
 	%HALT_CR can only be accessed via the BIOS.
 */
 #define HALT_CR       (*(vu16*)0x04000300)
-
-#define REG_SCFG_ROM		*(vu16*)0x4004000
-
-#ifdef ARM7
-#define REG_SCFG_A9ROM		*(vu8*)0x4004000
-#define REG_SCFG_A7ROM		*(vu8*)0x4004001  // ??
-#endif
-
-#define REG_SCFG_CLK		*(vu16*)0x4004004
-#define REG_SCFG_RST		*(vu16*)0x4004006
-#define REG_SCFG_EXT		*(vu32*)0x4004008
-#define REG_SCFG_MC			*(vu16*)0x4004010
 
 static inline
 /*!
@@ -204,7 +193,7 @@ u8* getHeapLimit();
 #ifdef ARM7
 #include <calico/nds/arm7/pmic.h>
 
-#define REG_CONSOLEID	(*(vu64*)0x04004D00)
+#define REG_CONSOLEID	REG_OTP_CID
 
 //!	Power-controlled hardware devices accessable to the ARM7.
 /*!	Note that these should only be used when programming for
