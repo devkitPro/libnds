@@ -80,16 +80,6 @@ enum IME_VALUE {
 extern "C" {
 #endif
 
-/*! \fn  VoidFn setPowerButtonCB(VoidFn CB);
-	\brief set callback for DSi Powerbutton press
-
-	\param CB
-		function to call when power button pressed
-	\return
-		the previously set callback
-*/
-VoidFn setPowerButtonCB(VoidFn CB);
-
 static inline int enterCriticalSection(void) {
 	return irqLock();
 }

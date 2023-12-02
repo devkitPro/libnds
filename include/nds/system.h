@@ -168,7 +168,6 @@ typedef struct sysVectors_t {
 #define SystemVectors __excpt_vectors
 
 extern sysVectors __excpt_vectors;
-void setSDcallback(void(*callback)(int));
 
 /*!
 	\brief Sets the ARM9 clock speed, only possible in DSi mode
