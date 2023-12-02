@@ -27,8 +27,8 @@
 #ifndef NDS_CARD_INCLUDE
 #define NDS_CARD_INCLUDE
 
-
 #include "ndstypes.h"
+#include <calico/nds/scfg.h>
 
 // Card bus
 #define	REG_CARD_DATA_RD	(*(vu32*)0x04100010)
@@ -105,9 +105,17 @@
 extern "C" {
 #endif
 
+//---------------------------------------------------------------------------------
+static inline void enableSlot1(void) {
+//---------------------------------------------------------------------------------
+	scfgSetMcPower(true);
+}
 
-void enableSlot1();
-void disableSlot1();
+//---------------------------------------------------------------------------------
+static inline void disableSlot1(void) {
+//---------------------------------------------------------------------------------
+	scfgSetMcPower(false);
+}
 
 void cardWriteCommand(const u8 *command);
 void cardPolledTransfer(u32 flags, u32 *destination, u32 length, const u8 *command);
