@@ -38,11 +38,30 @@ On the ARM 9 this functionality is best accessed via the console studio integrat
 #ifndef NDS_DEBUG_INCLUDE
 #define NDS_DEBUG_INCLUDE
 
-void nocashWrite(const char *message, int len);
-/*! \brief Send a message to the no$gba debug window 
+#include <stddef.h>
+#include "ndstypes.h"
+
+#define REG_NOCASH_OUT_STRZ (*(vu32*)0x4fffa10)
+#define REG_NOCASH_OUT_CHAR (*(vu8*) 0x4fffa1c)
+
+/*! \brief Send a message to the no$gba debug window
 \param message The message to send
+\param len Length in characters of the message to send
 */
-void nocashMessage(const char *message);
+static inline void nocashWrite(const char *message, size_t len)
+{
+	for (size_t i = 0; i < len; i ++) {
+		REG_NOCASH_OUT_CHAR = message[i];
+	}
+}
+
+/*! \brief Send a message to the no$gba debug window
+\param message The message to send (zero-terminated string)
+*/
+static inline void nocashMessage(const char *message)
+{
+	REG_NOCASH_OUT_STRZ = (u32)message;
+}
 
 #endif // NDS_DEBUG_INCLUDE
 
