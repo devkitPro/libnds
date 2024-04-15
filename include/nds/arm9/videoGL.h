@@ -338,7 +338,8 @@ much about it. This is only an issue because of hte mix of inlined/real function
 ---------------------------------------------------------------------------------*/
 
 typedef struct gl_hidden_globals {
-	GL_MATRIX_MODE_ENUM matrixMode; // holds the current Matrix Mode
+	u8 isActive;					// Has this been called before?
+
 	s_vramBlock *vramBlocks[ 2 ];		// Two classe instances, one for textures, and one for palettes
 	int vramLock[ 2 ];				// Holds the current lock state of the VRAM banks
 
@@ -355,19 +356,15 @@ typedef struct gl_hidden_globals {
 	int activePalette;				// The current active palette name
 	int texCount;
 	int palCount;
-
-	// holds the current state of the clear color register
-	u32 clearColor; // state of clear color register
-
-	u8 isActive;					// Has this been called before?
 } gl_hidden_globals;
 
+extern u32 glCurClearColor;
 
 // Pointer to global data for videoGL
 extern gl_hidden_globals glGlobalData;
 
 // Pointer to global data for videoGL
-static gl_hidden_globals* glGlob = &glGlobalData;
+#define glGlob (&glGlobalData)
 
 //---------------------------------------------------------------------------------
 //Fifo commands
@@ -412,6 +409,9 @@ static gl_hidden_globals* glGlob = &glGlobalData;
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/*! \brief Initializes the gl state machine (must be called once before using gl calls) */
+void glInit(void);
 
 /*! \brief Rotates the model view matrix by angle about the specified unit vector
 \param angle The angle to rotate by
@@ -521,13 +521,6 @@ void glTexCoord2f32(s32 u, s32 v);
 \param mode which material property to change
 \param color the color to set for that material property */
 void glMaterialf(GL_MATERIALS_ENUM mode, rgb color);
-
-// This handles initialization of the GL state; this is called from glInit to keep globals synced between compilation units
-void glInit_C(void);
-
-// This returns a pointer to the globals for videoGL
-gl_hidden_globals* glGetGlobals();
-
 
 #ifdef __cplusplus
 }
@@ -1300,13 +1293,6 @@ void glCutoffDepth(fixed12d3 wVal) {
 }
 
 GL_STATIC_INL
-/*! \fn void glInit()
-\brief Initializes the gl state machine (must be called once before using gl calls) */
-void glInit() {
-	glInit_C(); // actually does the initialization
-}
-
-GL_STATIC_INL
 /*! \fn void glClearColor(u8 red, u8 green, u8 blue, u8 alpha)
 \brief sets the color of the rear-plane(a.k.a Clear Color/Plane)
 \param red component (0-31)
@@ -1314,7 +1300,7 @@ GL_STATIC_INL
 \param blue component (0-31)
 \param alpha from 0(clear) to 31(opaque)*/
 void glClearColor(u8 red, u8 green, u8 blue, u8 alpha) {
-	GFX_CLEAR_COLOR = glGlob->clearColor = ( glGlob->clearColor & 0xFFE08000) | (0x7FFF & RGB15(red, green, blue)) | ((alpha & 0x1F) << 16);
+	GFX_CLEAR_COLOR = glCurClearColor = ( glCurClearColor & 0xFFE08000) | (0x7FFF & RGB15(red, green, blue)) | ((alpha & 0x1F) << 16);
 }
 
 GL_STATIC_INL
@@ -1322,7 +1308,7 @@ GL_STATIC_INL
 \brief sets the polygon ID of the rear-plane(a.k.a. Clear/Color Plane), useful for antialiasing and edge coloring
 \param ID the polygon ID to give the rear-plane */
 void glClearPolyID(u8 ID) {
-	GFX_CLEAR_COLOR = glGlob->clearColor = ( glGlob->clearColor & 0xC0FFFFFF) | (( ID & 0x3F ) << 24 );
+	GFX_CLEAR_COLOR = glCurClearColor = ( glCurClearColor & 0xC0FFFFFF) | (( ID & 0x3F ) << 24 );
 }
 
 GL_STATIC_INL

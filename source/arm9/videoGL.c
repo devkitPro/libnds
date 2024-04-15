@@ -38,75 +38,7 @@
 #include <nds/arm9/sassert.h>
 
 // this is the actual data of the globals for videoGL
-//   Please use the glGlob pointer to access this data since that makes it easier to move stuff in/out of the header.
 gl_hidden_globals glGlobalData;
-
-
-
-// This returns the pointer to the globals for videoGL
-gl_hidden_globals* glGetGlobals() {
-	return &glGlobalData;
-}
-
-//---------------------------------------------------------------------------------
-void glRotatef32i(int angle, s32 x, s32 y, s32 z) {
-//---------------------------------------------------------------------------------
-	s32 axis[3];
-	s32 sine = sinLerp(angle);//SIN[angle &  LUT_MASK];
-	s32 cosine = cosLerp(angle);//COS[angle & LUT_MASK];
-	s32 one_minus_cosine = inttof32(1) - cosine;
-
-	axis[0]=x;
-	axis[1]=y;
-	axis[2]=z;
-
-	normalizef32(axis);   // should require passed in normalized?
-
-	MATRIX_MULT3x3 = cosine + mulf32(one_minus_cosine, mulf32(axis[0], axis[0]));
-	MATRIX_MULT3x3 = mulf32(one_minus_cosine, mulf32(axis[0], axis[1])) + mulf32(axis[2], sine);
-	MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[0]), axis[2]) - mulf32(axis[1], sine);
-
-	MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[0]),  axis[1]) - mulf32(axis[2], sine);
-	MATRIX_MULT3x3 = cosine + mulf32(mulf32(one_minus_cosine, axis[1]), axis[1]);
-	MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[1]), axis[2]) + mulf32(axis[0], sine);
-
-	MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[0]), axis[2]) + mulf32(axis[1], sine);
-	MATRIX_MULT3x3 = mulf32(mulf32(one_minus_cosine, axis[1]), axis[2]) - mulf32(axis[0], sine);
-	MATRIX_MULT3x3 = cosine + mulf32(mulf32(one_minus_cosine, axis[2]), axis[2]);
-}
-
-
-
-
-//---------------------------------------------------------------------------------
-void glMaterialf(GL_MATERIALS_ENUM mode, rgb color) {
-//---------------------------------------------------------------------------------
-	static u32 diffuse_ambient = 0;
-	static u32 specular_emission = 0;
-
-	switch(mode) {
-		case GL_AMBIENT:
-			diffuse_ambient = (color << 16) | (diffuse_ambient & 0xFFFF);
-			break;
-		case GL_DIFFUSE:
-			diffuse_ambient = color | (diffuse_ambient & 0xFFFF0000);
-			break;
-		case GL_AMBIENT_AND_DIFFUSE:
-			diffuse_ambient= color + (color << 16);
-			break;
-		case GL_SPECULAR:
-			specular_emission = color | (specular_emission & 0xFFFF0000);
-			break;
-		case GL_SHININESS:
-			break;
-		case GL_EMISSION:
-			specular_emission = (color << 16) | (specular_emission & 0xFFFF);
-			break;
-	}
-
-	GFX_DIFFUSE_AMBIENT = diffuse_ambient;
-	GFX_SPECULAR_EMISSION = specular_emission;
-}
 
 //---------------------------------------------------------------------------------
 void glTexCoord2f32(s32 u, s32 v) {
@@ -520,16 +452,10 @@ vramBlock_getSize( s_vramBlock *mb, u32 index ) {
 //---------------------------------------------------------------------------------
 //---------------------------------------------------------------------------------
 
-
-
 //---------------------------------------------------------------------------------
-void glInit_C(void) {
+void _glInitGlobals(void) {
 //---------------------------------------------------------------------------------
 	int i;
-
-	powerOn(POWER_3D_CORE | POWER_MATRIX);	// enable 3D core & geometry engine
-
-	glGlob = glGetGlobals();
 
 	if( glGlob->isActive )
 		return;
@@ -542,8 +468,6 @@ void glInit_C(void) {
 	glGlob->vramLock[ 1 ] = 0;
 
 	// init texture globals
-
-	glGlob->clearColor = 0;
 
 	glGlob->activeTexture = 0;
 	glGlob->activePalette = 0;
@@ -564,39 +488,6 @@ void glInit_C(void) {
 		DynamicArraySet( &glGlob->deallocTex, i, (void*)0 );
 		DynamicArraySet( &glGlob->deallocPal, i, (void*)0 );
 	}
-
-	while (GFX_STATUS & (1<<27)); // wait till gfx engine is not busy
-
-	// Clear the FIFO
-	GFX_STATUS |= (1<<29);
-
-	// Clear overflows from list memory
-	glResetMatrixStack();
-
-	// prime the vertex/polygon buffers
-	glFlush(0);
-
-	// reset the control bits
-	GFX_CONTROL = 0;
-
-	// reset the rear-plane(a.k.a. clear color) to black, ID=0, and opaque
-	glClearColor(0,0,0,31);
-	glClearPolyID(0);
-
-	// reset the depth to it's max
-	glClearDepth(GL_MAX_DEPTH);
-
-	GFX_TEX_FORMAT = 0;
-	GFX_POLY_FORMAT = 0;
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-
-	glMatrixMode(GL_TEXTURE);
-	glLoadIdentity();
 
 	glGlob->isActive = 1;
 }
