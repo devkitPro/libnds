@@ -2,7 +2,7 @@
 
 #include "nds.h" 
 
-
+#include "float.h"
 
 #define f32 float
 #define u32 uint32_t
