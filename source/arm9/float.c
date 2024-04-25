@@ -104,10 +104,7 @@ NDS_ITCM_CODE f32 __wrap___aeabi_fmul( f32 x, f32 y){
     mantissa= mantissa & ((1<<23)-1);
     u32 exponent=(combined_exponent+(shift<<23));
     u32 sign= a^b;
-    union{
-    f32 f;
-    u32 k;
-    }result;
+    union{f32 f;u32 k;}result;
     result.k= sign |exponent | mantissa;
     return combined_exponent<=(0<<23)? 0.0:result.f ;
 }
