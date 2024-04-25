@@ -33,7 +33,7 @@ NDS_ITCM_CODE f32 __wrap___aeabi_fdiv(f32 x, f32 y ) {
     REG_DIVCNT = DIV_64_32; 
     REG_DIV_NUMER = (i<<23);
     REG_DIV_DENOM_L = j;
-    s16 shift= i<j ? -1 : 0; 
+    s32 shift= i<j ? -1 : 0; 
     u64 m=(xu.i) & (0xff<<23);
     u64 n=(yu.j) & (0xff<<23);
     s32 exponent=m-n+(shift<<23)+(127<<23);
