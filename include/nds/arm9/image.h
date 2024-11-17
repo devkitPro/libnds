@@ -53,7 +53,7 @@ typedef struct sImage
 {
 	short height; 				/*!< \brief The height of the image in pixels */
 	short width; 				/*!< \brief The width of the image in pixels */
-	int bpp;					/*!< \brief Bits per pixel (should be 4 8 16 or 24) */
+	int bpp;					/*!< \brief Bits per pixel (should be 4, 8, 16, or 24) */
 	unsigned short* palette;	/*!< \brief A pointer to the palette data */
 
 	//! A union of data pointers to the pixel data.

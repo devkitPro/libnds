@@ -129,11 +129,11 @@ extern u16 mosaicShadowSub;
 #define OAM_SUB       ((u16*)(MM_OBJRAM+0x400))/*!< \brief pointer to Object Attribute Memory (Sub engine)*/
 
 // macro creates a 15 bit color from 3x5 bit components
-/** \brief  Macro to convert 5 bit r g b components into a single 15 bit RGB triplet */
+/** \brief  Macro to convert 5 bit RGB components into a single 15 bit RGB triplet */
 #define RGB15(r,g,b)  ((r)|((g)<<5)|((b)<<10))
 #define RGB5(r,g,b)  ((r)|((g)<<5)|((b)<<10))
 #define RGB8(r,g,b)  (((r)>>3)|(((g)>>3)<<5)|(((b)>>3)<<10))
-/** \brief  Macro to convert 5 bit r g b components plus 1 bit alpha into a single 16 bit ARGB triplet */
+/** \brief  Macro to convert 5 bit RGB components plus 1 bit alpha into a single 16 bit ARGB triplet */
 #define ARGB16(a, r, g, b) ( ((a) << 15) | (r)|((g)<<5)|((b)<<10))
 
 /** \brief  Screen height in pixels */
@@ -157,149 +157,149 @@ extern u16 mosaicShadowSub;
 
 //! Allowed VRAM bank A modes
 typedef enum {
-	VRAM_A_LCD						= 0,					//!< maps vram a to lcd.
-	VRAM_A_MAIN_BG					= 1,					//!< maps vram a to main engine background slot 0.
-	VRAM_A_MAIN_BG_0x06000000		= 1 | VRAM_OFFSET(0),	//!< maps vram a to main engine background slot 0.
-	VRAM_A_MAIN_BG_0x06020000		= 1 | VRAM_OFFSET(1),	//!< maps vram a to main engine background slot 1.
-	VRAM_A_MAIN_BG_0x06040000		= 1 | VRAM_OFFSET(2),	//!< maps vram a to main engine background slot 2.
-	VRAM_A_MAIN_BG_0x06060000		= 1 | VRAM_OFFSET(3),	//!< maps vram a to main engine background slot 3.
-	VRAM_A_MAIN_SPRITE				= 2,					//!< maps vram a to main engine sprites slot 0.
-	VRAM_A_MAIN_SPRITE_0x06400000	= 2 | VRAM_OFFSET(0),	//!< maps vram a to main engine sprites slot 0.
-	VRAM_A_MAIN_SPRITE_0x06420000	= 2 | VRAM_OFFSET(1),	//!< maps vram a to main engine sprites slot 1.
-	VRAM_A_TEXTURE					= 3,					//!< maps vram a to 3d texture slot 0.
-	VRAM_A_TEXTURE_SLOT0			= 3 | VRAM_OFFSET(0),	//!< maps vram a to 3d texture slot 0.
-	VRAM_A_TEXTURE_SLOT1			= 3 | VRAM_OFFSET(1),	//!< maps vram a to 3d texture slot 1.
-	VRAM_A_TEXTURE_SLOT2			= 3 | VRAM_OFFSET(2),	//!< maps vram a to 3d texture slot 2.
-	VRAM_A_TEXTURE_SLOT3			= 3 | VRAM_OFFSET(3)	//!< maps vram a to 3d texture slot 3.
+	VRAM_A_LCD						= 0,					//!< maps vram bank a to lcd.
+	VRAM_A_MAIN_BG					= 1,					//!< maps vram bank a to main engine background slot 0.
+	VRAM_A_MAIN_BG_0x06000000		= 1 | VRAM_OFFSET(0),	//!< maps vram bank a to main engine background slot 0.
+	VRAM_A_MAIN_BG_0x06020000		= 1 | VRAM_OFFSET(1),	//!< maps vram bank a to main engine background slot 1.
+	VRAM_A_MAIN_BG_0x06040000		= 1 | VRAM_OFFSET(2),	//!< maps vram bank a to main engine background slot 2.
+	VRAM_A_MAIN_BG_0x06060000		= 1 | VRAM_OFFSET(3),	//!< maps vram bank a to main engine background slot 3.
+	VRAM_A_MAIN_SPRITE				= 2,					//!< maps vram bank a to main engine sprites slot 0.
+	VRAM_A_MAIN_SPRITE_0x06400000	= 2 | VRAM_OFFSET(0),	//!< maps vram bank a to main engine sprites slot 0.
+	VRAM_A_MAIN_SPRITE_0x06420000	= 2 | VRAM_OFFSET(1),	//!< maps vram bank a to main engine sprites slot 1.
+	VRAM_A_TEXTURE					= 3,					//!< maps vram bank a to 3d texture slot 0.
+	VRAM_A_TEXTURE_SLOT0			= 3 | VRAM_OFFSET(0),	//!< maps vram bank a to 3d texture slot 0.
+	VRAM_A_TEXTURE_SLOT1			= 3 | VRAM_OFFSET(1),	//!< maps vram bank a to 3d texture slot 1.
+	VRAM_A_TEXTURE_SLOT2			= 3 | VRAM_OFFSET(2),	//!< maps vram bank a to 3d texture slot 2.
+	VRAM_A_TEXTURE_SLOT3			= 3 | VRAM_OFFSET(3)	//!< maps vram bank a to 3d texture slot 3.
 } VRAM_A_TYPE;
 
 //! Allowed VRAM bank B modes
 typedef enum {
-	VRAM_B_LCD 						= 0,					//!< maps vram b to lcd.
-	VRAM_B_MAIN_BG					= 1 | VRAM_OFFSET(1),	//!< maps vram b to main engine background slot 1.
-	VRAM_B_MAIN_BG_0x06000000		= 1 | VRAM_OFFSET(0),	//!< maps vram b to main engine background slot 0.
-	VRAM_B_MAIN_BG_0x06020000		= 1 | VRAM_OFFSET(1),	//!< maps vram b to main engine background slot 1.
-	VRAM_B_MAIN_BG_0x06040000		= 1 | VRAM_OFFSET(2),	//!< maps vram b to main engine background slot 2.
-	VRAM_B_MAIN_BG_0x06060000		= 1 | VRAM_OFFSET(3),	//!< maps vram b to main engine background slot 3.
-	VRAM_B_MAIN_SPRITE				= 2,					//!< maps vram b to main engine sprites slot 0.
-	VRAM_B_MAIN_SPRITE_0x06400000	= 2 | VRAM_OFFSET(0),	//!< maps vram b to main engine sprites slot 0.
-	VRAM_B_MAIN_SPRITE_0x06420000	= 2 | VRAM_OFFSET(1),	//!< maps vram b to main engine sprites slot 1.
-	VRAM_B_TEXTURE					= 3 | VRAM_OFFSET(1),	//!< maps vram b to 3d texture slot 1.
-	VRAM_B_TEXTURE_SLOT0			= 3 | VRAM_OFFSET(0),	//!< maps vram b to 3d texture slot 0.
-	VRAM_B_TEXTURE_SLOT1			= 3 | VRAM_OFFSET(1),	//!< maps vram b to 3d texture slot 1.
-	VRAM_B_TEXTURE_SLOT2			= 3 | VRAM_OFFSET(2),	//!< maps vram b to 3d texture slot 2.
-	VRAM_B_TEXTURE_SLOT3			= 3 | VRAM_OFFSET(3)	//!< maps vram b to 3d texture slot 3.
+	VRAM_B_LCD 						= 0,					//!< maps vram bank b to lcd.
+	VRAM_B_MAIN_BG					= 1 | VRAM_OFFSET(1),	//!< maps vram bank b to main engine background slot 1.
+	VRAM_B_MAIN_BG_0x06000000		= 1 | VRAM_OFFSET(0),	//!< maps vram bank b to main engine background slot 0.
+	VRAM_B_MAIN_BG_0x06020000		= 1 | VRAM_OFFSET(1),	//!< maps vram bank b to main engine background slot 1.
+	VRAM_B_MAIN_BG_0x06040000		= 1 | VRAM_OFFSET(2),	//!< maps vram bank b to main engine background slot 2.
+	VRAM_B_MAIN_BG_0x06060000		= 1 | VRAM_OFFSET(3),	//!< maps vram bank b to main engine background slot 3.
+	VRAM_B_MAIN_SPRITE				= 2,					//!< maps vram bank b to main engine sprites slot 0.
+	VRAM_B_MAIN_SPRITE_0x06400000	= 2 | VRAM_OFFSET(0),	//!< maps vram bank b to main engine sprites slot 0.
+	VRAM_B_MAIN_SPRITE_0x06420000	= 2 | VRAM_OFFSET(1),	//!< maps vram bank b to main engine sprites slot 1.
+	VRAM_B_TEXTURE					= 3 | VRAM_OFFSET(1),	//!< maps vram bank b to 3d texture slot 1.
+	VRAM_B_TEXTURE_SLOT0			= 3 | VRAM_OFFSET(0),	//!< maps vram bank b to 3d texture slot 0.
+	VRAM_B_TEXTURE_SLOT1			= 3 | VRAM_OFFSET(1),	//!< maps vram bank b to 3d texture slot 1.
+	VRAM_B_TEXTURE_SLOT2			= 3 | VRAM_OFFSET(2),	//!< maps vram bank b to 3d texture slot 2.
+	VRAM_B_TEXTURE_SLOT3			= 3 | VRAM_OFFSET(3)	//!< maps vram bank b to 3d texture slot 3.
 } VRAM_B_TYPE;
 
 //! Allowed VRAM bank C modes
 typedef enum {
-	VRAM_C_LCD 					= 0,					//!< maps vram c to lcd.
-	VRAM_C_MAIN_BG  			= 1 | VRAM_OFFSET(2),	//!< maps vram c to main engine background slot 2.
-	VRAM_C_MAIN_BG_0x06000000	= 1 | VRAM_OFFSET(0),	//!< maps vram c to main engine background slot 0.
-	VRAM_C_MAIN_BG_0x06020000	= 1 | VRAM_OFFSET(1),	//!< maps vram c to main engine background slot 1.
-	VRAM_C_MAIN_BG_0x06040000	= 1 | VRAM_OFFSET(2),	//!< maps vram c to main engine background slot 2.
-	VRAM_C_MAIN_BG_0x06060000	= 1 | VRAM_OFFSET(3),	//!< maps vram c to main engine background slot 3.
-	VRAM_C_ARM7					= 2,					//!< maps vram c to ARM7 workram slot 0.
-	VRAM_C_ARM7_0x06000000 		= 2 | VRAM_OFFSET(0),	//!< maps vram c to ARM7 workram slot 0.
-	VRAM_C_ARM7_0x06020000 		= 2 | VRAM_OFFSET(1),	//!< maps vram c to ARM7 workram slot 1.
-	VRAM_C_SUB_BG				= 4,					//!< maps vram c to sub engine background slot 0.
-	VRAM_C_SUB_BG_0x06200000	= 4 | VRAM_OFFSET(0),	//!< maps vram c to sub engine background slot 0.
-	VRAM_C_TEXTURE				= 3 | VRAM_OFFSET(2),	//!< maps vram c to 3d texture slot 2.
-	VRAM_C_TEXTURE_SLOT0		= 3 | VRAM_OFFSET(0),	//!< maps vram c to 3d texture slot 0.
-	VRAM_C_TEXTURE_SLOT1		= 3 | VRAM_OFFSET(1),	//!< maps vram c to 3d texture slot 1.
-	VRAM_C_TEXTURE_SLOT2		= 3 | VRAM_OFFSET(2),	//!< maps vram c to 3d texture slot 2.
-	VRAM_C_TEXTURE_SLOT3		= 3 | VRAM_OFFSET(3)	//!< maps vram c to 3d texture slot 3.
+	VRAM_C_LCD 					= 0,					//!< maps vram bank c to lcd.
+	VRAM_C_MAIN_BG  			= 1 | VRAM_OFFSET(2),	//!< maps vram bank c to main engine background slot 2.
+	VRAM_C_MAIN_BG_0x06000000	= 1 | VRAM_OFFSET(0),	//!< maps vram bank c to main engine background slot 0.
+	VRAM_C_MAIN_BG_0x06020000	= 1 | VRAM_OFFSET(1),	//!< maps vram bank c to main engine background slot 1.
+	VRAM_C_MAIN_BG_0x06040000	= 1 | VRAM_OFFSET(2),	//!< maps vram bank c to main engine background slot 2.
+	VRAM_C_MAIN_BG_0x06060000	= 1 | VRAM_OFFSET(3),	//!< maps vram bank c to main engine background slot 3.
+	VRAM_C_ARM7					= 2,					//!< maps vram bank c to ARM7 workram slot 0.
+	VRAM_C_ARM7_0x06000000 		= 2 | VRAM_OFFSET(0),	//!< maps vram bank c to ARM7 workram slot 0.
+	VRAM_C_ARM7_0x06020000 		= 2 | VRAM_OFFSET(1),	//!< maps vram bank c to ARM7 workram slot 1.
+	VRAM_C_SUB_BG				= 4,					//!< maps vram bank c to sub engine background slot 0.
+	VRAM_C_SUB_BG_0x06200000	= 4 | VRAM_OFFSET(0),	//!< maps vram bank c to sub engine background slot 0.
+	VRAM_C_TEXTURE				= 3 | VRAM_OFFSET(2),	//!< maps vram bank c to 3d texture slot 2.
+	VRAM_C_TEXTURE_SLOT0		= 3 | VRAM_OFFSET(0),	//!< maps vram bank c to 3d texture slot 0.
+	VRAM_C_TEXTURE_SLOT1		= 3 | VRAM_OFFSET(1),	//!< maps vram bank c to 3d texture slot 1.
+	VRAM_C_TEXTURE_SLOT2		= 3 | VRAM_OFFSET(2),	//!< maps vram bank c to 3d texture slot 2.
+	VRAM_C_TEXTURE_SLOT3		= 3 | VRAM_OFFSET(3)	//!< maps vram bank c to 3d texture slot 3.
 } VRAM_C_TYPE;
 
 //! Allowed VRAM bank D modes
 typedef enum {
-	VRAM_D_LCD 					= 0,					//!< maps vram d to lcd.
-	VRAM_D_MAIN_BG  			= 1 | VRAM_OFFSET(3),	//!< maps vram d to main engine background slot 3.
-	VRAM_D_MAIN_BG_0x06000000	= 1 | VRAM_OFFSET(0),	//!< maps vram d to main engine background slot 0.
-	VRAM_D_MAIN_BG_0x06020000	= 1 | VRAM_OFFSET(1),	//!< maps vram d to main engine background slot 1.
-	VRAM_D_MAIN_BG_0x06040000	= 1 | VRAM_OFFSET(2),	//!< maps vram d to main engine background slot 2.
-	VRAM_D_MAIN_BG_0x06060000	= 1 | VRAM_OFFSET(3),	//!< maps vram d to main engine background slot 3.
-	VRAM_D_ARM7 				= 2 | VRAM_OFFSET(1),	//!< maps vram d to ARM7 workram slot 1.
-	VRAM_D_ARM7_0x06000000 		= 2 | VRAM_OFFSET(0),	//!< maps vram d to ARM7 workram slot 0.
-	VRAM_D_ARM7_0x06020000 		= 2 | VRAM_OFFSET(1),	//!< maps vram d to ARM7 workram slot 1.
-	VRAM_D_SUB_SPRITE  			= 4,					//!< maps vram d to sub engine sprites slot 0.
-	VRAM_D_TEXTURE 				= 3 | VRAM_OFFSET(3),	//!< maps vram d to 3d texture slot 3.
-	VRAM_D_TEXTURE_SLOT0		= 3 | VRAM_OFFSET(0),	//!< maps vram d to 3d texture slot 0.
-	VRAM_D_TEXTURE_SLOT1 		= 3 | VRAM_OFFSET(1),	//!< maps vram d to 3d texture slot 1.
-	VRAM_D_TEXTURE_SLOT2 		= 3 | VRAM_OFFSET(2),	//!< maps vram d to 3d texture slot 2.
-	VRAM_D_TEXTURE_SLOT3 		= 3 | VRAM_OFFSET(3)	//!< maps vram d to 3d texture slot 3.
+	VRAM_D_LCD 					= 0,					//!< maps vram bank d to lcd.
+	VRAM_D_MAIN_BG  			= 1 | VRAM_OFFSET(3),	//!< maps vram bank d to main engine background slot 3.
+	VRAM_D_MAIN_BG_0x06000000	= 1 | VRAM_OFFSET(0),	//!< maps vram bank d to main engine background slot 0.
+	VRAM_D_MAIN_BG_0x06020000	= 1 | VRAM_OFFSET(1),	//!< maps vram bank d to main engine background slot 1.
+	VRAM_D_MAIN_BG_0x06040000	= 1 | VRAM_OFFSET(2),	//!< maps vram bank d to main engine background slot 2.
+	VRAM_D_MAIN_BG_0x06060000	= 1 | VRAM_OFFSET(3),	//!< maps vram bank d to main engine background slot 3.
+	VRAM_D_ARM7 				= 2 | VRAM_OFFSET(1),	//!< maps vram bank d to ARM7 workram slot 1.
+	VRAM_D_ARM7_0x06000000 		= 2 | VRAM_OFFSET(0),	//!< maps vram bank d to ARM7 workram slot 0.
+	VRAM_D_ARM7_0x06020000 		= 2 | VRAM_OFFSET(1),	//!< maps vram bank d to ARM7 workram slot 1.
+	VRAM_D_SUB_SPRITE  			= 4,					//!< maps vram bank d to sub engine sprites slot 0.
+	VRAM_D_TEXTURE 				= 3 | VRAM_OFFSET(3),	//!< maps vram bank d to 3d texture slot 3.
+	VRAM_D_TEXTURE_SLOT0		= 3 | VRAM_OFFSET(0),	//!< maps vram bank d to 3d texture slot 0.
+	VRAM_D_TEXTURE_SLOT1 		= 3 | VRAM_OFFSET(1),	//!< maps vram bank d to 3d texture slot 1.
+	VRAM_D_TEXTURE_SLOT2 		= 3 | VRAM_OFFSET(2),	//!< maps vram bank d to 3d texture slot 2.
+	VRAM_D_TEXTURE_SLOT3 		= 3 | VRAM_OFFSET(3)	//!< maps vram bank d to 3d texture slot 3.
 } VRAM_D_TYPE;
 
 //! Allowed VRAM bank E modes
 typedef enum {
-	VRAM_E_LCD					= 0,		//!< maps vram e to lcd.
-	VRAM_E_MAIN_BG				= 1,		//!< maps vram e to main engine background first half of slot 0.
-	VRAM_E_MAIN_SPRITE			= 2,		//!< maps vram e to main engine sprites first half of slot 0.
-	VRAM_E_TEX_PALETTE			= 3,		//!< maps vram e to 3d texture palette slot 0-3.
-	VRAM_E_BG_EXT_PALETTE		= 4,		//!< maps vram e to main engine background extended palette.
+	VRAM_E_LCD					= 0,		//!< maps vram bank e to lcd.
+	VRAM_E_MAIN_BG				= 1,		//!< maps vram bank e to main engine background first half of slot 0.
+	VRAM_E_MAIN_SPRITE			= 2,		//!< maps vram bank e to main engine sprites first half of slot 0.
+	VRAM_E_TEX_PALETTE			= 3,		//!< maps vram bank e to 3d texture palette slot 0-3.
+	VRAM_E_BG_EXT_PALETTE		= 4,		//!< maps vram bank e to main engine background extended palette.
 } VRAM_E_TYPE;
 
 //! Allowed VRAM bank F modes
 typedef enum {
-	VRAM_F_LCD						= 0,					//!< maps vram f to lcd.
-	VRAM_F_MAIN_BG					= 1,					//!< maps vram f to main engine background first part of slot 0.
-	VRAM_F_MAIN_BG_0x06000000		= 1 | VRAM_OFFSET(0),	//!< maps vram f to main engine background first part of slot 0.
-	VRAM_F_MAIN_BG_0x06004000		= 1 | VRAM_OFFSET(1),	//!< maps vram f to main engine background second part of slot 0.
-	VRAM_F_MAIN_BG_0x06010000		= 1 | VRAM_OFFSET(2),	//!< maps vram f to main engine background second half of slot 0.
-	VRAM_F_MAIN_BG_0x06014000		= 1 | VRAM_OFFSET(3),	//!< maps vram f to main engine background second part of second half of slot 0.
-	VRAM_F_MAIN_SPRITE				= 2,					//!< maps vram f to main engine sprites first part of slot 0.
-	VRAM_F_MAIN_SPRITE_0x06400000	= 2 | VRAM_OFFSET(0),	//!< maps vram f to main engine sprites first part of slot 0.
-	VRAM_F_MAIN_SPRITE_0x06404000	= 2 | VRAM_OFFSET(1),	//!< maps vram f to main engine sprites second part of slot 0.
-	VRAM_F_MAIN_SPRITE_0x06410000	= 2 | VRAM_OFFSET(2),	//!< maps vram f to main engine sprites second half of slot 0.
-	VRAM_F_MAIN_SPRITE_0x06414000	= 2 | VRAM_OFFSET(3),	//!< maps vram f to main engine sprites second part of second half of slot 0.
-	VRAM_F_TEX_PALETTE				= 3,					//!< maps vram f to 3d texture palette slot 0.
-	VRAM_F_TEX_PALETTE_SLOT0		= 3 | VRAM_OFFSET(0),	//!< maps vram f to 3d texture palette slot 0.
-	VRAM_F_TEX_PALETTE_SLOT1		= 3 | VRAM_OFFSET(1),	//!< maps vram f to 3d texture palette slot 1.
-	VRAM_F_TEX_PALETTE_SLOT4		= 3 | VRAM_OFFSET(2),	//!< maps vram f to 3d texture palette slot 4.
-	VRAM_F_TEX_PALETTE_SLOT5		= 3 | VRAM_OFFSET(3),	//!< maps vram f to 3d texture palette slot 5.
-	VRAM_F_BG_EXT_PALETTE			= 4,					//!< maps vram f to main engine background extended palette slot 0 and 1.
-	VRAM_F_BG_EXT_PALETTE_SLOT01	= 4 | VRAM_OFFSET(0),	//!< maps vram f to main engine background extended palette slot 0 and 1.
-	VRAM_F_BG_EXT_PALETTE_SLOT23	= 4 | VRAM_OFFSET(1),	//!< maps vram f to main engine background extended palette slot 2 and 3.
-	VRAM_F_SPRITE_EXT_PALETTE		= 5,					//!< maps vram f to main engine sprites extended palette.
+	VRAM_F_LCD						= 0,					//!< maps vram bank f to lcd.
+	VRAM_F_MAIN_BG					= 1,					//!< maps vram bank f to main engine background first part of slot 0.
+	VRAM_F_MAIN_BG_0x06000000		= 1 | VRAM_OFFSET(0),	//!< maps vram bank f to main engine background first part of slot 0.
+	VRAM_F_MAIN_BG_0x06004000		= 1 | VRAM_OFFSET(1),	//!< maps vram bank f to main engine background second part of slot 0.
+	VRAM_F_MAIN_BG_0x06010000		= 1 | VRAM_OFFSET(2),	//!< maps vram bank f to main engine background second half of slot 0.
+	VRAM_F_MAIN_BG_0x06014000		= 1 | VRAM_OFFSET(3),	//!< maps vram bank f to main engine background second part of second half of slot 0.
+	VRAM_F_MAIN_SPRITE				= 2,					//!< maps vram bank f to main engine sprites first part of slot 0.
+	VRAM_F_MAIN_SPRITE_0x06400000	= 2 | VRAM_OFFSET(0),	//!< maps vram bank f to main engine sprites first part of slot 0.
+	VRAM_F_MAIN_SPRITE_0x06404000	= 2 | VRAM_OFFSET(1),	//!< maps vram bank f to main engine sprites second part of slot 0.
+	VRAM_F_MAIN_SPRITE_0x06410000	= 2 | VRAM_OFFSET(2),	//!< maps vram bank f to main engine sprites second half of slot 0.
+	VRAM_F_MAIN_SPRITE_0x06414000	= 2 | VRAM_OFFSET(3),	//!< maps vram bank f to main engine sprites second part of second half of slot 0.
+	VRAM_F_TEX_PALETTE				= 3,					//!< maps vram bank f to 3d texture palette slot 0.
+	VRAM_F_TEX_PALETTE_SLOT0		= 3 | VRAM_OFFSET(0),	//!< maps vram bank f to 3d texture palette slot 0.
+	VRAM_F_TEX_PALETTE_SLOT1		= 3 | VRAM_OFFSET(1),	//!< maps vram bank f to 3d texture palette slot 1.
+	VRAM_F_TEX_PALETTE_SLOT4		= 3 | VRAM_OFFSET(2),	//!< maps vram bank f to 3d texture palette slot 4.
+	VRAM_F_TEX_PALETTE_SLOT5		= 3 | VRAM_OFFSET(3),	//!< maps vram bank f to 3d texture palette slot 5.
+	VRAM_F_BG_EXT_PALETTE			= 4,					//!< maps vram bank f to main engine background extended palette slot 0 and 1.
+	VRAM_F_BG_EXT_PALETTE_SLOT01	= 4 | VRAM_OFFSET(0),	//!< maps vram bank f to main engine background extended palette slot 0 and 1.
+	VRAM_F_BG_EXT_PALETTE_SLOT23	= 4 | VRAM_OFFSET(1),	//!< maps vram bank f to main engine background extended palette slot 2 and 3.
+	VRAM_F_SPRITE_EXT_PALETTE		= 5,					//!< maps vram bank f to main engine sprites extended palette.
 } VRAM_F_TYPE;
 
 //! Allowed VRAM bank G modes
 typedef enum {
-	VRAM_G_LCD						= 0,					//!< maps vram g to lcd.
-	VRAM_G_MAIN_BG					= 1,					//!< maps vram g to main engine background first part of slot 0.
-	VRAM_G_MAIN_BG_0x06000000		= 1 | VRAM_OFFSET(0),	//!< maps vram g to main engine background first part of slot 0.
-	VRAM_G_MAIN_BG_0x06004000		= 1 | VRAM_OFFSET(1),	//!< maps vram g to main engine background second part of slot 0.
-	VRAM_G_MAIN_BG_0x06010000		= 1 | VRAM_OFFSET(2),	//!< maps vram g to main engine background second half of slot 0.
-	VRAM_G_MAIN_BG_0x06014000		= 1 | VRAM_OFFSET(3),	//!< maps vram g to main engine background second part of second half of slot 0.
-	VRAM_G_MAIN_SPRITE				= 2,					//!< maps vram g to main engine sprites first part of slot 0.
-	VRAM_G_MAIN_SPRITE_0x06400000	= 2 | VRAM_OFFSET(0),	//!< maps vram g to main engine sprites first part of slot 0.
-	VRAM_G_MAIN_SPRITE_0x06404000	= 2 | VRAM_OFFSET(1),	//!< maps vram g to main engine sprites second part of slot 0.
-	VRAM_G_MAIN_SPRITE_0x06410000	= 2 | VRAM_OFFSET(2),	//!< maps vram g to main engine sprites second half of slot 0.
-	VRAM_G_MAIN_SPRITE_0x06414000	= 2 | VRAM_OFFSET(3),	//!< maps vram g to main engine sprites second part of second half of slot 0.
-	VRAM_G_TEX_PALETTE				= 3,					//!< maps vram g to 3d texture palette slot 0.
-	VRAM_G_TEX_PALETTE_SLOT0		= 3 | VRAM_OFFSET(0),	//!< maps vram g to 3d texture palette slot 0.
-	VRAM_G_TEX_PALETTE_SLOT1		= 3 | VRAM_OFFSET(1),	//!< maps vram g to 3d texture palette slot 1.
-	VRAM_G_TEX_PALETTE_SLOT4		= 3 | VRAM_OFFSET(2),	//!< maps vram g to 3d texture palette slot 4.
-	VRAM_G_TEX_PALETTE_SLOT5		= 3 | VRAM_OFFSET(3),	//!< maps vram g to 3d texture palette slot 5.
-	VRAM_G_BG_EXT_PALETTE			= 4,					//!< maps vram g to main engine background extended palette slot 0 and 1.
-	VRAM_G_BG_EXT_PALETTE_SLOT01	= 4 | VRAM_OFFSET(0),	//!< maps vram g to main engine background extended palette slot 0 and 1.
-	VRAM_G_BG_EXT_PALETTE_SLOT23	= 4 | VRAM_OFFSET(1),	//!< maps vram g to main engine background extended palette slot 2 and 3.
-	VRAM_G_SPRITE_EXT_PALETTE		= 5,					//!< maps vram g to main engine sprites extended palette.
+	VRAM_G_LCD						= 0,					//!< maps vram bank g to lcd.
+	VRAM_G_MAIN_BG					= 1,					//!< maps vram bank g to main engine background first part of slot 0.
+	VRAM_G_MAIN_BG_0x06000000		= 1 | VRAM_OFFSET(0),	//!< maps vram bank g to main engine background first part of slot 0.
+	VRAM_G_MAIN_BG_0x06004000		= 1 | VRAM_OFFSET(1),	//!< maps vram bank g to main engine background second part of slot 0.
+	VRAM_G_MAIN_BG_0x06010000		= 1 | VRAM_OFFSET(2),	//!< maps vram bank g to main engine background second half of slot 0.
+	VRAM_G_MAIN_BG_0x06014000		= 1 | VRAM_OFFSET(3),	//!< maps vram bank g to main engine background second part of second half of slot 0.
+	VRAM_G_MAIN_SPRITE				= 2,					//!< maps vram bank g to main engine sprites first part of slot 0.
+	VRAM_G_MAIN_SPRITE_0x06400000	= 2 | VRAM_OFFSET(0),	//!< maps vram bank g to main engine sprites first part of slot 0.
+	VRAM_G_MAIN_SPRITE_0x06404000	= 2 | VRAM_OFFSET(1),	//!< maps vram bank g to main engine sprites second part of slot 0.
+	VRAM_G_MAIN_SPRITE_0x06410000	= 2 | VRAM_OFFSET(2),	//!< maps vram bank g to main engine sprites second half of slot 0.
+	VRAM_G_MAIN_SPRITE_0x06414000	= 2 | VRAM_OFFSET(3),	//!< maps vram bank g to main engine sprites second part of second half of slot 0.
+	VRAM_G_TEX_PALETTE				= 3,					//!< maps vram bank g to 3d texture palette slot 0.
+	VRAM_G_TEX_PALETTE_SLOT0		= 3 | VRAM_OFFSET(0),	//!< maps vram bank g to 3d texture palette slot 0.
+	VRAM_G_TEX_PALETTE_SLOT1		= 3 | VRAM_OFFSET(1),	//!< maps vram bank g to 3d texture palette slot 1.
+	VRAM_G_TEX_PALETTE_SLOT4		= 3 | VRAM_OFFSET(2),	//!< maps vram bank g to 3d texture palette slot 4.
+	VRAM_G_TEX_PALETTE_SLOT5		= 3 | VRAM_OFFSET(3),	//!< maps vram bank g to 3d texture palette slot 5.
+	VRAM_G_BG_EXT_PALETTE			= 4,					//!< maps vram bank g to main engine background extended palette slot 0 and 1.
+	VRAM_G_BG_EXT_PALETTE_SLOT01	= 4 | VRAM_OFFSET(0),	//!< maps vram bank g to main engine background extended palette slot 0 and 1.
+	VRAM_G_BG_EXT_PALETTE_SLOT23	= 4 | VRAM_OFFSET(1),	//!< maps vram bank g to main engine background extended palette slot 2 and 3.
+	VRAM_G_SPRITE_EXT_PALETTE		= 5,					//!< maps vram bank g to main engine sprites extended palette.
 } VRAM_G_TYPE;
 
 //! Allowed VRAM bank H modes
 typedef enum {
-	VRAM_H_LCD						= 0,	//!< maps vram h to lcd.
-	VRAM_H_SUB_BG					= 1,	//!< maps vram h to sub engine background first 2 parts of slot 0.
-	VRAM_H_SUB_BG_EXT_PALETTE		= 2,	//!< maps vram h to sub engine background extended palette.
+	VRAM_H_LCD						= 0,	//!< maps vram bank h to lcd.
+	VRAM_H_SUB_BG					= 1,	//!< maps vram bank h to sub engine background first 2 parts of slot 0.
+	VRAM_H_SUB_BG_EXT_PALETTE		= 2,	//!< maps vram bank h to sub engine background extended palette.
 } VRAM_H_TYPE;
 
 //! Allowed VRAM bank I modes
 typedef enum {
-	VRAM_I_LCD						= 0,	//!< maps vram i to lcd.
-	VRAM_I_SUB_BG_0x06208000		= 1,	//!< maps vram i to sub engine background thirth part of slot 0.
-	VRAM_I_SUB_SPRITE				= 2,	//!< maps vram i to sub engine sprites.
-	VRAM_I_SUB_SPRITE_EXT_PALETTE	= 3,	//!< maps vram i to sub engine sprites extended palette.
+	VRAM_I_LCD						= 0,	//!< maps vram bank i to lcd.
+	VRAM_I_SUB_BG_0x06208000		= 1,	//!< maps vram bank i to sub engine background thirth part of slot 0.
+	VRAM_I_SUB_SPRITE				= 2,	//!< maps vram bank i to sub engine sprites.
+	VRAM_I_SUB_SPRITE_EXT_PALETTE	= 3,	//!< maps vram bank i to sub engine sprites extended palette.
 }VRAM_I_TYPE;
 
 
@@ -311,25 +311,25 @@ typedef u16 _palette[256];
 /** \brief  An array of 16 256-color palettes */
 typedef _palette _ext_palette[16];
 
-/** \brief  Used for accessing vram E as an extended palette */
+/** \brief  Used for accessing vram bank E as an extended palette */
 #define VRAM_E_EXT_PALETTE ((_ext_palette *)VRAM_E)
 
-/** \brief  Used for accessing vram F as an extended palette */
+/** \brief  Used for accessing vram bank F as an extended palette */
 #define VRAM_F_EXT_PALETTE ((_ext_palette *)VRAM_F)
 
-/** \brief  Used for accessing vram G as an extended palette */
+/** \brief  Used for accessing vram bank G as an extended palette */
 #define VRAM_G_EXT_PALETTE ((_ext_palette *)VRAM_G)
 
-/** \brief  Used for accessing vram H as an extended palette */
+/** \brief  Used for accessing vram bank H as an extended palette */
 #define VRAM_H_EXT_PALETTE ((_ext_palette *)VRAM_H)
 
-/** \brief  Used for accessing vram F as an extended sprite palette */
+/** \brief  Used for accessing vram bank F as an extended sprite palette */
 #define VRAM_F_EXT_SPR_PALETTE ((_palette *)VRAM_F)
 
-/** \brief  Used for accessing vram G as an extended sprite palette */
+/** \brief  Used for accessing vram bank G as an extended sprite palette */
 #define VRAM_G_EXT_SPR_PALETTE ((_palette *)VRAM_G)
 
-/** \brief  Used for accessing vram I as an extended sprite palette */
+/** \brief  Used for accessing vram bank I as an extended sprite palette */
 #define VRAM_I_EXT_SPR_PALETTE ((_palette *)VRAM_I)
 
 

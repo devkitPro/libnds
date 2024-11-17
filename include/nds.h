@@ -70,7 +70,7 @@
  - \ref fifocommon.h "Fifo"
  - \ref timers.h "Timers"
 
- \section user_io_api User Input/ouput
+ \section user_io_api User Input/output
  - \ref arm9/input.h "Keypad and Touch pad"
  - \ref keyboard.h "Keyboard"
  - \ref console.h "Console and Debug Printing"
@@ -79,7 +79,7 @@
  - \ref decompress.h "Decompression"
  - \ref image.h "Image Manipulation"
  - \ref pcx.h "PCX file loader"
- - \ref dynamicArray.h "General Purpose dynamic array implementation"
+ - \ref dynamicArray.h "General purpose dynamic array implementation"
  - \ref linkedlist.h "General purpose linked list implementation"
 
  \section peripheral_api Custom Peripherals
@@ -93,7 +93,7 @@
 
 
 
- \section external_links Usefull links
+ \section external_links Useful links
  - <a href="http://www.devkitpro.org/">devkitPro</a>
  - <a href="https://github.com/devkitPro/">devkitPro github</a>
 
