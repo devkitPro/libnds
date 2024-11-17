@@ -69,7 +69,6 @@ u32 cardEepromReadID() {
 	return id;
 }
 
-
 //---------------------------------------------------------------------------------
 int cardEepromGetType(void) {
 //---------------------------------------------------------------------------------
@@ -79,7 +78,7 @@ int cardEepromGetType(void) {
 	if (( sr == 0xff && id == 0xffffff) || ( sr == 0 && id == 0 )) return -1;
 	if ( sr == 0xf0 && id == 0xffffff ) return 1;
 	if ( sr == 0x00 && id == 0xffffff ) return 2;
-	if ( id != 0xffffff) return 3;
+	if ( id != 0xffffff || ( sr == 0x02 && id == 0xffffff )) return 3;
 	
 	return 0;
 }
@@ -97,20 +96,38 @@ u32 cardEepromGetSize() {
 	if(type == 1)
 		return 512;
 	if(type == 2) {
-		u32 buf1,buf2,buf3;
+		u32 buf1,buf2,buf3 = 0x54534554; // "TEST"
+		// Save the first word of the EEPROM
 		cardReadEeprom(0,(u8*)&buf1,4,type);
-		if ( !(buf1 != 0 || buf1 != 0xffffffff) ) {
-			buf3 = ~buf1;
-			cardWriteEeprom(0,(u8*)&buf3,4,type);
-		} else {
-			buf3 = buf1;
-		}
+
+		// Write "TEST" to it
+		cardWriteEeprom(0,(u8*)&buf3,4,type);
+
+		// Loop until the EEPROM mirrors and the first word shows up again
 		int size = 8192;
-		while (1) {	 
+		while (1) {
 			cardReadEeprom(size,(u8*)&buf2,4,type);
-			if ( buf2 == buf3 ) break;
+			// Check if it matches, if so check again with another value to ensure no false positives
+			if (buf2 == buf3) {
+				u32 buf4 = 0x74736574; // "test"
+				// Write "test" to the first word
+				cardWriteEeprom(0,(u8*)&buf4,4,type);
+
+				// Check if it still matches
+				cardReadEeprom(size,(u8*)&buf2,4,type);
+				if (buf2 == buf4) break;
+
+				// False match, write "TEST" back and keep going
+				cardWriteEeprom(0,(u8*)&buf3,4,type);
+			}
 			size += 8192;
-		};
+		}
+
+		// Restore the first word
+		cardWriteEeprom(0,(u8*)&buf1,4,type);
+
+		return size;
+	}
 
 		if ( buf1 != buf3 ) cardWriteEeprom(0,(u8*)&buf1,4,type);
 
@@ -153,7 +170,13 @@ u32 cardEepromGetSize() {
 			if (device == 0x2211)
 				return 128*1024;		//	1Mbit(128KByte) - MX25L1021E
 		}
-		
+
+		if (id == 0xffffff) {
+			int sr = cardEepromCommand(SPI_EEPROM_RDSR);
+			if (sr == 2) { // Pokémon Mystery Dungeon - Explorers of Sky
+				return 128*1024; // 1Mbit (128KByte)
+			}
+		}
 
 		return 256*1024;		//	2Mbit(256KByte)
 	}
