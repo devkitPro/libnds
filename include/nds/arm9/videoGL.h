@@ -428,7 +428,7 @@ void glRotatef32i(int angle, s32 x, s32 y, s32 z);
 \param sizeY the vertical size of the texture; valid sizes are enumerated in GL_TEXTURE_TYPE_ENUM
 \param empty2 not used, just here for OpenGL compatibility
 \param param parameters for the texture
-\param texture pointer to the texture data to load
+\param texture pointer to the texture data to load; if NULL, VRAM for the texture is allocated but the texture is not loaded yet
 \return 1 on success, 0 on failure*/
 int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, int sizeY, int empty2, int param, const void* texture);
 
@@ -438,7 +438,7 @@ int glTexImage2D(int target, int empty1, GL_TEXTURE_TYPE_ENUM type, int sizeX, i
 \param width the length of the palette (if 0, then palette is removed from currently bound texture)
 \param empty2 ignored, only here for OpenGL compatability
 \param empty3 ignored, only here for OpenGL compatability
-\param table pointer to the palette data to load (if NULL, then palette is removed from currently bound texture)*/
+\param table pointer to the palette data to load (if NULL, VRAM for the palette is allocated but the palette is not loaded yet)*/
 void glColorTableEXT(int target, int empty1, u16 width, int empty2, int empty3, const u16* table);
 
 /*! \brief glColorSubTableEXT loads a 15-bit color format palette into a specific spot in a currently bound texture's existing palette

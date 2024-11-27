@@ -739,8 +739,8 @@ void glColorTableEXT( int target, int empty1, u16 width, int empty2, int empty3,
 		if( texture->palIndex )	// Remove prior palette if exists
 			removePaletteFromTexture( texture );
 
-		// Exit if no color table or color count is 0 (helpful in emptying the palette for the active texture)
-		if( !width || table == NULL )
+		// Exit if color count is 0 (helpful in emptying the palette for the active texture)
+		if( !width )
 			return;
 
 		// Allocate new palette block based on the texture's format
@@ -776,6 +776,19 @@ void glColorTableEXT( int target, int empty1, u16 width, int empty2, int empty3,
 			palette->connectCount = 1;
 			palette->palSize = width << 1;
 
+			if( glGlob->deallocPalSize )
+				texture->palIndex = (u32)DynamicArrayGet( &glGlob->deallocPal, glGlob->deallocPalSize-- );
+			else
+				texture->palIndex = glGlob->palCount++;
+			DynamicArraySet( &glGlob->palettePtrs, texture->palIndex, (void*)palette );
+
+			GFX_PAL_FORMAT = palette->addr;
+			glGlob->activePalette = texture->palIndex;
+
+			// allocate, but don't touch VRAM if table is NULL
+			if ( table == NULL )
+				return;
+
 			// copy straight to VRAM, and assign a palette name
 			u32 tempVRAM = VRAM_EFG_CR;
 			u16 *startBank = vramGetBank( (u16*)palette->vramAddr );
@@ -795,15 +808,6 @@ void glColorTableEXT( int target, int empty1, u16 width, int empty2, int empty3,
 
 			swiCopy( table, palette->vramAddr, width | COPY_MODE_HWORD );
 			vramRestoreBanks_EFG( tempVRAM );
-
-			if( glGlob->deallocPalSize )
-				texture->palIndex = (u32)DynamicArrayGet( &glGlob->deallocPal, glGlob->deallocPalSize-- );
-			else
-				texture->palIndex = glGlob->palCount++;
-			DynamicArraySet( &glGlob->palettePtrs, texture->palIndex, (void*)palette );
-
-			GFX_PAL_FORMAT = palette->addr;
-			glGlob->activePalette = texture->palIndex;
 		} else
 			GFX_PAL_FORMAT = glGlob->activePalette = texture->palIndex;
 	}
