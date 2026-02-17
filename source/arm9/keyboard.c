@@ -308,18 +308,8 @@ ssize_t keyboardRead(struct _reent *r, void *unused, char *ptr, size_t len) {
 }
 
 const devoptab_t std_in = {
-	"stdin",
-	0,
-	NULL,
-	NULL,
-	NULL,
-	keyboardRead,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL,
-	NULL
+	.name = "kb",
+	.read_r = keyboardRead,
 };
 
 
